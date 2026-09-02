@@ -1,9 +1,9 @@
 {
-  "version": "V35-GitHub-Pages-Master",
+  "version": "V35-GitHub-Pages-Master-No-Comic-PDF",
   "baseBuild": "V35 Complete Crew Gear + Selected Daybreak Traders",
   "saveKey": "daybreak_crimson_tide_v2",
   "entry": "index.html",
-  "assetCount": 32,
+  "assetCount": 31,
   "assets": [
     "assets/audio/combat.mp3",
     "assets/audio/explore.mp3",
@@ -18,7 +18,6 @@
     "assets/chapter-art/act1/ch06-ais-yah.png",
     "assets/chapter-art/act1/ch07-hall.png",
     "assets/chapter-art/act1/ch08-passage.png",
-    "assets/comics/legends-of-daybreak-1.pdf",
     "assets/game-chapters/act1/01-the-storm.png",
     "assets/game-chapters/act1/02-a-shore-unknown.png",
     "assets/game-chapters/act1/03-a-name-in-malacca.png",
