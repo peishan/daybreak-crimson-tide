@@ -1,0 +1,3 @@
+Dynamically referenced or missing static paths:
+assets/comics/legends-of-daybreak-1.pdf
+assets/portraits/san.png
