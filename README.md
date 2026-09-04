@@ -1,31 +1,15 @@
-# Daybreak: Crimson Tide
+# Daybreak: Crimson Tide — v9 Story Journey Test
 
-## GitHub Pages master build
+Test build for the Story Journey overhaul.
 
-This is the repository-ready master for **Daybreak: Crimson Tide**.
-
-### Deploy
-
-1. Create a GitHub repository.
-2. Upload **everything inside this folder** to the repository root.
-3. Go to **Settings → Pages**.
-4. Choose **Deploy from a branch**.
-5. Select your main branch and `/ (root)`.
-6. Save.
-
-`index.html` is the entry point.
-
-### Important
-
-- Keep the `assets/` directory intact.
-- Portraits, chapter art, comics and music are now bundled in the repository.
-- `.nojekyll` is included.
-- Existing save key is `daybreak_crimson_tide_v2`.
-- Future changes should modify this repository incrementally rather than replacing the entire project.
-- Do not rename existing portrait/chapter-art/audio paths unless the code is updated too.
-
-### Current baseline
-
-V35 — Complete Crew Gear + Selected Daybreak Traders.
-
-The repository packaging also restores the previously working portrait, Act I chapter-art, comic-PDF and audio assets so they remain version-controlled in GitHub.
+Key changes:
+- Story progression follows recruitment order and requires reaching the correct port.
+- Story chapters are completed as sequential journey steps: sail -> read -> rescue/escape -> read aftermath.
+- Story battles remain the existing combat system; Senedra/Zaki still escape independently.
+- Senedra and Zaki cannot progress until earlier recruitment chapters are completed.
+- Arc I comic artwork 1–24 is bundled using the established file naming for chapters 1–17.
+- Current story chapter shows a small spoiler thumbnail; tapping it opens the full comic in a new tab.
+- Story XP is substantially increased compared with the previous 35 XP rewards.
+- Sailing awards XP on successful arrival.
+- AFK/returning-to-game processing now also regenerates a portion of HP/MP (5% of max per hour, up to 40% over the existing 8-hour AFK cap).
+- Existing save key remains: daybreak_crimson_tide_v2
