@@ -1172,6 +1172,8 @@ body{
 .story-mode-end h2{font-family:Cinzel,serif;color:var(--gold);font-size:1.45rem;margin:0 0 10px}
 .story-mode-end p{line-height:1.6;opacity:.88;margin:0 auto 18px;max-width:560px}
 @media(max-width:560px){.story-mode-overlay{padding:10px 9px 18px}.story-mode-title{font-size:1.12rem}.story-mode-image{max-height:54vh}.story-mode-text{font-size:.96rem;padding:14px}.story-mode-panel{padding-top:12px}.story-mode-top{padding-bottom:10px}}
+
+.story-mode-next-objective{margin:18px auto 20px;max-width:560px;padding:14px 16px;border:1px solid rgba(232,201,106,.55);border-radius:12px;background:rgba(30,20,8,.35);text-align:left}.story-mode-next-label{font-family:Cinzel;color:var(--gold);font-size:.72rem;letter-spacing:.18em;margin-bottom:6px}.story-mode-next-text{font-size:1rem;line-height:1.5;color:var(--parchment)}
 </style>
 </head>
 <body class="portrait-first">
@@ -3007,35 +3009,55 @@ function finishStoryModeChapter(id){
     syncArc1StoryQuestProgress();
     saveGame();
   }
-  const nextChain = id===2 ? 3 : (id===3 ? 4 : null);
   if(overlay){
     const shell=overlay.querySelector('.story-mode-shell');
     if(shell){
       const title=ch?.title || `Chapter ${id}`;
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${id===2?'The trail is no longer just a rumour. San has people beside her now, and the next step will take her deeper into the story.':id===3?'The Crimson Tide has become a crew by choice. Now San must decide how to approach the guardian beyond the ruins.':'The plan is ready. The next step is the rescue.'}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button class="btn btn-success" onclick="${nextChain?`continueChainedStoryMode(${nextChain})`:'closeStoryMode()'}">${nextChain?'CONTINUE':'CONTINUE TO THE VOYAGE'}</button></div>`;
+      const next = getStoryModeNextStep(id);
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button class="btn btn-success" onclick="closeStoryMode()">${next.button || 'CONTINUE TO THE VOYAGE'}</button></div>`;
     }
   }
 }
-function continueChainedStoryMode(id){
-  const overlay=document.getElementById('storyModeOverlay');
-  if(overlay){ overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
-  document.body.style.overflow='';
-  storyModeChapter=null; storyModeChapterId=null;
-  setTimeout(()=>openStoryMode(id),220);
+function getStoryModeNextStep(id){
+  const q=currentArc1StoryQuest();
+  if(id===1){
+    if(level()<5) return {message:'The storm chapter is complete. The Crimson Tide is ready for its first real port.', objective:`Reach Level 5, then sail to Malacca. You are currently Level ${level()}.`, button:'CONTINUE — LEVEL UP & SAIL'};
+    return {message:'The storm chapter is complete. Malacca is now within reach.', objective:'Sail to Malacca. The next story will begin when you arrive.', button:'CONTINUE — SAIL TO MALACCA'};
+  }
+  if(id===2){
+    if(q?.id===2 && game.location==='malacca' && !game.foundCompanions?.joel) return {message:'San has reached Malacca. The story has led her to the wreck where Joel is being held.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
+    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+  }
+  if(id===3){
+    if(q?.id===2) return {message:'The crew has made its choice. Now the rescue can begin.', objective:'Return to the Story Quest and begin Joel’s rescue.', button:'CONTINUE — RESCUE JOEL'};
+    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+  }
+  if(id===4){
+    if(q?.id===2) return {message:'The plan is ready. Joel is waiting beyond the guardian.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
+    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+  }
+  return {message:'The chapter is complete.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
 }
 function closeStoryMode(){
   const overlay=document.getElementById('storyModeOverlay');
   if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
-  document.body.style.overflow=''; storyModeChapter=null; storyModeChapterId=null; ctPlayMusic('port');
-  updateUI(); renderMarket(); renderExplore(); renderStory(); renderLandingV24();
+  document.body.style.overflow='';
+  storyModeChapter=null; storyModeChapterId=null;
+  ctPlayMusic('port');
+  // Always return to the active port/game screen after Story Mode.
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const portScreen=document.getElementById('portScreen');
+  if(portScreen) portScreen.classList.add('active');
+  updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderStory(); renderLandingV24();
+  maybeLaunchPendingStory();
 }
 function maybeLaunchPendingStory(){
   if(!game) return;
   game.comicProgress=game.comicProgress||{};
+  // Only arrival-triggered chapters auto-fire. Later narrative chapters are
+  // launched by the active Story Quest so the player always knows why it starts.
   if(game.location==='singapore' && !game.comicProgress[1]) { setTimeout(()=>openStoryMode(1),450); return; }
   if(game.location==='malacca' && !game.comicProgress[2]) { setTimeout(()=>openStoryMode(2),450); return; }
-  if(game.location==='malacca' && game.comicProgress[2] && !game.comicProgress[3] && game.foundCompanions?.joel) { setTimeout(()=>openStoryMode(3),450); return; }
-  if(game.location==='malacca' && game.comicProgress[3] && !game.comicProgress[4] && !game.foundCompanions?.joel) { setTimeout(()=>openStoryMode(4),450); }
 }
 
 function openStoryModeReplay(chapterId){
