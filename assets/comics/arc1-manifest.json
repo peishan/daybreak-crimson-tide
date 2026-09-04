@@ -1,0 +1,31 @@
+{
+  "archive": "Arc I — The First Voyage",
+  "chapters": 24,
+  "bundled_artwork": {
+    "01": "ch01-source.png",
+    "02": "ch02-source.png",
+    "03": "ch03-source.png",
+    "04": "ch04-source.png",
+    "05": "ch05-source.png",
+    "06": "ch06-source.png",
+    "07": "ch07-source.png",
+    "08": "ch08-source.png",
+    "09": "ch09-shield-returns.png",
+    "10": "ch10-day-sea-rested.png",
+    "11": "ch11-day-we-chose.png",
+    "12": "ch12-debt-wasnt-hers.png",
+    "13": "ch13-debt-collector.png",
+    "14": "ch14-two-sisters-one-ship.png",
+    "15": "ch15-one-who-stayed.png",
+    "16": "ch16-mark-we-carried.png",
+    "17": "ch17-things-we-do-without-knowing.png",
+    "18": "ch18-mezstorm-rescue.png",
+    "19": "ch19-crew-we-choose.png",
+    "20": "ch20-senedra.png",
+    "21": "ch21-zaki.png",
+    "22": "ch22-mezstorm.png",
+    "23": "ch23-siblings.png",
+    "24": "ch24-drowned-passage.png"
+  },
+  "note": "Chapters 9–17 added from the supplied comic pages; existing 18–24 artwork retained."
+}
