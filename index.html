@@ -3606,6 +3606,23 @@ function completeSelfEscape(companion){
   syncArc1StoryQuestProgress();
   toast(`${m.name} escaped — and is now aboard.`); saveGame(); renderStory(); updateUI(); renderExplore();
 }
+function readStoryQuestComic(id){
+  const ch = ARC1_COMICS.find(x=>x.id===id);
+  const img = ARC1_ART[id];
+  if(!ch || !img || !ch.unlock()) return;
+  // Opening a story chapter from the active quest also records it as read.
+  game.comicProgress = game.comicProgress || {};
+  if(!game.comicProgress[id]){
+    game.comicProgress[id] = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation || 0) + 1;
+    logEvent(`📖 Comic Chapter ${id} complete: ${ch.title} · +${ch.xp} XP`, 'gold');
+    saveGame();
+  }
+  window.open(img, '_blank', 'noopener');
+  renderStory();
+  updateUI();
+}
 function renderStory() {
   const container = document.getElementById('storyContent');
   if (!container) return;
@@ -3630,11 +3647,29 @@ function renderStory() {
       else if(st==='level') statusText=`🔒 Requires Level ${q.level}. You are Level ${level()}.`;
       else if(st==='active' && !atPort) statusText=`⚓ Sail to ${port ? port.name : q.portId}.`;
       else if(st==='active') statusText=q.id===8?'⚔️ Defeat the Drowned Admiral.':'⚔️ Complete the recruitment chapter here.';
+      const comicForQuest = q.id === 1 ? 1 : (q.id === 2 ? 2 : null);
+      const needsComic = comicForQuest && !game.comicProgress?.[comicForQuest];
+      let actionHtml = `<div class="story-actions"><div class="story-chip">${esc(statusText)}</div></div>`;
+      if(st === 'active' && !atPort){
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="sailTo('${q.portId}')">⚓ Sail to ${esc(port ? port.name : 'Drowned Passage')}</button></div>`;
+      } else if(st === 'active' && atPort && q.id === 2 && needsComic){
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readStoryQuestComic(${comicForQuest})">📖 Read Chapter 2 — The First Port</button></div><div class="story-actions"><div class="story-chip">Read the chapter before beginning Joel's rescue.</div></div>`;
+      } else if(st === 'active' && atPort && q.id === 2){
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('malacca')">⚔️ Begin Joel's Rescue</button></div>`;
+      } else if(st === 'active' && atPort && q.id === 8){
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startFinalFight()">⚔️ Enter the Drowned Passage</button></div>`;
+      } else if(st === 'active' && atPort && q.companion){
+        const portId = q.portId;
+        const portObj = PORTS.find(x=>x.id===portId);
+        actionHtml = portObj && portObj.recruitment === 'escape'
+          ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${q.companion}')">🏃 Follow the Escape</button></div>`
+          : `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('${portId}')">⚔️ Begin Recruitment</button></div>`;
+      }
       return `<article class="story-chapter active">
         <div class="story-chapter-top"><div class="story-chapter-title">Chapter ${q.id} — ${esc(q.title)}</div><div class="story-status">CURRENT</div></div>
         <div class="story-chapter-text">${esc(q.summary)}</div>
         <div class="story-meta"><span class="story-chip gold">📍 ${esc(port ? port.name : 'Drowned Passage')}</span><span class="story-chip">⭐ ${storyQuestLevelText(q)}</span><span class="story-chip red">${atPort?'📍 At destination':'🧭 Destination pending'}</span></div>
-        <div class="story-actions"><div class="story-chip">${esc(statusText)}</div></div>
+        ${actionHtml}
       </article>`;
     })() : `<article class="story-chapter complete"><div class="story-chapter-title">✓ Arc I Story Complete</div><div class="story-chapter-text">The full recruitment voyage is complete. The Crimson Tide can now move into the next act.</div></article>`}
   </section>`;
