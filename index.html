@@ -3484,7 +3484,22 @@ const ARC1_COMICS = [
   {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
 ];
 const ARC1_ART = {
-  20:'assets/comics/arc1/ch20-senedra.png',21:'assets/comics/arc1/ch21-zaki.png',22:'assets/comics/arc1/ch22-mezstorm.png',23:'assets/comics/arc1/ch23-siblings.png',24:'assets/comics/arc1/ch24-drowned-passage.png'
+  9:'assets/comics/arc1/ch09-shield-returns.png',
+  10:'assets/comics/arc1/ch10-day-sea-rested.png',
+  11:'assets/comics/arc1/ch11-day-we-chose.png',
+  12:'assets/comics/arc1/ch12-debt-wasnt-hers.png',
+  13:'assets/comics/arc1/ch13-debt-collector.png',
+  14:'assets/comics/arc1/ch14-two-sisters-one-ship.png',
+  15:'assets/comics/arc1/ch15-one-who-stayed.png',
+  16:'assets/comics/arc1/ch16-mark-we-carried.png',
+  17:'assets/comics/arc1/ch17-things-we-do-without-knowing.png',
+  18:'assets/comics/arc1/ch18-mezstorm-rescue.png',
+  19:'assets/comics/arc1/ch19-crew-we-choose.png',
+  20:'assets/comics/arc1/ch20-senedra.png',
+  21:'assets/comics/arc1/ch21-zaki.png',
+  22:'assets/comics/arc1/ch22-mezstorm.png',
+  23:'assets/comics/arc1/ch23-siblings.png',
+  24:'assets/comics/arc1/ch24-drowned-passage.png'
 };
 function completeArc1Comic(id){
   const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;
