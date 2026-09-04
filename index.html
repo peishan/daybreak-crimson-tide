@@ -2821,13 +2821,14 @@ function renderLandingV24(){
 function showSettings() {
   showModal('Settings',
     `<div style="display:grid;gap:10px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(0,0,0,.18);">
-        <div><div style="font-size:.82rem;color:var(--gold);">Music</div><div style="font-size:.72rem;opacity:.72;margin-top:2px;">Toggle the Crimson Tide soundtrack on or off.</div></div>
-        <button id="musicToggleBtn" class="btn btn-small" onclick="ctSetMusicEnabled(!ctMusicEnabled)" aria-pressed="${ctMusicEnabled}">${ctMusicEnabled ? '🎵 Music: ON' : '🔇 Music: OFF'}</button>
-      </div>
       <label style="font-size:.8rem;color:var(--gold);">Ship Name</label>
       <input id="landingShipNameEdit" value="${esc(game.shipName || 'The Daybreak')}"
         style="padding:10px;border:1px solid var(--sand);border-radius:7px;background:rgba(0,0,0,.35);color:var(--parchment);">
+      <label style="display:flex;align-items:center;gap:9px;font-size:.85rem;color:var(--parchment);cursor:pointer;">
+        <input id="landingMusicEnabledEdit" type="checkbox" ${ctMusicEnabled ? 'checked' : ''}> 🎵 Music enabled
+      </label>
+      <label style="font-size:.8rem;color:var(--gold);">Music volume</label>
+      <input id="landingMusicVolumeEdit" type="range" min="0" max="1" step="0.01" value="${ctMusicVolume}" oninput="ctSetMusicVolume(this.value)" style="width:100%;">
       <label style="font-size:.8rem;color:var(--gold);">Difficulty</label>
       <select id="landingDifficultyEdit"
         style="padding:10px;border:1px solid var(--sand);border-radius:7px;background:rgba(0,0,0,.35);color:var(--parchment);">
@@ -2842,6 +2843,8 @@ function showSettings() {
         const d = document.getElementById('landingDifficultyEdit');
         if (n && n.value.trim()) game.shipName = n.value.trim();
         if (d) game.difficulty = d.value;
+        const music = document.getElementById('landingMusicEnabledEdit');
+        if (music) ctSetMusicEnabled(music.checked);
         renderLanding();
         closeModal();
         toast('⚙ Settings updated.');
@@ -2983,7 +2986,7 @@ const CT_AUDIO_TRACKS = {
 };
 let ctAudio = null;
 let ctAudioKey = null;
-let ctMusicEnabled = localStorage.getItem('ct_music_enabled') !== 'false';
+let ctMusicEnabled = localStorage.getItem('ct_music_enabled') !== '0';
 let ctMusicVolume = Number(localStorage.getItem('ct_music_volume') || 0.42);
 
 function ctPlayMusic(key) {
@@ -3006,19 +3009,14 @@ function ctPlayMusic(key) {
 
 function ctStopMusic() {
   if (ctAudio) ctAudio.pause();
+  ctAudioKey = null;
 }
 function ctSetMusicEnabled(enabled) {
   ctMusicEnabled = !!enabled;
-  localStorage.setItem('ct_music_enabled', String(ctMusicEnabled));
+  localStorage.setItem('ct_music_enabled', ctMusicEnabled ? '1' : '0');
   if (!ctMusicEnabled) ctStopMusic();
   else ctPlayMusic(ctAudioKey || 'landing');
-  const toggle = document.getElementById('musicToggleBtn');
-  if (toggle) {
-    toggle.textContent = ctMusicEnabled ? '🎵 Music: ON' : '🔇 Music: OFF';
-    toggle.setAttribute('aria-pressed', String(ctMusicEnabled));
-  }
 }
-
 function ctSetMusicVolume(value) {
   ctMusicVolume = Math.max(0, Math.min(1, Number(value)));
   localStorage.setItem('ct_music_volume', String(ctMusicVolume));
@@ -3468,41 +3466,40 @@ function startFinalFight() {
 // STORY SCREEN — the search for the crew
 // ---------------------------------------------------------------------------
 const ARC1_COMICS = [
-  {id:1,title:"San's Survival",tag:'Opening',unlock:()=>true,summary:'The sea takes the ship, the crew, and every answer San thought she had. She survives anyway.',xp:35},
-  {id:2,title:'The One Who Stayed',tag:'Joel',unlock:()=>!!game.foundCompanions.joel,summary:'San finds Joel and the first familiar bond begins without a memory to explain it.',xp:35},
-  {id:3,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'A false debt leads San to a woman who feels strangely like family.',xp:35},
-  {id:4,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.foundCompanions.eliz,summary:'A healer refuses to abandon the sick, even when the wreck itself wants her trapped.',xp:35},
-  {id:5,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm’s bargain with the drowned idol comes due.',xp:35},
-  {id:6,title:'The Watchful Signal',tag:'Senedra',unlock:()=>!!game.foundCompanions.senedra,summary:'For months, Senedra keeps the Hanoi lighthouse signalling and refuses to stop watching the horizon.',xp:35},
-  {id:7,title:'The Planner',tag:'Zaki',unlock:()=>!!game.foundCompanions.zaki,summary:'Zaki survives a prison hulk through preparation, strategy, and one fistfight at a time.',xp:35},
-  {id:8,title:'The Drowned Passage',tag:'Aldric & Wren',unlock:()=>!!game.finalCleared,summary:'The scattered crew reaches the passage beyond the charts and meets the two who have survived it.',xp:50},
-  {id:9,title:'The Quiet Between Voyages',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'The crew learns how to live aboard the same ship again.',xp:35},
-  {id:10,title:'The Names We Keep',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'Names return through ledgers, rumours, and introductions—not recovered memories.',xp:35},
-  {id:11,title:'Before the Next Port',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'The Crimson Tide becomes more than a place to sleep; it becomes somewhere to belong.',xp:35},
-  {id:12,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'Aisyah’s false debt is exposed, and San’s instinct to protect her becomes impossible to ignore.',xp:40},
-  {id:13,title:'The Debt Collector',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'A matching mark in the ledger hints that the crew’s scattering was not entirely random.',xp:40},
-  {id:14,title:'Two Sisters, One Ship',tag:'San & Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'Sisterhood takes shape through teasing, trust, and the things neither woman can explain.',xp:40},
-  {id:15,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.foundCompanions.eliz,summary:'Eliz chooses the crew because they prove they need her—and because she chooses to stay.',xp:40},
-  {id:16,title:'The Mark We Carried',tag:'San · Joel · Aisyah',unlock:()=>!!game.foundCompanions.joel && !!game.foundCompanions.aisyah,summary:'Three matching gem-like pendants are noticed for what they are: a mystery, not an answer.',xp:40},
-  {id:17,title:'The Things We Do Without Knowing',tag:'Crew',unlock:()=>!!game.foundCompanions.eliz,summary:'The crew falls into familiar roles even though none of them remembers why.',xp:40},
-  {id:18,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm’s rescue leaves a deeper question: what does regeneration mean when identity itself can shift?',xp:40},
-  {id:19,title:'The Crew We Choose',tag:'Mezstorm + Crew',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm finds her place aboard the Crimson Tide through scenes with the people already aboard.',xp:40},
-  {id:20,title:'Senedra — The Watchful Signal',tag:'Senedra',unlock:()=>!!game.foundCompanions.senedra,summary:'The woman at the lighthouse is finally brought into the crew’s story—but not because someone defeated her guardian.',xp:50},
-  {id:21,title:'Zaki — The Planner',tag:'Zaki',unlock:()=>!!game.foundCompanions.zaki,summary:'Zaki’s prison-hulk survival reveals the careful planner beneath the fighter.',xp:50},
-  {id:22,title:'Mezstorm — The Regeneration',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm confronts the strange regeneration and transformation that make her different in Crimson Tide.',xp:50},
-  {id:23,title:'The Two Who Remembered',tag:'Senedra & Zaki',unlock:()=>!!game.foundCompanions.senedra && !!game.foundCompanions.zaki,summary:'Senedra and Zaki remember each other as siblings, but not Aisyah, San, Mezstorm, or Eliz.',xp:60},
-  {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
+  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:35},
+  {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:35},
+  {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:35},
+  {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:35},
+  {id:5,title:'The Voice Behind the Wall',tag:'The First Meeting',unlock:()=>!!game.comicProgress?.[4],summary:'Behind the ruined wall, San meets the man she cannot remember but somehow feels she has been searching for.',xp:35},
+  {id:6,title:'The Shield Returns',tag:'The Rescue of Joel',unlock:()=>!!game.comicProgress?.[5],summary:'The Crimson Tide enters the ruins at midnight. San and Joel fight side by side before either can explain why it feels natural.',xp:35},
+  {id:7,title:'The Shield That Remained',tag:'A Piece of Him Returned',unlock:()=>!!game.comicProgress?.[6],summary:'The storm took their memories, but something remained: the feeling of a shield, a promise, and a person worth bringing home.',xp:35},
+  {id:8,title:'The Tradewinds Remember',tag:'A Shield Without Its Owner',unlock:()=>!!game.comicProgress?.[7],summary:'The search continues through the trade routes. The shield leaves a trail even when its owner cannot remember where he came from.',xp:35},
+  {id:9,title:'The Quiet Between Voyages',tag:'Crew',unlock:()=>!!game.comicProgress?.[8] && !!game.finalCleared,summary:'The crew learns how to live aboard the same ship again.',xp:35},
+  {id:10,title:'The Names We Keep',tag:'Crew',unlock:()=>!!game.comicProgress?.[9],summary:'Names return through ledgers, rumours, and introductions—not recovered memories.',xp:35},
+  {id:11,title:'Before the Next Port',tag:'Crew',unlock:()=>!!game.comicProgress?.[10],summary:'The Crimson Tide becomes more than a place to sleep; it becomes somewhere to belong.',xp:35},
+  {id:12,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.comicProgress?.[11],summary:'Aisyah’s false debt is exposed, and San’s instinct to protect her becomes impossible to ignore.',xp:40},
+  {id:13,title:'The Debt Collector',tag:'Aisyah',unlock:()=>!!game.comicProgress?.[12],summary:'A matching mark in the ledger hints that the crew’s scattering was not entirely random.',xp:40},
+  {id:14,title:'Two Sisters, One Ship',tag:'San & Aisyah',unlock:()=>!!game.comicProgress?.[13],summary:'Sisterhood takes shape through teasing, trust, and the things neither woman can explain.',xp:40},
+  {id:15,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.comicProgress?.[14],summary:'Eliz chooses the crew because they prove they need her—and because she chooses to stay.',xp:40},
+  {id:16,title:'The Mark We Carried',tag:'San · Joel · Aisyah',unlock:()=>!!game.comicProgress?.[15],summary:'Three matching gem-like pendants are noticed for what they are: a mystery, not an answer.',xp:40},
+  {id:17,title:'The Things We Do Without Knowing',tag:'Crew',unlock:()=>!!game.comicProgress?.[16],summary:'The crew falls into familiar roles even though none of them remembers why.',xp:40},
+  {id:18,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.comicProgress?.[17],summary:'Mezstorm’s rescue leaves a deeper question: what does regeneration mean when identity itself can shift?',xp:40},
+  {id:19,title:'The Crew We Choose',tag:'Mezstorm + Crew',unlock:()=>!!game.comicProgress?.[18],summary:'Mezstorm finds her place aboard the Crimson Tide through scenes with the people already aboard.',xp:40},
+  {id:20,title:'Senedra — The Watchful Signal',tag:'Senedra',unlock:()=>!!game.comicProgress?.[19],summary:'The woman at the lighthouse is finally brought into the crew’s story—but not because someone defeated her guardian.',xp:50},
+  {id:21,title:'Zaki — The Planner',tag:'Zaki',unlock:()=>!!game.comicProgress?.[20],summary:'Zaki’s prison-hulk survival reveals the careful planner beneath the fighter.',xp:50},
+  {id:22,title:'Mezstorm — The Regeneration',tag:'Mezstorm',unlock:()=>!!game.comicProgress?.[21],summary:'Mezstorm confronts the strange regeneration and transformation that make her different in Crimson Tide.',xp:50},
+  {id:23,title:'The Two Who Remembered',tag:'Senedra & Zaki',unlock:()=>!!game.comicProgress?.[22],summary:'Senedra and Zaki remember each other as siblings, but not Aisyah, San, Mezstorm, or Eliz.',xp:60},
+  {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.comicProgress?.[23] && !!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
 ];
 const ARC1_ART = {
-  9:'assets/comics/arc1/ch09-crimson-tide.png',
-  10:'assets/comics/arc1/ch10-crimson-tide.png',
-  11:'assets/comics/arc1/ch11-crimson-tide.png',
-  12:'assets/comics/arc1/ch12-crimson-tide.png',
-  13:'assets/comics/arc1/ch13-crimson-tide.png',
-  14:'assets/comics/arc1/ch14-crimson-tide.png',
-  15:'assets/comics/arc1/ch15-crimson-tide.png',
-  16:'assets/comics/arc1/ch16-crimson-tide.png',
-  17:'assets/comics/arc1/ch17-crimson-tide.png',
+  1:'assets/comics/arc1/ch01-storm-that-remained.png',
+  2:'assets/comics/arc1/ch02-the-first-port.png',
+  3:'assets/comics/arc1/ch03-a-crew-of-choice.png',
+  4:'assets/comics/arc1/ch04-the-guardians-fortress.png',
+  5:'assets/comics/arc1/ch05-the-voice-behind-the-wall.png',
+  6:'assets/comics/arc1/ch06-the-shield-returns.png',
+  7:'assets/comics/arc1/ch07-the-shield-that-remained.png',
+  8:'assets/comics/arc1/ch08-the-tradewinds-remember.png',
   18:'assets/comics/arc1/ch18-mezstorm-rescue.png',
   19:'assets/comics/arc1/ch19-crew-we-choose.png',
   20:'assets/comics/arc1/ch20-senedra.png',
@@ -3511,43 +3508,8 @@ const ARC1_ART = {
   23:'assets/comics/arc1/ch23-siblings.png',
   24:'assets/comics/arc1/ch24-drowned-passage.png'
 };
-function arc1NextChapterId(){
-  const completed=game.comicProgress||{};
-  for(let i=1;i<=24;i++){ if(!completed[i]) return i; }
-  return 25;
-}
-function arc1StoryChapterUnlocked(id){
-  if(id===1) return true;
-  if(arc1NextChapterId()!==id) return false;
-  const requirements={
-    2:()=>!!game.foundCompanions.joel,
-    3:()=>!!game.foundCompanions.aisyah,
-    4:()=>!!game.foundCompanions.eliz,
-    5:()=>!!game.foundCompanions.mezstorm,
-    6:()=>!!game.foundCompanions.senedra,
-    7:()=>!!game.foundCompanions.zaki,
-    8:()=>!!game.finalCleared,
-    9:()=>!!game.finalCleared,
-    10:()=>!!game.finalCleared,
-    11:()=>!!game.finalCleared,
-    12:()=>!!game.foundCompanions.aisyah,
-    13:()=>!!game.foundCompanions.aisyah,
-    14:()=>!!game.foundCompanions.aisyah,
-    15:()=>!!game.foundCompanions.eliz,
-    16:()=>!!game.foundCompanions.joel && !!game.foundCompanions.aisyah,
-    17:()=>!!game.foundCompanions.eliz,
-    18:()=>!!game.foundCompanions.mezstorm,
-    19:()=>!!game.foundCompanions.mezstorm,
-    20:()=>!!game.foundCompanions.senedra,
-    21:()=>!!game.foundCompanions.zaki,
-    22:()=>!!game.foundCompanions.mezstorm,
-    23:()=>!!game.foundCompanions.senedra && !!game.foundCompanions.zaki,
-    24:()=>!!game.finalCleared
-  };
-  return !requirements[id] || requirements[id]();
-}
 function completeArc1Comic(id){
-  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !arc1StoryChapterUnlocked(id)) return;
+  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;
   game.comicProgress=game.comicProgress||{};
   if(game.comicProgress[id]) return;
   game.comicProgress[id]=true;
@@ -3558,10 +3520,16 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!arc1StoryChapterUnlocked(ch.id);const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="arc1-comic-art"><img src="${img}" alt="Chapter ${ch.id} comic" loading="lazy"></div>`:(unlocked?`<div class="arc1-comic-placeholder">📖 Crimson Tide comic artwork for this chapter is not bundled in this test yet.</div>`:'')}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeArc1Comic(${ch.id})">📖 Complete Chapter</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="arc1-comic-art"><img src="${img}" alt="Chapter ${ch.id} comic" loading="lazy"></div>`:''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeArc1Comic(${ch.id})">📖 Complete Chapter</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 function completeSelfEscape(companion){
-  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion] || arc1NextChapterId()!==port.chapterId) return;
+  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
+  // Recruitment follows the established Legends of Daybreak order.
+  const prior = companion==='senedra' ? 'mezstorm' : companion==='zaki' ? 'senedra' : null;
+  if(prior && !game.foundCompanions[prior]){
+    toast(`The story is not ready for ${ALL_PARTY.find(x=>x.id===companion)?.name || companion} yet.`);
+    return;
+  }
   const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return;
   game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
   gainXP(90); game.reputation=(game.reputation||0)+2;
@@ -3634,8 +3602,8 @@ function renderStory() {
         <span class="story-chip">👤 ${esc(member ? member.name : p.companion)}</span>
         <span class="story-chip red">${done ? 'Crew reunited' : (p.recruitment==='escape' ? 'Escapes independently' : 'Guardian remains')}</span>
       </div>
-      ${!done && p.recruitment==='escape' && arc1NextChapterId()===p.chapterId ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : (!done && p.recruitment==='escape' ? `<div class="story-meta"><span class="story-chip">📖 Follow this escape after the earlier story chapters are unlocked.</span></div>` : '')}
-      
+      ${!done && p.recruitment==='escape' ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : ''}
+      ${p.comic ? renderComicPanels({comic:p.comic}, 'act1_'+p.chapterId) : ''}
     </article>`;
   });
 
