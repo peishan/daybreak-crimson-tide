@@ -1150,20 +1150,6 @@ body{
 .arc1-comic-placeholder{padding:28px 16px;text-align:center;color:#d6c48b;font-family:Georgia,serif}
 .arc1-comic-xp{color:#8fd19e;font-size:.78rem;margin-top:7px}
 @media(min-width:800px){.arc1-comic-grid{grid-template-columns:1fr 1fr}}
-.story-journey-track{display:flex;flex-direction:column;gap:9px;margin-top:12px}
-.story-step{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid rgba(205,163,55,.22);border-radius:10px;background:rgba(7,17,24,.68)}
-.story-step.done{border-color:rgba(91,177,112,.48);background:rgba(45,80,55,.10)}
-.story-step.current{border-color:rgba(205,163,55,.62);box-shadow:0 0 0 1px rgba(205,163,55,.10) inset}
-.story-step.locked{opacity:.55}
-.story-step-icon{font-size:1.15rem;line-height:1.2;min-width:26px;text-align:center}
-.story-step-body{flex:1;min-width:0}.story-step-title{font-family:Georgia,serif;color:#e6c97b;font-size:.94rem}.story-step-desc{font-size:.76rem;opacity:.78;margin-top:3px;line-height:1.4}
-.story-step-actions{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}
-.story-thumb{margin-top:9px;border-radius:8px;overflow:hidden;border:1px solid rgba(205,163,55,.28);background:#081218;max-width:190px}
-.story-thumb img{display:block;width:100%;height:120px;object-fit:cover;object-position:top center}
-.story-thumb-label{padding:6px 8px;font-size:.67rem;opacity:.78}
-.story-reward-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.story-reward{padding:5px 8px;border-radius:999px;background:rgba(205,163,55,.09);border:1px solid rgba(205,163,55,.22);font-size:.72rem}
-.story-current-banner{padding:10px 12px;border-radius:9px;background:linear-gradient(90deg,rgba(205,163,55,.12),rgba(90,40,30,.10));border:1px solid rgba(205,163,55,.28);margin-top:10px;font-size:.8rem}
-
 </style>
 </head>
 <body class="portrait-first">
@@ -2655,7 +2641,7 @@ let game = {
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
   bounties: [], bountyDay: null,
-  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {}, storyQuestStage: {}, storyStepProgress: {},
+  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {},
   inCombat: false, combatEnemy: null, combatEnemyHp: 0,
   combatTurn: 0, combatRound: 1, combatLog: [], combatSessionId: 0, combatResolved: false,
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
@@ -3168,30 +3154,13 @@ function processAFKRewards() {
   const wholeMinutes = Math.floor(elapsedHours * 60);
   const goldReward = Math.max(0, Math.floor(wholeMinutes * 2));
   const xpReward = Math.max(0, Math.floor(wholeMinutes * 3));
-  const regenHours = Math.min(8, wholeMinutes / 60);
-  const regenPct = Math.min(1, regenHours * 0.05); // 5% of max HP/MP per hour, capped at 40% over 8h.
-  let regenCount = 0;
-  if (regenPct > 0) {
-    game.partyHp = game.partyHp || {}; game.partyMp = game.partyMp || {};
-    for (const m of ALL_PARTY) {
-      if (!game.foundCompanions?.[m.id] && m.id !== 'san') continue;
-      const maxHp = effectiveMaxHp(m); const maxMp = effectiveMaxMp(m);
-      const oldHp = Number(game.partyHp[m.id] ?? m.hp ?? maxHp);
-      const oldMp = Number(game.partyMp[m.id] ?? m.mp ?? maxMp);
-      const newHp = Math.min(maxHp, Math.round(oldHp + maxHp * regenPct));
-      const newMp = Math.min(maxMp, Math.round(oldMp + maxMp * regenPct));
-      if (newHp !== oldHp || newMp !== oldMp) regenCount++;
-      game.partyHp[m.id] = newHp; game.partyMp[m.id] = newMp;
-    }
-  }
   game.lastActiveAt = now;
 
-  if (goldReward || xpReward || regenCount) {
+  if (goldReward || xpReward) {
     game.gold += goldReward;
     gainXP(xpReward);
-    const regenText = regenCount ? ` · ❤️/💙 crew regeneration` : '';
-    logEvent(`⏳ AFK voyage earnings (${(wholeMinutes/60).toFixed(1)}h, capped at 8h): +${goldReward}g and +${xpReward} XP${regenText}.`, 'gold');
-    toast(`⏳ AFK: +${goldReward}g · +${xpReward} XP${regenCount ? ' · HP/MP restored' : ''}`);
+    logEvent(`⏳ AFK voyage earnings (${(wholeMinutes/60).toFixed(1)}h, capped at 8h): +${goldReward}g and +${xpReward} XP.`, 'gold');
+    toast(`⏳ AFK rewards: +${goldReward}g · +${xpReward} XP`);
     return true;
   }
   return false;
@@ -3483,13 +3452,18 @@ function startGuardianFight(portId) {
   const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
   const quest = ARC1_STORY_QUESTS.find(q => q.portId === portId);
 
-  // First-time recruitment is gated by the current story step. Optional
-  // rematches for Senedra/Zaki remain available after their independent escapes.
+  // First-time recruitment is level- and order-gated. Optional rematches for
+  // Senedra/Zaki remain available after their independent escapes.
   if (!escaped && quest) {
-    if (level() < quest.level) { toast(`Chapter ${quest.id} requires Level ${quest.level}. You are Level ${level()}.`); return; }
-    if (!storyQuestPrereqMet(quest) || game.location !== quest.portId) { toast('Reach this port and complete the earlier story steps first.'); return; }
-    const stage=storyQuestStage(quest), step=quest.steps[stage];
-    if (!step || step.type!=='battle') { toast('Read the current story chapter before starting the rescue battle.'); return; }
+    if (level() < quest.level) {
+      toast(`Chapter ${quest.id} requires Level ${quest.level}. You are Level ${level()}.`);
+      return;
+    }
+    if (!arc1StoryPrereqMet(quest)) {
+      const prior = ARC1_STORY_QUESTS.find(q=>q.id===quest.id-1);
+      toast(`Complete Chapter ${prior?.id || (quest.id-1)} before recruiting here.`);
+      return;
+    }
   }
   const pre = escaped
     ? `${GUARDIANS[port.guardian].name} still controls part of the harbor. ${ALL_PARTY.find(m=>m.id===port.companion)?.name || 'The companion'} already escaped — this is an optional rematch for the challenge and rewards.`
@@ -3500,10 +3474,8 @@ function startGuardianFight(portId) {
 }
 function startFinalFight() {
   const quest = ARC1_STORY_QUESTS.find(q=>q.id===8);
-  syncArc1StoryQuestProgress();
   if (quest && level() < quest.level) { toast(`Chapter 8 requires Level ${quest.level}. You are Level ${level()}.`); return; }
   if (Object.keys(game.foundCompanions||{}).length < 6) { toast('Recover the six scattered companions first.'); return; }
-  if (quest && (storyQuestStage(quest)!==1 || !storyQuestPrereqMet(quest))) { toast('Complete the Drowned Passage story setup first.'); return; }
   showModal('Chapter 8', DROWNED_PASSAGE.preFight || "This is the last one. San can feel it.",
     [{text: '⚔️ Go', action: () => { closeModal(); startCombat({ kind: 'final', key: 'drowned_admiral', enemy: GUARDIANS.drowned_admiral }); }},
      {text: 'Not Yet', action: closeModal}]);
@@ -3517,62 +3489,73 @@ function startFinalFight() {
 // cannot be completed early. Each chapter requires the correct level, reaching
 // the destination, and completing that chapter's recruitment/finale condition.
 const ARC1_STORY_QUESTS = [
-  {id:1,title:'The Storm That Remained',portId:'singapore',level:1,companion:null,summary:'Begin the voyage from Singapore.',steps:[
-    {type:'read',comic:1,label:'Read Chapter 1 — The Storm That Remained',desc:'San survives the storm with Soel. The journey begins.'}
-  ]},
-  {id:2,title:'Malacca — The Shield Returns',portId:'malacca',level:5,companion:'joel',summary:'Reach Malacca, follow the trail, rescue Joel, then live through what comes after.',steps:[
-    {type:'sail',label:'Sail to Malacca',desc:'Reach the first port where the trail leads San.'},
-    {type:'read',comic:2,label:'Read Chapter 2 — The First Port',desc:'Malacca is the first true step into the new world.'},
-    {type:'read',comic:3,label:'Read Chapter 3 — A Crew of Choice',desc:'San begins deciding who can stand beside her.'},
-    {type:'read',comic:4,label:"Read Chapter 4 — The Guardian’s Fortress",desc:'The crew studies the ruins before making its rescue plan.'},
-    {type:'read',comic:5,label:'Read Chapter 5 — The Voice Behind the Wall',desc:'San meets the man she cannot remember.'},
-    {type:'battle',label:'Rescue Joel',desc:'Defeat the Wreck Warden and bring Joel home.',action:'joel'},
-    {type:'read',comic:6,label:'Read Chapter 6 — The Shield Returns',desc:'San and Joel fight side by side as if they have done it before.'},
-    {type:'read',comic:7,label:'Read Chapter 7 — The Shield That Remained',desc:'Something remains even when memory does not.'},
-    {type:'read',comic:8,label:'Read Chapter 8 — The Tradewinds Remember',desc:'The search leaves another trail.'},
-    {type:'read',comic:9,label:'Read Chapter 9 — The Shield Returns',desc:'The crew carries the quiet aftermath of Malacca.'},
-    {type:'read',comic:10,label:'Read Chapter 10 — Day at Sea, Rested',desc:'A little time aboard the Crimson Tide changes the rhythm of the journey.'},
-    {type:'read',comic:11,label:'Read Chapter 11 — The Day We Chose',desc:'The crew chooses to keep sailing together.'}
-  ]},
-  {id:3,title:'Palembang — The Debt That Wasn’t Hers',portId:'palembang',level:10,companion:'aisyah',summary:'Reach Palembang, meet Aisyah, expose the false debt, and choose to bring her aboard.',steps:[
-    {type:'sail',label:'Sail to Palembang',desc:'Follow the next lead into the ancient river port.'},
-    {type:'read',comic:12,label:'Read Chapter 12 — The Debt That Wasn’t Hers',desc:'San finds Aisyah beneath a debt she never signed.'},
-    {type:'battle',label:'Rescue Aisyah',desc:'Defeat the Debt Collector and break the false claim.',action:'aisyah'},
-    {type:'read',comic:13,label:'Read Chapter 13 — The Debt Collector',desc:'The ledger leaves behind a stranger clue.'},
-    {type:'read',comic:14,label:'Read Chapter 14 — Two Sisters, One Ship',desc:'Sisterhood takes shape through instinct, teasing, and trust.'}
-  ]},
-  {id:4,title:'Batavia — The One Who Stayed',portId:'batavia',level:15,companion:'eliz',summary:'Reach Batavia, enter the quarantined hulk, and bring Eliz home.',steps:[
-    {type:'sail',label:'Sail to Batavia',desc:'The next signal comes from the quarantined port.'},
-    {type:'battle',label:'Rescue Eliz',desc:'Defeat the Plague Hulk and get Eliz and her patients out safely.',action:'eliz'},
-    {type:'read',comic:15,label:'Read Chapter 15 — The One Who Stayed',desc:'Eliz chooses the crew because she chooses to stay.'}
-  ]},
-  {id:5,title:'Bangkok — The Storm That Was Owed',portId:'bangkok',level:20,companion:'mezstorm',summary:'Carry the crew’s quiet discoveries to Bangkok, then confront the storm-bound bargain.',steps:[
-    {type:'sail',label:'Sail to Bangkok',desc:'The Crimson Tide follows the next lead east.'},
-    {type:'read',comic:16,label:'Read Chapter 16 — The Mark We Carried',desc:'The matching gem-like pendants are noticed, but remain unexplained.'},
-    {type:'read',comic:17,label:'Read Chapter 17 — The Things We Do Without Knowing',desc:'The crew falls into familiar roles without remembering why.'},
-    {type:'battle',label:'Rescue Mezstorm',desc:'Defeat the Storm Idol and break the bargain.',action:'mezstorm'},
-    {type:'read',comic:18,label:'Read Chapter 18 — The Storm That Was Owed',desc:'Mezstorm’s rescue raises a deeper question about identity.'},
-    {type:'read',comic:19,label:'Read Chapter 19 — The Crew We Choose',desc:'Mezstorm finds a place aboard the Crimson Tide.'},
-    {type:'read',comic:22,label:'Read Chapter 22 — Mezstorm: The Regeneration',desc:'The strange regeneration and transformation are confronted.'}
-  ]},
-  {id:6,title:'Hanoi — The Watchful Signal',portId:'hanoi',level:25,companion:'senedra',summary:'Reach Hanoi, find the lighthouse signal, and let Senedra choose to escape on her own.',steps:[
-    {type:'sail',label:'Sail to Hanoi',desc:'The signal has been waiting for someone to notice it.'},
-    {type:'read',comic:20,label:'Read Chapter 20 — Senedra: The Watchful Signal',desc:'Senedra has been signalling from the lighthouse for months.'},
-    {type:'escape',label:'Senedra Escapes',desc:'Senedra escapes independently and joins the Crimson Tide.',action:'senedra'}
-  ]},
-  {id:7,title:'Manila — The Planner',portId:'manila',level:30,companion:'zaki',summary:'Reach Manila, find Zaki aboard the prison hulk, and let him fight his way free.',steps:[
-    {type:'sail',label:'Sail to Manila',desc:'The next trail leads across the sea.'},
-    {type:'read',comic:21,label:'Read Chapter 21 — Zaki: The Planner',desc:'The fighter aboard the prison hulk is more careful than he first appears.'},
-    {type:'escape',label:'Zaki Escapes',desc:'Zaki gets himself out and rejoins the voyage.',action:'zaki'},
-    {type:'read',comic:23,label:'Read Chapter 23 — The Two Who Remembered',desc:'Senedra and Zaki remember each other as siblings, and nothing more.'}
-  ]},
-  {id:8,title:'Drowned Passage — The Last Crossing',portId:'drowned_passage',level:35,companion:'final',summary:'Reach the Drowned Passage, face the Admiral, and close the First Voyage.',steps:[
-    {type:'sail',label:'Reach the Drowned Passage',desc:'The passage opens only after the scattered crew has been found.'},
-    {type:'battle',label:'Defeat the Drowned Admiral',desc:'Fight the guardian of the last crossing.',action:'final'},
-    {type:'read',comic:24,label:'Read Chapter 24 — The Drowned Passage',desc:'Aldric and Wren join the ten aboard as the sea beyond the charts opens.'}
-  ]}
+  {id:1, title:'The Storm That Remained', portId:'singapore', level:1, companion:null, summary:'Begin the voyage from Singapore.', complete:()=>true},
+  {id:2, title:'Malacca — Find Joel', portId:'malacca', level:5, companion:'joel', summary:'Reach Malacca and bring Joel home from the guardian’s wreck.', complete:()=>game.location==='malacca' && !!game.foundCompanions.joel},
+  {id:3, title:'Palembang — Find Aisyah', portId:'palembang', level:10, companion:'aisyah', summary:'Reach Palembang and resolve Aisyah’s false debt.', complete:()=>game.location==='palembang' && !!game.foundCompanions.aisyah},
+  {id:4, title:'Batavia — Find Eliz', portId:'batavia', level:15, companion:'eliz', summary:'Reach Batavia and bring Eliz back aboard.', complete:()=>game.location==='batavia' && !!game.foundCompanions.eliz},
+  {id:5, title:'Bangkok — Find Mezstorm', portId:'bangkok', level:20, companion:'mezstorm', summary:'Reach Bangkok and break the storm-bound bargain holding Mezstorm.', complete:()=>game.location==='bangkok' && !!game.foundCompanions.mezstorm},
+  {id:6, title:'Hanoi — Find Senedra', portId:'hanoi', level:25, companion:'senedra', summary:'Reach Hanoi and follow Senedra’s signal after the earlier crew has been recovered.', complete:()=>game.location==='hanoi' && !!game.foundCompanions.senedra},
+  {id:7, title:'Manila — Find Zaki', portId:'manila', level:30, companion:'zaki', summary:'Reach Manila and bring Zaki out of the prison hulk.', complete:()=>game.location==='manila' && !!game.foundCompanions.zaki},
+  {id:8, title:'Drowned Passage — The Last Crossing', portId:'drowned_passage', level:35, companion:'final', summary:'Reach the Drowned Passage after all six companions are aboard and defeat the Drowned Admiral.', complete:()=>!!game.finalCleared}
 ];
+function arc1StoryPrereqMet(q){
+  if (!q) return false;
+  if (level() < q.level) return false;
+  if (q.id <= 1) return true;
+  const prior = ARC1_STORY_QUESTS.find(x=>x.id===q.id-1);
+  return !!(prior && (game.storyQuestProgress?.[prior.id] || prior.complete()));
+}
+function currentArc1StoryQuest(){
+  return ARC1_STORY_QUESTS.find(q=>!game.storyQuestProgress?.[q.id]);
+}
+function syncArc1StoryQuestProgress(){
+  game.storyQuestProgress = game.storyQuestProgress || {};
+  let changed=false;
+  for(const q of ARC1_STORY_QUESTS){
+    if(game.storyQuestProgress[q.id]) continue;
+    // Never skip the recruitment order. A chapter can only complete after its
+    // previous chapter has completed. Chapter 1 is the starting state.
+    if(q.id===1 || (arc1StoryPrereqMet(q) && q.complete())){
+      game.storyQuestProgress[q.id]=true; changed=true;
+    }
+  }
+  if(changed) saveGame();
+  return changed;
+}
+function storyQuestStatus(q){
+  if(game.storyQuestProgress?.[q.id]) return 'complete';
+  if(!arc1StoryPrereqMet(q)) return 'locked';
+  if(level() < q.level) return 'level';
+  return 'active';
+}
+function storyQuestLevelText(q){ return q.level <= 1 ? 'Level 1' : `Level ${q.level}`; }
 
+const ARC1_COMICS = [
+  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:35},
+  {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:35},
+  {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:35},
+  {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:35},
+  {id:5,title:'The Voice Behind the Wall',tag:'The First Meeting',unlock:()=>!!game.comicProgress?.[4],summary:'Behind the ruined wall, San meets the man she cannot remember but somehow feels she has been searching for.',xp:35},
+  {id:6,title:'The Shield Returns',tag:'The Rescue of Joel',unlock:()=>!!game.comicProgress?.[5],summary:'The Crimson Tide enters the ruins at midnight. San and Joel fight side by side before either can explain why it feels natural.',xp:35},
+  {id:7,title:'The Shield That Remained',tag:'A Piece of Him Returned',unlock:()=>!!game.comicProgress?.[6],summary:'The storm took their memories, but something remained: the feeling of a shield, a promise, and a person worth bringing home.',xp:35},
+  {id:8,title:'The Tradewinds Remember',tag:'A Shield Without Its Owner',unlock:()=>!!game.comicProgress?.[7],summary:'The search continues through the trade routes. The shield leaves a trail even when its owner cannot remember where he came from.',xp:35},
+  {id:9,title:'The Quiet Between Voyages',tag:'Crew',unlock:()=>!!game.comicProgress?.[8] && !!game.finalCleared,summary:'The crew learns how to live aboard the same ship again.',xp:35},
+  {id:10,title:'The Names We Keep',tag:'Crew',unlock:()=>!!game.comicProgress?.[9],summary:'Names return through ledgers, rumours, and introductions—not recovered memories.',xp:35},
+  {id:11,title:'Before the Next Port',tag:'Crew',unlock:()=>!!game.comicProgress?.[10],summary:'The Crimson Tide becomes more than a place to sleep; it becomes somewhere to belong.',xp:35},
+  {id:12,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.comicProgress?.[11],summary:'Aisyah’s false debt is exposed, and San’s instinct to protect her becomes impossible to ignore.',xp:40},
+  {id:13,title:'The Debt Collector',tag:'Aisyah',unlock:()=>!!game.comicProgress?.[12],summary:'A matching mark in the ledger hints that the crew’s scattering was not entirely random.',xp:40},
+  {id:14,title:'Two Sisters, One Ship',tag:'San & Aisyah',unlock:()=>!!game.comicProgress?.[13],summary:'Sisterhood takes shape through teasing, trust, and the things neither woman can explain.',xp:40},
+  {id:15,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.comicProgress?.[14],summary:'Eliz chooses the crew because they prove they need her—and because she chooses to stay.',xp:40},
+  {id:16,title:'The Mark We Carried',tag:'San · Joel · Aisyah',unlock:()=>!!game.comicProgress?.[15],summary:'Three matching gem-like pendants are noticed for what they are: a mystery, not an answer.',xp:40},
+  {id:17,title:'The Things We Do Without Knowing',tag:'Crew',unlock:()=>!!game.comicProgress?.[16],summary:'The crew falls into familiar roles even though none of them remembers why.',xp:40},
+  {id:18,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.comicProgress?.[17],summary:'Mezstorm’s rescue leaves a deeper question: what does regeneration mean when identity itself can shift?',xp:40},
+  {id:19,title:'The Crew We Choose',tag:'Mezstorm + Crew',unlock:()=>!!game.comicProgress?.[18],summary:'Mezstorm finds her place aboard the Crimson Tide through scenes with the people already aboard.',xp:40},
+  {id:20,title:'Senedra — The Watchful Signal',tag:'Senedra',unlock:()=>!!game.comicProgress?.[19],summary:'The woman at the lighthouse is finally brought into the crew’s story—but not because someone defeated her guardian.',xp:50},
+  {id:21,title:'Zaki — The Planner',tag:'Zaki',unlock:()=>!!game.comicProgress?.[20],summary:'Zaki’s prison-hulk survival reveals the careful planner beneath the fighter.',xp:50},
+  {id:22,title:'Mezstorm — The Regeneration',tag:'Mezstorm',unlock:()=>!!game.comicProgress?.[21],summary:'Mezstorm confronts the strange regeneration and transformation that make her different in Crimson Tide.',xp:50},
+  {id:23,title:'The Two Who Remembered',tag:'Senedra & Zaki',unlock:()=>!!game.comicProgress?.[22],summary:'Senedra and Zaki remember each other as siblings, but not Aisyah, San, Mezstorm, or Eliz.',xp:60},
+  {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.comicProgress?.[23] && !!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
+];
 const ARC1_ART = {
   1:'assets/comics/arc1/ch01-storm-that-remained.png',
   2:'assets/comics/arc1/ch02-the-first-port.png',
@@ -3582,15 +3565,6 @@ const ARC1_ART = {
   6:'assets/comics/arc1/ch06-the-shield-returns.png',
   7:'assets/comics/arc1/ch07-the-shield-that-remained.png',
   8:'assets/comics/arc1/ch08-the-tradewinds-remember.png',
-  9:'assets/comics/arc1/ch09-shield-returns.png',
-  10:'assets/comics/arc1/ch10-day-sea-rested.png',
-  11:'assets/comics/arc1/ch11-day-we-chose.png',
-  12:'assets/comics/arc1/ch12-debt-wasnt-hers.png',
-  13:'assets/comics/arc1/ch13-debt-collector.png',
-  14:'assets/comics/arc1/ch14-two-sisters-one-ship.png',
-  15:'assets/comics/arc1/ch15-one-who-stayed.png',
-  16:'assets/comics/arc1/ch16-mark-we-carried.png',
-  17:'assets/comics/arc1/ch17-things-we-do-without-knowing.png',
   18:'assets/comics/arc1/ch18-mezstorm-rescue.png',
   19:'assets/comics/arc1/ch19-crew-we-choose.png',
   20:'assets/comics/arc1/ch20-senedra.png',
@@ -3599,146 +3573,157 @@ const ARC1_ART = {
   23:'assets/comics/arc1/ch23-siblings.png',
   24:'assets/comics/arc1/ch24-drowned-passage.png'
 };
-
-function storyStepConditionMet(q, stepIndex){
-  const step=q.steps?.[stepIndex]; if(!step) return false;
-  if(step.type==='read') return !!game.comicProgress?.[step.comic];
-  if(step.type==='sail') return q.id===8 ? Object.keys(game.foundCompanions||{}).length>=6 : game.location===q.portId;
-  if(step.type==='battle') {
-    if(step.action==='final') return !!game.finalCleared;
-    const p=PORTS.find(x=>x.id===q.portId); return !!(p && game.foundCompanions?.[p.companion]);
-  }
-  if(step.type==='escape') return !!game.foundCompanions?.[step.action];
-  return false;
-}
-function storyStepDone(q, stepIndex){ return !!game.storyStepProgress?.[q.id]?.[stepIndex]; }
-function storyQuestStage(q){
-  const prog=game.storyStepProgress?.[q.id]||{};
-  for(let i=0;i<(q.steps||[]).length;i++) if(!prog[i]) return i;
-  return q.steps?.length || 0;
-}
-function storyQuestPrereqMet(q){
-  if(!q) return false;
-  if(level()<q.level) return false;
-  if(q.id<=1) return true;
-  const prior=ARC1_STORY_QUESTS.find(x=>x.id===q.id-1);
-  return !!prior && storyQuestStage(prior)>=prior.steps.length;
-}
-function currentArc1StoryQuest(){ return ARC1_STORY_QUESTS.find(q=>storyQuestStage(q)<q.steps.length); }
-function syncArc1StoryQuestProgress(){
-  game.storyQuestProgress=game.storyQuestProgress||{}; game.storyQuestStage=game.storyQuestStage||{}; game.storyStepProgress=game.storyStepProgress||{};
-  let changed=false;
-  for(const q of ARC1_STORY_QUESTS){
-    game.storyStepProgress[q.id]=game.storyStepProgress[q.id]||{};
-    // Legacy saves that marked a whole quest complete are preserved as complete.
-    if(game.storyQuestProgress[q.id] && Object.keys(game.storyStepProgress[q.id]).length===0){
-      q.steps.forEach((_,i)=>game.storyStepProgress[q.id][i]=true); changed=true;
-    }
-    // Advance only in order; never let a later condition skip the current step.
-    for(let i=0;i<q.steps.length;i++){
-      if(game.storyStepProgress[q.id][i]) continue;
-      if(i>0 && !game.storyStepProgress[q.id][i-1]) break;
-      if(storyQuestPrereqMet(q) && storyStepConditionMet(q,i)) { game.storyStepProgress[q.id][i]=true; changed=true; continue; }
-      break;
-    }
-    const stage=storyQuestStage(q);
-    if(game.storyQuestStage[q.id]!==stage){game.storyQuestStage[q.id]=stage;changed=true;}
-    if(stage>=q.steps.length && !game.storyQuestProgress[q.id]){game.storyQuestProgress[q.id]=true;changed=true;}
-  }
-  return changed;
-}
-function storyQuestStatus(q){
-  const stage=storyQuestStage(q);
-  if(stage>=q.steps.length) return 'complete';
-  if(!storyQuestPrereqMet(q)) return 'locked';
-  return 'active';
-}
-function storyStepIcon(step){ return step.type==='sail'?'⛵':step.type==='battle'?'⚔️':step.type==='escape'?'🏃':'📖'; }
-function storyStepAction(q,step){
-  if(step.type==='read') return `<a class="btn btn-small btn-magic" href="${ARC1_ART[step.comic]||'#'}" target="_blank" rel="noopener" onclick="return openStoryComic(${q.id},${q.steps.indexOf(step)},${step.comic})">📖 Open Chapter</a>`;
-  if(step.type==='battle'){
-    if(step.action==='final') return `<button class="btn btn-small btn-danger" onclick="startFinalFight()">⚔️ Begin Battle</button>`;
-    return `<button class="btn btn-small btn-danger" onclick="startGuardianFight('${q.portId}')">⚔️ Begin Rescue</button>`;
-  }
-  if(step.type==='escape') return `<button class="btn btn-small btn-magic" onclick="completeSelfEscape('${step.action}')">🏃 Follow the Escape</button>`;
-  return '';
-}
-function openStoryComic(qid, stepIndex, comicId){
-  const q=ARC1_STORY_QUESTS.find(x=>x.id===qid); if(!q) return false;
-  syncArc1StoryQuestProgress();
-  if(currentArc1StoryQuest()?.id!==qid || storyQuestStage(q)!==stepIndex || q.steps?.[stepIndex]?.comic!==comicId){ toast('Complete the earlier story steps first.'); return false; }
-  const win=window.open(ARC1_ART[comicId], '_blank', 'noopener');
-  if(!win) toast('Allow pop-ups to read the comic chapter.');
-  completeArc1Comic(comicId);
-  return false;
-}
 function completeArc1Comic(id){
-  const exists=Object.keys(ARC1_ART).map(Number).includes(Number(id)); if(!exists) return;
+  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;
   game.comicProgress=game.comicProgress||{};
   if(game.comicProgress[id]) return;
-  const bonus={1:150,2:150,3:150,4:175,5:175,6:250,7:175,8:175,9:125,10:125,11:150,12:175,13:225,14:175,15:350,16:200,17:225,18:400,19:225,20:300,21:325,22:250,23:600,24:750};
-  const xp=bonus[id]||150;
   game.comicProgress[id]=true;
-  gainXP(xp); game.reputation=(game.reputation||0)+1;
-  syncArc1StoryQuestProgress();
-  logEvent(`📖 Comic Chapter ${id} complete · +${xp} Story XP`, 'gold');
-  toast(`📖 Chapter ${id} complete · +${xp} Story XP`);
+  gainXP(ch.xp); game.reputation=(game.reputation||0)+1;
+  logEvent(`📖 Comic Chapter ${id} complete: ${ch.title} · +${ch.xp} XP`, 'gold');
+  toast(`📖 Chapter ${id} complete · +${ch.xp} XP`);
   saveGame(); renderStory(); updateUI();
 }
 function renderArc1ComicArchive(){
-  const current=currentArc1StoryQuest();
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">The comic is now a journey record: chapters unlock through the voyage rather than appearing as a separate checklist.</div></div><div class="arc1-comic-grid">${ARC1_STORY_QUESTS.map(q=>{const st=storyQuestStage(q), status=storyQuestStatus(q), active=current?.id===q.id; return `<article class="arc1-comic-card ${status==='complete'?'complete':''} ${status==='locked'?'locked':''} ${active?'current':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${q.id} — ${esc(q.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(q.summary)}</div></div><div class="arc1-comic-status">${status==='complete'?'✓ COMPLETE':active?'CURRENT':'🔒 LOCKED'}</div></div><div class="story-meta"><span class="story-chip gold">📍 ${esc(q.portId==='drowned_passage'?'Drowned Passage':(PORTS.find(p=>p.id===q.portId)?.name||q.portId))}</span><span class="story-chip">⭐ Level ${q.level}</span><span class="story-chip">${st}/${q.steps.length} steps</span></div></article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>`:(unlocked?`<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`:'')}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 function completeSelfEscape(companion){
   const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
-  const quest=ARC1_STORY_QUESTS.find(q=>q.companion===companion); syncArc1StoryQuestProgress(); const stage=quest?storyQuestStage(quest):0; const step=quest?.steps?.[stage];
-  if(!quest || !step || step.type!=='escape' || step.action!==companion || !storyQuestPrereqMet(quest) || game.location!==quest.portId){ toast('Reach the correct port and complete the earlier story steps first.'); return; }
+  const quest=ARC1_STORY_QUESTS.find(q=>q.companion===companion);
+  if(quest && level() < quest.level){ toast(`Requires Level ${quest.level} to continue this story chapter.`); return; }
+  // Recruitment follows the established Legends of Daybreak order.
+  const prior = companion==='senedra' ? 'mezstorm' : companion==='zaki' ? 'senedra' : null;
+  if(prior && !game.foundCompanions[prior]){
+    toast(`The story is not ready for ${ALL_PARTY.find(x=>x.id===companion)?.name || companion} yet.`);
+    return;
+  }
+  if(quest && !arc1StoryPrereqMet(quest)){ toast('Complete the previous story chapter first.'); return; }
   const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return;
   game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
-  const xp=450; gainXP(xp); game.reputation=(game.reputation||0)+2;
-  logEvent(`📖 ${m.name} escaped and joined the crew on their own · +${xp} Story XP`, 'gold');
-  syncArc1StoryQuestProgress(); toast(`${m.name} escaped — and is now aboard. +${xp} Story XP`); saveGame(); renderStory(); updateUI(); renderExplore();
-}
-
-function renderStory() {
-  const container=document.getElementById('storyContent'); if(!container) return;
+  gainXP(90); game.reputation=(game.reputation||0)+2;
+  logEvent(`📖 ${m.name} escaped and joined the crew on their own · +90 XP`, 'gold');
   syncArc1StoryQuestProgress();
-  const current=currentArc1StoryQuest();
-  let html='';
-  html += `<section class="story-act story-quest-panel"><div class="story-act-header"><div class="story-act-kicker">Story Quest</div><div class="story-act-title">Follow the Voyage</div><div class="story-act-tagline">Every recruitment follows the Legends of Daybreak order. Ports remain freely explorable, but story steps require the correct level, destination, and previous step.</div></div>`;
-  if(!current){
-    html += `<article class="story-chapter complete"><div class="story-chapter-title">✓ Arc I Story Complete</div><div class="story-chapter-text">The First Voyage is complete. The Crimson Tide has reached the end of the first journey.</div></article>`;
-  } else {
-    const q=current, stage=storyQuestStage(q), status=storyQuestStatus(q), port=PORTS.find(p=>p.id===q.portId), step=q.steps[stage];
-    const atPort=game.location===q.portId;
-    let gate='';
-    if(level()<q.level) gate=`🔒 San needs Level ${q.level}. Current level: ${level()}.`;
-    else if(q.id>1 && !storyQuestPrereqMet(q)) gate=`🔒 Complete the previous story chapter first.`;
-    else if(step.type==='sail' && !atPort) gate=`⛵ Sail to ${port?.name||q.portId} to continue.`;
-    else if(step.type==='read' && !storyQuestPrereqMet(q)) gate='🔒 Earlier story steps are still locked.';
-    else if(step.type==='battle' && !atPort) gate=`⛵ Sail to ${port?.name||q.portId} before the rescue.`;
-    else gate=`${storyStepIcon(step)} ${step.label}`;
-    const thumb=step.type==='read' ? ARC1_ART[step.comic] : (q.steps.find(s=>s.type==='read'&&ARC1_ART[s.comic]) ? ARC1_ART[q.steps.find(s=>s.type==='read'&&ARC1_ART[s.comic]).comic] : null);
-    html += `<article class="story-chapter active"><div class="story-chapter-top"><div class="story-chapter-title">Chapter ${q.id} — ${esc(q.title)}</div><div class="story-status">CURRENT</div></div><div class="story-chapter-text">${esc(q.summary)}</div><div class="story-meta"><span class="story-chip gold">📍 ${esc(port?.name||q.portId)}</span><span class="story-chip">⭐ Level ${q.level}</span><span class="story-chip">${stage}/${q.steps.length} complete</span></div><div class="story-current-banner"><b>Next:</b> ${esc(gate)}</div>`;
-    html += `<div class="story-journey-track">${q.steps.map((s,i)=>{const done=storyStepDone(q,i),cur=i===stage,locked=i>stage; const image=s.type==='read'?ARC1_ART[s.comic]:null; return `<div class="story-step ${done?'done':''} ${cur?'current':''} ${locked?'locked':''}"><div class="story-step-icon">${done?'✓':storyStepIcon(s)}</div><div class="story-step-body"><div class="story-step-title">${esc(s.label)}</div><div class="story-step-desc">${esc(s.desc)}</div>${image&&cur?`<div class="story-thumb"><a href="${image}" target="_blank" rel="noopener" onclick="return openStoryComic(${q.id},${i},${s.comic})"><img src="${image}" alt="Chapter ${s.comic} preview" loading="lazy"></a><div class="story-thumb-label">Tap the thumbnail to open the full chapter</div></div>`:''}${cur?`<div class="story-step-actions">${s.type==='sail'&&!atPort?`<button class="btn btn-small btn-magic" onclick="goScreen('nav')">⛵ Sail to ${esc(port?.name||q.portId)}</button>`:''}${s.type==='sail'&&atPort?`<span class="story-chip">✓ Destination reached</span>`:''}${s.type==='read'?storyStepAction(q,s):''}${s.type==='battle'&&atPort?storyStepAction(q,s):''}${s.type==='escape'&&atPort?storyStepAction(q,s):''}</div>`:''}</div></div>`}).join('')}</div>`;
-    const rewards=q.steps.filter(s=>s.type==='read').length*150 + q.steps.filter(s=>s.type==='battle'||s.type==='escape').length*250;
-    html += `<div class="story-reward-row"><span class="story-reward">📖 Story XP available through chapter steps</span><span class="story-reward">⛵ Sailing XP from voyages</span><span class="story-reward">⚔️ Combat rewards remain separate</span></div></article>`;
-  }
-  html += `</section>`;
+  toast(`${m.name} escaped — and is now aboard.`); saveGame(); renderStory(); updateUI(); renderExplore();
+}
+function renderStory() {
+  const container = document.getElementById('storyContent');
+  if (!container) return;
+
+  let html = '';
+
+  syncArc1StoryQuestProgress();
+  const currentStoryQuest = currentArc1StoryQuest();
+  html += `<section class="story-act story-quest-panel">
+    <div class="story-act-header">
+      <div class="story-act-kicker">Story Quest</div>
+      <div class="story-act-title">Follow the Voyage</div>
+      <div class="story-act-tagline">The story follows the same recruitment order as Legends of Daybreak. Ports remain freely explorable, but story chapters are level-gated.</div>
+    </div>
+    ${currentStoryQuest ? (()=>{
+      const q=currentStoryQuest, st=storyQuestStatus(q), port=PORTS.find(p=>p.id===q.portId);
+      const previous=q.id>1 ? ARC1_STORY_QUESTS.find(x=>x.id===q.id-1) : null;
+      const prevDone=!previous || !!game.storyQuestProgress?.[previous.id];
+      const atPort=game.location===q.portId;
+      let statusText='';
+      if(st==='locked') statusText=`🔒 Complete Chapter ${previous?.id || 0} first.`;
+      else if(st==='level') statusText=`🔒 Requires Level ${q.level}. You are Level ${level()}.`;
+      else if(st==='active' && !atPort) statusText=`⚓ Sail to ${port ? port.name : q.portId}.`;
+      else if(st==='active') statusText=q.id===8?'⚔️ Defeat the Drowned Admiral.':'⚔️ Complete the recruitment chapter here.';
+      return `<article class="story-chapter active">
+        <div class="story-chapter-top"><div class="story-chapter-title">Chapter ${q.id} — ${esc(q.title)}</div><div class="story-status">CURRENT</div></div>
+        <div class="story-chapter-text">${esc(q.summary)}</div>
+        <div class="story-meta"><span class="story-chip gold">📍 ${esc(port ? port.name : 'Drowned Passage')}</span><span class="story-chip">⭐ ${storyQuestLevelText(q)}</span><span class="story-chip red">${atPort?'📍 At destination':'🧭 Destination pending'}</span></div>
+        <div class="story-actions"><div class="story-chip">${esc(statusText)}</div></div>
+      </article>`;
+    })() : `<article class="story-chapter complete"><div class="story-chapter-title">✓ Arc I Story Complete</div><div class="story-chapter-text">The full recruitment voyage is complete. The Crimson Tide can now move into the next act.</div></article>`}
+  </section>`;
+
   html += renderArc1ComicArchive();
 
+  // ACT I
   // ACT I GAME CHAPTER ART — exact reference sequence
-  html += `<section class="game-chapter-art-gallery"><div class="game-chapter-art-header"><div class="story-act-kicker">Act I</div><div class="story-act-title">The Scattered Crew</div><div class="story-act-tagline">Game chapter illustrations — exact Act I reference sequence.</div></div><div class="game-chapter-art-grid">${[['01','The Storm','assets/chapter-art/act1/ch01-storm.png'],['02','A Shore Unknown','assets/chapter-art/act1/ch02-shore.png'],['03','A Name in Malacca','assets/chapter-art/act1/ch03-malacca.png'],['04','Shadows of Malacca','assets/chapter-art/act1/ch04-malacca-night.png'],['05',"Joel's Guardian",'assets/chapter-art/act1/ch05-joel.png'],['06','Earned Trust','assets/chapter-art/act1/ch06-ais-yah.png'],['07','New Course','assets/chapter-art/act1/ch07-hall.png'],['08','The Lost Signal','assets/chapter-art/act1/ch08-passage.png'],['09','Beneath Dusk','assets/game-chapters/act1/09-beneath-dusk.png']].map(c=>`<article class="game-chapter-art-card"><div class="game-chapter-art-number">${c[0]}</div><img src="${c[2]}" alt="${esc(c[1])}" loading="lazy"><div class="game-chapter-art-title">${esc(c[1])}</div></article>`).join('')}</div></section>`;
+  html += `<section class="game-chapter-art-gallery">
+    <div class="game-chapter-art-header">
+      <div class="story-act-kicker">Act I</div>
+      <div class="story-act-title">The Scattered Crew</div>
+      <div class="story-act-tagline">Game chapter illustrations — exact Act I reference sequence.</div>
+    </div>
+    <div class="game-chapter-art-grid">
+      ${[
+        ['01','The Storm','assets/chapter-art/act1/ch01-storm.png'],
+        ['02','A Shore Unknown','assets/chapter-art/act1/ch02-shore.png'],
+        ['03','A Name in Malacca','assets/chapter-art/act1/ch03-malacca.png'],
+        ['04','Shadows of Malacca','assets/chapter-art/act1/ch04-malacca-night.png'],
+        [ '05',"Joel's Guardian",'assets/chapter-art/act1/ch05-joel.png'],
+        ['06','Earned Trust','assets/chapter-art/act1/ch06-ais-yah.png'],
+        ['07','New Course','assets/chapter-art/act1/ch07-hall.png'],
+        ['08','The Lost Signal','assets/chapter-art/act1/ch08-passage.png'],
+        ['09','Beneath Dusk','assets/game-chapters/act1/09-beneath-dusk.png']
+      ].map(c=>`<article class="game-chapter-art-card">
+        <div class="game-chapter-art-number">${c[0]}</div>
+        <img src="${c[2]}" alt="${esc(c[1])}" loading="lazy">
+        <div class="game-chapter-art-title">${esc(c[1])}</div>
+      </article>`).join('')}
+    </div>
+  </section>`;
 
-  // Legacy Act I overview remains below the new journey flow.
-  html += `<div class="story-act"><div class="story-act-header"><div class="story-act-kicker">Act I</div><div class="story-act-title">The Scattering</div><div class="story-act-tagline">Find the crew, one port at a time.</div></div>`;
-  html += `<div class="story-chapter active"><div class="story-chapter-title">The Storm</div><div class="story-chapter-text">${esc(PORTS[0].blurb)}</div><div class="story-meta"><span class="story-chip gold">📍 Singapore</span><span class="story-chip">⚓ Three months after the storm</span></div></div>`;
-  PORTS.filter(p=>p.companion).forEach(p=>{
-    const done=!!game.foundCompanions[p.companion], member=ALL_PARTY.find(m=>m.id===p.companion);
-    html += `<article class="story-chapter ${done?'complete':''}"><div class="story-chapter-top"><div class="story-chapter-title">${esc(member?member.name:p.companion)} — ${esc(p.name)}</div><div class="story-status">${done?'✓ FOUND':'FOLLOW JOURNEY'}</div></div><div class="story-chapter-text">${esc(p.blurb)}</div><div class="story-meta"><span class="story-chip gold">📍 ${esc(p.name)}</span><span class="story-chip">👤 ${esc(member?member.name:p.companion)}</span><span class="story-chip red">${done?'Crew reunited':(p.recruitment==='escape'?'Escapes independently':'Guardian remains')}</span></div></article>`;
+  html += `<div class="story-act">
+    <div class="story-act-header">
+      <div class="story-act-kicker">Act I</div>
+      <div class="story-act-title">The Scattering</div>
+      <div class="story-act-tagline">Find the crew, one port at a time.</div>
+    </div>`;
+
+  html += `<div class="story-chapter active">
+    <div class="story-chapter-title">The Storm</div>
+    <div class="story-chapter-text">${esc(PORTS[0].blurb)}</div>
+    <div class="story-meta"><span class="story-chip gold">📍 Singapore</span><span class="story-chip">⚓ Three months after the storm</span></div>
+    ${renderComicPanels({comic:[
+      {image:'assets/comics/act1/ch02/panel01.png', caption:'The storm took everything.'},
+      {image:'assets/comics/act1/ch02/panel02.png', caption:'But I’m still here. So I won’t stop.'}
+    ]}, 'the_storm')}
+  </div>`;
+
+  PORTS.filter(p => p.companion).forEach(p => {
+    const done = !!game.foundCompanions[p.companion];
+    const member = ALL_PARTY.find(m => m.id === p.companion);
+    html += `<article class="story-chapter ${done?'complete':''}">
+      <div class="story-chapter-top">
+        <div class="story-chapter-title">Chapter ${p.chapterId} — ${esc(member ? member.name : p.companion)}</div>
+        <div class="story-status">${done ? '✓ FOUND' : 'UNRESOLVED'}</div>
+      </div>
+      <div class="story-chapter-text">${esc(p.blurb)}</div>
+      <div class="story-meta">
+        <span class="story-chip gold">📍 ${esc(p.name)}</span>
+        <span class="story-chip">👤 ${esc(member ? member.name : p.companion)}</span>
+        <span class="story-chip red">${done ? 'Crew reunited' : (p.recruitment==='escape' ? 'Escapes independently' : 'Guardian remains')}</span>
+      </div>
+      ${!done && p.recruitment==='escape' ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : ''}
+      ${p.comic ? renderComicPanels({comic:p.comic}, 'act1_'+p.chapterId) : ''}
+    </article>`;
   });
+
+  if (Object.keys(game.foundCompanions).length >= 6) {
+    html += `<article class="story-chapter ${game.finalCleared?'complete':'active'}">
+      <div class="story-chapter-top">
+        <div class="story-chapter-title">Chapter 8 — Ser Aldric & Sister Wren</div>
+        <div class="story-status">${game.finalCleared ? '✓ FOUND' : 'CURRENT'}</div>
+      </div>
+      <div class="story-chapter-text">${esc(DROWNED_PASSAGE.blurb)}</div>
+      <div class="story-meta">
+        <span class="story-chip gold">📍 The Drowned Passage</span>
+        <span class="story-chip">👥 Aldric & Wren</span>
+        <span class="story-chip">⚓ Already part of the crew once found</span>
+      </div>
+    </article>`;
+  } else {
+    html += `<article class="story-chapter locked">
+      <div class="story-chapter-title">Chapter 8 — The Drowned Passage</div>
+      <div class="story-chapter-text">Something waits beyond the charted ports. The passage opens only when the scattered six have been found.</div>
+    </article>`;
+  }
+
   html += `</div>`;
 
   // ACT II
@@ -3926,10 +3911,7 @@ function doVoyage(portId, days, dangerLevel) {
         game.location = portId;
         generateMarketPrices();
         const port = PORTS.find(p => p.id === portId);
-        const sailingXP = Math.max(20, (days * 20) + (dangerLevel * 10));
-        gainXP(sailingXP);
-        logEvent('⚓ Arrived at ' + port.name + '! ' + port.desc + ` · ⛵ +${sailingXP} Sailing XP`, 'neutral');
-        toast(`⛵ Voyage complete · +${sailingXP} Sailing XP`);
+        logEvent('⚓ Arrived at ' + port.name + '! ' + port.desc, 'neutral');
         syncArc1StoryQuestProgress();
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('portScreen').classList.add('active');
@@ -4847,16 +4829,10 @@ function handleVictory() {
     const port = PORTS.find(p => p.id === enemy.portId);
     game.clearedGuardians[enemy.key] = true;
     const member = ALL_PARTY.find(m => m.id === port.companion);
-    const q=ARC1_STORY_QUESTS.find(x=>x.portId===port?.id);
-    const stage=q ? storyQuestStage(q) : -1;
-    const step=q?.steps?.[stage];
-    const storyRecruitReady=!!(q && step && step.type==='battle' && storyQuestPrereqMet(q) && game.location===q.portId);
-    if (member && !game.foundCompanions[port.companion] && storyRecruitReady) {
+    if (member && !game.foundCompanions[port.companion]) {
       game.foundCompanions[port.companion] = true;
       game.partyHp[member.id] = member.hp; game.partyMp[member.id] = member.mp;
-      const recruitXP = 250;
-      gainXP(recruitXP);
-      logCombat(`<span style="color:#e8c96a">${member.name} joins the crew!</span> +${recruitXP} Story XP`);
+      logCombat(`<span style="color:#e8c96a">${member.name} joins the crew!</span>`);
       game.storyModalQueue.push(Object.assign({}, port, {companionName: member.name}));
       syncArc1StoryQuestProgress();
     } else if (member) {
