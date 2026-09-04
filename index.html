@@ -2896,7 +2896,8 @@ function showSettings() {
 // ---------------------------------------------------------------------------
 // STORY MODE — illustrated virtual novel prototype
 // ---------------------------------------------------------------------------
-const STORY_MODE_CHAPTER_1 = [
+const STORY_MODE_CHAPTERS = {
+1: [
   {image:'assets/comics/arc1/story/ch01/01-opening.png', text:'Three months after the storm, San wakes with the sea around her and a silence where familiar names should be.', caption:'Survival is the first memory.'},
   {image:'assets/comics/arc1/story/ch01/02-storm-ship.png', text:'The Crimson Tide survived the wreck. San did too. But the storm scattered more than wood and cargo.', caption:'The ship remains. The crew does not.'},
   {image:'assets/comics/arc1/story/ch01/03-eyes.png', text:'She looks out across the water, searching faces that should mean something to her.', caption:'Every face is a stranger.'},
@@ -2904,15 +2905,71 @@ const STORY_MODE_CHAPTER_1 = [
   {image:'assets/comics/arc1/story/ch01/05-soel.png', text:'Soel stays close. The strange little spirit cat seems to understand the weight of what has been lost.', caption:'Some bonds survive without names.'},
   {image:'assets/comics/arc1/story/ch01/06-ship.png', text:'San returns to the deck. There are no answers here yet, only a ship, an open sea, and somewhere else to go.', caption:'The voyage begins.'},
   {image:'assets/comics/arc1/story/ch01/07-crew.png', text:'She looks at the empty places where familiar people should stand.', caption:'The crew is scattered.'},
-  {image:'assets/comics/arc1/story/ch01/08-san.png', text:'San tightens her grip and makes the only decision that matters.', caption:'“If they are out there, I will find them.”'},
+  {image:'assets/comics/arc1/story/ch01/08-san.png', text:'San tightens her grip and makes the only decision that matters.', caption:'If they are out there, I will find them.'},
   {image:'assets/comics/arc1/story/ch01/09-ending.png', text:'The Crimson Tide turns toward the horizon. Somewhere beyond the charts, the first trail is waiting.', caption:'And so the search begins.'}
-];
+],
+2: [
+  {image:'assets/comics/arc1/story/ch02/01.jpg', text:'Three days at sea. Three days without land. At last, the Crimson Tide reaches Malacca, the first great port of the new world.', caption:'The First Port.'},
+  {image:'assets/comics/arc1/story/ch02/02.jpg', text:'The harbour is crowded with merchants, ships, languages and unfamiliar faces. San does not know this world yet.', caption:'New people. New stories. New dangers.'},
+  {image:'assets/comics/arc1/story/ch02/03.jpg', text:'She studies the harbour through tired eyes. She cannot remember this place, but something tells her to keep looking.', caption:'Step by step. Port by port.'},
+  {image:'assets/comics/arc1/story/ch02/04.jpg', text:'San begins gathering what she can learn: trade routes, smugglers, rumours, and the places where information changes hands.', caption:'What San learns.'},
+  {image:'assets/comics/arc1/story/ch02/05.jpg', text:'Soel watches the crowd from beside her. His spirit bell rings softly, as if he senses that this place has many stories.', caption:'Soel listens.'},
+  {image:'assets/comics/arc1/story/ch02/06.jpg', text:'A few words from strangers become leads. Malacca remembers people who have passed through — even when San cannot.', caption:'Where do we even start?'},
+  {image:'assets/comics/arc1/story/ch02/07.jpg', text:'Rumours spread through the market: strange ships, smugglers, an old ruin, and a warrior no one knows by name.', caption:'Rumours in the market.'},
+  {image:'assets/comics/arc1/story/ch02/08.jpg', text:'Every rumour points somewhere different. San realizes that finding one person may mean following several trails at once.', caption:'A port full of trails.'},
+  {image:'assets/comics/arc1/story/ch02/09.jpg', text:'One story speaks of a lone warrior fighting a terrible creature among old ruins.', caption:'A warrior alone.'},
+  {image:'assets/comics/arc1/story/ch02/10.jpg', text:'Another says the authorities have offered a reward to anyone brave enough to investigate.', caption:'Someone has not returned.'},
+  {image:'assets/comics/arc1/story/ch02/11.jpg', text:'San studies the map. The harbour is only the beginning. The trail leads beyond the safe streets.', caption:'Malacca.'},
+  {image:'assets/comics/arc1/story/ch02/12.jpg', text:'The Crimson Tide is small and scarred, but it is enough for now. San needs a ship, a crew, and reasons to stay.', caption:'A ship. A crew. A reason.'},
+  {image:'assets/comics/arc1/story/ch02/13.jpg', text:'She looks across the busy harbour and accepts that this journey will not be solved in a single day.', caption:'The journey continues.'},
+  {image:'assets/comics/arc1/story/ch02/14.jpg', text:'Soel remains beside her. Whatever comes next, she is no longer completely alone.', caption:'Not anymore.'},
+  {image:'assets/comics/arc1/story/ch02/15.jpg', text:'One port lies behind them. The world ahead is wide, and somewhere in it is the first person San intends to bring home.', caption:'The search begins in Malacca.'}
+],
+3: [
+  {image:'assets/comics/arc1/story/ch03/01.jpg', text:'A ship is nothing without its crew. San can no longer pretend she can do this alone.', caption:'A Crew of Choice.'},
+  {image:'assets/comics/arc1/story/ch03/02.jpg', text:'The Crimson Tide is damaged, short-handed and still unfamiliar. Waiting will not change that.', caption:'The Crimson Tide was not ready.'},
+  {image:'assets/comics/arc1/story/ch03/03.jpg', text:'San begins looking for people who can keep the ship alive: someone who knows the waters, someone who can mend, someone who can see danger first.', caption:'What San needs.'},
+  {image:'assets/comics/arc1/story/ch03/04.jpg', text:'Kael knows winds and currents. His confidence is practical rather than heroic.', caption:'The helmsman.'},
+  {image:'assets/comics/arc1/story/ch03/05.jpg', text:'Mei can mend sails and tend wounds. She notices problems before they become disasters.', caption:'The shipwright and healer.'},
+  {image:'assets/comics/arc1/story/ch03/06.jpg', text:'Rian watches the harbour from above, quick-eyed and quicker on his feet.', caption:'The scout.'},
+  {image:'assets/comics/arc1/story/ch03/07.jpg', text:'Toran is a wall of muscle, but there is care behind the strength. He keeps watch because someone has to.', caption:'The guard.'},
+  {image:'assets/comics/arc1/story/ch03/08.jpg', text:'San does not recruit legends. She chooses people willing to stand beside her.', caption:'Loyalty is earned, not demanded.'},
+  {image:'assets/comics/arc1/story/ch03/09.jpg', text:'The ship is repaired a little at a time. Routes are studied. Supplies are counted. The risk is calculated.', caption:'The Crimson Tide, in progress.'},
+  {image:'assets/comics/arc1/story/ch03/10.jpg', text:'There is enough food. Enough water. Enough hope to continue.', caption:'Enough for now.'},
+  {image:'assets/comics/arc1/story/ch03/11.jpg', text:'The crew gathers around the table. None of them know why this feels more important than a contract.', caption:'A crew begins at a table.'},
+  {image:'assets/comics/arc1/story/ch03/12.jpg', text:'The Crimson Tide is not a perfect ship. It does not need to be.', caption:'A ship becomes a home.'},
+  {image:'assets/comics/arc1/story/ch03/13.jpg', text:'They are not family. They are not bound by blood. But they choose this together.', caption:'We choose this.'},
+  {image:'assets/comics/arc1/story/ch03/14.jpg', text:'San looks toward the sea with Soel beside her. The future is uncertain, but the choice is theirs.', caption:'We will learn. We will survive.'},
+  {image:'assets/comics/arc1/story/ch03/15.jpg', text:'The Crimson Tide sets sail. Not as heroes. Not as legends. Just as people looking for a tomorrow.', caption:'The journey begins.'}
+],
+4: [
+  {image:'assets/comics/arc1/story/ch04/01.jpg', text:'Rumours spread through every port: a warrior alone in ruined fortifications, guarding something no one dares approach.', caption:"The Guardian's Fortress."},
+  {image:'assets/comics/arc1/story/ch04/02.jpg', text:'San watches the ruins from the water. A captain does not throw her crew into the unknown without learning what waits there.', caption:'Observe. Learn. Plan.'},
+  {image:'assets/comics/arc1/story/ch04/03.jpg', text:'The sight feels strangely familiar. San cannot explain why the thought of the warrior pulls at something inside her.', caption:'Why does it feel like I should know him?'},
+  {image:'assets/comics/arc1/story/ch04/04.jpg', text:'The creature appears only at dusk. Previous attempts ended in failure. The guardian refuses to leave.', caption:'What we know.'},
+  {image:'assets/comics/arc1/story/ch04/05.jpg', text:'San studies the battlefield. The warrior is not simply a prisoner. He is a guardian.', caption:'He is not a prisoner.'},
+  {image:'assets/comics/arc1/story/ch04/06.jpg', text:'The crew questions whether they should interfere. San knows that leaving him behind feels wrong.', caption:'One decision.'},
+  {image:'assets/comics/arc1/story/ch04/07.jpg', text:'They begin with observation. First they learn the guardian’s pattern.', caption:'1. Observe.'},
+  {image:'assets/comics/arc1/story/ch04/08.jpg', text:'Two ships will approach from the south and create a distraction.', caption:'2. Distract.'},
+  {image:'assets/comics/arc1/story/ch04/09.jpg', text:'The fighters will approach from the cliff side while the opening appears.', caption:'3. Flank.'},
+  {image:'assets/comics/arc1/story/ch04/10.jpg', text:'Medical supplies are prepared. The goal is not to destroy the guardian.', caption:'4. Heal and support.'},
+  {image:'assets/comics/arc1/story/ch04/11.jpg', text:'The retreat route is chosen before the fight begins. If the plan fails, everyone comes home.', caption:'5. Extraction.'},
+  {image:'assets/comics/arc1/story/ch04/12.jpg', text:'San traces the plan on the map. Red will distract. Blue will flank. Green will extract.', caption:'One team. One plan.'},
+  {image:'assets/comics/arc1/story/ch04/13.jpg', text:'San makes the objective clear: they are not here to kill the guardian.', caption:'We are here to bring him home.'},
+  {image:'assets/comics/arc1/story/ch04/14.jpg', text:'Hands meet over the table. Whatever happens next, nobody is left behind.', caption:'One team. No one left behind.'},
+  {image:'assets/comics/arc1/story/ch04/15.jpg', text:'Tomorrow, the Crimson Tide will enter the ruins. Tomorrow, San will finally meet the person she has been searching for.', caption:'The rescue begins.'}
+]
+};
 let storyModeChapter = null;
+let storyModeChapterId = null;
 let storyModeIndex = 0;
 function openStoryMode(chapterId){
-  if(chapterId !== 1) return;
-  if(game.comicProgress?.[1]) return;
-  storyModeChapter = STORY_MODE_CHAPTER_1;
+  const chapter = STORY_MODE_CHAPTERS[chapterId];
+  if(!chapter) return;
+  game.comicProgress = game.comicProgress || {};
+  if(game.comicProgress[chapterId]) return;
+  storyModeChapter = chapter;
+  storyModeChapterId = chapterId;
   storyModeIndex = 0;
   const overlay=document.getElementById('storyModeOverlay');
   if(!overlay) return;
@@ -2928,44 +2985,62 @@ function renderStoryModePanel(){
   const counter=document.getElementById('storyModeCounter');
   const next=document.getElementById('storyModeNext');
   if(!panel||!p) return;
-  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter 1 story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
+  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
-  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'BEGIN THE VOYAGE':'TAP TO CONTINUE';
+  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'CONTINUE THE VOYAGE':'TAP TO CONTINUE';
   window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 function advanceStoryMode(){
   if(!storyModeChapter) return;
   if(storyModeIndex < storyModeChapter.length-1){ storyModeIndex++; renderStoryModePanel(); return; }
-  finishStoryModeChapter(1);
+  finishStoryModeChapter(storyModeChapterId);
 }
 function finishStoryModeChapter(id){
   const overlay=document.getElementById('storyModeOverlay');
-  if(id===1){
-    game.comicProgress=game.comicProgress||{};
-    if(!game.comicProgress[1]){
-      game.comicProgress[1]=true;
-      gainXP(150);
-      game.reputation=(game.reputation||0)+1;
-      logEvent('📖 Story Mode Chapter 1 complete: The Storm That Remained · +150 XP','gold');
-      syncArc1StoryQuestProgress();
-      saveGame();
-    }
-    if(overlay){
-      const shell=overlay.querySelector('.story-mode-shell');
-      if(shell){ shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>The Storm That Remained</h2><p>The Crimson Tide is ready. The search for the scattered crew begins at the first port.</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +150</div><button class="btn btn-success" onclick="closeStoryMode()">⚓ CONTINUE TO SINGAPORE</button></div>`; }
+  const ch=ARC1_COMICS.find(x=>x.id===id);
+  game.comicProgress=game.comicProgress||{};
+  if(!game.comicProgress[id]){
+    game.comicProgress[id]=true;
+    gainXP(ch?.xp || (id===1?150:150));
+    game.reputation=(game.reputation||0)+1;
+    logEvent(`📖 Story Mode Chapter ${id} complete: ${ch?.title || 'The Voyage'} · +${ch?.xp || 150} XP`,'gold');
+    syncArc1StoryQuestProgress();
+    saveGame();
+  }
+  const nextChain = id===2 ? 3 : (id===3 ? 4 : null);
+  if(overlay){
+    const shell=overlay.querySelector('.story-mode-shell');
+    if(shell){
+      const title=ch?.title || `Chapter ${id}`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${id===2?'The trail is no longer just a rumour. San has people beside her now, and the next step will take her deeper into the story.':id===3?'The Crimson Tide has become a crew by choice. Now San must decide how to approach the guardian beyond the ruins.':'The plan is ready. The next step is the rescue.'}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button class="btn btn-success" onclick="${nextChain?`continueChainedStoryMode(${nextChain})`:'closeStoryMode()'}">${nextChain?'CONTINUE':'CONTINUE TO THE VOYAGE'}</button></div>`;
     }
   }
+}
+function continueChainedStoryMode(id){
+  const overlay=document.getElementById('storyModeOverlay');
+  if(overlay){ overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
+  document.body.style.overflow='';
+  storyModeChapter=null; storyModeChapterId=null;
+  setTimeout(()=>openStoryMode(id),220);
 }
 function closeStoryMode(){
   const overlay=document.getElementById('storyModeOverlay');
   if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
-  document.body.style.overflow=''; storyModeChapter=null; ctPlayMusic('port');
+  document.body.style.overflow=''; storyModeChapter=null; storyModeChapterId=null; ctPlayMusic('port');
   updateUI(); renderMarket(); renderExplore(); renderStory(); renderLandingV24();
 }
 function maybeLaunchPendingStory(){
   if(!game) return;
   game.comicProgress=game.comicProgress||{};
-  if(game.location==='singapore' && !game.comicProgress[1]) setTimeout(()=>openStoryMode(1),450);
+  if(game.location==='singapore' && !game.comicProgress[1]) { setTimeout(()=>openStoryMode(1),450); return; }
+  if(game.location==='malacca' && !game.comicProgress[2]) { setTimeout(()=>openStoryMode(2),450); return; }
+  if(game.location==='malacca' && game.comicProgress[2] && !game.comicProgress[3] && game.foundCompanions?.joel) { setTimeout(()=>openStoryMode(3),450); return; }
+  if(game.location==='malacca' && game.comicProgress[3] && !game.comicProgress[4] && !game.foundCompanions?.joel) { setTimeout(()=>openStoryMode(4),450); }
+}
+
+function openStoryModeReplay(chapterId){
+  const saved=game.comicProgress?.[chapterId];
+  if(saved){ game.comicProgress[chapterId]=false; openStoryMode(chapterId); game.comicProgress[chapterId]=true; } else openStoryMode(chapterId);
 }
 
 // SAVE / LOAD
@@ -3078,6 +3153,11 @@ function closeModal() {
   if (game.storyModalQueue && game.storyModalQueue.length) {
     const next = game.storyModalQueue.shift();
     setTimeout(() => showStoryModal(next), 250);
+    return;
+  }
+  // When a recruitment aftermath closes, continue the illustrated voyage automatically.
+  if (typeof maybeLaunchPendingStory === 'function' && !game.inCombat) {
+    setTimeout(() => maybeLaunchPendingStory(), 350);
   }
 }
 function showStoryModal(entry) {
@@ -3528,12 +3608,22 @@ function renderExplore() {
   html += bountyBoardHTML();
   container.innerHTML = html;
 }
-function scaleCrimsonEnemy(baseEnemy, kind='harbor') {
+function scaleCrimsonEnemy(baseEnemy, kind='harbor', storyLevel=null) {
   if (!baseEnemy) return null;
-  // Story guardians remain fixed so their chapter difficulty is intentional.
-  if (kind === 'guardian' || kind === 'final' || kind === 'memory') {
-    return Object.assign({}, baseEnemy);
+  // Guardians are tuned to their story level rather than using the late-game base stats.
+  if (kind === 'guardian') {
+    const lv = Math.max(1, Number(storyLevel || level()));
+    const hpMult = Math.min(1.35, 0.36 + lv * 0.026);
+    const dmgMult = Math.min(1.35, 0.50 + lv * 0.021);
+    return Object.assign({}, baseEnemy, {
+      hp: Math.max(80, Math.round(baseEnemy.hp * hpMult)),
+      dmg: Math.max(6, Math.round(baseEnemy.dmg * dmgMult)),
+      xp: Math.max(baseEnemy.xp, Math.round(baseEnemy.xp * (0.75 + lv * 0.015))),
+      gold: Math.max(baseEnemy.gold, Math.round(baseEnemy.gold * (0.75 + lv * 0.01))),
+      scaledFromStoryLevel: lv
+    });
   }
+  if (kind === 'final' || kind === 'memory') return Object.assign({}, baseEnemy);
   const lv = Math.max(1, level());
   const steps = Math.max(0, lv - 1);
   const hpMult = Math.min(2.8, 1 + steps * 0.10);
@@ -3580,7 +3670,7 @@ function startGuardianFight(portId) {
     ? `${GUARDIANS[port.guardian].name} still controls part of the harbor. ${ALL_PARTY.find(m=>m.id===port.companion)?.name || 'The companion'} already escaped — this is an optional rematch for the challenge and rewards.`
     : (port.preFight || "San steadies herself at the threshold. Whatever's waiting below, she isn't leaving without them.");
   showModal(`${escaped ? 'Optional Rematch' : 'Chapter '+port.chapterId}`, pre,
-    [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: GUARDIANS[port.guardian], portId }); }},
+    [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: scaleCrimsonEnemy(GUARDIANS[port.guardian], 'guardian', quest?.level || level()), portId }); }},
      {text: 'Not Yet', action: closeModal}]);
 }
 function startFinalFight() {
@@ -3643,9 +3733,9 @@ function storyQuestLevelText(q){ return q.level <= 1 ? 'Level 1' : `Level ${q.le
 
 const ARC1_COMICS = [
   {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:150},
-  {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:35},
-  {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:35},
-  {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:35},
+  {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:150},
+  {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:150},
+  {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:175},
   {id:5,title:'The Voice Behind the Wall',tag:'The First Meeting',unlock:()=>!!game.comicProgress?.[4],summary:'Behind the ruined wall, San meets the man she cannot remember but somehow feels she has been searching for.',xp:35},
   {id:6,title:'The Shield Returns',tag:'The Rescue of Joel',unlock:()=>!!game.comicProgress?.[5],summary:'The Crimson Tide enters the ruins at midnight. San and Joel fight side by side before either can explain why it feels natural.',xp:35},
   {id:7,title:'The Shield That Remained',tag:'A Piece of Him Returned',unlock:()=>!!game.comicProgress?.[6],summary:'The storm took their memories, but something remained: the feeling of a shield, a promise, and a person worth bringing home.',xp:35},
@@ -3696,7 +3786,7 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (ch.id===1 ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openStoryMode(1)">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? ((ch.id>=1 && ch.id<=4) ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 function completeSelfEscape(companion){
@@ -3979,6 +4069,7 @@ function doVoyage(portId, days, dangerLevel) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('portScreen').classList.add('active');
         updateUI(); renderMarket(); renderExplore();
+        maybeLaunchPendingStory();
       }, 800);
     }
   }, 600);
