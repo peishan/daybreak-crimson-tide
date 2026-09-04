@@ -1136,6 +1136,20 @@ body{
 .gear-audit.warn{color:#e8b76b;border-color:rgba(220,150,70,.45)}
 .gear-bonus-summary{font-size:.64rem;color:var(--sand);opacity:.85;margin-top:2px}
 
+
+/* Arc I comic archive */
+.arc1-comic-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.arc1-comic-card{background:rgba(8,18,24,.78);border:1px solid rgba(205,163,55,.38);border-radius:10px;padding:13px;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.arc1-comic-card.complete{border-color:rgba(91,177,112,.55)}
+.arc1-comic-card.locked{opacity:.62}
+.arc1-comic-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.arc1-comic-title{font-family:Georgia,serif;color:#e6c97b;font-size:1rem}
+.arc1-comic-status{font-size:.72rem;letter-spacing:.08em;white-space:nowrap}
+.arc1-comic-art{margin-top:10px;border-radius:8px;overflow:hidden;background:#081218;border:1px solid rgba(205,163,55,.22)}
+.arc1-comic-art img{display:block;width:100%;height:auto;max-height:720px;object-fit:contain;background:#081218}
+.arc1-comic-placeholder{padding:28px 16px;text-align:center;color:#d6c48b;font-family:Georgia,serif}
+.arc1-comic-xp{color:#8fd19e;font-size:.78rem;margin-top:7px}
+@media(min-width:800px){.arc1-comic-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body class="portrait-first">
@@ -1695,12 +1709,12 @@ const PORTS = [
     harbor: ['harbor_ghoul','wreck_crab'] },
   { id: 'hanoi', name: 'Hanoi', icon: '🐉', desc: 'Northern trading post. Tea, silk, and porcelain.',
     specialties: ['tea', 'silk', 'porcelain'], distances: { singapore: 3, malacca: 4, batavia: 5, manila: 2, bangkok: 2, palembang: 4 }, danger: 2,
-    chapterId: 6, companion: 'senedra', guardian: 'fog_stalker',
+    chapterId: 6, companion: 'senedra', guardian: 'fog_stalker', recruitment: 'escape',
     blurb: "Senedra's been signaling from the same lighthouse for three months, certain someone would eventually see it — she just didn't expect the fog to start signaling back. Her aim hasn't dulled at all waiting.",
     harbor: ['dock_thief','bilge_rat'] },
   { id: 'manila', name: 'Manila', icon: '🏝️', desc: 'Pearl of the Orient. Pearls, tropical fruits, and Spanish silver.',
     specialties: ['pearls', 'fruits', 'silver'], distances: { singapore: 4, malacca: 5, batavia: 4, bangkok: 3, hanoi: 2, palembang: 5 }, danger: 3,
-    chapterId: 7, companion: 'zaki', guardian: 'iron_brig_warden',
+    chapterId: 7, companion: 'zaki', guardian: 'iron_brig_warden', recruitment: 'escape',
     blurb: "Zaki's working off a debt aboard a prison hulk one fistfight at a time, and winning every single one of them, which is exactly the problem — they'll never let their best fighter go willingly.",
     harbor: ['smuggler_crew','harbor_ghoul'] }
 ];
@@ -2627,7 +2641,7 @@ let game = {
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
   bounties: [], bountyDay: null,
-  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0,
+  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {},
   inCombat: false, combatEnemy: null, combatEnemyHp: 0,
   combatTurn: 0, combatRound: 1, combatLog: [], combatSessionId: 0, combatResolved: false,
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
@@ -3365,9 +3379,11 @@ function renderExplore() {
     const g = GUARDIANS[port.guardian];
     html += `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🎯 Chapter ${port.chapterId} — ${done ? 'Cleared' : 'Guardian'}</h3>`;
     if (done) {
-      html += `<p style="font-size:0.85rem;opacity:0.75;">${g.name} has been dealt with. This harbor is safe.</p>`;
+      html += `<article class="quest-item" style="border-left-color:#6fb57d;"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">Cleared · optional rematch available</span></div></div></article>`;
     } else {
-      html += `<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">${g.hp} HP · major encounter</span></div><button class="btn btn-small btn-danger" onclick="startGuardianFight('${port.id}')">Face Them</button></div></article>`;
+      const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
+      const label = escaped ? 'Optional Guardian' : 'Guardian';
+      html += `<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">${g.hp} HP · ${label}</span></div><button class="btn btn-small btn-danger" onclick="startGuardianFight('${port.id}')">${escaped ? 'Challenge' : 'Face Them'}</button></div></article>`;
     }
   } else if (port.id === 'singapore') {
     html += `<p style="font-size:0.85rem;opacity:0.6;margin-top:14px;">San's home port. No one left to find here — just the road ahead.</p>`;
@@ -3424,9 +3440,12 @@ function startHarborFight(key) {
 }
 function startGuardianFight(portId) {
   const port = PORTS.find(p => p.id === portId);
-  const pre = port.preFight || "San steadies herself at the threshold. Whatever's waiting below, she isn't leaving without them.";
-  showModal(`Chapter ${port.chapterId}`, pre,
-    [{text: '⚔️ Go', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: GUARDIANS[port.guardian], portId }); }},
+  const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
+  const pre = escaped
+    ? `${GUARDIANS[port.guardian].name} still controls part of the harbor. ${ALL_PARTY.find(m=>m.id===port.companion)?.name || 'The companion'} already escaped — this is an optional rematch for the challenge and rewards.`
+    : (port.preFight || "San steadies herself at the threshold. Whatever's waiting below, she isn't leaving without them.");
+  showModal(`${escaped ? 'Optional Rematch' : 'Chapter '+port.chapterId}`, pre,
+    [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: GUARDIANS[port.guardian], portId }); }},
      {text: 'Not Yet', action: closeModal}]);
 }
 function startFinalFight() {
@@ -3438,11 +3457,64 @@ function startFinalFight() {
 // ---------------------------------------------------------------------------
 // STORY SCREEN — the search for the crew
 // ---------------------------------------------------------------------------
+const ARC1_COMICS = [
+  {id:1,title:"San's Survival",tag:'Opening',unlock:()=>true,summary:'The sea takes the ship, the crew, and every answer San thought she had. She survives anyway.',xp:35},
+  {id:2,title:'The One Who Stayed',tag:'Joel',unlock:()=>!!game.foundCompanions.joel,summary:'San finds Joel and the first familiar bond begins without a memory to explain it.',xp:35},
+  {id:3,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'A false debt leads San to a woman who feels strangely like family.',xp:35},
+  {id:4,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.foundCompanions.eliz,summary:'A healer refuses to abandon the sick, even when the wreck itself wants her trapped.',xp:35},
+  {id:5,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm’s bargain with the drowned idol comes due.',xp:35},
+  {id:6,title:'The Watchful Signal',tag:'Senedra',unlock:()=>!!game.foundCompanions.senedra,summary:'For months, Senedra keeps the Hanoi lighthouse signalling and refuses to stop watching the horizon.',xp:35},
+  {id:7,title:'The Planner',tag:'Zaki',unlock:()=>!!game.foundCompanions.zaki,summary:'Zaki survives a prison hulk through preparation, strategy, and one fistfight at a time.',xp:35},
+  {id:8,title:'The Drowned Passage',tag:'Aldric & Wren',unlock:()=>!!game.finalCleared,summary:'The scattered crew reaches the passage beyond the charts and meets the two who have survived it.',xp:50},
+  {id:9,title:'The Quiet Between Voyages',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'The crew learns how to live aboard the same ship again.',xp:35},
+  {id:10,title:'The Names We Keep',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'Names return through ledgers, rumours, and introductions—not recovered memories.',xp:35},
+  {id:11,title:'Before the Next Port',tag:'Crew',unlock:()=>!!game.finalCleared,summary:'The Crimson Tide becomes more than a place to sleep; it becomes somewhere to belong.',xp:35},
+  {id:12,title:'The Debt That Wasn’t Hers',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'Aisyah’s false debt is exposed, and San’s instinct to protect her becomes impossible to ignore.',xp:40},
+  {id:13,title:'The Debt Collector',tag:'Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'A matching mark in the ledger hints that the crew’s scattering was not entirely random.',xp:40},
+  {id:14,title:'Two Sisters, One Ship',tag:'San & Aisyah',unlock:()=>!!game.foundCompanions.aisyah,summary:'Sisterhood takes shape through teasing, trust, and the things neither woman can explain.',xp:40},
+  {id:15,title:'The One Who Stayed',tag:'Eliz',unlock:()=>!!game.foundCompanions.eliz,summary:'Eliz chooses the crew because they prove they need her—and because she chooses to stay.',xp:40},
+  {id:16,title:'The Mark We Carried',tag:'San · Joel · Aisyah',unlock:()=>!!game.foundCompanions.joel && !!game.foundCompanions.aisyah,summary:'Three matching gem-like pendants are noticed for what they are: a mystery, not an answer.',xp:40},
+  {id:17,title:'The Things We Do Without Knowing',tag:'Crew',unlock:()=>!!game.foundCompanions.eliz,summary:'The crew falls into familiar roles even though none of them remembers why.',xp:40},
+  {id:18,title:'The Storm That Was Owed',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm’s rescue leaves a deeper question: what does regeneration mean when identity itself can shift?',xp:40},
+  {id:19,title:'The Crew We Choose',tag:'Mezstorm + Crew',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm finds her place aboard the Crimson Tide through scenes with the people already aboard.',xp:40},
+  {id:20,title:'Senedra — The Watchful Signal',tag:'Senedra',unlock:()=>!!game.foundCompanions.senedra,summary:'The woman at the lighthouse is finally brought into the crew’s story—but not because someone defeated her guardian.',xp:50},
+  {id:21,title:'Zaki — The Planner',tag:'Zaki',unlock:()=>!!game.foundCompanions.zaki,summary:'Zaki’s prison-hulk survival reveals the careful planner beneath the fighter.',xp:50},
+  {id:22,title:'Mezstorm — The Regeneration',tag:'Mezstorm',unlock:()=>!!game.foundCompanions.mezstorm,summary:'Mezstorm confronts the strange regeneration and transformation that make her different in Crimson Tide.',xp:50},
+  {id:23,title:'The Two Who Remembered',tag:'Senedra & Zaki',unlock:()=>!!game.foundCompanions.senedra && !!game.foundCompanions.zaki,summary:'Senedra and Zaki remember each other as siblings, but not Aisyah, San, Mezstorm, or Eliz.',xp:60},
+  {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
+];
+const ARC1_ART = {
+  20:'assets/comics/arc1/ch20-senedra.png',21:'assets/comics/arc1/ch21-zaki.png',22:'assets/comics/arc1/ch22-mezstorm.png',23:'assets/comics/arc1/ch23-siblings.png',24:'assets/comics/arc1/ch24-drowned-passage.png'
+};
+function completeArc1Comic(id){
+  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;
+  game.comicProgress=game.comicProgress||{};
+  if(game.comicProgress[id]) return;
+  game.comicProgress[id]=true;
+  gainXP(ch.xp); game.reputation=(game.reputation||0)+1;
+  logEvent(`📖 Comic Chapter ${id} complete: ${ch.title} · +${ch.xp} XP`, 'gold');
+  toast(`📖 Chapter ${id} complete · +${ch.xp} XP`);
+  saveGame(); renderStory(); updateUI();
+}
+function renderArc1ComicArchive(){
+  const completed=game.comicProgress||{};
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="arc1-comic-art"><img src="${img}" alt="Chapter ${ch.id} comic" loading="lazy"></div>`:''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeArc1Comic(${ch.id})">📖 Complete Chapter</button></div>`:''}</article>`}).join('')}</div></section>`;
+}
+function completeSelfEscape(companion){
+  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
+  const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return;
+  game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
+  gainXP(90); game.reputation=(game.reputation||0)+2;
+  logEvent(`📖 ${m.name} escaped and joined the crew on their own · +90 XP`, 'gold');
+  toast(`${m.name} escaped — and is now aboard.`); saveGame(); renderStory(); updateUI(); renderExplore();
+}
 function renderStory() {
   const container = document.getElementById('storyContent');
   if (!container) return;
 
   let html = '';
+
+  html += renderArc1ComicArchive();
 
   // ACT I
   // ACT I GAME CHAPTER ART — exact reference sequence
@@ -3500,8 +3572,9 @@ function renderStory() {
       <div class="story-meta">
         <span class="story-chip gold">📍 ${esc(p.name)}</span>
         <span class="story-chip">👤 ${esc(member ? member.name : p.companion)}</span>
-        <span class="story-chip red">${done ? 'Crew reunited' : 'Guardian remains'}</span>
+        <span class="story-chip red">${done ? 'Crew reunited' : (p.recruitment==='escape' ? 'Escapes independently' : 'Guardian remains')}</span>
       </div>
+      ${!done && p.recruitment==='escape' ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : ''}
       ${p.comic ? renderComicPanels({comic:p.comic}, 'act1_'+p.chapterId) : ''}
     </article>`;
   });
@@ -4629,11 +4702,15 @@ function handleVictory() {
   if (enemy.kind === 'guardian') {
     const port = PORTS.find(p => p.id === enemy.portId);
     game.clearedGuardians[enemy.key] = true;
-    game.foundCompanions[port.companion] = true;
     const member = ALL_PARTY.find(m => m.id === port.companion);
-    game.partyHp[member.id] = member.hp; game.partyMp[member.id] = member.mp;
-    logCombat(`<span style="color:#e8c96a">${member.name} joins the crew!</span>`);
-    game.storyModalQueue.push(Object.assign({}, port, {companionName: member.name}));
+    if (member && !game.foundCompanions[port.companion]) {
+      game.foundCompanions[port.companion] = true;
+      game.partyHp[member.id] = member.hp; game.partyMp[member.id] = member.mp;
+      logCombat(`<span style="color:#e8c96a">${member.name} joins the crew!</span>`);
+      game.storyModalQueue.push(Object.assign({}, port, {companionName: member.name}));
+    } else if (member) {
+      logCombat(`<span style="color:#e8c96a">Optional rematch cleared.</span> ${member.name} was already aboard.`);
+    }
   } else if (enemy.kind === 'final') {
     game.finalCleared = true;
     game.partyHp['ser_aldric'] = ALL_PARTY.find(m=>m.id==='ser_aldric').hp; game.partyMp['ser_aldric'] = 0;
