@@ -1150,6 +1150,28 @@ body{
 .arc1-comic-placeholder{padding:28px 16px;text-align:center;color:#d6c48b;font-family:Georgia,serif}
 .arc1-comic-xp{color:#8fd19e;font-size:.78rem;margin-top:7px}
 @media(min-width:800px){.arc1-comic-grid{grid-template-columns:1fr 1fr}}
+
+/* ===== STORY MODE — illustrated virtual novel ===== */
+.story-mode-overlay{position:fixed;inset:0;background:rgba(3,8,10,.97);z-index:1000;display:none;overflow:auto;padding:18px 12px 28px;box-sizing:border-box}
+.story-mode-overlay.active{display:block}
+.story-mode-shell{width:min(760px,100%);margin:0 auto;min-height:calc(100vh - 46px);display:flex;flex-direction:column}
+.story-mode-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 2px 14px;border-bottom:1px solid rgba(232,197,71,.35)}
+.story-mode-kicker{font-family:Cinzel,serif;color:var(--gold);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase}
+.story-mode-title{font-family:Cinzel,serif;color:var(--parchment);font-size:1.35rem;margin-top:4px}
+.story-mode-counter{font-size:.78rem;opacity:.7;white-space:nowrap}
+.story-mode-panel{flex:1;display:flex;flex-direction:column;justify-content:center;padding:18px 0 8px}
+.story-mode-image-wrap{background:#071116;border:1px solid rgba(232,197,71,.35);border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.story-mode-image{display:block;width:100%;height:auto;max-height:62vh;object-fit:contain;background:#071116}
+.story-mode-text{margin-top:14px;background:linear-gradient(180deg,rgba(35,27,18,.96),rgba(12,17,19,.97));border:1px solid rgba(232,197,71,.35);border-radius:12px;padding:16px 17px;color:var(--parchment);font-size:1rem;line-height:1.62;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.story-mode-speaker{font-family:Cinzel,serif;color:var(--gold);font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.story-mode-caption{opacity:.95}
+.story-mode-tap{margin-top:14px;text-align:center;font-family:Cinzel,serif;color:var(--gold);font-size:.78rem;letter-spacing:.08em;opacity:.78}
+.story-mode-controls{display:flex;justify-content:center;padding-top:12px}
+.story-mode-controls .btn{min-width:190px}
+.story-mode-end{text-align:center;padding:36px 12px}
+.story-mode-end h2{font-family:Cinzel,serif;color:var(--gold);font-size:1.45rem;margin:0 0 10px}
+.story-mode-end p{line-height:1.6;opacity:.88;margin:0 auto 18px;max-width:560px}
+@media(max-width:560px){.story-mode-overlay{padding:10px 9px 18px}.story-mode-title{font-size:1.12rem}.story-mode-image{max-height:54vh}.story-mode-text{font-size:.96rem;padding:14px}.story-mode-panel{padding-top:12px}.story-mode-top{padding-bottom:10px}}
 </style>
 </head>
 <body class="portrait-first">
@@ -1644,6 +1666,18 @@ body{
 </div>
 
 <!-- MODAL -->
+
+<!-- STORY MODE: interactive illustrated virtual novel -->
+<div id="storyModeOverlay" class="story-mode-overlay" aria-hidden="true">
+  <div class="story-mode-shell">
+    <div class="story-mode-top">
+      <div><div class="story-mode-kicker">Story Mode</div><div id="storyModeTitle" class="story-mode-title">Chapter 1 — The Storm That Remained</div></div>
+      <div id="storyModeCounter" class="story-mode-counter">1 / 9</div>
+    </div>
+    <div id="storyModePanel" class="story-mode-panel"></div>
+    <div class="story-mode-controls"><button id="storyModeNext" class="btn btn-magic" onclick="advanceStoryMode()">TAP TO CONTINUE</button></div>
+  </div>
+</div>
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2 id="modalTitle">Event</h2>
@@ -2858,6 +2892,82 @@ function showSettings() {
   }, 0);
 }
 
+
+// ---------------------------------------------------------------------------
+// STORY MODE — illustrated virtual novel prototype
+// ---------------------------------------------------------------------------
+const STORY_MODE_CHAPTER_1 = [
+  {image:'assets/comics/arc1/story/ch01/01-opening.png', text:'Three months after the storm, San wakes with the sea around her and a silence where familiar names should be.', caption:'Survival is the first memory.'},
+  {image:'assets/comics/arc1/story/ch01/02-storm-ship.png', text:'The Crimson Tide survived the wreck. San did too. But the storm scattered more than wood and cargo.', caption:'The ship remains. The crew does not.'},
+  {image:'assets/comics/arc1/story/ch01/03-eyes.png', text:'She looks out across the water, searching faces that should mean something to her.', caption:'Every face is a stranger.'},
+  {image:'assets/comics/arc1/story/ch01/04-what-san-knows.png', text:'There is only one certainty left: the people beside her are her crew. The rest must be remembered — or found.', caption:'What San knows.'},
+  {image:'assets/comics/arc1/story/ch01/05-soel.png', text:'Soel stays close. The strange little spirit cat seems to understand the weight of what has been lost.', caption:'Some bonds survive without names.'},
+  {image:'assets/comics/arc1/story/ch01/06-ship.png', text:'San returns to the deck. There are no answers here yet, only a ship, an open sea, and somewhere else to go.', caption:'The voyage begins.'},
+  {image:'assets/comics/arc1/story/ch01/07-crew.png', text:'She looks at the empty places where familiar people should stand.', caption:'The crew is scattered.'},
+  {image:'assets/comics/arc1/story/ch01/08-san.png', text:'San tightens her grip and makes the only decision that matters.', caption:'“If they are out there, I will find them.”'},
+  {image:'assets/comics/arc1/story/ch01/09-ending.png', text:'The Crimson Tide turns toward the horizon. Somewhere beyond the charts, the first trail is waiting.', caption:'And so the search begins.'}
+];
+let storyModeChapter = null;
+let storyModeIndex = 0;
+function openStoryMode(chapterId){
+  if(chapterId !== 1) return;
+  if(game.comicProgress?.[1]) return;
+  storyModeChapter = STORY_MODE_CHAPTER_1;
+  storyModeIndex = 0;
+  const overlay=document.getElementById('storyModeOverlay');
+  if(!overlay) return;
+  overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  ctPlayMusic('explore');
+  renderStoryModePanel();
+}
+function renderStoryModePanel(){
+  if(!storyModeChapter) return;
+  const p=storyModeChapter[storyModeIndex];
+  const panel=document.getElementById('storyModePanel');
+  const counter=document.getElementById('storyModeCounter');
+  const next=document.getElementById('storyModeNext');
+  if(!panel||!p) return;
+  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter 1 story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
+  if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
+  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'BEGIN THE VOYAGE':'TAP TO CONTINUE';
+  window.scrollTo({top:0,left:0,behavior:'instant'});
+}
+function advanceStoryMode(){
+  if(!storyModeChapter) return;
+  if(storyModeIndex < storyModeChapter.length-1){ storyModeIndex++; renderStoryModePanel(); return; }
+  finishStoryModeChapter(1);
+}
+function finishStoryModeChapter(id){
+  const overlay=document.getElementById('storyModeOverlay');
+  if(id===1){
+    game.comicProgress=game.comicProgress||{};
+    if(!game.comicProgress[1]){
+      game.comicProgress[1]=true;
+      gainXP(150);
+      game.reputation=(game.reputation||0)+1;
+      logEvent('📖 Story Mode Chapter 1 complete: The Storm That Remained · +150 XP','gold');
+      syncArc1StoryQuestProgress();
+      saveGame();
+    }
+    if(overlay){
+      const shell=overlay.querySelector('.story-mode-shell');
+      if(shell){ shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>The Storm That Remained</h2><p>The Crimson Tide is ready. The search for the scattered crew begins at the first port.</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +150</div><button class="btn btn-success" onclick="closeStoryMode()">⚓ CONTINUE TO SINGAPORE</button></div>`; }
+    }
+  }
+}
+function closeStoryMode(){
+  const overlay=document.getElementById('storyModeOverlay');
+  if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
+  document.body.style.overflow=''; storyModeChapter=null; ctPlayMusic('port');
+  updateUI(); renderMarket(); renderExplore(); renderStory(); renderLandingV24();
+}
+function maybeLaunchPendingStory(){
+  if(!game) return;
+  game.comicProgress=game.comicProgress||{};
+  if(game.location==='singapore' && !game.comicProgress[1]) setTimeout(()=>openStoryMode(1),450);
+}
+
 // SAVE / LOAD
 // ---------------------------------------------------------------------------
 function saveGame() {
@@ -3290,10 +3400,10 @@ function startGame() {
   document.getElementById('portScreen').scrollIntoView({block: 'start', behavior: 'instant'});
 
   logEvent('⚓ San sets sail from Singapore aboard ' + game.shipName + ' with ' + game.gold + ' gold.', 'neutral');
-  showModal("Chapter 1 — The Scattering", PORTS[0].blurb, [{text:'Begin', action:closeModal}]);
   updateUI();
   renderMarket();
   renderLandingV24(); renderAFKWelcome();
+  setTimeout(() => openStoryMode(1), 500);
 }
 
 // ---------------------------------------------------------------------------
@@ -3516,7 +3626,7 @@ function syncArc1StoryQuestProgress(){
     if(game.storyQuestProgress[q.id]) continue;
     // Never skip the recruitment order. A chapter can only complete after its
     // previous chapter has completed. Chapter 1 is the starting state.
-    if(q.id===1 || (arc1StoryPrereqMet(q) && q.complete())){
+    if((q.id===1 && game.comicProgress?.[1]) || (q.id>1 && arc1StoryPrereqMet(q) && q.complete())){
       game.storyQuestProgress[q.id]=true; changed=true;
     }
   }
@@ -3532,7 +3642,7 @@ function storyQuestStatus(q){
 function storyQuestLevelText(q){ return q.level <= 1 ? 'Level 1' : `Level ${q.level}`; }
 
 const ARC1_COMICS = [
-  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:35},
+  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:150},
   {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:35},
   {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:35},
   {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:35},
@@ -3586,7 +3696,7 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>`:(unlocked?`<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`:'')}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (ch.id===1 ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openStoryMode(1)">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 function completeSelfEscape(companion){
@@ -3677,90 +3787,7 @@ function renderStory() {
 
   html += renderArc1ComicArchive();
 
-  // ACT I
-  // ACT I GAME CHAPTER ART — exact reference sequence
-  html += `<section class="game-chapter-art-gallery">
-    <div class="game-chapter-art-header">
-      <div class="story-act-kicker">Act I</div>
-      <div class="story-act-title">The Scattered Crew</div>
-      <div class="story-act-tagline">Game chapter illustrations — exact Act I reference sequence.</div>
-    </div>
-    <div class="game-chapter-art-grid">
-      ${[
-        ['01','The Storm','assets/chapter-art/act1/ch01-storm.png'],
-        ['02','A Shore Unknown','assets/chapter-art/act1/ch02-shore.png'],
-        ['03','A Name in Malacca','assets/chapter-art/act1/ch03-malacca.png'],
-        ['04','Shadows of Malacca','assets/chapter-art/act1/ch04-malacca-night.png'],
-        [ '05',"Joel's Guardian",'assets/chapter-art/act1/ch05-joel.png'],
-        ['06','Earned Trust','assets/chapter-art/act1/ch06-ais-yah.png'],
-        ['07','New Course','assets/chapter-art/act1/ch07-hall.png'],
-        ['08','The Lost Signal','assets/chapter-art/act1/ch08-passage.png'],
-        ['09','Beneath Dusk','assets/game-chapters/act1/09-beneath-dusk.png']
-      ].map(c=>`<article class="game-chapter-art-card">
-        <div class="game-chapter-art-number">${c[0]}</div>
-        <img src="${c[2]}" alt="${esc(c[1])}" loading="lazy">
-        <div class="game-chapter-art-title">${esc(c[1])}</div>
-      </article>`).join('')}
-    </div>
-  </section>`;
-
-  html += `<div class="story-act">
-    <div class="story-act-header">
-      <div class="story-act-kicker">Act I</div>
-      <div class="story-act-title">The Scattering</div>
-      <div class="story-act-tagline">Find the crew, one port at a time.</div>
-    </div>`;
-
-  html += `<div class="story-chapter active">
-    <div class="story-chapter-title">The Storm</div>
-    <div class="story-chapter-text">${esc(PORTS[0].blurb)}</div>
-    <div class="story-meta"><span class="story-chip gold">📍 Singapore</span><span class="story-chip">⚓ Three months after the storm</span></div>
-    ${renderComicPanels({comic:[
-      {image:'assets/comics/act1/ch02/panel01.png', caption:'The storm took everything.'},
-      {image:'assets/comics/act1/ch02/panel02.png', caption:'But I’m still here. So I won’t stop.'}
-    ]}, 'the_storm')}
-  </div>`;
-
-  PORTS.filter(p => p.companion).forEach(p => {
-    const done = !!game.foundCompanions[p.companion];
-    const member = ALL_PARTY.find(m => m.id === p.companion);
-    html += `<article class="story-chapter ${done?'complete':''}">
-      <div class="story-chapter-top">
-        <div class="story-chapter-title">Chapter ${p.chapterId} — ${esc(member ? member.name : p.companion)}</div>
-        <div class="story-status">${done ? '✓ FOUND' : 'UNRESOLVED'}</div>
-      </div>
-      <div class="story-chapter-text">${esc(p.blurb)}</div>
-      <div class="story-meta">
-        <span class="story-chip gold">📍 ${esc(p.name)}</span>
-        <span class="story-chip">👤 ${esc(member ? member.name : p.companion)}</span>
-        <span class="story-chip red">${done ? 'Crew reunited' : (p.recruitment==='escape' ? 'Escapes independently' : 'Guardian remains')}</span>
-      </div>
-      ${!done && p.recruitment==='escape' ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : ''}
-      ${p.comic ? renderComicPanels({comic:p.comic}, 'act1_'+p.chapterId) : ''}
-    </article>`;
-  });
-
-  if (Object.keys(game.foundCompanions).length >= 6) {
-    html += `<article class="story-chapter ${game.finalCleared?'complete':'active'}">
-      <div class="story-chapter-top">
-        <div class="story-chapter-title">Chapter 8 — Ser Aldric & Sister Wren</div>
-        <div class="story-status">${game.finalCleared ? '✓ FOUND' : 'CURRENT'}</div>
-      </div>
-      <div class="story-chapter-text">${esc(DROWNED_PASSAGE.blurb)}</div>
-      <div class="story-meta">
-        <span class="story-chip gold">📍 The Drowned Passage</span>
-        <span class="story-chip">👥 Aldric & Wren</span>
-        <span class="story-chip">⚓ Already part of the crew once found</span>
-      </div>
-    </article>`;
-  } else {
-    html += `<article class="story-chapter locked">
-      <div class="story-chapter-title">Chapter 8 — The Drowned Passage</div>
-      <div class="story-chapter-text">Something waits beyond the charted ports. The passage opens only when the scattered six have been found.</div>
-    </article>`;
-  }
-
-  html += `</div>`;
+  // The canonical Arc I comics own the narrative presentation. Story Mode is the interactive presentation; the archive remains the reference library.
 
   // ACT II
   html += `<div class="story-act">
