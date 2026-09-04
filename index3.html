@@ -2889,7 +2889,6 @@ function loadGame() {
     document.getElementById('portScreen').classList.add('active');
     updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
     logEvent('📂 Voyage resumed from Day ' + game.day, 'good');
-    maybeLaunchPendingStory();
   } catch (e) {
     toast('Could not read that save file.');
   }
