@@ -2821,6 +2821,10 @@ function renderLandingV24(){
 function showSettings() {
   showModal('Settings',
     `<div style="display:grid;gap:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(0,0,0,.18);">
+        <div><div style="font-size:.82rem;color:var(--gold);">Music</div><div style="font-size:.72rem;opacity:.72;margin-top:2px;">Toggle the Crimson Tide soundtrack on or off.</div></div>
+        <button id="musicToggleBtn" class="btn btn-small" onclick="ctSetMusicEnabled(!ctMusicEnabled)" aria-pressed="${ctMusicEnabled}">${ctMusicEnabled ? '🎵 Music: ON' : '🔇 Music: OFF'}</button>
+      </div>
       <label style="font-size:.8rem;color:var(--gold);">Ship Name</label>
       <input id="landingShipNameEdit" value="${esc(game.shipName || 'The Daybreak')}"
         style="padding:10px;border:1px solid var(--sand);border-radius:7px;background:rgba(0,0,0,.35);color:var(--parchment);">
@@ -2979,7 +2983,7 @@ const CT_AUDIO_TRACKS = {
 };
 let ctAudio = null;
 let ctAudioKey = null;
-let ctMusicEnabled = true;
+let ctMusicEnabled = localStorage.getItem('ct_music_enabled') !== 'false';
 let ctMusicVolume = Number(localStorage.getItem('ct_music_volume') || 0.42);
 
 function ctPlayMusic(key) {
@@ -3002,13 +3006,19 @@ function ctPlayMusic(key) {
 
 function ctStopMusic() {
   if (ctAudio) ctAudio.pause();
-  ctAudioKey = null;
 }
 function ctSetMusicEnabled(enabled) {
   ctMusicEnabled = !!enabled;
+  localStorage.setItem('ct_music_enabled', String(ctMusicEnabled));
   if (!ctMusicEnabled) ctStopMusic();
   else ctPlayMusic(ctAudioKey || 'landing');
+  const toggle = document.getElementById('musicToggleBtn');
+  if (toggle) {
+    toggle.textContent = ctMusicEnabled ? '🎵 Music: ON' : '🔇 Music: OFF';
+    toggle.setAttribute('aria-pressed', String(ctMusicEnabled));
+  }
 }
+
 function ctSetMusicVolume(value) {
   ctMusicVolume = Math.max(0, Math.min(1, Number(value)));
   localStorage.setItem('ct_music_volume', String(ctMusicVolume));
@@ -3484,15 +3494,15 @@ const ARC1_COMICS = [
   {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
 ];
 const ARC1_ART = {
-  9:'assets/comics/arc1/ch09-shield-returns.png',
-  10:'assets/comics/arc1/ch10-day-sea-rested.png',
-  11:'assets/comics/arc1/ch11-day-we-chose.png',
-  12:'assets/comics/arc1/ch12-debt-wasnt-hers.png',
-  13:'assets/comics/arc1/ch13-debt-collector.png',
-  14:'assets/comics/arc1/ch14-two-sisters-one-ship.png',
-  15:'assets/comics/arc1/ch15-one-who-stayed.png',
-  16:'assets/comics/arc1/ch16-mark-we-carried.png',
-  17:'assets/comics/arc1/ch17-things-we-do-without-knowing.png',
+  9:'assets/comics/arc1/ch09-crimson-tide.png',
+  10:'assets/comics/arc1/ch10-crimson-tide.png',
+  11:'assets/comics/arc1/ch11-crimson-tide.png',
+  12:'assets/comics/arc1/ch12-crimson-tide.png',
+  13:'assets/comics/arc1/ch13-crimson-tide.png',
+  14:'assets/comics/arc1/ch14-crimson-tide.png',
+  15:'assets/comics/arc1/ch15-crimson-tide.png',
+  16:'assets/comics/arc1/ch16-crimson-tide.png',
+  17:'assets/comics/arc1/ch17-crimson-tide.png',
   18:'assets/comics/arc1/ch18-mezstorm-rescue.png',
   19:'assets/comics/arc1/ch19-crew-we-choose.png',
   20:'assets/comics/arc1/ch20-senedra.png',
@@ -3501,8 +3511,43 @@ const ARC1_ART = {
   23:'assets/comics/arc1/ch23-siblings.png',
   24:'assets/comics/arc1/ch24-drowned-passage.png'
 };
+function arc1NextChapterId(){
+  const completed=game.comicProgress||{};
+  for(let i=1;i<=24;i++){ if(!completed[i]) return i; }
+  return 25;
+}
+function arc1StoryChapterUnlocked(id){
+  if(id===1) return true;
+  if(arc1NextChapterId()!==id) return false;
+  const requirements={
+    2:()=>!!game.foundCompanions.joel,
+    3:()=>!!game.foundCompanions.aisyah,
+    4:()=>!!game.foundCompanions.eliz,
+    5:()=>!!game.foundCompanions.mezstorm,
+    6:()=>!!game.foundCompanions.senedra,
+    7:()=>!!game.foundCompanions.zaki,
+    8:()=>!!game.finalCleared,
+    9:()=>!!game.finalCleared,
+    10:()=>!!game.finalCleared,
+    11:()=>!!game.finalCleared,
+    12:()=>!!game.foundCompanions.aisyah,
+    13:()=>!!game.foundCompanions.aisyah,
+    14:()=>!!game.foundCompanions.aisyah,
+    15:()=>!!game.foundCompanions.eliz,
+    16:()=>!!game.foundCompanions.joel && !!game.foundCompanions.aisyah,
+    17:()=>!!game.foundCompanions.eliz,
+    18:()=>!!game.foundCompanions.mezstorm,
+    19:()=>!!game.foundCompanions.mezstorm,
+    20:()=>!!game.foundCompanions.senedra,
+    21:()=>!!game.foundCompanions.zaki,
+    22:()=>!!game.foundCompanions.mezstorm,
+    23:()=>!!game.foundCompanions.senedra && !!game.foundCompanions.zaki,
+    24:()=>!!game.finalCleared
+  };
+  return !requirements[id] || requirements[id]();
+}
 function completeArc1Comic(id){
-  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;
+  const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !arc1StoryChapterUnlocked(id)) return;
   game.comicProgress=game.comicProgress||{};
   if(game.comicProgress[id]) return;
   game.comicProgress[id]=true;
@@ -3513,10 +3558,10 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="arc1-comic-art"><img src="${img}" alt="Chapter ${ch.id} comic" loading="lazy"></div>`:''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeArc1Comic(${ch.id})">📖 Complete Chapter</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!arc1StoryChapterUnlocked(ch.id);const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${img&&unlocked?`<div class="arc1-comic-art"><img src="${img}" alt="Chapter ${ch.id} comic" loading="lazy"></div>`:(unlocked?`<div class="arc1-comic-placeholder">📖 Crimson Tide comic artwork for this chapter is not bundled in this test yet.</div>`:'')}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeArc1Comic(${ch.id})">📖 Complete Chapter</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 function completeSelfEscape(companion){
-  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
+  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion] || arc1NextChapterId()!==port.chapterId) return;
   const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return;
   game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
   gainXP(90); game.reputation=(game.reputation||0)+2;
@@ -3589,8 +3634,8 @@ function renderStory() {
         <span class="story-chip">👤 ${esc(member ? member.name : p.companion)}</span>
         <span class="story-chip red">${done ? 'Crew reunited' : (p.recruitment==='escape' ? 'Escapes independently' : 'Guardian remains')}</span>
       </div>
-      ${!done && p.recruitment==='escape' ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : ''}
-      ${p.comic ? renderComicPanels({comic:p.comic}, 'act1_'+p.chapterId) : ''}
+      ${!done && p.recruitment==='escape' && arc1NextChapterId()===p.chapterId ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${p.companion}')">🏃 Follow the Escape</button></div>` : (!done && p.recruitment==='escape' ? `<div class="story-meta"><span class="story-chip">📖 Follow this escape after the earlier story chapters are unlocked.</span></div>` : '')}
+      
     </article>`;
   });
 
