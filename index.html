@@ -2965,21 +2965,51 @@ const STORY_MODE_CHAPTERS = {
 let storyModeChapter = null;
 let storyModeChapterId = null;
 let storyModeIndex = 0;
-function openStoryMode(chapterId){
+let storyModePending = null;
+let storyModeTransitionTimer = null;
+let storyModeLaunching = false;
+
+function openStoryMode(chapterId, options={}){
   const chapter = STORY_MODE_CHAPTERS[chapterId];
-  if(!chapter) return;
+  if(!chapter) return false;
   game.comicProgress = game.comicProgress || {};
-  if(game.comicProgress[chapterId]) return;
+  if(game.comicProgress[chapterId] && !options.replay) return false;
+  const overlay=document.getElementById('storyModeOverlay');
+  if(!overlay) return false;
+  storyModeLaunching = true;
+  storyModePending = null;
   storyModeChapter = chapter;
   storyModeChapterId = chapterId;
   storyModeIndex = 0;
-  const overlay=document.getElementById('storyModeOverlay');
-  if(!overlay) return;
-  overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+  overlay.style.display='flex';
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
   ctPlayMusic('explore');
   renderStoryModePanel();
+  storyModeLaunching = false;
+  return true;
 }
+
+function requestStoryMode(chapterId, delay=450){
+  if(!game || storyModeChapter || storyModeLaunching) return;
+  if(game.comicProgress?.[chapterId]) return;
+  storyModePending = chapterId;
+  clearTimeout(storyModeTransitionTimer);
+  const attempt=()=>{
+    if(!storyModePending || storyModeChapter || storyModeLaunching) return;
+    const overlay=document.getElementById('storyModeOverlay');
+    if(!overlay){ storyModeTransitionTimer=setTimeout(attempt,300); return; }
+    if(!document.getElementById('portScreen')?.classList.contains('active')){
+      storyModeTransitionTimer=setTimeout(attempt,300); return;
+    }
+    const id=storyModePending;
+    if(openStoryMode(id)) storyModePending=null;
+    else storyModePending=null;
+  };
+  storyModeTransitionTimer=setTimeout(attempt,Math.max(0,delay));
+}
+
 function renderStoryModePanel(){
   if(!storyModeChapter) return;
   const p=storyModeChapter[storyModeIndex];
@@ -2989,7 +3019,7 @@ function renderStoryModePanel(){
   if(!panel||!p) return;
   panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
-  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'CONTINUE THE VOYAGE':'TAP TO CONTINUE';
+  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'CONTINUE':'TAP TO CONTINUE';
   window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 function advanceStoryMode(){
@@ -2997,6 +3027,15 @@ function advanceStoryMode(){
   if(storyModeIndex < storyModeChapter.length-1){ storyModeIndex++; renderStoryModePanel(); return; }
   finishStoryModeChapter(storyModeChapterId);
 }
+
+function nextAutoStoryChapter(id){
+  // Chapters 2-4 are one continuous Malacca story sequence. They should feel
+  // like scenes in one journey, not three unrelated books that require refreshes.
+  if(id===2 && !game.comicProgress?.[3]) return 3;
+  if(id===3 && !game.comicProgress?.[4]) return 4;
+  return null;
+}
+
 function finishStoryModeChapter(id){
   const overlay=document.getElementById('storyModeOverlay');
   const ch=ARC1_COMICS.find(x=>x.id===id);
@@ -3009,12 +3048,29 @@ function finishStoryModeChapter(id){
     syncArc1StoryQuestProgress();
     saveGame();
   }
+  const autoNext=nextAutoStoryChapter(id);
   if(overlay){
     const shell=overlay.querySelector('.story-mode-shell');
     if(shell){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button></div>`;
+      const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p>${autoNext?`<div class="story-mode-next-objective"><div class="story-mode-next-label">CONTINUING THE STORY</div><div class="story-mode-next-text">${esc(nextTitle)}<br><span style="font-size:.8rem;opacity:.72;">The next scene will begin automatically.</span></div></div>`:`<div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div>`}<div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div>${autoNext?`<div class="story-mode-countdown" id="storyModeCountdown">NEXT SCENE IN 2…</div>`:`<button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button>`}</div>`;
+      if(autoNext){
+        clearTimeout(storyModeTransitionTimer);
+        let count=2;
+        const tick=()=>{
+          if(!storyModeChapter || storyModeChapterId!==id) return;
+          const el=document.getElementById('storyModeCountdown');
+          if(count>0){ if(el) el.textContent=`NEXT SCENE IN ${count}…`; count--; storyModeTransitionTimer=setTimeout(tick,800); return; }
+          storyModeChapter=null; storyModeChapterId=null; storyModeIndex=0;
+          overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); overlay.style.display='none';
+          document.body.style.overflow='';
+          // Re-open immediately; no refresh, no manual archive click.
+          requestStoryMode(autoNext,80);
+        };
+        storyModeTransitionTimer=setTimeout(tick,700);
+      }
     }
   }
 }
@@ -3025,22 +3081,19 @@ function getStoryModeNextStep(id){
     return {message:'The storm chapter is complete. Malacca is now within reach.', objective:'Sail to Malacca. The next story will begin when you arrive.', button:'CONTINUE — SAIL TO MALACCA'};
   }
   if(id===2){
-    if(q?.id===2 && game.location==='malacca' && !game.foundCompanions?.joel) return {message:'San has reached Malacca. The story has led her to the wreck where Joel is being held.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
-    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+    return {message:'San has reached Malacca. The story continues deeper into the port.', objective:'Continue the Malacca story. The next scene will lead toward Joel’s rescue.', button:'CONTINUE THE VOYAGE'};
   }
   if(id===3){
-    if(q?.id===2) return {message:'The crew has made its choice. Now the rescue can begin.', objective:'Return to the Story Quest and begin Joel’s rescue.', button:'CONTINUE — RESCUE JOEL'};
-    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+    return {message:'The crew has made its choice. The rescue plan is taking shape.', objective:'Continue the Malacca story. The next scene prepares the rescue.', button:'CONTINUE THE VOYAGE'};
   }
   if(id===4){
-    if(q?.id===2) return {message:'The plan is ready. Joel is waiting beyond the guardian.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
-    return {message:'The journey continues.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+    return {message:'The plan is ready. Joel is waiting beyond the guardian.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
   }
   return {message:'The chapter is complete.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
 }
 function closeStoryMode(){
-  // Close the overlay FIRST and never depend on a later renderer succeeding.
-  // This makes the completion button a real return-to-game action on mobile.
+  clearTimeout(storyModeTransitionTimer);
+  storyModePending=null;
   const overlay=document.getElementById('storyModeOverlay');
   if(overlay){
     overlay.classList.remove('active');
@@ -3050,34 +3103,29 @@ function closeStoryMode(){
   document.body.style.overflow='';
   storyModeChapter=null;
   storyModeChapterId=null;
-
-  // Return to the actual port screen using the same navigation path as the
-  // normal Port button. Rendering errors/audio restrictions must not trap the
-  // player inside Story Mode.
-  try { goScreen('port'); }
-  catch(e){
+  storyModeIndex=0;
+  try { goScreen('port'); } catch(e){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     const portScreen=document.getElementById('portScreen');
     if(portScreen) portScreen.classList.add('active');
     try { updateUI(); } catch(err) {}
     window.scrollTo(0,0);
   }
-  // Only arrival-triggered chapters may auto-fire. Completed chapters are
-  // already marked, so this will not reopen the chapter just completed.
-  try { maybeLaunchPendingStory(); } catch(e) {}
+  // Do not auto-fire a completed chapter. Arrival triggers are handled by
+  // doVoyage; completion only returns to the game unless a chain is active.
 }
 function maybeLaunchPendingStory(){
-  if(!game) return;
+  if(!game || storyModeChapter || storyModeLaunching) return;
   game.comicProgress=game.comicProgress||{};
-  // Only arrival-triggered chapters auto-fire. Later narrative chapters are
-  // launched by the active Story Quest so the player always knows why it starts.
-  if(game.location==='singapore' && !game.comicProgress[1]) { setTimeout(()=>openStoryMode(1),450); return; }
-  if(game.location==='malacca' && !game.comicProgress[2]) { setTimeout(()=>openStoryMode(2),450); return; }
+  // Story Mode is event-driven: starting a new voyage at Singapore fires Ch1;
+  // arriving at Malacca fires Ch2. Chapters 2-4 chain inside Story Mode.
+  if(game.location==='singapore' && !game.comicProgress[1]) { requestStoryMode(1,350); return; }
+  if(game.location==='malacca' && !game.comicProgress[2]) { requestStoryMode(2,350); return; }
 }
 
 function openStoryModeReplay(chapterId){
-  const saved=game.comicProgress?.[chapterId];
-  if(saved){ game.comicProgress[chapterId]=false; openStoryMode(chapterId); game.comicProgress[chapterId]=true; } else openStoryMode(chapterId);
+  if(!STORY_MODE_CHAPTERS[chapterId]) return;
+  openStoryMode(chapterId,{replay:true});
 }
 
 // SAVE / LOAD
@@ -3846,20 +3894,12 @@ function completeSelfEscape(companion){
 }
 function readStoryQuestComic(id){
   const ch = ARC1_COMICS.find(x=>x.id===id);
-  const img = ARC1_ART[id];
-  if(!ch || !img || !ch.unlock()) return;
-  // Opening a story chapter from the active quest also records it as read.
-  game.comicProgress = game.comicProgress || {};
-  if(!game.comicProgress[id]){
-    game.comicProgress[id] = true;
-    gainXP(ch.xp);
-    game.reputation = (game.reputation || 0) + 1;
-    logEvent(`📖 Comic Chapter ${id} complete: ${ch.title} · +${ch.xp} XP`, 'gold');
-    saveGame();
+  if(!ch || !ch.unlock()) return;
+  if(STORY_MODE_CHAPTERS[id]) requestStoryMode(id,80);
+  else {
+    const img=ARC1_ART[id];
+    if(img) window.open(img, '_blank', 'noopener');
   }
-  window.open(img, '_blank', 'noopener');
-  renderStory();
-  updateUI();
 }
 function renderStory() {
   const container = document.getElementById('storyContent');
@@ -3891,7 +3931,7 @@ function renderStory() {
       if(st === 'active' && !atPort){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="sailTo('${q.portId}')">⚓ Sail to ${esc(port ? port.name : 'Drowned Passage')}</button></div>`;
       } else if(st === 'active' && atPort && q.id === 2 && needsComic){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readStoryQuestComic(${comicForQuest})">📖 Read Chapter 2 — The First Port</button></div><div class="story-actions"><div class="story-chip">Read the chapter before beginning Joel's rescue.</div></div>`;
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(${comicForQuest},80)">📖 Continue Story Mode — Chapter 2</button></div><div class="story-actions"><div class="story-chip">The Malacca story plays as one continuous sequence.</div></div>`;
       } else if(st === 'active' && atPort && q.id === 2){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('malacca')">⚔️ Begin Joel's Rescue</button></div>`;
       } else if(st === 'active' && atPort && q.id === 8){
@@ -4106,6 +4146,7 @@ function doVoyage(portId, days, dangerLevel) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('portScreen').classList.add('active');
         updateUI(); renderMarket(); renderExplore();
+        renderStory();
         maybeLaunchPendingStory();
       }, 800);
     }
