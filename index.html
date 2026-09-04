@@ -3014,7 +3014,7 @@ function finishStoryModeChapter(id){
     if(shell){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button class="btn btn-success" onclick="closeStoryMode()">${next.button || 'CONTINUE TO THE VOYAGE'}</button></div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button></div>`;
     }
   }
 }
@@ -3039,17 +3039,32 @@ function getStoryModeNextStep(id){
   return {message:'The chapter is complete.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
 }
 function closeStoryMode(){
+  // Close the overlay FIRST and never depend on a later renderer succeeding.
+  // This makes the completion button a real return-to-game action on mobile.
   const overlay=document.getElementById('storyModeOverlay');
-  if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+    overlay.style.display='none';
+  }
   document.body.style.overflow='';
-  storyModeChapter=null; storyModeChapterId=null;
-  ctPlayMusic('port');
-  // Always return to the active port/game screen after Story Mode.
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const portScreen=document.getElementById('portScreen');
-  if(portScreen) portScreen.classList.add('active');
-  updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderStory(); renderLandingV24();
-  maybeLaunchPendingStory();
+  storyModeChapter=null;
+  storyModeChapterId=null;
+
+  // Return to the actual port screen using the same navigation path as the
+  // normal Port button. Rendering errors/audio restrictions must not trap the
+  // player inside Story Mode.
+  try { goScreen('port'); }
+  catch(e){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const portScreen=document.getElementById('portScreen');
+    if(portScreen) portScreen.classList.add('active');
+    try { updateUI(); } catch(err) {}
+    window.scrollTo(0,0);
+  }
+  // Only arrival-triggered chapters may auto-fire. Completed chapters are
+  // already marked, so this will not reopen the chapter just completed.
+  try { maybeLaunchPendingStory(); } catch(e) {}
 }
 function maybeLaunchPendingStory(){
   if(!game) return;
