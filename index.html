@@ -3101,11 +3101,10 @@ function finishStoryModeChapter(id){
     if(shell){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
-      const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
-      const nextChapter = ({1:2, 2:3, 3:4})[id] || null;
-      const canContinueStory = !!nextChapter && !!STORY_MODE_CHAPTERS[nextChapter] && !game.comicProgress?.[nextChapter];
+      const nextChapter = null;
+      const canContinueStory = false;
       const continueLabel = 'CONTINUE';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="continueStoryFlow(${id}); return false;">${continueLabel}</button></div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>The chapter is complete. Your current Objective is now updated.</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="continueStoryFlow(${id}); return false;">${continueLabel}</button></div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -3142,12 +3141,33 @@ function getStoryModeNextStep(id){
   return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
 }
 function continueStoryFlow(id){
-  // Manual Story Mode: Continue only exits the completed chapter. The Objective
-  // system decides what the player should do next; it never auto-opens a chapter.
-  closeStoryMode();
-  setTimeout(()=>{
-    try { goScreen('story'); } catch(e) {}
-  }, 40);
+  // Manual Story Mode: Continue exits the completed chapter and immediately
+  // rebuilds the Story screen from the current in-memory state. No refresh,
+  // save/load cycle, or automatic chapter launch is required.
+  clearTimeout(storyModeTransitionTimer);
+  storyModePending=null;
+  const overlay=document.getElementById('storyModeOverlay');
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+    overlay.style.display='none';
+  }
+  document.body.style.overflow='';
+  storyModeChapter=null;
+  storyModeChapterId=null;
+  storyModeIndex=0;
+  try {
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const storyScreen=document.getElementById('storyScreen');
+    if(storyScreen) storyScreen.classList.add('active');
+    renderStory();
+    renderMainGoal();
+    updateUI();
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+  } catch(e) {
+    console.error('Story completion refresh error:',e);
+    try { goScreen('story'); } catch(err) {}
+  }
 }
 
 function closeStoryMode(){
@@ -5727,7 +5747,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 #ctBuildFooter strong{color:rgba(232,197,71,.82);font-weight:700;}
 </style>
 <script>
-// Build 39: robust Story Mode input bridge. Story Mode advances through a
+// Build 46: refresh-free Story Mode completion and immediate Story screen refresh. Story Mode advances through a
 // global function and responds to click, pointerup, and touchend.
 (function(){
   function advance(ev){
