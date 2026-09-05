@@ -3064,7 +3064,7 @@ function finishStoryModeChapter(id){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
       const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><div class="story-mode-next-objective"><div class="story-mode-next-label">CAPTAIN'S GOAL UPDATED</div><div class="story-mode-next-text">Check the goal toast for your next objective.</div></div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">CONTINUE</button></div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">CONTINUE</button></div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -3086,19 +3086,19 @@ function finishStoryModeChapter(id){
 function getStoryModeNextStep(id){
   const q=currentArc1StoryQuest();
   if(id===1){
-    if(level()<5) return {message:'The storm chapter is complete. The Crimson Tide is ready for its first real port.', objective:`Reach Level 5, then sail to Malacca. Current level: ${level()}.`, button:'CONTINUE — LEVEL UP & SAIL'};
-    return {message:'The storm chapter is complete. Malacca is now within reach.', objective:'Sail to Malacca. The next story will begin when you arrive.', button:'CONTINUE — SAIL TO MALACCA'};
+    if(level()<5) return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+    return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
   }
   if(id===2){
-    return {message:'San has reached Malacca. The story continues deeper into the port.', objective:'Continue the Malacca story. The next scene will lead toward Joel’s rescue.', button:'CONTINUE THE VOYAGE'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
   }
   if(id===3){
-    return {message:'The crew has made its choice. The rescue plan is taking shape.', objective:'Continue the Malacca story. The next scene prepares the rescue.', button:'CONTINUE THE VOYAGE'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
   }
   if(id===4){
-    return {message:'The plan is ready. Joel is waiting beyond the guardian.', objective:'Begin Joel’s rescue and defeat the Wreck Warden.', button:'CONTINUE — RESCUE JOEL'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
   }
-  return {message:'The chapter is complete.', objective:'Follow the current Story Quest objective.', button:'CONTINUE TO THE VOYAGE'};
+  return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
 }
 function closeStoryMode(){
   clearTimeout(storyModeTransitionTimer);
@@ -5600,8 +5600,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V40 · Goal Toast Story Completion';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V40</strong> · Story Mode Input Bridge</footer>
+<script>window.__CT_BUILD__='V41 · Goal Toast Completion Cleanup';</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V41</strong> · Goal Toast Completion Cleanup</footer>
 
 </body>
 </html>
