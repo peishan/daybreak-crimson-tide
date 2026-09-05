@@ -1678,7 +1678,7 @@ body{
       <div id="storyModeCounter" class="story-mode-counter">1 / 9</div>
     </div>
     <div id="storyModePanel" class="story-mode-panel"></div>
-    <div class="story-mode-controls"><button id="storyModeNext" class="btn btn-magic" onclick="advanceStoryMode()">TAP TO CONTINUE</button></div>
+    <div class="story-mode-controls"><button id="storyModeNext" class="btn btn-magic" onclick="window.advanceStoryMode()">TAP TO CONTINUE</button></div>
   </div>
 </div>
 <div class="modal-overlay" id="modalOverlay">
@@ -3023,7 +3023,7 @@ function renderStoryModePanel(){
   if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'CONTINUE':'TAP TO CONTINUE';
   window.scrollTo({top:0,left:0,behavior:'instant'});
 }
-function advanceStoryMode(){
+window.advanceStoryMode = function(){
   try {
     if(!storyModeChapter) return;
   if(storyModeIndex < storyModeChapter.length-1){ storyModeIndex++; renderStoryModePanel(); return; }
@@ -3032,7 +3032,7 @@ function advanceStoryMode(){
     console.error('Story Mode advance error:', e);
     toast('Story Mode encountered an error. Please tap again.');
   }
-}
+};
 
 function nextAutoStoryChapter(id){
   // Story chapters are event-driven. Completion never silently chains into
@@ -5573,30 +5573,34 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 #ctBuildFooter strong{color:rgba(232,197,71,.82);font-weight:700;}
 </style>
 <script>
-// Build 38 Story Mode interaction safety net: use event delegation so the
-// virtual-novel controls still work even if an inline handler is unavailable.
+// Build 39: robust Story Mode input bridge. Story Mode advances through a
+// global function and responds to click, pointerup, and touchend.
 (function(){
-  function wireStoryMode(){
-    document.addEventListener('click', function(ev){
-      const btn = ev.target && ev.target.closest ? ev.target.closest('#storyModeNext') : null;
-      if(btn){ ev.preventDefault(); ev.stopPropagation(); window.advanceStoryMode(); return; }
+  function advance(ev){
+    if(ev){ ev.preventDefault(); ev.stopImmediatePropagation(); }
+    if(typeof window.advanceStoryMode === 'function') window.advanceStoryMode();
+  }
+  function wire(){
+    const handler = function(ev){
+      const el = ev.target && ev.target.closest ? ev.target.closest('#storyModeNext') : null;
+      if(el){ advance(ev); return; }
+      const panel = ev.target && ev.target.closest ? ev.target.closest('#storyModePanel') : null;
       const overlay = ev.target && ev.target.closest ? ev.target.closest('#storyModeOverlay.active') : null;
-      if(overlay){
-        const panel = ev.target.closest('#storyModePanel');
-        if(panel){ ev.preventDefault(); window.advanceStoryMode(); }
-      }
-    }, true);
+      if(panel && overlay) advance(ev);
+    };
+    document.addEventListener('pointerup', handler, true);
+    document.addEventListener('click', handler, true);
+    document.addEventListener('touchend', handler, {capture:true, passive:false});
     document.addEventListener('keydown', function(ev){
-      if((ev.key==='Enter'||ev.key===' '||ev.key==='ArrowRight') && document.getElementById('storyModeOverlay')?.classList.contains('active')){
-        ev.preventDefault(); window.advanceStoryMode();
-      }
+      const overlay=document.getElementById('storyModeOverlay');
+      if(overlay && overlay.classList.contains('active') && (ev.key==='Enter'||ev.key===' '||ev.key==='ArrowRight')) advance(ev);
     }, true);
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wireStoryMode, {once:true}); else wireStoryMode();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V38 · Story Mode Tap Fix';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V38</strong> · Story Mode Tap Fix</footer>
+<script>window.__CT_BUILD__='V39 · Story Mode Input Bridge';</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V39</strong> · Story Mode Input Bridge</footer>
 
 </body>
 </html>
