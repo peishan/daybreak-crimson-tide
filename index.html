@@ -3029,10 +3029,8 @@ function advanceStoryMode(){
 }
 
 function nextAutoStoryChapter(id){
-  // Chapters 2-4 are one continuous Malacca story sequence. They should feel
-  // like scenes in one journey, not three unrelated books that require refreshes.
-  if(id===2 && !game.comicProgress?.[3]) return 3;
-  if(id===3 && !game.comicProgress?.[4]) return 4;
+  // Story chapters are event-driven. Completion never silently chains into
+  // another chapter; the Story Quest determines the next objective.
   return null;
 }
 
@@ -3055,7 +3053,7 @@ function finishStoryModeChapter(id){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
       const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p>${autoNext?`<div class="story-mode-next-objective"><div class="story-mode-next-label">CONTINUING THE STORY</div><div class="story-mode-next-text">${esc(nextTitle)}<br><span style="font-size:.8rem;opacity:.72;">The next scene will begin automatically.</span></div></div>`:`<div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div>`}<div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div>${autoNext?`<div class="story-mode-countdown" id="storyModeCountdown">NEXT SCENE IN 2…</div>`:`<button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button>`}</div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p>${autoNext?`<div class="story-mode-next-objective"><div class="story-mode-next-label">CONTINUING THE STORY</div><div class="story-mode-next-text">${esc(nextTitle)}<br><span style="font-size:.8rem;opacity:.72;">The next scene will begin automatically.</span></div></div>`:`<div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div>`}<div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div>${autoNext?`<div class="story-mode-countdown" id="storyModeCountdown">NEXT SCENE IN 2…</div>`:`<button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button>`}</div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -3077,7 +3075,7 @@ function finishStoryModeChapter(id){
 function getStoryModeNextStep(id){
   const q=currentArc1StoryQuest();
   if(id===1){
-    if(level()<5) return {message:'The storm chapter is complete. The Crimson Tide is ready for its first real port.', objective:`Reach Level 5, then sail to Malacca. You are currently Level ${level()}.`, button:'CONTINUE — LEVEL UP & SAIL'};
+    if(level()<5) return {message:'The storm chapter is complete. The Crimson Tide is ready for its first real port.', objective:`Reach Level 5, then sail to Malacca. Current level: ${level()}.`, button:'CONTINUE — LEVEL UP & SAIL'};
     return {message:'The storm chapter is complete. Malacca is now within reach.', objective:'Sail to Malacca. The next story will begin when you arrive.', button:'CONTINUE — SAIL TO MALACCA'};
   }
   if(id===2){
@@ -3115,12 +3113,18 @@ function closeStoryMode(){
   // doVoyage; completion only returns to the game unless a chain is active.
 }
 function maybeLaunchPendingStory(){
+  // Legacy compatibility hook. Story Mode is launched by explicit story events
+  // (new voyage / actual arrival), not by arbitrary UI renders or modal closes.
   if(!game || storyModeChapter || storyModeLaunching) return;
   game.comicProgress=game.comicProgress||{};
-  // Story Mode is event-driven: starting a new voyage at Singapore fires Ch1;
-  // arriving at Malacca fires Ch2. Chapters 2-4 chain inside Story Mode.
-  if(game.location==='singapore' && !game.comicProgress[1]) { requestStoryMode(1,350); return; }
-  if(game.location==='malacca' && !game.comicProgress[2]) { requestStoryMode(2,350); return; }
+  if(game.location==='singapore' && !game.comicProgress[1]) requestStoryMode(1,180);
+}
+function triggerArrivalStory(portId){
+  if(!game || storyModeChapter || storyModeLaunching) return;
+  game.comicProgress=game.comicProgress||{};
+  const map={malacca:2};
+  const id=map[portId];
+  if(id && !game.comicProgress[id]) requestStoryMode(id,220);
 }
 
 function openStoryModeReplay(chapterId){
@@ -3239,10 +3243,6 @@ function closeModal() {
     const next = game.storyModalQueue.shift();
     setTimeout(() => showStoryModal(next), 250);
     return;
-  }
-  // When a recruitment aftermath closes, continue the illustrated voyage automatically.
-  if (typeof maybeLaunchPendingStory === 'function' && !game.inCombat) {
-    setTimeout(() => maybeLaunchPendingStory(), 350);
   }
 }
 function showStoryModal(entry) {
@@ -4147,7 +4147,7 @@ function doVoyage(portId, days, dangerLevel) {
         document.getElementById('portScreen').classList.add('active');
         updateUI(); renderMarket(); renderExplore();
         renderStory();
-        maybeLaunchPendingStory();
+        triggerArrivalStory(portId);
       }, 800);
     }
   }, 600);
