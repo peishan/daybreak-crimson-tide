@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V49">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V50">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V49</title>
+<title>Daybreak: Crimson Tide — Build V50</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3033,6 +3033,9 @@ function openStoryMode(chapterId, options={}){
 function requestStoryMode(chapterId, delay=450){
   if(!game || storyModeChapter || storyModeLaunching) return;
   const required={1:'begin_chapter_1',2:'complete_chapter_2',3:'complete_chapter_3',4:'complete_chapter_4'}[chapterId];
+  // A chapter is playable when its matching Objective is current. Previous
+  // chapters are never required to be re-opened, and live Objective state is
+  // checked directly so no browser refresh is needed.
   if(required && objectiveState()!==required && !game.comicProgress?.[chapterId]) { toast('🔒 Follow the current Objective first.'); return; }
   if(game.comicProgress?.[chapterId]) return;
   storyModePending = chapterId;
@@ -4113,58 +4116,41 @@ function renderStory() {
   if (!container) return;
 
   let html = '';
+  const so = objectiveState();
+  const storyDefs = [
+    {id:1, title:'The Storm That Remained', tag:'Survival Is the First Memory', req:'begin_chapter_1', done:!!game.comicProgress?.[1]},
+    {id:2, title:'The First Port', tag:'Malacca', req:'complete_chapter_2', done:!!game.comicProgress?.[2]},
+    {id:3, title:'A Crew of Choice', tag:'We Sail Together or Not at All', req:'complete_chapter_3', done:!!game.comicProgress?.[3]},
+    {id:4, title:"The Guardian’s Fortress", tag:'Strategy Before the Storm', req:'complete_chapter_4', done:!!game.comicProgress?.[4]}
+  ];
 
-  syncArc1StoryQuestProgress();
-  const currentStoryQuest = currentArc1StoryQuest();
   html += `<section class="story-act story-quest-panel">
     <div class="story-act-header">
-      <div class="story-act-kicker">Story Quest</div>
-      <div class="story-act-title">Follow the Voyage</div>
-      <div class="story-act-tagline">The story follows the same recruitment order as Legends of Daybreak. Ports remain freely explorable, but story chapters are level-gated.</div>
-    </div>
-    ${currentStoryQuest ? (()=>{
-      const q=currentStoryQuest, st=storyQuestStatus(q), port=PORTS.find(p=>p.id===q.portId);
-      const previous=q.id>1 ? ARC1_STORY_QUESTS.find(x=>x.id===q.id-1) : null;
-      const prevDone=!previous || !!game.storyQuestProgress?.[previous.id];
-      const atPort=game.location===q.portId;
-      let statusText='';
-      if(st==='locked') statusText=`🔒 Complete Chapter ${previous?.id || 0} first.`;
-      else if(st==='level') statusText=`🔒 Requires Level ${q.level}. You are Level ${level()}.`;
-      else if(st==='active' && !atPort) statusText=`⚓ Sail to ${port ? port.name : q.portId}.`;
-      else if(st==='active') statusText=q.id===8?'⚔️ Defeat the Drowned Admiral.':'⚔️ Complete the recruitment chapter here.';
-      const comicForQuest = q.id === 1 ? 1 : (q.id === 2 ? 2 : null);
-      const needsComic = comicForQuest && !game.comicProgress?.[comicForQuest];
-      let actionHtml = `<div class="story-actions"><div class="story-chip">${esc(statusText)}</div></div>`;
-      if(st === 'active' && !atPort){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="sailTo('${q.portId}')">⚓ Sail to ${esc(port ? port.name : 'Drowned Passage')}</button></div>`;
-      } else if(st === 'active' && atPort && q.id === 2){
-        actionHtml = `<div class="story-actions"><div class="story-chip">🎯 Follow the current Objective. Story chapters are started manually.</div></div>`;
-      } else if(st === 'active' && atPort && q.id === 8){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startFinalFight()">⚔️ Enter the Drowned Passage</button></div>`;
-      } else if(st === 'active' && atPort && q.companion){
-        const portId = q.portId;
-        const portObj = PORTS.find(x=>x.id===portId);
-        actionHtml = portObj && portObj.recruitment === 'escape'
-          ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="completeSelfEscape('${q.companion}')">🏃 Follow the Escape</button></div>`
-          : `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('${portId}')">⚔️ Begin Recruitment</button></div>`;
-      }
-      return `<article class="story-chapter active">
-        <div class="story-chapter-top"><div class="story-chapter-title">Chapter ${q.id} — ${esc(q.title)}</div><div class="story-status">CURRENT</div></div>
-        <div class="story-chapter-text">${esc(q.summary)}</div>
-        <div class="story-meta"><span class="story-chip gold">📍 ${esc(port ? port.name : 'Drowned Passage')}</span><span class="story-chip">⭐ ${storyQuestLevelText(q)}</span><span class="story-chip red">${atPort?'📍 At destination':'🧭 Destination pending'}</span></div>
-        ${actionHtml}
-      </article>`;
-    })() : `<article class="story-chapter complete"><div class="story-chapter-title">✓ Arc I Story Complete</div><div class="story-chapter-text">The full recruitment voyage is complete. The Crimson Tide can now move into the next act.</div></article>`}
-  </section>`;
+      <div class="story-act-kicker">Story</div>
+      <div class="story-act-title">The Voyage</div>
+      <div class="story-act-tagline">Story chapters are manual. Your Objective tells you which chapter is ready.</div>
+    </div>`;
+
+  storyDefs.forEach(ch => {
+    const ready = !ch.done && so === ch.req;
+    const locked = !ch.done && !ready;
+    let status = ch.done ? '✓ COMPLETE' : (ready ? 'CURRENT' : '🔒 LOCKED');
+    let action = ch.done
+      ? `<div class="story-actions"><div class="story-chip">Chapter complete.</div></div>`
+      : ready
+        ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(${ch.id},80)">▶ Play Chapter ${ch.id}</button></div>`
+        : `<div class="story-actions"><div class="story-chip">Follow the current Objective first.</div></div>`;
+    html += `<article class="story-chapter ${ready?'active':(ch.done?'complete':'locked')}">
+      <div class="story-chapter-top"><div class="story-chapter-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div class="story-status">${status}</div></div>
+      <div class="story-chapter-text"><i>${esc(ch.tag)}</i></div>
+      ${action}
+    </article>`;
+  });
+
+  html += `</section>`;
 
   html += renderArc1ComicArchive();
-  const so=objectiveState();
-  const storyButton = so==='begin_chapter_1' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(1,80)">▶ Play Chapter 1</button>' :
-    so==='complete_chapter_2' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(2,80)">▶ Play Chapter 2</button>' :
-    so==='complete_chapter_3' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(3,80)">▶ Play Chapter 3</button>' :
-    so==='complete_chapter_4' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(4,80)">▶ Play Chapter 4</button>' :
-    '<div class="story-chip">Story chapters are manual. Follow the current Objective.</div>';
-  html += `<section class="panel" style="margin-top:12px;"><div class="panel-title">🎯 Current Story Objective</div><div class="story-actions">${storyButton}</div></section>`;
+
 
   // The canonical Arc I comics own the narrative presentation. Story Mode is the interactive presentation; the archive remains the reference library.
 
@@ -5766,8 +5752,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V49 · Live Objective State · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V49</strong> · Live Objective State · Tap Story</footer>
+<script>window.__CT_BUILD__='V50 · Story Chapter Flow · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V50</strong> · Live Objective State · Tap Story</footer>
 
 </body>
 </html>
