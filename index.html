@@ -33,7 +33,7 @@
     if(existing){ existing.remove(); return; }
     const overlay = document.createElement('div');
     overlay.id = 'ctDebugLogOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:999999;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;';
     const text = window.__CT_LOG__.length ? window.__CT_LOG__.join('\n') : '(no log entries yet)';
     overlay.innerHTML =
       '<div style="color:#e8c547;font-family:sans-serif;font-size:14px;margin-bottom:8px;display:flex;justify-content:space-between;">' +
@@ -45,11 +45,26 @@
     document.body.appendChild(overlay);
     document.getElementById('ctDebugLogClose').onclick = function(){ overlay.remove(); };
   };
+  // Fixed, always-on-top floating button — unlike the footer link (which sits
+  // below the full-height screen content and requires scrolling past an
+  // entire screen to reach), this is reachable from every screen, every
+  // scroll position, and even over the Story Mode overlay itself.
+  function addFloatingDebugButton(){
+    if(document.getElementById('ctDebugFab')) return;
+    const btn = document.createElement('div');
+    btn.id = 'ctDebugFab';
+    btn.textContent = '🐛';
+    btn.style.cssText = 'position:fixed;bottom:14px;right:14px;width:40px;height:40px;border-radius:50%;background:rgba(20,14,8,.88);border:1px solid #e8c547;color:#e8c547;display:flex;align-items:center;justify-content:center;font-size:19px;z-index:999998;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);';
+    btn.onclick = function(ev){ ev.stopPropagation(); window.__ctShowDebugLog(); };
+    document.body.appendChild(btn);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', addFloatingDebugButton, {once:true});
+  else addFloatingDebugButton();
 })();
 </script>
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V55">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V56">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V55</title>
+<title>Daybreak: Crimson Tide — Build V56</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -5851,8 +5866,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V55 · On-Device Debug Log'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V55</strong> · On-Device Debug Log · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V56 · Floating Debug Button'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V56</strong> · Floating Debug Button · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 </body>
 </html>
