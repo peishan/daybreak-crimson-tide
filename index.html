@@ -3339,16 +3339,30 @@ function objectiveState() {
   game.temporaryCrew = game.temporaryCrew || [];
   if (!game.comicProgress[1]) return 'begin_chapter_1';
   if (level() < 5) return 'reach_level_5';
-  if (!game.foundCompanions.joel && game.location !== 'malacca') return 'sail_malacca';
-  if (!game.foundCompanions.joel && !game.comicProgress[2]) return 'complete_chapter_2';
-  if (!game.foundCompanions.joel && !game.temporaryCrew.length) return 'recruit_crew';
-  if (!game.foundCompanions.joel && !game.comicProgress[3]) return 'complete_chapter_3';
-  if (!game.foundCompanions.joel && !game.malaccaPrepStep) return 'plan_with_crew';
-  if (!game.foundCompanions.joel && game.malaccaPrepStep === 1) return 'talk_to_joel';
-  if (!game.foundCompanions.joel && game.malaccaPrepStep === 2) return 'change_plan';
-  if (!game.foundCompanions.joel && !game.comicProgress[4]) return 'complete_chapter_4';
-  if (!game.foundCompanions.joel) return 'recruit_joel';
-  return 'continue_voyage';
+  // Reconciliation guard: if Joel is already recruited — from an older save,
+  // a direct guardian fight, or any path other than this exact step chain —
+  // retroactively close out every step of his questline instead of leaving
+  // it stuck. Without this, the chain below can never re-satisfy itself once
+  // foundCompanions.joel flips true out of order, permanently locking
+  // Chapters 2-4 in the Story screen even though nothing is actually left to do.
+  if (game.foundCompanions.joel) {
+    const neededPatch = !game.comicProgress[2] || !game.comicProgress[3] || !game.comicProgress[4] || !game.malaccaPrepStep;
+    game.comicProgress[2] = true;
+    game.comicProgress[3] = true;
+    game.comicProgress[4] = true;
+    if (!game.malaccaPrepStep) game.malaccaPrepStep = 3;
+    if (neededPatch && typeof saveGame === 'function') saveGame();
+    return 'continue_voyage';
+  }
+  if (game.location !== 'malacca') return 'sail_malacca';
+  if (!game.comicProgress[2]) return 'complete_chapter_2';
+  if (!game.temporaryCrew.length) return 'recruit_crew';
+  if (!game.comicProgress[3]) return 'complete_chapter_3';
+  if (!game.malaccaPrepStep) return 'plan_with_crew';
+  if (game.malaccaPrepStep === 1) return 'talk_to_joel';
+  if (game.malaccaPrepStep === 2) return 'change_plan';
+  if (!game.comicProgress[4]) return 'complete_chapter_4';
+  return 'recruit_joel';
 }
 function setArc1Objective(next, completedLabel=null) {
   game.arc1Objective = next;
