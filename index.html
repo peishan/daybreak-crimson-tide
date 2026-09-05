@@ -100,6 +100,8 @@ tr:hover { background: rgba(196,163,90,0.08); }
 }
 .port-card:hover { transform: scale(1.03); border-color: var(--gold); box-shadow: 0 0 15px rgba(232,197,71,0.15); }
 .port-card.current { border-color: var(--success); background: rgba(39,174,96,0.1); }
+.port-card.locked { opacity:.48; cursor:not-allowed; border-style:dashed; }
+.port-card.locked:hover { transform:none; box-shadow:none; }
 .port-card .port-icon { font-size: 2rem; margin-bottom: 6px; }
 .port-card .port-name { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold); }
 .port-card .port-dist { font-size: 0.75rem; opacity: 0.7; margin-top: 4px; }
@@ -720,6 +722,41 @@ tr:hover { background: rgba(196,163,90,0.08); }
   .ct-live-status{top:80.2%;height:8.8%}
 }
 
+
+/* ============================================================
+   V43 — OBJECTIVES + MOBILE NAV + MARKET READABILITY
+   ============================================================ */
+@media (max-width:700px){
+  .nav-bar{
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px;
+    padding:6px; margin-bottom:10px;
+  }
+  .nav-btn{
+    min-height:42px; padding:6px 4px; font-size:.68rem;
+    line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .nav-btn.active{font-weight:700;}
+
+  /* Turn the commodity table into readable stacked trading cards. */
+  #marketTable{display:block; width:100%; overflow:visible;}
+  #marketTable tr{
+    display:grid; grid-template-columns:minmax(0,1.35fr) minmax(70px,.65fr);
+    gap:6px 10px; padding:10px 0;
+    border:1px solid rgba(196,163,90,.22); border-radius:10px;
+    margin-bottom:8px; background:rgba(0,0,0,.18);
+  }
+  #marketTable td{display:block; border:0; padding:2px 8px; min-width:0;}
+  #marketTable td:nth-child(1){font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; font-weight:700;}
+  #marketTable td:nth-child(2){text-align:right; font-size:.95rem;}
+  #marketTable td:nth-child(3){grid-column:1 / -1; font-size:.76rem;}
+  #marketTable td:nth-child(4), #marketTable td:nth-child(5){
+    grid-column:span 1; display:flex; flex-wrap:wrap; align-items:center; gap:3px;
+  }
+  #marketTable td:nth-child(4)::before{content:'BUY'; font-family:'Cinzel',serif; color:var(--success); font-size:.68rem; margin-right:3px;}
+  #marketTable td:nth-child(5)::before{content:'SELL'; font-family:'Cinzel',serif; color:var(--sand); font-size:.68rem; margin-right:3px;}
+  #marketTable .btn-small{min-height:34px; padding:5px 8px; font-size:.68rem; margin:1px;}
+  #marketTable thead{display:none;}
+}
 
 /* ============================================================
    V22 — PORTRAIT-FIRST MOBILE LAYOUT
@@ -3089,35 +3126,27 @@ function finishStoryModeChapter(id){
 function getStoryModeNextStep(id){
   const q=currentArc1StoryQuest();
   if(id===1){
-    if(level()<5) return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
-    return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+    if(level()<5) return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
+    return {message:'The storm chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
   }
   if(id===2){
-    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
   }
   if(id===3){
-    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
   }
   if(id===4){
-    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+    return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
   }
-  return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
+  return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
 }
 function continueStoryFlow(id){
-  const nextChapter = ({1:2, 2:3, 3:4})[id] || null;
-  const canContinueStory = !!nextChapter && !!STORY_MODE_CHAPTERS[nextChapter] && !game.comicProgress?.[nextChapter];
+  // Manual Story Mode: Continue only exits the completed chapter. The Objective
+  // system decides what the player should do next; it never auto-opens a chapter.
   closeStoryMode();
-  updateUI();
-  renderStory();
-  if(canContinueStory){
-    goScreen('story');
-    // Start the next chapter only after the Story screen is active. This keeps
-    // the Goal Toast as the progression authority while making Continue feel
-    // like an actual forward step instead of returning to the same chapter.
-    setTimeout(()=>openStoryMode(nextChapter), 60);
-  } else {
-    goScreen('port');
-  }
+  setTimeout(()=>{
+    try { goScreen('story'); } catch(e) {}
+  }, 40);
 }
 
 function closeStoryMode(){
@@ -3154,9 +3183,9 @@ function triggerArrivalStory(portId){
   if(portId==='malacca' && !game.foundCompanions?.joel && !game.comicProgress?.[2]) {
     goalToast('reached Malacca', 'open Story → Chapter 2: The First Port');
   } else if(portId==='palembang' && !game.foundCompanions?.aisyah) {
-    toast('🎯 New Goal: open Story → Chapter 12: The Debt That Wasn’t Hers.', 5200);
+    toast('🎯 New Objective: open Story → Chapter 12: The Debt That Wasn’t Hers.', 5200);
   } else if(portId==='batavia' && !game.foundCompanions?.eliz) {
-    toast('🎯 New Goal: open Story → Chapter 15: The One Who Stayed.', 5200);
+    toast('🎯 New Objective: open Story → Chapter 15: The One Who Stayed.', 5200);
   }
   renderMainGoal();
 }
@@ -3249,41 +3278,41 @@ function toast(msg, duration=2800) {
   t.textContent = msg; t.style.opacity = '1'; clearTimeout(window.__toast); window.__toast = setTimeout(() => t.style.opacity = '0', duration);
 }
 function goalToast(completed, next, duration=5200) {
-  toast(`🎯 Goal completed: ${completed}\n➡️ New Goal: ${next}`, duration);
+  toast(`🎯 Objective completed: ${completed}\n➡️ New Objective: ${next}`, duration);
 }
 function renderMainGoal() {
   const el=document.getElementById('mainGoalPanel');
   if(!el) return;
-  let title='Reach Level 5';
-  let text=`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`;
-  let optional='Optional from Level 1: complete bounties for extra XP and gold.';
+  let title='Begin Chapter 1';
+  let text='Open Story and play The Storm That Remained.';
+  let optional='Optional: complete bounties for extra XP and gold.';
   if(!game.comicProgress?.[1]) {
-    title='Begin the Voyage';
-    text='Chapter 1 will begin automatically when you start a new voyage.';
+    title='Begin Chapter 1 — The Storm That Remained';
+    text='Open Story and start the voyage. Story Mode is manual.';
   } else if(level()<5) {
     title='Reach Level 5';
-    text=`Level ${level()} / 5 — keep earning XP until Malacca unlocks.`;
+    text=`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`;
   } else if(!game.foundCompanions?.joel && game.location!=='malacca') {
     title='Sail to Malacca';
-    text='Malacca is unlocked. Sail there to begin Joel’s story.';
+    text='Malacca is unlocked. Sail there to continue the voyage.';
   } else if(!game.foundCompanions?.joel && !game.comicProgress?.[2]) {
-    title='Story Mode — Chapter 2';
-    text='Open the Story tab and play The First Port.';
+    title='Complete Chapter 2 — The First Port';
+    text='Open Story and play Chapter 2.';
   } else if(!game.foundCompanions?.joel && !game.comicProgress?.[3]) {
-    title='Story Mode — Chapter 3';
-    text='Open the Story tab and continue A Crew of Choice.';
+    title='Complete Chapter 3 — A Crew of Choice';
+    text='Open Story and play Chapter 3.';
   } else if(!game.foundCompanions?.joel && !game.comicProgress?.[4]) {
-    title='Story Mode — Chapter 4';
-    text='Open the Story tab and prepare for Joel’s rescue.';
+    title='Complete Chapter 4 — The Guardian’s Fortress';
+    text='Open Story and prepare for Joel’s rescue.';
   } else if(!game.foundCompanions?.joel) {
     title='Recruit Joel';
-    text='Face the Wreck Warden and bring your first mate home.';
+    text='Defeat the Wreck Warden and bring your first mate home.';
   } else {
     title='Continue the Voyage';
     text='Sail toward the next crew member and keep building the Crimson Tide.';
     optional='Optional: complete bounties whenever you visit a port for extra XP and gold.';
   }
-  el.innerHTML=`<div class="ct-goal-kicker">Captain’s Goal</div><div class="ct-goal-title">🎯 ${esc(title)}</div><div class="ct-goal-text">${esc(text)}</div><div class="ct-goal-optional">${esc(optional)}</div>`;
+  el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(title)}</div><div class="ct-goal-text">${esc(text)}</div><div class="ct-goal-optional">${esc(optional)}</div>`;
 }
 
 function rollDice(notation) {
@@ -3646,8 +3675,8 @@ function startGame() {
   updateUI();
   renderMarket();
   renderLandingV24(); renderAFKWelcome(); renderMainGoal();
-  toast('🎯 New Goal: Reach Level 5. Optional: complete bounties for XP and gold.', 5200);
-  setTimeout(() => openStoryMode(1), 900);
+  toast('🎯 New Objective: Begin Chapter 1 — open Story.', 5200);
+  // Story Mode is manual: the Objective tells the player to open Story.
 }
 
 // ---------------------------------------------------------------------------
@@ -4010,11 +4039,11 @@ function renderStory() {
       if(st === 'active' && !atPort){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="sailTo('${q.portId}')">⚓ Sail to ${esc(port ? port.name : 'Drowned Passage')}</button></div>`;
       } else if(st === 'active' && atPort && q.id === 2 && needsComic){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(${comicForQuest},80)">📖 Story Mode — Chapter 2</button></div><div class="story-actions"><div class="story-chip">Open Story Mode when you are ready. The story does not auto-fire after arrival.</div></div>`;
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(${comicForQuest},80)">▶ Play Chapter 2</button></div><div class="story-actions"><div class="story-chip">Open Story and play the chapter when you are ready.</div></div>`;
       } else if(st === 'active' && atPort && q.id === 2 && game.comicProgress?.[2] && !game.comicProgress?.[3]){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(3,80)">📖 Story Mode — Chapter 3</button></div>`;
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(3,80)">▶ Play Chapter 3</button></div>`;
       } else if(st === 'active' && atPort && q.id === 2 && game.comicProgress?.[3] && !game.comicProgress?.[4]){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(4,80)">📖 Story Mode — Chapter 4</button></div>`;
+        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(4,80)">▶ Play Chapter 4</button></div>`;
       } else if(st === 'active' && atPort && q.id === 2){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('malacca')">⚔️ Recruit Joel — Wreck Warden</button></div>`;
       } else if(st === 'active' && atPort && q.id === 8){
@@ -4163,6 +4192,18 @@ function bountyBoardHTML() {
 // ---------------------------------------------------------------------------
 // VOYAGE / SAILING
 // ---------------------------------------------------------------------------
+function isPortUnlocked(portId){
+  if(portId==='singapore') return true;
+  if(portId==='malacca') return !!game.comicProgress?.[1] && level()>=5;
+  if(portId==='palembang') return !!game.foundCompanions?.joel;
+  if(portId==='batavia') return !!game.foundCompanions?.aisyah;
+  if(portId==='bangkok') return !!game.foundCompanions?.eliz;
+  if(portId==='hanoi') return !!game.foundCompanions?.mezstorm;
+  if(portId==='manila') return !!game.foundCompanions?.senedra;
+  if(portId==='drowned_passage') return !!game.foundCompanions?.zaki;
+  return false;
+}
+
 function renderNavigation() {
   const grid = document.getElementById('navPortGrid');
   const currentPort = PORTS.find(p => p.id === game.location);
@@ -4170,10 +4211,41 @@ function renderNavigation() {
     if (port.id === game.location) {
       return `<div class="port-card current"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">📍 You are here</div></div>`;
     }
-    const dist = currentPort.distances[port.id];
-    const travelDays = Math.max(1, dist - (game.ship.sails >= 3 ? 1 : 0));
-    const needsCompanion = port.companion && !game.foundCompanions[port.companion];
-    return `<div class="port-card" onclick="sailTo('${port.id}')"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}${needsCompanion ? ' 📍' : ''}</div><div class="port-dist">${travelDays} day voyage<br>${'⚔️'.repeat(port.danger)}</div></div>`;
+function renderMainGoal() {
+  const el=document.getElementById('mainGoalPanel');
+  if(!el) return;
+  let title='Begin Chapter 1';
+  let text='Open Story and play The Storm That Remained.';
+  let optional='Optional: complete bounties for extra XP and gold.';
+  if(!game.comicProgress?.[1]) {
+    title='Begin Chapter 1 — The Storm That Remained';
+    text='Open Story and start the voyage. Story Mode is manual.';
+  } else if(level()<5) {
+    title='Reach Level 5';
+    text=`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`;
+  } else if(!game.foundCompanions?.joel && game.location!=='malacca') {
+    title='Sail to Malacca';
+    text='Malacca is unlocked. Sail there to continue the voyage.';
+  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[2]) {
+    title='Complete Chapter 2 — The First Port';
+    text='Open Story and play Chapter 2.';
+  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[3]) {
+    title='Complete Chapter 3 — A Crew of Choice';
+    text='Open Story and play Chapter 3.';
+  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[4]) {
+    title='Complete Chapter 4 — The Guardian’s Fortress';
+    text='Open Story and prepare for Joel’s rescue.';
+  } else if(!game.foundCompanions?.joel) {
+    title='Recruit Joel';
+    text='Defeat the Wreck Warden and bring your first mate home.';
+  } else {
+    title='Continue the Voyage';
+    text='Sail toward the next crew member and keep building the Crimson Tide.';
+    optional='Optional: complete bounties whenever you visit a port for extra XP and gold.';
+  }
+  el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(title)}</div><div class="ct-goal-text">${esc(text)}</div><div class="ct-goal-optional">${esc(optional)}</div>`;
+}
+
   }).join('');
 
   document.getElementById('voyageConditions').innerHTML =
@@ -4182,6 +4254,7 @@ function renderNavigation() {
     '<br>Ship condition: ' + (game.health > 70 ? 'Good' : game.health > 30 ? 'Damaged' : '<span style="color: var(--danger);">Critical</span>') + '.';
 }
 function sailTo(portId) {
+  if(!isPortUnlocked(portId)){ toast('🔒 This port is locked. Follow the current Objective first.'); return; }
   const currentPort = PORTS.find(p => p.id === game.location);
   const targetPort = PORTS.find(p => p.id === portId);
   const dist = currentPort.distances[portId];
@@ -4550,9 +4623,9 @@ function gainXP(amount) {
   if (after > before) {
     logEvent('⭐ LEVEL UP! Now level ' + after + '!', 'gold');
     if (before < 5 && after >= 5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && game.location==='singapore') {
-      goalToast(`reached Level 5`, 'sail to Malacca');
+      goalToast('reached Level 5', 'sail to Malacca');
     } else {
-      toast(`⭐ Goal progress: reached Level ${after}.`, 3200);
+      toast(`⭐ Objective progress: reached Level ${after}.`, 3200);
     }
   }
   syncShipToCaptainLevel();
@@ -5620,8 +5693,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V42 · Continue Flow Fix';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V42</strong> · Continue Flow Fix</footer>
+<script>window.__CT_BUILD__='V43 · Objectives + Mobile Market';</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V43</strong> · Objectives + Mobile Market</footer>
 
 </body>
 </html>
