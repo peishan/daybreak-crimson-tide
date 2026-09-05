@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V53">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V54">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V53</title>
+<title>Daybreak: Crimson Tide — Build V54</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3020,43 +3020,65 @@ let storyModeLaunching = false;
 
 function openStoryMode(chapterId, options={}){
   const chapter = STORY_MODE_CHAPTERS[chapterId];
-  if(!chapter) return false;
+  if(!chapter){ console.warn('[StoryMode] openStoryMode: no chapter data for', chapterId); return false; }
   game.comicProgress = game.comicProgress || {};
-  if(game.comicProgress[chapterId] && !options.replay) return false;
+  if(game.comicProgress[chapterId] && !options.replay){ console.warn('[StoryMode] openStoryMode: chapter already complete', chapterId); return false; }
   const overlay=document.getElementById('storyModeOverlay');
-  if(!overlay) return false;
+  if(!overlay){ console.warn('[StoryMode] openStoryMode: #storyModeOverlay missing from DOM'); return false; }
   storyModeLaunching = true;
-  storyModePending = null;
-  storyModeChapter = chapter;
-  storyModeChapterId = chapterId;
-  storyModeIndex = 0;
-  overlay.style.display='flex';
-  overlay.classList.add('active');
-  overlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow='hidden';
-  ctPlayMusic('explore');
-  renderStoryModePanel();
-  storyModeLaunching = false;
-  return true;
+  try {
+    storyModePending = null;
+    storyModeChapter = chapter;
+    storyModeChapterId = chapterId;
+    storyModeIndex = 0;
+    overlay.style.display='flex';
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    ctPlayMusic('explore');
+    renderStoryModePanel();
+    storyModeLaunching = false;
+    return true;
+  } catch(e) {
+    // Never leave storyModeLaunching stuck true — that would silently block
+    // every future attempt to open Story Mode for the rest of the session.
+    console.error('[StoryMode] openStoryMode threw:', e);
+    storyModeLaunching = false;
+    storyModeChapter = null;
+    storyModeChapterId = null;
+    if(overlay){ overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); overlay.style.display='none'; }
+    document.body.style.overflow='';
+    toast('⚠️ Story Mode hit an error opening this chapter. Please try again.');
+    return false;
+  }
 }
 
 function requestStoryMode(chapterId, delay=450){
-  if(!game || storyModeChapter || storyModeLaunching) return;
+  // Every early-return path below now surfaces a toast + console.warn. A tap
+  // that visibly does nothing is undebuggable on a phone with no devtools —
+  // this makes "why didn't it open" answerable from the log/toast alone.
+  if(!STORY_MODE_CHAPTERS[chapterId]){ console.warn('[StoryMode] no chapter data for id', chapterId); toast('⚠️ Story Mode error: chapter data missing.'); return; }
+  if(!game){ console.warn('[StoryMode] game object not ready'); toast('⚠️ Story Mode error: game not loaded yet.'); return; }
+  if(storyModeChapter){ console.warn('[StoryMode] blocked: a chapter is already open', storyModeChapterId); toast('📖 Story Mode is already open.'); return; }
+  if(storyModeLaunching){ console.warn('[StoryMode] blocked: storyModeLaunching stuck true — recovering'); storyModeLaunching=false; }
   const required={1:'begin_chapter_1',2:'complete_chapter_2',3:'complete_chapter_3',4:'complete_chapter_4'}[chapterId];
   // A chapter is playable when its matching Objective is current. Previous
   // chapters are never required to be re-opened, and live Objective state is
   // checked directly so no browser refresh is needed.
-  if(required && objectiveState()!==required && !game.comicProgress?.[chapterId]) { toast('🔒 Follow the current Objective first.'); return; }
-  if(game.comicProgress?.[chapterId]) return;
+  if(required && objectiveState()!==required && !game.comicProgress?.[chapterId]) { console.warn('[StoryMode] blocked: objective mismatch. required=',required,'current=',objectiveState()); toast('🔒 Follow the current Objective first.'); return; }
+  if(game.comicProgress?.[chapterId]){ console.warn('[StoryMode] blocked: chapter already marked complete', chapterId); toast('✓ This chapter is already complete. Open Story to see what\'s next.'); return; }
   storyModePending = chapterId;
   clearTimeout(storyModeTransitionTimer);
   const attempt=()=>{
-    if(!storyModePending || storyModeChapter || storyModeLaunching) return;
+    if(!storyModePending){ console.warn('[StoryMode] attempt aborted: storyModePending cleared'); return; }
+    if(storyModeChapter){ console.warn('[StoryMode] attempt aborted: chapter already open'); storyModePending=null; return; }
+    if(storyModeLaunching){ console.warn('[StoryMode] attempt aborted: still launching, retrying'); storyModeTransitionTimer=setTimeout(attempt,100); return; }
     const overlay=document.getElementById('storyModeOverlay');
-    if(!overlay){ storyModeTransitionTimer=setTimeout(attempt,100); return; }
+    if(!overlay){ console.warn('[StoryMode] attempt: overlay element not found yet, retrying'); storyModeTransitionTimer=setTimeout(attempt,100); return; }
     const id=storyModePending;
     storyModePending=null;
-    openStoryMode(id);
+    const opened=openStoryMode(id);
+    if(!opened){ console.warn('[StoryMode] openStoryMode returned false for', id); toast('⚠️ Story Mode failed to open. Please try again.'); }
   };
   storyModeTransitionTimer=setTimeout(attempt,Math.max(0,delay));
 }
@@ -5784,8 +5806,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V53 · Story Screen Auto-Refresh Fix'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V53</strong> · Story Screen Auto-Refresh Fix</footer>
+<script>window.__CT_BUILD__='V54 · Story Mode Diagnostics + Never-Silent-Fail'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V54</strong> · Story Mode Diagnostics</footer>
 
 </body>
 </html>
