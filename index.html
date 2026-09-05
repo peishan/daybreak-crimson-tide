@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V48">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V49">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V48</title>
+<title>Daybreak: Crimson Tide — Build V49</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3208,22 +3208,27 @@ function maybeLaunchPendingStory(){
 }
 function triggerArrivalStory(portId){
   if(!game) return;
-  // Arrival must commit the new Objective immediately. Do not rely on a
-  // browser refresh or a later render to recalculate the progression state.
-  if(portId==='malacca' && !game.foundCompanions?.joel && !game.comicProgress?.[2]) {
-    if(objectiveState()==='sail_malacca' || (level()>=5 && game.location==='malacca')) {
+  // The arrival event commits the destination Objective directly. Do not ask
+  // objectiveState() which objective is active after location has already
+  // changed — by then 'sail_malacca' is no longer the derived state.
+  if(portId==='malacca' && level()>=5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && !game.comicProgress?.[2]) {
+    if(game.arc1Objective !== 'complete_chapter_2') {
       completeObjectiveAndRefresh('complete_chapter_2','reached Malacca');
     } else {
       renderMainGoal();
+      saveGameQuiet();
     }
   } else if(portId==='palembang' && !game.foundCompanions?.aisyah) {
-    setArc1Objective('complete_chapter_12','reached Palembang');
-    toast('🎯 New Objective: open Story → Chapter 12: The Debt That Wasn’t Hers.', 5200);
+    const changed = game.arc1Objective !== 'complete_chapter_12';
+    setArc1Objective('complete_chapter_12', changed ? 'reached Palembang' : null);
+    if(changed) toast('🎯 New Objective: open Story → Chapter 12: The Debt Wasn’t Hers.', 5200);
   } else if(portId==='batavia' && !game.foundCompanions?.eliz) {
-    setArc1Objective('complete_chapter_15','reached Batavia');
-    toast('🎯 New Objective: open Story → Chapter 15: The One Who Stayed.', 5200);
+    const changed = game.arc1Objective !== 'complete_chapter_15';
+    setArc1Objective('complete_chapter_15', changed ? 'reached Batavia' : null);
+    if(changed) toast('🎯 New Objective: open Story → Chapter 15: The One Who Stayed.', 5200);
   }
   renderMainGoal();
+  try { if (document.getElementById('storyScreen')?.classList.contains('active')) renderStory(); } catch(e) {}
 }
 
 function openStoryModeReplay(chapterId){
@@ -3317,10 +3322,11 @@ function goalToast(completed, next, duration=5200) {
   toast(`🎯 Objective completed: ${completed}\n➡️ New Objective: ${next}`, duration);
 }
 function objectiveState() {
+  // Live game state is the source of truth. The saved arc1Objective field is
+  // only a mirror/legacy value and can never make the current Objective stale.
   game.comicProgress = game.comicProgress || {};
   game.foundCompanions = game.foundCompanions || {};
   game.temporaryCrew = game.temporaryCrew || [];
-  if (game.arc1Objective) return game.arc1Objective;
   if (!game.comicProgress[1]) return 'begin_chapter_1';
   if (level() < 5) return 'reach_level_5';
   if (!game.foundCompanions.joel && game.location !== 'malacca') return 'sail_malacca';
@@ -4272,7 +4278,7 @@ function checkBountyProgress(type, target, amount) {
     b.c = Math.min(b.need, b.c + amount);
     if (b.c >= b.need) {
       b.done = true;
-      game.xpTotal += b.rw.xp;
+      gainXP(b.rw.xp);
       game.gold += b.rw.gold;
       toast(`💰 Bounty complete: ${b.name} · +${b.rw.xp} XP · +${b.rw.gold}g`);
     }
@@ -4305,40 +4311,6 @@ function renderNavigation() {
     if (port.id === game.location) {
       return `<div class="port-card current"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">📍 You are here</div></div>`;
     }
-function renderMainGoal() {
-  const el=document.getElementById('mainGoalPanel');
-  if(!el) return;
-  let title='Begin Chapter 1';
-  let text='Open Story and play The Storm That Remained.';
-  let optional='Optional: complete bounties for extra XP and gold.';
-  if(!game.comicProgress?.[1]) {
-    title='Begin Chapter 1 — The Storm That Remained';
-    text='Open Story and start the voyage. Story Mode is manual.';
-  } else if(level()<5) {
-    title='Reach Level 5';
-    text=`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`;
-  } else if(!game.foundCompanions?.joel && game.location!=='malacca') {
-    title='Sail to Malacca';
-    text='Malacca is unlocked. Sail there to continue the voyage.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[2]) {
-    title='Complete Chapter 2 — The First Port';
-    text='Open Story and play Chapter 2.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[3]) {
-    title='Complete Chapter 3 — A Crew of Choice';
-    text='Open Story and play Chapter 3.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[4]) {
-    title='Complete Chapter 4 — The Guardian’s Fortress';
-    text='Open Story and prepare for Joel’s rescue.';
-  } else if(!game.foundCompanions?.joel) {
-    title='Recruit Joel';
-    text='Defeat the Wreck Warden and bring your first mate home.';
-  } else {
-    title='Continue the Voyage';
-    text='Sail toward the next crew member and keep building the Crimson Tide.';
-    optional='Optional: complete bounties whenever you visit a port for extra XP and gold.';
-  }
-  el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(title)}</div><div class="ct-goal-text">${esc(text)}</div><div class="ct-goal-optional">${esc(optional)}</div>`;
-}
 
   }).join('');
 
@@ -4396,8 +4368,9 @@ function doVoyage(portId, days, dangerLevel) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('portScreen').classList.add('active');
         updateUI(); renderMarket(); renderExplore();
-        renderStory();
         triggerArrivalStory(portId);
+        // Story is rebuilt after the Objective transition, so no browser refresh is needed.
+        renderStory();
       }, 800);
     }
   }, 600);
@@ -4713,11 +4686,15 @@ function upgradeShip(type, cost) {
 // ---------------------------------------------------------------------------
 function gainXP(amount) {
   const before = level();
+  const beforeObjective = objectiveState();
   game.xpTotal += Math.max(0, Math.min(amount, 5000));
   const after = level();
   if (after > before) {
     logEvent('⭐ LEVEL UP! Now level ' + after + '!', 'gold');
-    if (before < 5 && after >= 5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && game.location==='singapore' && objectiveState()==='reach_level_5') {
+    // Capture the old Objective before adding XP. Once Level 5 is reached,
+    // objectiveState() naturally changes to 'sail_malacca'. Checking it after
+    // the XP change was why V48 could miss this transition.
+    if (before < 5 && after >= 5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && beforeObjective === 'reach_level_5') {
       completeObjectiveAndRefresh('sail_malacca','reached Level 5');
     } else {
       toast(`⭐ Objective progress: reached Level ${after}.`, 3200);
@@ -4726,6 +4703,7 @@ function gainXP(amount) {
   syncShipToCaptainLevel();
   updateCrimsonXPDisplay();
   try { renderMainGoal(); } catch(e) {}
+  try { if (document.getElementById('storyScreen')?.classList.contains('active')) renderStory(); } catch(e) {}
   saveGameQuiet();
 }
 
@@ -5788,8 +5766,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V48 · Live Objective State · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V48</strong> · Refresh-Free Story Completion · Tap Story</footer>
+<script>window.__CT_BUILD__='V49 · Live Objective State · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V49</strong> · Live Objective State · Tap Story</footer>
 
 </body>
 </html>
