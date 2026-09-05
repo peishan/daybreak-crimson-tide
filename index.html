@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V50">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V51</title>
+<title>Daybreak: Crimson Tide — Build V52</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -1212,6 +1212,12 @@ body{
 @media(max-width:560px){.story-mode-overlay{padding:10px 9px 18px}.story-mode-title{font-size:1.12rem}.story-mode-image{max-height:54vh}.story-mode-text{font-size:.96rem;padding:14px}.story-mode-panel{padding-top:12px}.story-mode-top{padding-bottom:10px}}
 
 .story-mode-next-objective{margin:18px auto 20px;max-width:560px;padding:14px 16px;border:1px solid rgba(232,201,106,.55);border-radius:12px;background:rgba(30,20,8,.35);text-align:left}.story-mode-next-label{font-family:Cinzel;color:var(--gold);font-size:.72rem;letter-spacing:.18em;margin-bottom:6px}.story-mode-next-text{font-size:1rem;line-height:1.5;color:var(--parchment)}
+
+/* V52 quick settings */
+.ct-bottom-settings{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:14px 0 8px;padding:8px 0;border-top:1px solid rgba(232,197,71,.18);}
+.ct-settings-shortcut,.ct-music-shortcut{border:1px solid rgba(232,197,71,.38);background:rgba(0,0,0,.28);color:var(--parchment);border-radius:999px;padding:8px 14px;font-size:.82rem;cursor:pointer;}
+.ct-settings-shortcut:hover,.ct-music-shortcut:hover{border-color:var(--gold);}
+@media(max-width:600px){.ct-settings-shortcut,.ct-music-shortcut{flex:1;min-width:130px;padding:9px 10px;}}
 </style>
 </head>
 <body class="portrait-first">
@@ -1306,6 +1312,10 @@ body{
       <button class="nav-btn" onclick="goScreen('shipyard')">⚓ Shipyard</button>
       <button class="nav-btn" onclick="goScreen('tavern')">🍺 Tavern</button>
       <button class="nav-btn" onclick="goScreen('log')">📜 Log</button>
+    </div>
+    <div class="ct-bottom-settings" aria-label="Quick settings">
+      <button class="ct-settings-shortcut" onclick="showSettings()">⚙️ Settings</button>
+      <button class="ct-music-shortcut" onclick="ctSetMusicEnabled(!ctMusicEnabled); toast(ctMusicEnabled ? '🎵 Music on.' : '🔇 Music off.');">🎵 Music</button>
     </div>
     <div id="mainGoalPanel" class="panel ct-goal-panel" style="margin:10px 0; border-color:rgba(232,197,71,.42);"></div>
     <div id="objectiveActionPanel" class="panel ct-goal-panel" style="margin:10px 0; border-color:rgba(111,181,125,.45); display:none;"></div>
@@ -3043,12 +3053,10 @@ function requestStoryMode(chapterId, delay=450){
   const attempt=()=>{
     if(!storyModePending || storyModeChapter || storyModeLaunching) return;
     const overlay=document.getElementById('storyModeOverlay');
-    if(!overlay){ storyModeTransitionTimer=setTimeout(attempt,300); return; }
-    // Story Mode is now launched manually from the Story tab as well as
-    // from other screens. Do not require the Port screen to be active.
+    if(!overlay){ storyModeTransitionTimer=setTimeout(attempt,100); return; }
     const id=storyModePending;
-    if(openStoryMode(id)) storyModePending=null;
-    else storyModePending=null;
+    storyModePending=null;
+    openStoryMode(id);
   };
   storyModeTransitionTimer=setTimeout(attempt,Math.max(0,delay));
 }
@@ -3355,6 +3363,9 @@ function setArc1Objective(next, completedLabel=null) {
     goalToast(completedLabel, nextLabels[next] || next);
   }
   renderMainGoal();
+  renderObjectiveActionPanel();
+  if (typeof renderStoryScreen === 'function') renderStoryScreen();
+  if (typeof renderNavigation === 'function') renderNavigation();
   saveGameQuiet();
 }
 function renderObjectiveActionPanel() {
@@ -5760,7 +5771,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 })();
 </script>
 <script>window.__CT_BUILD__='V52 · Story Chapter Launch Fix · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V51</strong> · Live Objective State · Tap Story</footer>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V52</strong> · Live Objective State · Tap Story</footer>
 
 </body>
 </html>
