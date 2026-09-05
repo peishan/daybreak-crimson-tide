@@ -3064,7 +3064,10 @@ function finishStoryModeChapter(id){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
       const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">CONTINUE</button></div>`;
+      const nextChapter = ({1:2, 2:3, 3:4})[id] || null;
+      const canContinueStory = !!nextChapter && !!STORY_MODE_CHAPTERS[nextChapter] && !game.comicProgress?.[nextChapter];
+      const continueLabel = 'CONTINUE';
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="continueStoryFlow(${id}); return false;">${continueLabel}</button></div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -3100,6 +3103,23 @@ function getStoryModeNextStep(id){
   }
   return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Captain’s Goal.'};
 }
+function continueStoryFlow(id){
+  const nextChapter = ({1:2, 2:3, 3:4})[id] || null;
+  const canContinueStory = !!nextChapter && !!STORY_MODE_CHAPTERS[nextChapter] && !game.comicProgress?.[nextChapter];
+  closeStoryMode();
+  updateUI();
+  renderStory();
+  if(canContinueStory){
+    goScreen('story');
+    // Start the next chapter only after the Story screen is active. This keeps
+    // the Goal Toast as the progression authority while making Continue feel
+    // like an actual forward step instead of returning to the same chapter.
+    setTimeout(()=>openStoryMode(nextChapter), 60);
+  } else {
+    goScreen('port');
+  }
+}
+
 function closeStoryMode(){
   clearTimeout(storyModeTransitionTimer);
   storyModePending=null;
@@ -5600,8 +5620,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V41 · Goal Toast Completion Cleanup';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V41</strong> · Goal Toast Completion Cleanup</footer>
+<script>window.__CT_BUILD__='V42 · Continue Flow Fix';</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V42</strong> · Continue Flow Fix</footer>
 
 </body>
 </html>
