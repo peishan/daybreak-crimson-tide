@@ -1208,6 +1208,7 @@ body{
 .story-mode-end{text-align:center;padding:36px 12px}
 .story-mode-end h2{font-family:Cinzel,serif;color:var(--gold);font-size:1.45rem;margin:0 0 10px}
 .story-mode-end p{line-height:1.6;opacity:.88;margin:0 auto 18px;max-width:560px}
+.ct-goal-panel .btn{margin-top:10px}.ct-goal-panel .ct-goal-title{line-height:1.25}.ct-goal-panel .ct-goal-text{line-height:1.5}
 @media(max-width:560px){.story-mode-overlay{padding:10px 9px 18px}.story-mode-title{font-size:1.12rem}.story-mode-image{max-height:54vh}.story-mode-text{font-size:.96rem;padding:14px}.story-mode-panel{padding-top:12px}.story-mode-top{padding-bottom:10px}}
 
 .story-mode-next-objective{margin:18px auto 20px;max-width:560px;padding:14px 16px;border:1px solid rgba(232,201,106,.55);border-radius:12px;background:rgba(30,20,8,.35);text-align:left}.story-mode-next-label{font-family:Cinzel;color:var(--gold);font-size:.72rem;letter-spacing:.18em;margin-bottom:6px}.story-mode-next-text{font-size:1rem;line-height:1.5;color:var(--parchment)}
@@ -1307,6 +1308,7 @@ body{
       <button class="nav-btn" onclick="goScreen('log')">📜 Log</button>
     </div>
     <div id="mainGoalPanel" class="panel ct-goal-panel" style="margin:10px 0; border-color:rgba(232,197,71,.42);"></div>
+    <div id="objectiveActionPanel" class="panel ct-goal-panel" style="margin:10px 0; border-color:rgba(111,181,125,.45); display:none;"></div>
     <div class="panel" style="margin:10px 0; border-color:rgba(232,197,71,.42);">
       <div class="panel-title">🔥 Seafarer's Rest</div>
       <div style="font-size:.82rem;opacity:.9;line-height:1.55;">
@@ -1715,7 +1717,6 @@ body{
       <div id="storyModeCounter" class="story-mode-counter">1 / 9</div>
     </div>
     <div id="storyModePanel" class="story-mode-panel"></div>
-    <div class="story-mode-controls"><button id="storyModeNext" class="btn btn-magic" onclick="window.advanceStoryMode()">TAP TO CONTINUE</button></div>
   </div>
 </div>
 <div class="modal-overlay" id="modalOverlay">
@@ -2715,7 +2716,7 @@ let game = {
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
   bounties: [], bountyDay: null,
-  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {},
+  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {}, arc1Objective: null, malaccaPrepStep: 0,
   inCombat: false, combatEnemy: null, combatEnemyHp: 0,
   combatTurn: 0, combatRound: 1, combatLog: [], combatSessionId: 0, combatResolved: false,
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
@@ -3031,6 +3032,8 @@ function openStoryMode(chapterId, options={}){
 
 function requestStoryMode(chapterId, delay=450){
   if(!game || storyModeChapter || storyModeLaunching) return;
+  const required={1:'begin_chapter_1',2:'complete_chapter_2',3:'complete_chapter_3',4:'complete_chapter_4'}[chapterId];
+  if(required && objectiveState()!==required && !game.comicProgress?.[chapterId]) { toast('🔒 Follow the current Objective first.'); return; }
   if(game.comicProgress?.[chapterId]) return;
   storyModePending = chapterId;
   clearTimeout(storyModeTransitionTimer);
@@ -3053,11 +3056,9 @@ function renderStoryModePanel(){
   const p=storyModeChapter[storyModeIndex];
   const panel=document.getElementById('storyModePanel');
   const counter=document.getElementById('storyModeCounter');
-  const next=document.getElementById('storyModeNext');
   if(!panel||!p) return;
-  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
+  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap the screen to continue</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
-  if(next) next.textContent='CONTINUE';
   window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 window.advanceStoryMode = function(){
@@ -3088,10 +3089,10 @@ function finishStoryModeChapter(id){
     logEvent(`📖 Story Mode Chapter ${id} complete: ${ch?.title || 'The Voyage'} · +${ch?.xp || 150} XP`,'gold');
     syncArc1StoryQuestProgress();
     saveGame();
-    if(id===1) goalToast('Chapter 1', 'Reach Level 5');
-    if(id===2) goalToast('Chapter 2 story', 'open Story → Chapter 3');
-    if(id===3) goalToast('Chapter 3 story', 'open Story → Chapter 4');
-    if(id===4) goalToast('Chapter 4 story', 'recruit Joel by defeating the Wreck Warden');
+    if(id===1) completeObjectiveAndRefresh(level()>=5 ? 'sail_malacca' : 'reach_level_5','Chapter 1');
+    if(id===2) completeObjectiveAndRefresh('recruit_crew','Chapter 2');
+    if(id===3) completeObjectiveAndRefresh('plan_with_crew','Chapter 3');
+    if(id===4) completeObjectiveAndRefresh('recruit_joel','Chapter 4');
     try { renderMainGoal(); } catch(e) {}
   }
   const autoNext=nextAutoStoryChapter(id);
@@ -3280,39 +3281,89 @@ function toast(msg, duration=2800) {
 function goalToast(completed, next, duration=5200) {
   toast(`🎯 Objective completed: ${completed}\n➡️ New Objective: ${next}`, duration);
 }
-function renderMainGoal() {
-  const el=document.getElementById('mainGoalPanel');
-  if(!el) return;
-  let title='Begin Chapter 1';
-  let text='Open Story and play The Storm That Remained.';
-  let optional='Optional: complete bounties for extra XP and gold.';
-  if(!game.comicProgress?.[1]) {
-    title='Begin Chapter 1 — The Storm That Remained';
-    text='Open Story and start the voyage. Story Mode is manual.';
-  } else if(level()<5) {
-    title='Reach Level 5';
-    text=`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`;
-  } else if(!game.foundCompanions?.joel && game.location!=='malacca') {
-    title='Sail to Malacca';
-    text='Malacca is unlocked. Sail there to continue the voyage.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[2]) {
-    title='Complete Chapter 2 — The First Port';
-    text='Open Story and play Chapter 2.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[3]) {
-    title='Complete Chapter 3 — A Crew of Choice';
-    text='Open Story and play Chapter 3.';
-  } else if(!game.foundCompanions?.joel && !game.comicProgress?.[4]) {
-    title='Complete Chapter 4 — The Guardian’s Fortress';
-    text='Open Story and prepare for Joel’s rescue.';
-  } else if(!game.foundCompanions?.joel) {
-    title='Recruit Joel';
-    text='Defeat the Wreck Warden and bring your first mate home.';
-  } else {
-    title='Continue the Voyage';
-    text='Sail toward the next crew member and keep building the Crimson Tide.';
-    optional='Optional: complete bounties whenever you visit a port for extra XP and gold.';
+function objectiveState() {
+  game.comicProgress = game.comicProgress || {};
+  game.foundCompanions = game.foundCompanions || {};
+  game.temporaryCrew = game.temporaryCrew || [];
+  if (game.arc1Objective) return game.arc1Objective;
+  if (!game.comicProgress[1]) return 'begin_chapter_1';
+  if (level() < 5) return 'reach_level_5';
+  if (!game.foundCompanions.joel && game.location !== 'malacca') return 'sail_malacca';
+  if (!game.foundCompanions.joel && !game.comicProgress[2]) return 'complete_chapter_2';
+  if (!game.foundCompanions.joel && !game.temporaryCrew.length) return 'recruit_crew';
+  if (!game.foundCompanions.joel && !game.comicProgress[3]) return 'complete_chapter_3';
+  if (!game.foundCompanions.joel && !game.malaccaPrepStep) return 'plan_with_crew';
+  if (!game.foundCompanions.joel && game.malaccaPrepStep === 1) return 'talk_to_joel';
+  if (!game.foundCompanions.joel && game.malaccaPrepStep === 2) return 'change_plan';
+  if (!game.foundCompanions.joel && !game.comicProgress[4]) return 'complete_chapter_4';
+  if (!game.foundCompanions.joel) return 'recruit_joel';
+  return 'continue_voyage';
+}
+function setArc1Objective(next, completedLabel=null) {
+  game.arc1Objective = next;
+  if (completedLabel) {
+    const nextLabels = {
+      begin_chapter_1:'Open Story → Chapter 1', reach_level_5:'Reach Level 5', sail_malacca:'Sail to Malacca',
+      complete_chapter_2:'Open Story → Chapter 2', recruit_crew:'Go to the Tavern → recruit a crew member',
+      complete_chapter_3:'Open Story → Chapter 3', plan_with_crew:'Plan with your crew', talk_to_joel:'Talk to Joel',
+      change_plan:'Change the plan', complete_chapter_4:'Open Story → Chapter 4', recruit_joel:'Defeat the Wreck Warden and rescue Joel',
+      continue_voyage:'Continue the Voyage'
+    };
+    goalToast(completedLabel, nextLabels[next] || next);
   }
-  el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(title)}</div><div class="ct-goal-text">${esc(text)}</div><div class="ct-goal-optional">${esc(optional)}</div>`;
+  renderMainGoal();
+  saveGameQuiet();
+}
+function renderObjectiveActionPanel() {
+  const el=document.getElementById('objectiveActionPanel'); if(!el) return;
+  const o=objectiveState(); let html='';
+  if(o==='plan_with_crew') html='<div class="ct-goal-kicker">Objective Action</div><div class="ct-goal-title">🗺️ Plan with the Crew</div><div class="ct-goal-text">The crew is aboard. Gather everyone and decide how to approach the guardian.</div><button class="btn btn-success" onclick="planWithCrew()">🗺️ Make the Plan</button>';
+  else if(o==='talk_to_joel') html='<div class="ct-goal-kicker">Objective Action</div><div class="ct-goal-title">💬 Talk to Joel</div><div class="ct-goal-text">Joel is near the wreck. San wants to speak with him before committing the crew.</div><button class="btn btn-success" onclick="talkToJoel()">💬 Talk to Joel</button>';
+  else if(o==='change_plan') html='<div class="ct-goal-kicker">Objective Action</div><div class="ct-goal-title">🗺️ Change the Plan</div><div class="ct-goal-text">What Joel says changes the risk. San needs to revise the crew’s approach.</div><button class="btn btn-success" onclick="changeMalaccaPlan()">🗺️ Change the Plan</button>';
+  if(html){el.style.display='block';el.innerHTML=html;} else {el.style.display='none';el.innerHTML='';}
+}
+function renderMainGoal() {
+  const el=document.getElementById('mainGoalPanel'); if(!el) return;
+  const labels={
+    begin_chapter_1:['Begin Chapter 1 — The Storm That Remained','Open Story and start the chapter.'],
+    reach_level_5:['Reach Level 5',`Level ${level()} / 5 — earn XP from bounties, harbor fights, trading and quests.`],
+    sail_malacca:['Sail to Malacca','Malacca is unlocked. Sail there to continue the voyage.'],
+    complete_chapter_2:['Complete Chapter 2 — The First Port','Open Story and play Chapter 2.'],
+    recruit_crew:['Recruit a Crew','Go to the Tavern and hire at least one temporary crew member.'],
+    complete_chapter_3:['Complete Chapter 3 — A Crew of Choice','Open Story and play Chapter 3.'],
+    plan_with_crew:['Plan with Your Crew','Gather the crew and make a plan for approaching the guardian.'],
+    talk_to_joel:['Talk to Joel','Go to the wreck and speak with Joel before the final approach.'],
+    change_plan:['Change the Plan','Return to the crew and revise the plan based on what Joel told you.'],
+    complete_chapter_4:['Complete Chapter 4 — The Guardian’s Fortress','Open Story and complete the preparation chapter.'],
+    recruit_joel:['Rescue Joel','Defeat the Wreck Warden and bring your first mate home.'],
+    continue_voyage:['Continue the Voyage','Sail toward the next crew member and keep building the Crimson Tide.']
+  };
+  const pair=labels[objectiveState()]||labels.continue_voyage;
+  el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(pair[0])}</div><div class="ct-goal-text">${esc(pair[1])}</div><div class="ct-goal-optional">Optional: complete bounties for extra XP and gold.</div>`;
+  renderObjectiveActionPanel();
+}
+function completeObjectiveAndRefresh(next, completedLabel){ setArc1Objective(next, completedLabel); }
+function planWithCrew(){
+  if(objectiveState()!=='plan_with_crew'){toast('Follow the current Objective first.');return;}
+  if(!(game.temporaryCrew||[]).length){toast('Recruit at least one temporary crew member at the Tavern first.');return;}
+  showModal('The Next Move','San gathers the crew around the table. Maps, rumours, and the wreck’s reports are spread out before them.<br><br><i>They will approach carefully. No one gets left behind.</i>',[
+    {text:'🗺️ Make the Plan',action:()=>{closeModal();game.malaccaPrepStep=1;completeObjectiveAndRefresh('talk_to_joel','planned with the crew');}},
+    {text:'Not Yet',action:closeModal}
+  ]);
+}
+function talkToJoel(){
+  if(objectiveState()!=='talk_to_joel'){toast('Follow the current Objective first.');return;}
+  showModal('A Quiet Conversation','San finds the man near the edge of the wreck site. He looks like someone who has been waiting for a decision.<br><br><i>“You should not take your people in there the way you planned.”</i><br><br>Joel does not explain why he sounds so certain. San listens anyway.',[
+    {text:'💬 Finish the Conversation',action:()=>{closeModal();game.malaccaPrepStep=2;completeObjectiveAndRefresh('change_plan','talked to Joel');}},
+    {text:'Not Yet',action:closeModal}
+  ]);
+}
+function changeMalaccaPlan(){
+  if(objectiveState()!=='change_plan'){toast('Follow the current Objective first.');return;}
+  showModal('A Different Plan','San returns to the crew and changes the approach.<br><br><i>The original plan is too risky. They will draw the guardian out, create an opening, and extract Joel instead of charging straight into the ruins.</i>',[
+    {text:'🗺️ Change the Plan',action:()=>{closeModal();game.malaccaPrepStep=3;completeObjectiveAndRefresh('complete_chapter_4','changed the plan');}},
+    {text:'Not Yet',action:closeModal}
+  ]);
 }
 
 function rollDice(notation) {
@@ -3424,6 +3475,7 @@ function goScreen(name) {
   if (name === 'story') renderStory();
   if (name === 'log') renderLog();
   updateUI();
+  try { renderMainGoal(); } catch(e) {}
 }
 function switchPortTab(tab) {
   document.querySelectorAll('#portContent .tab-content').forEach(t => t.classList.remove('active'));
@@ -3670,7 +3722,9 @@ function startGame() {
 
   game.comicProgress = game.comicProgress || {};
   game.storyQuestProgress = game.storyQuestProgress || {};
-  game.mainGoal = 'reach_level_5';
+  game.mainGoal = 'begin_chapter_1';
+  game.arc1Objective = 'begin_chapter_1';
+  game.malaccaPrepStep = 0;
   logEvent('⚓ San sets sail from Singapore aboard ' + game.shipName + ' with ' + game.gold + ' gold.', 'neutral');
   updateUI();
   renderMarket();
@@ -3846,8 +3900,12 @@ function startGuardianFight(portId) {
   const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
   const quest = ARC1_STORY_QUESTS.find(q => q.portId === portId);
 
-  // First-time recruitment is level- and order-gated. Optional rematches for
+  // First-time recruitment is objective-gated. Optional rematches for
   // Senedra/Zaki remain available after their independent escapes.
+  if (!escaped && portId === 'malacca' && objectiveState() !== 'recruit_joel') {
+    toast('🔒 The Wreck Warden is locked. Complete the current Objective first.');
+    return;
+  }
   if (!escaped && quest) {
     if (level() < quest.level) {
       toast(`Chapter ${quest.id} requires Level ${quest.level}. You are Level ${level()}.`);
@@ -4038,14 +4096,8 @@ function renderStory() {
       let actionHtml = `<div class="story-actions"><div class="story-chip">${esc(statusText)}</div></div>`;
       if(st === 'active' && !atPort){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="sailTo('${q.portId}')">⚓ Sail to ${esc(port ? port.name : 'Drowned Passage')}</button></div>`;
-      } else if(st === 'active' && atPort && q.id === 2 && needsComic){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(${comicForQuest},80)">▶ Play Chapter 2</button></div><div class="story-actions"><div class="story-chip">Open Story and play the chapter when you are ready.</div></div>`;
-      } else if(st === 'active' && atPort && q.id === 2 && game.comicProgress?.[2] && !game.comicProgress?.[3]){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(3,80)">▶ Play Chapter 3</button></div>`;
-      } else if(st === 'active' && atPort && q.id === 2 && game.comicProgress?.[3] && !game.comicProgress?.[4]){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="requestStoryMode(4,80)">▶ Play Chapter 4</button></div>`;
       } else if(st === 'active' && atPort && q.id === 2){
-        actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startGuardianFight('malacca')">⚔️ Recruit Joel — Wreck Warden</button></div>`;
+        actionHtml = `<div class="story-actions"><div class="story-chip">🎯 Follow the current Objective. Story chapters are started manually.</div></div>`;
       } else if(st === 'active' && atPort && q.id === 8){
         actionHtml = `<div class="story-actions"><button class="btn btn-small btn-danger" onclick="startFinalFight()">⚔️ Enter the Drowned Passage</button></div>`;
       } else if(st === 'active' && atPort && q.companion){
@@ -4065,6 +4117,13 @@ function renderStory() {
   </section>`;
 
   html += renderArc1ComicArchive();
+  const so=objectiveState();
+  const storyButton = so==='begin_chapter_1' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(1,80)">▶ Play Chapter 1</button>' :
+    so==='complete_chapter_2' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(2,80)">▶ Play Chapter 2</button>' :
+    so==='complete_chapter_3' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(3,80)">▶ Play Chapter 3</button>' :
+    so==='complete_chapter_4' ? '<button class="btn btn-small btn-magic" onclick="requestStoryMode(4,80)">▶ Play Chapter 4</button>' :
+    '<div class="story-chip">Story chapters are manual. Follow the current Objective.</div>';
+  html += `<section class="panel" style="margin-top:12px;"><div class="panel-title">🎯 Current Story Objective</div><div class="story-actions">${storyButton}</div></section>`;
 
   // The canonical Arc I comics own the narrative presentation. Story Mode is the interactive presentation; the archive remains the reference library.
 
@@ -4442,6 +4501,7 @@ function hireTemporaryCrew(id) {
   game.partyHp[hire.id] = hire.maxHp;
   game.partyMp[hire.id] = Number(hire.maxMp || 30);
   logEvent(`🍺 ${hire.name} joins the crew for this voyage.`, 'good');
+  if (objectiveState() === 'recruit_crew') completeObjectiveAndRefresh('complete_chapter_3','recruited a temporary crew member');
   renderPort();
   updateUI();
 }
@@ -5693,8 +5753,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V43 · Objectives + Mobile Market';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V43</strong> · Objectives + Mobile Market</footer>
+<script>window.__CT_BUILD__='V45 · Objectives + Mobile Market · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V45</strong> · Objectives + Mobile Market · Tap Story</footer>
 
 </body>
 </html>
