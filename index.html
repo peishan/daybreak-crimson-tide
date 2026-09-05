@@ -3044,9 +3044,8 @@ function requestStoryMode(chapterId, delay=450){
     if(!storyModePending || storyModeChapter || storyModeLaunching) return;
     const overlay=document.getElementById('storyModeOverlay');
     if(!overlay){ storyModeTransitionTimer=setTimeout(attempt,300); return; }
-    if(!document.getElementById('portScreen')?.classList.contains('active')){
-      storyModeTransitionTimer=setTimeout(attempt,300); return;
-    }
+    // Story Mode is now launched manually from the Story tab as well as
+    // from other screens. Do not require the Port screen to be active.
     const id=storyModePending;
     if(openStoryMode(id)) storyModePending=null;
     else storyModePending=null;
@@ -5760,7 +5759,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V51 · Sail Navigation Fix · Tap Story'</script>
+<script>window.__CT_BUILD__='V52 · Story Chapter Launch Fix · Tap Story'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V51</strong> · Live Objective State · Tap Story</footer>
 
 </body>
