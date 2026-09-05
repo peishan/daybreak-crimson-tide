@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V36">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V47">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V36</title>
+<title>Daybreak: Crimson Tide — Build V47</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3141,9 +3141,9 @@ function getStoryModeNextStep(id){
   return {message:'The chapter is complete. Your next objective is shown by the Goal Toast and Current Objective.'};
 }
 function continueStoryFlow(id){
-  // Manual Story Mode: Continue exits the completed chapter and immediately
-  // rebuilds the Story screen from the current in-memory state. No refresh,
-  // save/load cycle, or automatic chapter launch is required.
+  // Manual Story Mode: completion is committed first, then the Story screen
+  // is rebuilt through the normal screen-navigation path. This guarantees
+  // newly unlocked chapters appear immediately without a browser refresh.
   clearTimeout(storyModeTransitionTimer);
   storyModePending=null;
   const overlay=document.getElementById('storyModeOverlay');
@@ -3157,16 +3157,23 @@ function continueStoryFlow(id){
   storyModeChapterId=null;
   storyModeIndex=0;
   try {
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    const storyScreen=document.getElementById('storyScreen');
-    if(storyScreen) storyScreen.classList.add('active');
-    renderStory();
-    renderMainGoal();
-    updateUI();
-    window.scrollTo({top:0,left:0,behavior:'instant'});
+    // Persist the already-updated in-memory state before rebuilding the screen.
+    saveGameQuiet();
+    // Use the canonical navigation path so all Story-dependent UI is rebuilt
+    // from the same current state in one pass.
+    goScreen('story');
+    requestAnimationFrame(()=>{
+      try { renderStory(); renderMainGoal(); updateUI(); } catch(e) { console.error('Story post-refresh render error:',e); }
+    });
   } catch(e) {
     console.error('Story completion refresh error:',e);
-    try { goScreen('story'); } catch(err) {}
+    const storyScreen=document.getElementById('storyScreen');
+    if(storyScreen){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      storyScreen.classList.add('active');
+      try { renderStory(); renderMainGoal(); updateUI(); } catch(err) { console.error(err); }
+    }
+    window.scrollTo(0,0);
   }
 }
 
@@ -5773,8 +5780,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V45 · Objectives + Mobile Market · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V45</strong> · Objectives + Mobile Market · Tap Story</footer>
+<script>window.__CT_BUILD__='V47 · Immediate Story State Refresh · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V47</strong> · Refresh-Free Story Completion · Tap Story</footer>
 
 </body>
 </html>
