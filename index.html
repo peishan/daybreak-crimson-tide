@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V50">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V50</title>
+<title>Daybreak: Crimson Tide — Build V51</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -4292,12 +4292,20 @@ function isPortUnlocked(portId){
 
 function renderNavigation() {
   const grid = document.getElementById('navPortGrid');
+  if (!grid) return;
   const currentPort = PORTS.find(p => p.id === game.location);
+  const objective = objectiveState();
   grid.innerHTML = PORTS.map(port => {
     if (port.id === game.location) {
       return `<div class="port-card current"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">📍 You are here</div></div>`;
     }
-
+    const unlocked = isPortUnlocked(port.id);
+    const isObjectiveDestination = objective === 'sail_malacca' && port.id === 'malacca';
+    if (!unlocked) {
+      return `<div class="port-card" style="opacity:.55;"><div class="port-icon">🔒</div><div class="port-name">${port.name}</div><div class="port-dist">Locked</div></div>`;
+    }
+    const dist = currentPort?.distances?.[port.id] ?? '?';
+    return `<div class="port-card ${isObjectiveDestination ? 'objective-target' : ''}" onclick="sailTo('${port.id}')" style="cursor:pointer;"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">${isObjectiveDestination ? '🎯 Current Objective' : '⛵ ' + dist + ' units'} </div></div>`;
   }).join('');
 
   document.getElementById('voyageConditions').innerHTML =
@@ -5752,8 +5760,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V50 · Story Chapter Flow · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V50</strong> · Live Objective State · Tap Story</footer>
+<script>window.__CT_BUILD__='V51 · Sail Navigation Fix · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V51</strong> · Live Objective State · Tap Story</footer>
 
 </body>
 </html>
