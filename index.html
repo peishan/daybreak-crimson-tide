@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V47">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V48">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V47</title>
+<title>Daybreak: Crimson Tide — Build V48</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3208,11 +3208,19 @@ function maybeLaunchPendingStory(){
 }
 function triggerArrivalStory(portId){
   if(!game) return;
+  // Arrival must commit the new Objective immediately. Do not rely on a
+  // browser refresh or a later render to recalculate the progression state.
   if(portId==='malacca' && !game.foundCompanions?.joel && !game.comicProgress?.[2]) {
-    goalToast('reached Malacca', 'open Story → Chapter 2: The First Port');
+    if(objectiveState()==='sail_malacca' || (level()>=5 && game.location==='malacca')) {
+      completeObjectiveAndRefresh('complete_chapter_2','reached Malacca');
+    } else {
+      renderMainGoal();
+    }
   } else if(portId==='palembang' && !game.foundCompanions?.aisyah) {
+    setArc1Objective('complete_chapter_12','reached Palembang');
     toast('🎯 New Objective: open Story → Chapter 12: The Debt That Wasn’t Hers.', 5200);
   } else if(portId==='batavia' && !game.foundCompanions?.eliz) {
+    setArc1Objective('complete_chapter_15','reached Batavia');
     toast('🎯 New Objective: open Story → Chapter 15: The One Who Stayed.', 5200);
   }
   renderMainGoal();
@@ -4709,8 +4717,8 @@ function gainXP(amount) {
   const after = level();
   if (after > before) {
     logEvent('⭐ LEVEL UP! Now level ' + after + '!', 'gold');
-    if (before < 5 && after >= 5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && game.location==='singapore') {
-      goalToast('reached Level 5', 'sail to Malacca');
+    if (before < 5 && after >= 5 && game.comicProgress?.[1] && !game.foundCompanions?.joel && game.location==='singapore' && objectiveState()==='reach_level_5') {
+      completeObjectiveAndRefresh('sail_malacca','reached Level 5');
     } else {
       toast(`⭐ Objective progress: reached Level ${after}.`, 3200);
     }
@@ -5780,8 +5788,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V47 · Immediate Story State Refresh · Tap Story'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V47</strong> · Refresh-Free Story Completion · Tap Story</footer>
+<script>window.__CT_BUILD__='V48 · Live Objective State · Tap Story'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V48</strong> · Refresh-Free Story Completion · Tap Story</footer>
 
 </body>
 </html>
