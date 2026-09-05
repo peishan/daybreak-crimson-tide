@@ -3020,7 +3020,7 @@ function renderStoryModePanel(){
   if(!panel||!p) return;
   panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap continue to follow the voyage</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
-  if(next) next.textContent=storyModeIndex===storyModeChapter.length-1?'CONTINUE':'TAP TO CONTINUE';
+  if(next) next.textContent='CONTINUE';
   window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 window.advanceStoryMode = function(){
@@ -3051,9 +3051,10 @@ function finishStoryModeChapter(id){
     logEvent(`📖 Story Mode Chapter ${id} complete: ${ch?.title || 'The Voyage'} · +${ch?.xp || 150} XP`,'gold');
     syncArc1StoryQuestProgress();
     saveGame();
-    if(id===2) toast('🎯 Goal completed: Chapter 2 story. ➡️ New Goal: open Story → Chapter 3.', 5200);
-    if(id===3) toast('🎯 Goal completed: Chapter 3 story. ➡️ New Goal: open Story → Chapter 4.', 5200);
-    if(id===4) toast('🎯 Goal completed: Chapter 4 story. ➡️ New Goal: recruit Joel by defeating the Wreck Warden.', 5200);
+    if(id===1) goalToast('Chapter 1', 'Reach Level 5');
+    if(id===2) goalToast('Chapter 2 story', 'open Story → Chapter 3');
+    if(id===3) goalToast('Chapter 3 story', 'open Story → Chapter 4');
+    if(id===4) goalToast('Chapter 4 story', 'recruit Joel by defeating the Wreck Warden');
     try { renderMainGoal(); } catch(e) {}
   }
   const autoNext=nextAutoStoryChapter(id);
@@ -3063,7 +3064,7 @@ function finishStoryModeChapter(id){
       const title=ch?.title || `Chapter ${id}`;
       const next = getStoryModeNextStep(id);
       const nextTitle=autoNext ? (ARC1_COMICS.find(x=>x.id===autoNext)?.title || `Chapter ${autoNext}`) : '';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p>${autoNext?`<div class="story-mode-next-objective"><div class="story-mode-next-label">CONTINUING THE STORY</div><div class="story-mode-next-text">${esc(nextTitle)}<br><span style="font-size:.8rem;opacity:.72;">The next scene will begin automatically.</span></div></div>`:`<div class="story-mode-next-objective"><div class="story-mode-next-label">NEXT OBJECTIVE</div><div class="story-mode-next-text">${esc(next.objective)}</div></div>`}<div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div>${autoNext?`<div class="story-mode-countdown" id="storyModeCountdown">NEXT SCENE IN 2…</div>`:`<button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">${next.button || 'CONTINUE TO THE VOYAGE'}</button>`}</div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>${esc(next.message)}</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><div class="story-mode-next-objective"><div class="story-mode-next-label">CAPTAIN'S GOAL UPDATED</div><div class="story-mode-next-text">Check the goal toast for your next objective.</div></div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="closeStoryMode(); updateUI(); renderStory(); goScreen('port'); return false;">CONTINUE</button></div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -5599,8 +5600,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V39 · Story Mode Input Bridge';</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V39</strong> · Story Mode Input Bridge</footer>
+<script>window.__CT_BUILD__='V40 · Goal Toast Story Completion';</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V40</strong> · Story Mode Input Bridge</footer>
 
 </body>
 </html>
