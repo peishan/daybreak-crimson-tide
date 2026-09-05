@@ -3378,7 +3378,7 @@ function setArc1Objective(next, completedLabel=null) {
   }
   renderMainGoal();
   renderObjectiveActionPanel();
-  if (typeof renderStoryScreen === 'function') renderStoryScreen();
+  if (typeof renderStory === 'function') renderStory();
   if (typeof renderNavigation === 'function') renderNavigation();
   saveGameQuiet();
 }
