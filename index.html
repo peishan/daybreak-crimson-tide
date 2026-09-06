@@ -77,9 +77,9 @@
   else addFloatingDebugButton();
 })();
 </script>
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V59">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V59</title>
+<title>Daybreak: Crimson Tide — Build V61</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3106,6 +3106,23 @@ function openStoryMode(chapterId, options={}){
     storyModeChapter = chapter;
     storyModeChapterId = chapterId;
     storyModeIndex = 0;
+    // finishStoryModeChapter() replaces the ENTIRE .story-mode-shell innerHTML
+    // with a "Chapter Complete" screen, permanently destroying #storyModePanel
+    // and #storyModeCounter in the process. Every open must therefore rebuild
+    // the shell's base structure fresh — it can never be assumed to still
+    // exist after a previous chapter finished. This was the actual root cause
+    // of chapters silently failing to display after the first one completed.
+    const shell = overlay.querySelector('.story-mode-shell');
+    if(shell){
+      shell.innerHTML = `<div class="story-mode-top"><div><div class="story-mode-kicker">Story Mode</div><div id="storyModeTitle" class="story-mode-title"></div></div><div id="storyModeCounter" class="story-mode-counter"></div></div><div id="storyModePanel" class="story-mode-panel"></div>`;
+      const titleEl = document.getElementById('storyModeTitle');
+      if(titleEl){
+        const meta = (typeof ARC1_COMICS !== 'undefined') ? ARC1_COMICS.find(c=>c.id===chapterId) : null;
+        titleEl.textContent = meta ? `Chapter ${chapterId} — ${meta.title}` : `Chapter ${chapterId}`;
+      }
+    } else {
+      console.error('[StoryMode] openStoryMode: .story-mode-shell missing from DOM — cannot rebuild panel');
+    }
     overlay.style.display='flex';
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden','false');
@@ -3113,7 +3130,8 @@ function openStoryMode(chapterId, options={}){
     ctPlayMusic('explore');
     renderStoryModePanel();
     storyModeLaunching = false;
-    console.log('[StoryMode] openStoryMode SUCCESS for chapter', chapterId, '- overlay display now:', overlay.style.display, 'active class:', overlay.classList.contains('active'));
+    const panelExists = !!document.getElementById('storyModePanel');
+    console.log('[StoryMode] openStoryMode SUCCESS for chapter', chapterId, '- overlay display now:', overlay.style.display, 'active class:', overlay.classList.contains('active'), '- #storyModePanel exists:', panelExists);
     return true;
   } catch(e) {
     // Never leave storyModeLaunching stuck true — that would silently block
@@ -3130,7 +3148,7 @@ function openStoryMode(chapterId, options={}){
 }
 
 function requestStoryMode(chapterId, delay=450){
-  // Every early-return path below now surfaces a toast + console.warn. A tap
+  // Every early-return path below surfaces a toast + console.warn. A tap
   // that visibly does nothing is undebuggable on a phone with no devtools —
   // this makes "why didn't it open" answerable from the log/toast alone.
   if(!STORY_MODE_CHAPTERS[chapterId]){ console.warn('[StoryMode] no chapter data for id', chapterId); toast('⚠️ Story Mode error: chapter data missing.'); return; }
@@ -3143,20 +3161,14 @@ function requestStoryMode(chapterId, delay=450){
   // checked directly so no browser refresh is needed.
   if(required && objectiveState()!==required && !game.comicProgress?.[chapterId]) { console.warn('[StoryMode] blocked: objective mismatch. required=',required,'current=',objectiveState()); toast('🔒 Follow the current Objective first.'); return; }
   if(game.comicProgress?.[chapterId]){ console.warn('[StoryMode] blocked: chapter already marked complete', chapterId); toast('✓ This chapter is already complete. Open Story to see what\'s next.'); return; }
-  storyModePending = chapterId;
-  clearTimeout(storyModeTransitionTimer);
-  const attempt=()=>{
-    if(!storyModePending){ console.warn('[StoryMode] attempt aborted: storyModePending cleared'); return; }
-    if(storyModeChapter){ console.warn('[StoryMode] attempt aborted: chapter already open'); storyModePending=null; return; }
-    if(storyModeLaunching){ console.warn('[StoryMode] attempt aborted: still launching, retrying'); storyModeTransitionTimer=setTimeout(attempt,100); return; }
-    const overlay=document.getElementById('storyModeOverlay');
-    if(!overlay){ console.warn('[StoryMode] attempt: overlay element not found yet, retrying'); storyModeTransitionTimer=setTimeout(attempt,100); return; }
-    const id=storyModePending;
-    storyModePending=null;
-    const opened=openStoryMode(id);
-    if(!opened){ console.warn('[StoryMode] openStoryMode returned false for', id); toast('⚠️ Story Mode failed to open. Please try again.'); }
-  };
-  storyModeTransitionTimer=setTimeout(attempt,Math.max(0,delay));
+  // Previously this deferred to a setTimeout(attempt, delay) before opening,
+  // mirroring the same "Play Story Mode" action available lower down on the
+  // Comic Archive (which calls openStoryMode() directly, no timer, and has
+  // proven reliable). The deferred timer was found to silently never fire on
+  // at least one real device/browser, with no error of any kind — so it's
+  // removed. Both buttons now behave identically: open immediately.
+  const opened=openStoryMode(chapterId);
+  if(!opened){ console.warn('[StoryMode] openStoryMode returned false for', chapterId); toast('⚠️ Story Mode failed to open. Please try again.'); }
 }
 
 function renderStoryModePanel(){
@@ -5900,8 +5912,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V59 · Image + Success Logging'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V59</strong> · Image + Success Logging · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V61 · Fixed Shell Destruction Bug'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V61</strong> · Fixed Chapter Launch (Real Fix) · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 </body>
 </html>
