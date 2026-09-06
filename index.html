@@ -28,6 +28,21 @@
   window.addEventListener('unhandledrejection', function(ev){
     push('unhandledrejection', [String(ev.reason)]);
   });
+  // Log every tap/click that lands on a button or story-related element, so
+  // we can tell "the tap never reached the button" apart from "the button's
+  // own code ran and did nothing" — the two look identical from the outside.
+  document.addEventListener('click', function(ev){
+    try {
+      const t = ev.target;
+      const tag = t.tagName;
+      const isInteresting = tag === 'BUTTON' || (t.closest && (t.closest('button') || t.closest('.story-actions') || t.closest('#storyModeOverlay')));
+      if(!isInteresting) return;
+      const el = tag === 'BUTTON' ? t : (t.closest('button') || t);
+      const label = (el.textContent||'').trim().slice(0,40);
+      const onclickAttr = el.getAttribute && el.getAttribute('onclick');
+      push('tap', ['target=<'+tag+'> text="'+label+'" onclick="'+(onclickAttr||'none')+'" id='+(el.id||'none')]);
+    } catch(e) {}
+  }, true);
   window.__ctShowDebugLog = function(){
     const existing = document.getElementById('ctDebugLogOverlay');
     if(existing){ existing.remove(); return; }
@@ -62,9 +77,9 @@
   else addFloatingDebugButton();
 })();
 </script>
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V56">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V58">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V56</title>
+<title>Daybreak: Crimson Tide — Build V58</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -4530,6 +4545,16 @@ function handleVoyageEvent(event) {
 // ---------------------------------------------------------------------------
 // TAVERN
 // ---------------------------------------------------------------------------
+// renderPort() was called from 6 places (free rest, tavern rest, crew hire/
+// dismiss) but never defined — every call threw an uncaught ReferenceError,
+// silently aborting whatever function was mid-execution at that point. This
+// mirrors what goScreen('port') already does to refresh the Port screen.
+function renderPort() {
+  try { renderMarket(); } catch(e) { console.error('[renderPort] renderMarket failed:', e); }
+  try { renderCargo(); } catch(e) { console.error('[renderPort] renderCargo failed:', e); }
+  try { renderIntel(); } catch(e) { console.error('[renderPort] renderIntel failed:', e); }
+  try { renderExplore(); } catch(e) { console.error('[renderPort] renderExplore failed:', e); }
+}
 function freeRestAtPort() {
   if (game.freeRestDay === game.day) {
     toast('You have already used the free rest site today.');
@@ -5866,8 +5891,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V56 · Floating Debug Button'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V56</strong> · Floating Debug Button · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V58 · Tap Tracing'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V58</strong> · Tap Tracing · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 </body>
 </html>
