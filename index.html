@@ -79,7 +79,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V64</title>
+<title>Daybreak: Crimson Tide — Build V65</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -5912,8 +5912,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V64 · Fixed Chapter 1 Lockout'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V64</strong> · Full Arc I Story Panels · Rescue Gates (Fixed) · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V65 · Fixed Chapters 5-8 Gate'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V65</strong> · Full Arc I Story Panels · Rescue Gates (Fixed) · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6026,6 +6026,15 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if(!game.malaccaPrepStep) game.malaccaPrepStep=3;
       if(typeof saveGame==='function') saveGame();
     }
+    // Chapters 5-8 (Joel's own arc — first meeting, rescue, aftermath, and
+    // the search's close) previously had no gate anywhere in this chain
+    // either, same bug as 14/16/17 below: reachable via requestStoryMode's
+    // own guard, but never actually requested by objectiveState(), so
+    // never surfaced as CURRENT and stayed permanently locked in the UI.
+    if(!game.comicProgress?.[5]) return 'complete_chapter_5';
+    if(!game.comicProgress?.[6]) return 'complete_chapter_6';
+    if(!game.comicProgress?.[7]) return 'complete_chapter_7';
+    if(!game.comicProgress?.[8]) return 'complete_chapter_8';
     if(!game.foundCompanions?.aisyah){
       if(game.location!=='palembang') return 'sail_palembang';
       if(!game.comicProgress?.[9]) return 'complete_chapter_9';
@@ -6173,8 +6182,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   // Ensure build marker is visible.
   const f=document.getElementById('ctBuildFooter');
-  if(f){ f.innerHTML='Daybreak: Crimson Tide · <strong>Build V64</strong> · Full Arc I Story Panels · Rescue Gates (Fixed)'; }
-  window.__CT_BUILD__='V64 · Fixed Chapter 1 Lockout';
+  if(f){ f.innerHTML='Daybreak: Crimson Tide · <strong>Build V65</strong> · Full Arc I Story Panels · Rescue Gates (Fixed)'; }
+  window.__CT_BUILD__='V65 · Fixed Chapters 5-8 Gate';
 })();
 </script>
 </body>
