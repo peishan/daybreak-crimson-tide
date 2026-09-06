@@ -77,9 +77,9 @@
   else addFloatingDebugButton();
 })();
 </script>
-<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V58">
+<meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V59">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V58</title>
+<title>Daybreak: Crimson Tide — Build V59</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3113,6 +3113,7 @@ function openStoryMode(chapterId, options={}){
     ctPlayMusic('explore');
     renderStoryModePanel();
     storyModeLaunching = false;
+    console.log('[StoryMode] openStoryMode SUCCESS for chapter', chapterId, '- overlay display now:', overlay.style.display, 'active class:', overlay.classList.contains('active'));
     return true;
   } catch(e) {
     // Never leave storyModeLaunching stuck true — that would silently block
@@ -3167,6 +3168,14 @@ function renderStoryModePanel(){
   panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap the screen to continue</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
   window.scrollTo({top:0,left:0,behavior:'instant'});
+  // Diagnostic: confirm whether this panel's image actually loads. A broken
+  // image path would make the overlay open successfully but look identical
+  // to "nothing happened" if there's no visible fallback content.
+  const img = panel.querySelector('img.story-mode-image');
+  if(img){
+    img.addEventListener('load', ()=>console.log('[StoryMode] image loaded OK:', p.image), {once:true});
+    img.addEventListener('error', ()=>console.error('[StoryMode] IMAGE FAILED TO LOAD:', p.image), {once:true});
+  }
 }
 window.advanceStoryMode = function(){
   try {
@@ -5891,8 +5900,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V58 · Tap Tracing'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V58</strong> · Tap Tracing · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V59 · Image + Success Logging'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V59</strong> · Image + Success Logging · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 </body>
 </html>
