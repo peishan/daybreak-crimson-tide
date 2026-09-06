@@ -79,7 +79,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V63</title>
+<title>Daybreak: Crimson Tide — Build V64</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -5912,8 +5912,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V63 · Fixed Crop, Reconciliation, Orphaned Chapters'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V63</strong> · Full Arc I Story Panels · Rescue Gates (Fixed) · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V64 · Fixed Chapter 1 Lockout'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V64</strong> · Full Arc I Story Panels · Rescue Gates (Fixed) · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6155,7 +6155,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     let html='<section class="story-act story-quest-panel"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">24 story chapters. Manual Story Mode. Your Objective determines what is ready.</div></div>';
     ARC1_COMICS.forEach(ch=>{
       const done=!!game.comicProgress?.[ch.id];
-      const ready=!done && so===('complete_chapter_'+ch.id);
+      // Chapter 1 is a special case: objectiveState() names its "ready" state
+      // 'begin_chapter_1', not 'complete_chapter_1' like every other chapter.
+      // Comparing it against the generic 'complete_chapter_N' pattern meant
+      // Chapter 1 could never match and always rendered as locked, even at
+      // the very start of a new game.
+      const requiredState = ch.id===1 ? 'begin_chapter_1' : ('complete_chapter_'+ch.id);
+      const ready=!done && so===requiredState;
       const special=(ch.id===13&&!game.foundCompanions?.aisyah)?'RESCUE NEXT':(ch.id===15&&!game.foundCompanions?.eliz)?'RESCUE NEXT':(ch.id===18&&!game.foundCompanions?.mezstorm)?'RESCUE NEXT':'';
       const status=done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       const action=ready?'<button class="btn btn-small btn-success" onclick="requestStoryMode('+ch.id+',80)">READ CHAPTER</button>':special?'<div class="story-chip">Prepare for the rescue objective.</div>':'<div class="story-chip">Follow the current Objective.</div>';
@@ -6167,8 +6173,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   // Ensure build marker is visible.
   const f=document.getElementById('ctBuildFooter');
-  if(f){ f.innerHTML='Daybreak: Crimson Tide · <strong>Build V63</strong> · Full Arc I Story Panels · Rescue Gates (Fixed)'; }
-  window.__CT_BUILD__='V63 · Fixed Crop, Reconciliation, Orphaned Chapters';
+  if(f){ f.innerHTML='Daybreak: Crimson Tide · <strong>Build V64</strong> · Full Arc I Story Panels · Rescue Gates (Fixed)'; }
+  window.__CT_BUILD__='V64 · Fixed Chapter 1 Lockout';
 })();
 </script>
 </body>
