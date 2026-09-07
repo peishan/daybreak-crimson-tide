@@ -73,13 +73,30 @@
     btn.onclick = function(ev){ ev.stopPropagation(); window.__ctShowDebugLog(); };
     document.body.appendChild(btn);
   }
+  // Universal shortcut back to the landing/menu screen (Continue Voyage,
+  // Comic Chapters archive, Codex, Settings, etc.) — reachable from any
+  // screen, not just Port, using the same always-on-top pattern as the
+  // debug button. goScreen('intro') already re-renders live stats via
+  // renderLanding(), so this is safe to use mid-session.
+  function addFloatingMenuButton(){
+    if(document.getElementById('ctMenuFab')) return;
+    const btn = document.createElement('div');
+    btn.id = 'ctMenuFab';
+    btn.textContent = '🏠';
+    btn.style.cssText = 'position:fixed;bottom:14px;left:14px;width:40px;height:40px;border-radius:50%;background:rgba(20,14,8,.88);border:1px solid #e8c547;color:#e8c547;display:flex;align-items:center;justify-content:center;font-size:19px;z-index:999998;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5);';
+    btn.title = 'Back to menu';
+    btn.onclick = function(ev){ ev.stopPropagation(); if(typeof goScreen==='function') goScreen('intro'); };
+    document.body.appendChild(btn);
+  }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', addFloatingDebugButton, {once:true});
   else addFloatingDebugButton();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', addFloatingMenuButton, {once:true});
+  else addFloatingMenuButton();
 })();
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V68</title>
+<title>Daybreak: Crimson Tide — Build V69</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3850,11 +3867,43 @@ function wireCrewPortraits(){
 }
 function renderComicArchive(){
   const el=document.getElementById('comicArchive'); if(!el)return;
-  el.innerHTML=`<div class="comic-archive-card">
-    <div class="comic-archive-title">Legends of Daybreak — Chapters 1–12</div>
-    <div class="comic-archive-sub">The Daybreak story archive.</div>
-    ${true ? '<a class="btn btn-success" href="assets/comics/legends-of-daybreak-1.pdf" target="_blank" rel="noopener">📖 Open Comic PDF</a>' : '<div class="muted">Comic PDF not bundled in this build.</div>'}
-  </div>`;
+  // This used to link to a "Legends of Daybreak" PDF that isn't even bundled
+  // in this build — leftover from a shared template, not Crimson Tide's own
+  // content. Replaced with a real back-reading archive: every chapter the
+  // player has already completed, across both arcs, linking to its full
+  // page image in a new tab. Chapters not yet reached stay hidden rather
+  // than shown locked, since this screen is reachable from the landing page
+  // before the player has necessarily loaded their save.
+  const ARC1_IMAGES = {
+    1:'ch01-storm-that-remained.png', 2:'ch02-the-first-port.png', 3:'ch03-a-crew-of-choice.png',
+    4:'ch04-the-guardians-fortress.png', 5:'ch05-the-voice-behind-the-wall.png', 6:'ch06-the-shield-returns.png',
+    7:'ch07-the-shield-that-remained.png', 8:'ch08-the-tradewinds-remember.png', 9:'ch09-shield-returns.png',
+    10:'ch10-day-sea-rested.png', 11:'ch11-day-we-chose.png', 12:'ch12-debt-wasnt-hers.png',
+    13:'ch13-debt-collector.png', 14:'ch14-two-sisters-one-ship.png', 15:'ch15-one-who-stayed.png',
+    16:'ch16-mark-we-carried.png', 17:'ch17-things-we-do-without-knowing.png', 18:'ch18-mezstorm-rescue.png',
+    19:'ch19-crew-we-choose.png', 20:'ch20-senedra.png', 21:'ch21-zaki.png',
+    22:'ch22-mezstorm.png', 23:'ch23-siblings.png', 24:'ch24-drowned-passage.png'
+  };
+  const progress1 = (typeof game!=='undefined' && game.comicProgress) || {};
+  const progress2 = (typeof game!=='undefined' && game.comicProgress2) || {};
+  const arc1Read = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
+    .filter(ch => !!progress1[ch.id] && ARC1_IMAGES[ch.id])
+    .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1/'+ARC1_IMAGES[ch.id]}));
+  const arc2Read = (typeof window.ARC2_CHAPTERS!=='undefined' ? window.ARC2_CHAPTERS : [])
+    .filter(ch => !!progress2[ch.id] && ch.image)
+    .map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
+
+  function section(label, chapters){
+    if(!chapters.length) return '<div class="comic-archive-card"><div class="comic-archive-sub">No '+label+' chapters read yet.</div></div>';
+    return chapters.map(ch =>
+      '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+      '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>'
+    ).join('');
+  }
+
+  el.innerHTML =
+    '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read) +
+    '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc II — A Voyage to Remember</div>' + section('Arc II', arc2Read);
 }
 
 function hasSavedVoyage() {
@@ -5916,8 +5965,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V68 · Arc II Splash + Cover Art'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V68</strong> · Arc II Splash · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V69 · Auto-Backup + Reload Nudge'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V69</strong> · Auto-Backup · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6343,5 +6392,52 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 </script>
 
 <!-- END ARC2_MARKER -->
+
+<script id="ct-build-v69-safety">
+(function(){
+  // AUTO-BACKUP: every meaningful save (equip/unequip, buying gear, chapter
+  // completions, daily reward, companion recruitment — all the existing
+  // saveGame() call sites) now also drops a timestamped JSON file via the
+  // browser's normal download flow, throttled to at most once every 3
+  // minutes so routine gear-shopping doesn't spam downloads. This exists
+  // because localStorage alone was lost once already this project (likely a
+  // hard cache-clear or site-data wipe) with no external copy to recover
+  // from — a downloaded file survives that even though localStorage doesn't.
+  let lastAutoBackup = 0;
+  function ctAutoBackup(){
+    const now = Date.now();
+    if(now - lastAutoBackup < 180000) return; // 3 minute minimum gap
+    lastAutoBackup = now;
+    try {
+      const blob = new Blob([JSON.stringify(game)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+      a.href = url;
+      a.download = 'crimson-tide-autosave-'+stamp+'.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      console.log('[AutoBackup] Downloaded '+a.download);
+    } catch(e) { console.error('[AutoBackup] failed:', e); }
+  }
+  const oldSaveGameForBackup = window.saveGame;
+  window.saveGame = function(){
+    const r = oldSaveGameForBackup.apply(this, arguments);
+    ctAutoBackup();
+    return r;
+  };
+
+  // RELOAD NUDGE: a plain beforeunload confirmation. Important caveat this
+  // genuinely cannot do: it cannot stop the browser from clearing
+  // localStorage (a "Clear browsing data" action, private-browsing cleanup,
+  // or storage eviction bypasses this entirely) — it only catches someone
+  // accidentally closing or refreshing the tab. The auto-backup above is the
+  // actual protection against data loss; this is a secondary nudge only.
+  window.addEventListener('beforeunload', function(e){
+    e.preventDefault();
+    e.returnValue = '';
+  });
+})();
+</script>
 </body>
 </html>
