@@ -96,7 +96,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V75</title>
+<title>Daybreak: Crimson Tide — Build V77</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -2636,7 +2636,8 @@ const HARBOR_ENEMIES = {
   // he's rendered (see ct-build-v72-fairtide-arc4 below), which keeps him
   // out of the generic per-port mob lists and shows him as his own
   // "Challenge" card instead, unlocked once Chapter 8 is read.
-  robin: { name: 'Robin C.', icon: '⛓️', hp: 450, dmg: 20, xp: 400, gold: 200, desc: 'Senior Partner at R&C. Binding and freezing magic, and an unshakable belief that everyone has a price — including yours.' }
+  robin: { name: 'Robin C. & His Enforcers', icon: '⛓️', hp: 520, dmg: 22, xp: 450, gold: 220, desc: 'Senior Partner at R&C, backed by hired muscle. Binding and freezing magic, and an unshakable belief that everyone has a price — including yours.' },
+  jeff: { name: 'Jeff & His Crew', icon: '🔨', hp: 540, dmg: 26, xp: 460, gold: 220, desc: "Once tried to poach Joel with a bigger ship and better pay. Fights the way he talks — heavy, crushing, and taking the rejection personally." }
 };
 const SEA_ENEMIES = {
   giant_octopus: { name: 'Giant Octopus', art: '🐙', hp: 340, dmg: 16, xp: 110, gold: 60,  desc: 'Ink clouds the water an instant before the tentacles do.' },
@@ -4441,7 +4442,7 @@ function renderStory() {
 function bountyPool() {
   const pool = [];
   Object.entries(HARBOR_ENEMIES).forEach(([key, e]) => {
-    if(key==='robin') return; // named recurring rival, not a generic cullable mob type — excluded from the auto-generated bounty board so his name doesn't surface before Chapter 8 introduces him
+    if(key==='robin' || key==='jeff') return; // named recurring rivals, not generic cullable mob types — excluded from the auto-generated bounty board so their names don't surface before they're properly introduced
     pool.push({id:'b_'+key, type:'kill', target:key, need: 2 + Math.floor(Math.random()*2),
       name: e.name + ' Cull', desc: `Defeat ${e.name} where you find them.`, icon: e.icon,
       rw: {xp: e.xp * 2, gold: e.gold * 2}});
@@ -5984,8 +5985,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V75 · Arc IV Ch.1-14 + 5 New Companions'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V75</strong> · Arc IV Ch.1-14 + Companions · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V77 · Robin+Jeff Sea Ambush (Ch19 Gate)'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V77</strong> · Rivals + Sea Ambush · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6764,20 +6765,24 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const container = document.getElementById('exploreContent');
     if(!container) return;
 
-    // Robin C. — recurring rival, challengeable at any port once Chapter 8
-    // ("The Contract," his first defeat-but-escape) has been read. Kept
-    // separate from the generic per-port harbor list on purpose, so he
-    // reads as a named, ongoing threat rather than blending into random mobs.
-    if(!!game.comicProgress4?.[8]){
-      const robinBase = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES.robin : null;
-      if(robinBase){
+    // Robin C. and Jeff — recurring rivals, challengeable at any port once
+    // Chapter 19 ("The Rivals Return," confirming both are back and active)
+    // has been read. Originally gated at Chapter 8 for Robin; moved to 19
+    // per correction, since that's the actual narrative point both rivals
+    // are confirmed to be active threats again, not just defeated-once.
+    // Kept separate from the generic per-port harbor list so they read as
+    // named, ongoing threats rather than blending into random mobs.
+    if(!!game.comicProgress4?.[19]){
+      ['robin','jeff'].forEach(function(key){
+        const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[key] : null;
+        if(!base) return;
         container.insertAdjacentHTML('beforeend',
-          '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">⛓️ Rival: Robin C.</h3>'+
+          '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">'+base.icon+' Rival: '+esc(base.name)+'</h3>'+
           '<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;">'+
-          '<div style="font-size:1.8rem;">'+robinBase.icon+'</div><div style="flex:1;"><strong>'+esc(robinBase.name)+'</strong><br>'+
-          '<span style="font-size:.8rem;opacity:.8;">'+esc(robinBase.desc)+'</span></div>'+
-          '<button class="btn btn-small btn-danger" onclick="startHarborFight(\'robin\')">⚔️ Challenge</button></div></article>');
-      }
+          '<div style="font-size:1.8rem;">'+base.icon+'</div><div style="flex:1;"><strong>'+esc(base.name)+'</strong><br>'+
+          '<span style="font-size:.8rem;opacity:.8;">'+esc(base.desc)+'</span></div>'+
+          '<button class="btn btn-small btn-danger" onclick="startHarborFight(\''+key+'\')">⚔️ Challenge</button></div></article>');
+      });
     }
 
     if(game.location!=='fair_tide') return;
@@ -6861,14 +6866,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:11, title:'Two Who Choose Each Other',  focus:'Brada Shah joins the crew, alongside Mimi.',                                     image:'assets/comics/arc4/ch11-two-who-choose-each-other.png', xp:175},
     {id:12, title:'A Better Offer',             focus:'Jeff approaches Joel with an offer.',                                            image:'assets/comics/arc4/ch12-a-better-offer.png',             xp:150},
     {id:13, title:"The First Mate's Answer",    focus:'Joel refuses Jeff.',                                                             image:'assets/comics/arc4/ch13-the-first-mates-answer.png',    xp:175},
-    {id:14, title:'The Night Raid',             focus:"Jeff attacks. A shore battle, not a sea battle.",                                image:'assets/comics/arc4/ch14-the-night-raid.png',             xp:225}
-    // Chapters 15 and 19 are still pending — chapters 16-18, 20, and 21 are
-    // already illustrated and saved to assets/comics/arc4/, but deliberately
-    // held out of this array for now. Chapter completion is tracked by ID,
-    // and the chain requires every ID in order; inserting 16-21 with a gap
-    // at 15 would let a player read ahead past where 15 belongs, and then
-    // get pulled backward to it once it's added later — same risk applies
-    // to 19. Appending them once 15 and 19 arrive avoids that entirely.
+    {id:14, title:'The Night Raid',             focus:"Jeff attacks. A shore battle, not a sea battle.",                                image:'assets/comics/arc4/ch14-the-night-raid.png',             xp:225},
+    {id:15, title:"Stand With Who's Right",     focus:'Another captain makes Joel an offer. He turns it down.',                         image:'assets/comics/arc4/ch15-stand-with-whos-right.png',     xp:175},
+    {id:16, title:'The Tide Gathers',           focus:'More allies arrive at Fair Tide.',                                               image:'assets/comics/arc4/ch16-the-tide-gathers.png',           xp:150},
+    {id:17, title:'What We Recognise',          focus:'The recurring sense of familiarity, confronted directly.',                       image:'assets/comics/arc4/ch17-what-we-recognise.png',          xp:150},
+    {id:18, title:'The Port Becomes Ours',      focus:'Fair Tide, now a true home port.',                                               image:'assets/comics/arc4/ch18-the-port-becomes-ours.png',      xp:150},
+    {id:19, title:'The Rivals Return',          focus:'Robin and Jeff are both rebuilding. Defeated, not gone.',                         image:'assets/comics/arc4/ch19-the-rivals-return.png',          xp:200},
+    {id:20, title:'A Crew Worth Following',     focus:'Every ally confirms why they stay.',                                             image:'assets/comics/arc4/ch20-a-crew-worth-following.png',     xp:175},
+    {id:21, title:'Beyond the Next Horizon',    focus:'Arc IV closes. Larger crew, wider world.',                                        image:'assets/comics/arc4/ch21-beyond-the-next-horizon.png',    xp:250}
   ];
   window.ARC4_CHAPTERS = ARC4_CHAPTERS;
 
@@ -6880,6 +6885,31 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if(!game.comicProgress4[ch.id]) return 'complete_arc4_chapter_'+ch.id;
     }
     return 'arc4_chapters_complete_for_now';
+  };
+
+  // Sea ambush: once Chapter 19 ("The Rivals Return") is read, every voyage
+  // carries a chance of Robin or Jeff intercepting the ship at sea — never
+  // both at once. Hooks doVoyage the same way Arc II's Fair Tide sail-flag
+  // already does: check first, and either redirect into combat or hand off
+  // to whatever doVoyage already was.
+  const RIVAL_AMBUSH_CHANCE = 0.15;
+  const oldDoVoyageForArc4 = window.doVoyage;
+  window.doVoyage = function(portId, days, dangerLevel){
+    if(!!game.comicProgress4?.[19] && Math.random() < RIVAL_AMBUSH_CHANCE){
+      const rivalKey = Math.random() < 0.5 ? 'robin' : 'jeff';
+      const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[rivalKey] : null;
+      if(base){
+        toast('⚔️ '+base.name+' intercepts the ship!');
+        logEvent('⚔️ Ambushed at sea by '+base.name+'.', 'bad');
+        // Same 'sea' kind the existing random voyage-event combat already
+        // uses (see doVoyage's EVENTS loop) — matches its flee/defeat
+        // handling exactly, and scaleCrimsonEnemy treats 'sea' identically
+        // to 'harbor' for scaling purposes, so this auto-scales the same way.
+        startCombat({kind:'sea', key:rivalKey, enemy: scaledEnemyForExplore(rivalKey, 'sea'), portId:null});
+        return;
+      }
+    }
+    return oldDoVoyageForArc4.apply(this, arguments);
   };
   // Chapter → companion recruitment. Fires once, the moment the chapter that
   // introduces each ally is marked read — reuses game.foundCompanions, the
