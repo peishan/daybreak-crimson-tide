@@ -96,7 +96,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V69</title>
+<title>Daybreak: Crimson Tide — Build V75</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -1850,7 +1850,7 @@ body{
 // ---------------------------------------------------------------------------
 const PORTS = [
   { id: 'singapore', name: 'Singapore', icon: '🦁', desc: 'The Lion City. A bustling free port where all goods flow.',
-    specialties: ['spices', 'silk', 'tea'], distances: { malacca: 1, batavia: 3, manila: 4, bangkok: 2, hanoi: 3, palembang: 2 }, danger: 1,
+    specialties: ['spices', 'silk', 'tea'], distances: { malacca: 1, batavia: 3, manila: 4, bangkok: 2, hanoi: 3, palembang: 2, kota_batu: 6, fair_tide: 5 }, danger: 1,
     chapterId: 1, companion: null, guardian: null,
     comic: [
       {image:'assets/comics/act1/ch02/panel01.png', caption:'The storm took everything.'},
@@ -1861,7 +1861,7 @@ const PORTS = [
     blurb: "San's home port, or what's left of one. Three months since the Daybreak went down in a squall that shouldn't have existed. She surfaced with Soel's collar around her wrist, a compass that points toward people instead of north, and nothing else. One by one, it's led her to a port. One by one, she means to get her crew back.",
     harbor: ['bilge_rat','dock_thief'] },
   { id: 'malacca', name: 'Malacca', icon: '🏰', desc: 'Historic straits port. Spices and antiquities trade hands here.',
-    specialties: ['spices', 'pepper', 'antiquities'], distances: { singapore: 1, batavia: 3, manila: 5, bangkok: 3, hanoi: 4, palembang: 3 }, danger: 2,
+    specialties: ['spices', 'pepper', 'antiquities'], distances: { singapore: 1, batavia: 3, manila: 5, bangkok: 3, hanoi: 4, palembang: 3, kota_batu: 6, fair_tide: 5 }, danger: 2,
     chapterId: 2, companion: 'joel', guardian: 'wreck_warden',
     comic: [
       {image:'assets/comics/act1/ch03/panel01.png', caption:'A port of crossroads. Merchants from far and wide.'},
@@ -1874,30 +1874,40 @@ const PORTS = [
     postFight: "The shape wearing all those dead captains comes apart like wet paper the moment it stops being fed. Joel doesn't say much — he never does — but his hand finds San's shoulder for just a second before he picks his sword back up like no time passed at all.",
     harbor: ['bilge_rat','smuggler_crew'] },
   { id: 'palembang', name: 'Palembang', icon: '⛰️', desc: 'Ancient Srivijayan port. Pepper, ivory, and exotic hardwoods.',
-    specialties: ['pepper', 'ivory', 'timber'], distances: { singapore: 2, malacca: 3, batavia: 2, manila: 5, bangkok: 3, hanoi: 4 }, danger: 3,
+    specialties: ['pepper', 'ivory', 'timber'], distances: { singapore: 2, malacca: 3, batavia: 2, manila: 5, bangkok: 3, hanoi: 4, kota_batu: 7, fair_tide: 6 }, danger: 3,
     chapterId: 3, companion: 'aisyah', guardian: 'debt_collector',
     blurb: "Aisyah is buried under a debt she never signed for, minding a dead man's ledger for a collector who has never once let a name off the page. She taught San how to read a bad deal from across a room. This one is the worst she's ever been in.",
     harbor: ['smuggler_crew','wreck_crab'] },
   { id: 'batavia', name: 'Batavia', icon: '🌺', desc: 'Dutch colonial capital. Coffee, nutmeg, and fine textiles.',
-    specialties: ['coffee', 'nutmeg', 'textiles'], distances: { singapore: 3, malacca: 3, manila: 4, bangkok: 4, hanoi: 5, palembang: 2 }, danger: 2,
+    specialties: ['coffee', 'nutmeg', 'textiles'], distances: { singapore: 3, malacca: 3, manila: 4, bangkok: 4, hanoi: 5, palembang: 2, kota_batu: 7, fair_tide: 6 }, danger: 2,
     chapterId: 4, companion: 'eliz', guardian: 'plague_hulk',
     blurb: "Eliz has been tending a quarantined hulk alone for weeks, refusing to leave the sick until someone makes her believe the crew needs her just as badly. The hulk isn't going to let either of them go without a fight.",
     harbor: ['dock_thief','harbor_ghoul'] },
   { id: 'bangkok', name: 'Bangkok', icon: '🛕', desc: 'Venice of the East. Rice, timber, and sacred artifacts.',
-    specialties: ['rice', 'timber', 'artifacts'], distances: { singapore: 2, malacca: 3, batavia: 4, manila: 3, hanoi: 2, palembang: 3 }, danger: 2,
+    specialties: ['rice', 'timber', 'artifacts'], distances: { singapore: 2, malacca: 3, batavia: 4, manila: 3, hanoi: 2, palembang: 3, kota_batu: 6, fair_tide: 5 }, danger: 2,
     chapterId: 5, companion: 'mezstorm', guardian: 'storm_idol',
     blurb: "Mezstorm bartered his freedom to a drowned idol just to survive the wreck, and the idol has an excellent memory for deals. He still owes it a storm. San's about to make sure it never collects.",
     harbor: ['harbor_ghoul','wreck_crab'] },
   { id: 'hanoi', name: 'Hanoi', icon: '🐉', desc: 'Northern trading post. Tea, silk, and porcelain.',
-    specialties: ['tea', 'silk', 'porcelain'], distances: { singapore: 3, malacca: 4, batavia: 5, manila: 2, bangkok: 2, palembang: 4 }, danger: 2,
+    specialties: ['tea', 'silk', 'porcelain'], distances: { singapore: 3, malacca: 4, batavia: 5, manila: 2, bangkok: 2, palembang: 4, kota_batu: 7, fair_tide: 6 }, danger: 2,
     chapterId: 6, companion: 'senedra', guardian: 'fog_stalker', recruitment: 'escape',
     blurb: "Senedra's been signaling from the same lighthouse for three months, certain someone would eventually see it — she just didn't expect the fog to start signaling back. Her aim hasn't dulled at all waiting.",
     harbor: ['dock_thief','bilge_rat'] },
   { id: 'manila', name: 'Manila', icon: '🏝️', desc: 'Pearl of the Orient. Pearls, tropical fruits, and Spanish silver.',
-    specialties: ['pearls', 'fruits', 'silver'], distances: { singapore: 4, malacca: 5, batavia: 4, bangkok: 3, hanoi: 2, palembang: 5 }, danger: 3,
+    specialties: ['pearls', 'fruits', 'silver'], distances: { singapore: 4, malacca: 5, batavia: 4, bangkok: 3, hanoi: 2, palembang: 5, kota_batu: 7, fair_tide: 6 }, danger: 3,
     chapterId: 7, companion: 'zaki', guardian: 'iron_brig_warden', recruitment: 'escape',
     blurb: "Zaki's working off a debt aboard a prison hulk one fistfight at a time, and winning every single one of them, which is exactly the problem — they'll never let their best fighter go willingly.",
-    harbor: ['smuggler_crew','harbor_ghoul'] }
+    harbor: ['smuggler_crew','harbor_ghoul'] },
+  { id: 'kota_batu', name: 'Kota Batu', icon: '🏯', desc: 'The historic capital of the Bruneian Empire at its height — camphor, gold dust, and bezoar stones change hands here.',
+    specialties: ['camphor', 'gold_dust', 'bezoar'], distances: { singapore: 6, malacca: 6, palembang: 7, batavia: 7, bangkok: 6, hanoi: 7, manila: 7, fair_tide: 6 }, danger: 5,
+    chapterId: null, companion: null, guardian: null,
+    blurb: "Before Bandar Seri Begawan, before Muara, this was the seat of an empire that ruled the whole coastline. The crew reaches it only once they've faced down enough of what Bandar Seri Begawan's illusions left behind — and grown strong enough to actually stand in the real thing. The alleys here are older, meaner, and unimpressed by reputation.",
+    harbor: ['portside_rogues','market_row_toughs','quay_row_debt_runners','old_quarter_runners','back_lane_toughs'] },
+  { id: 'fair_tide', name: 'Fair Tide', icon: '🌅', desc: 'A weathered coastal port along their route, worn down but full of potential — the first place that could actually become home.',
+    specialties: ['timber', 'rice', 'rum'], distances: { singapore: 5, malacca: 5, palembang: 6, batavia: 6, bangkok: 5, hanoi: 6, manila: 6, kota_batu: 6 }, danger: 2,
+    chapterId: null, companion: null, guardian: null,
+    blurb: "Not much left of it at first glance — a leaning warehouse, a dead lighthouse, docks that have seen better decades. But the harbourmaster's still there, and so are a handful of people who never quite gave up on the place. Somewhere ships can come home to, if the crew's willing to put in the work.",
+    harbor: ['dock_thief','smuggler_crew'] }
 ];
 
 // The endgame stop — only reachable once every companion above has been
@@ -1947,30 +1957,35 @@ function deliverAid() {
 // at a time, same as everything else here.
 // ---------------------------------------------------------------------------
 const ACT3_CHAPTERS = [
-  { id: 1, companion: 'joel', title: 'Familiar Streets', location: 'Bandar Seri Begawan',
+  { id: 22, companion: 'joel', title: 'Familiar Streets', location: 'Bandar Seri Begawan Illusion',
+    image: 'assets/comics/arc3/ch22-joel-familiar-streets.png',
     setupBlurb: "San finds Joel alone checking the rigging, no crisis pulling either of them away for once. \"I never actually got to talk to you,\" she says. \"Not properly. Not since whatever this is.\" Joel doesn't pretend not to understand. Neither of them remembers much from before the storm — but something about the other feels less like a stranger than it should. Bandar Seri Begawan keeps surfacing in both their heads, unprompted, familiar in a way neither can explain. If they were from anywhere, it was there. They decide to go find out, together.",
     enemy: { name: 'Portside Rogues', art: '🗡️', hp: 260, dmg: 14, xp: 220, gold: 90, desc: 'A gang working the alleys behind the harbor, testing whether two strangers are worth robbing.' },
     victoryScene: "The last rogue never gets the swing off — Joel's already moving, closing the space between him and San before the blade does, pulling her in against his chest with one arm braced across her back like he's done it a hundred times before. For a second neither of them breathes.<br><br>And then it isn't the alley anymore. It's a room with the windows shut against a storm that shouldn't exist, raised voices, a door closing too hard, $200 that was never hers to lend. The memory doesn't come back all at once — just enough to hurt.<br><br>San pulls back first, breathing harder from the memory than the fight. \"It seems... we were arguing. But I can't remember why.\"<br><br>Joel is quiet for a few seconds. Then: \"Maybe some things are best left in the past.\"<br><br>But San leans closer instead of letting it go. \"And some things we live in the present with.\" She kisses him, and this time he doesn't pull away.<br><br>They don't talk about the argument again that night. They don't need to.",
     rw: {xp:500, gold:150, rep:10} },
-  { id: 2, companion: 'aisyah', title: 'The House at Meragang', location: 'Meragang',
-    setupBlurb: "San can't explain it, but Aisyah feels less like a crewmate and more like something owed — a lifetime of favors she never got to pay back. She says as much, half-joking, expecting it to be shrugged off. Aisyah doesn't laugh it off. \"Feels like you're the little sister who never calls first,\" she says, and it lands harder than either of them expects. Neither remembers a house, or a name for what they were to each other — just Meragang, surfacing the same unprompted way Bandar Seri Begawan did. They go looking.",
+  { id: 23, companion: 'aisyah', title: 'The House at Bandar Seri Begawan', location: 'Bandar Seri Begawan Illusion',
+    image: 'assets/comics/arc3/ch23-aisyah-the-house.png',
+    setupBlurb: "San can't explain it, but Aisyah feels less like a crewmate and more like something owed — a lifetime of favors she never got to pay back. She says as much, half-joking, expecting it to be shrugged off. Aisyah doesn't laugh it off. \"Feels like you're the little sister who never calls first,\" she says, and it lands harder than either of them expects. Neither remembers a house, or a name for what they were to each other — just Bandar Seri Begawan, surfacing the same unprompted way it did for Joel. They go looking.",
     enemy: { name: 'Market Row Toughs', art: '🥊', hp: 300, dmg: 15, xp: 240, gold: 100, desc: "Small-time muscle leaning on stallholders who can't afford to say no." },
     victoryScene: "The last of them drops his knife and bolts the second Aisyah's boot connects with his shin — the fight was never close. She doesn't even look winded, already scanning the alley like she's cataloguing what's worth taking. \"Habit,\" she says, when she catches San staring.<br><br>And the memory comes with the word: a house that never stopped being loud, seven cats underfoot and two dogs at the door, a woman at the kitchen table doing sums in her head faster than San could reach for a calculator — thirty-some years of teaching mathematics to children who never once thought to thank her for it. Money going out to San more times than either of them ever bothered to count, and never once with a lecture attached.<br><br>\"You used to just... give me things,\" San says. \"Money. Advice. Never asked for it back.\"<br><br>Aisyah shrugs like it costs her nothing, same as it always did. \"That's what oldest sisters are for.\"<br><br>San doesn't know what to say to that, so she just puts her head on Aisyah's shoulder for a second, the way she must have done a hundred times in a life she can't remember yet. Aisyah lets her.<br><br>There are two more voices in that memory-house San can't place yet — grown, maybe grown enough by now to have their own name for the woman standing next to her. Aisyah goes quiet for a moment too long, like she's chasing the same thread.<br><br>\"There's more of us out there,\" she says eventually. \"I can feel it. Might be closer than you think.\"",
     rw: {xp:500, gold:150, rep:10} },
-  { id: 3, companion: 'mezstorm', title: 'The Weather Between Them', location: 'Singapore',
+  { id: 24, companion: 'mezstorm', title: 'The Weather Between Them', location: 'Singapore Illusion',
+    image: 'assets/comics/arc3/ch24-mezstorm-the-weather-between-them.png',
     setupBlurb: "San's tried to talk to Mez properly twice already and lost her nerve both times. There's something braced in the way Mez watches her — not unkind, just guarded, like she's already expecting to be let down before San's said a word. San doesn't know why that stings the way it does. She only knows Mez keeps looking toward Singapore like she's homesick for a place she's never once admitted to missing. Eliz wants to go. That's reason enough for Mez to finally agree — and reason enough for San to come along.",
     enemy: { name: 'Quay Row Debt Runners', art: '🧾', hp: 320, dmg: 16, xp: 260, gold: 110, desc: "Leaning on shopkeepers over a debt that was never really theirs to collect." },
     victoryScene: "Eliz freezes the second a runner grabs for her sleeve — and Mez is already moving, but so is San, faster, putting herself calmly between him and both of them, talking him down instead of swinging first, the way she never used to. It's over in a minute. Nobody's hurt.<br><br>Mez looks at her like she's looking at a stranger wearing her sister's face. \"That's not how I remember you handling things,\" she says slowly.<br><br>And with the words comes the shape of what San doesn't have language for yet: being the one who always got in trouble, whose relationships never worked out, the one Mez stopped expecting anything different from long before any storm ever hit. Somewhere in it, unspoken, is a man named Lim, and everything Mez never understood about why San finally left him — the kind of thing that's easy to mistake for just another San mess, from the outside.<br><br>\"Joel's not like that,\" San says quietly, before Mez even asks. \"I don't expect you to just believe me. I know what you think of me.\"<br><br>Mez doesn't answer right away. She watches Eliz, safe, already chattering about something else entirely — then looks back at San like she's recalculating something she'd stopped bothering to check.<br><br>\"Maybe,\" is all she says.<br><br>It isn't forgiveness. It isn't even trust yet. But it's more than San's gotten from her in longer than she can remember — and for now, it's enough to build on.",
     rw: {xp:500, gold:150, rep:10} },
-  { id: 4, companions: ['senedra','zaki'], title: 'Grown Before Their Time', location: 'Jangsak',
-    setupBlurb: "San watches Senedra and Zaki move through the harbor crowd like they've been doing it their whole lives — Senedra already reading the rooftops, Zaki already between San and anyone who looks twice at her. She's the aunt here. It shouldn't feel like the other way around. Jangsak surfaces in her head before she can place why — just a name, the shape of a house. She doesn't ask if they remember it. Some part of her isn't sure she wants the answer badly enough to make either of them dig for it. They go anyway, because it's on the way to somewhere else, and because none of them mind the company.",
+  { id: 25, companions: ['senedra','zaki'], title: 'Grown Before Their Time', location: 'Bandar Seri Begawan Illusion',
+    image: 'assets/comics/arc3/ch25-senedra-zaki-grown-before-their-time.png',
+    setupBlurb: "San watches Senedra and Zaki move through the harbor crowd like they've been doing it their whole lives — Senedra already reading the rooftops, Zaki already between San and anyone who looks twice at her. She's the aunt here. It shouldn't feel like the other way around. Bandar Seri Begawan surfaces in her head before she can place why — just a name, the shape of a house. She doesn't ask if they remember it. Some part of her isn't sure she wants the answer badly enough to make either of them dig for it. They go anyway, because it's on the way to somewhere else, and because none of them mind the company.",
     enemy: { name: 'Old Quarter Runners', art: '🔪', hp: 310, dmg: 16, xp: 250, gold: 105, desc: 'Small-time toughs who\'ve learned the back alleys better than the watch ever will.' },
-    victoryScene: "Zaki barely breaks a sweat clearing the last of them out — he never does. Senedra's already scanning the rooftops before San's even caught her breath, same as always.<br><br>\"You always did that,\" San says. \"Watch every exit before anyone asked you to.\"<br><br>\"Somebody had to,\" Senedra says. Not unkind. Just true.<br><br>Something flickers at the edge of San's memory — a house in Jangsak, quieter some years than others. It doesn't come all the way back. Zaki doesn't reach for it at all; he was too young when most of it happened to have kept much of it in the first place. Senedra's expression doesn't change either — whatever she remembers, she'd already decided a long time before any storm that it wasn't worth carrying forward.<br><br>San almost says something. Almost. But she looks at the two of them, steady, unbothered, already arguing over who gets first pick of the spoils — and decides the memory can stay exactly where it's been all this time.<br><br>Some things are better left forgotten. Whatever came before, 2026 was good between them. That's the version she'd rather keep.",
+    victoryScene: "Zaki barely breaks a sweat clearing the last of them out — he never does. Senedra's already scanning the rooftops before San's even caught her breath, same as always.<br><br>\"You always did that,\" San says. \"Watch every exit before anyone asked you to.\"<br><br>\"Somebody had to,\" Senedra says. Not unkind. Just true.<br><br>Something flickers at the edge of San's memory — a house, quieter some years than others. It doesn't come all the way back. Zaki doesn't reach for it at all; he was too young when most of it happened to have kept much of it in the first place. Senedra's expression doesn't change either — whatever she remembers, she'd already decided a long time before any storm that it wasn't worth carrying forward.<br><br>San almost says something. Almost. But she looks at the two of them, steady, unbothered, already arguing over who gets first pick of the spoils — and decides the memory can stay exactly where it's been all this time.<br><br>Some things are better left forgotten. Whatever came before, 2026 was good between them. That's the version she'd rather keep.",
     rw: {xp:520, gold:160, rep:12} },
-  { id: 5, companion: 'eliz', title: 'Small Hands, Long Memory', location: 'Singapore',
+  { id: 26, companion: 'eliz', title: 'Small Hands, Long Memory', location: 'Singapore Illusion',
+    image: 'assets/comics/arc3/ch26-eliz-small-hands-long-memory.png',
     setupBlurb: "San's spent longer avoiding Eliz's eyes than anyone else's on this ship, and she knows it. There's a version of her Eliz still remembers that isn't the one standing here now — someone who used to show up on weekends and then, one day, just didn't, the same way the others eventually didn't either. Eliz doesn't say any of that out loud. She just watches San carefully, deciding, like she's always done, whether this one's worth trusting with anything that matters. Neither of them mentions it outright, but they end up walking Singapore's old streets together anyway — the ones San used to cut through on her way to class, a lifetime ago.",
     enemy: { name: 'Back Lane Toughs', art: '🥋', hp: 330, dmg: 16, xp: 270, gold: 115, desc: "Small-time trouble that knows exactly which streets the watch doesn't bother with." },
-    victoryScene: "One of them lands a solid hit before Eliz can even raise her hands — square into San's shoulder, hard enough to put her down on one knee. For once it's San who needs the help, and Eliz who's already there, palms glowing, steady in a way that has nothing rushed about it. She's done this before. She's good at it.<br><br>The memory comes in with the warmth of the healing — a baby in a house in Singapore that wasn't quite home yet for anyone in it, San dropping out of one university to chase a fresh start in another, her mother beside her, easy and unbothered in a house that was slowly running out of the kind of easy San could afford to be. Money trouble at the company, doors closing quieter than they should have. Then two men leaving Eliz's life within a few years of each other — her father first, and after him the one she'd cautiously started letting herself call something like a second dad — and San graduating and going home to Brunei not long after, the way people who aren't stuck do.<br><br>Then San again, older, a man beside her that Eliz disliked on sight and never once reconsidered — a small, sharp instinct, the kind adults are usually too polite to trust in themselves. Nobody asked Eliz what she thought of Lim. She was right anyway.<br><br>San remembers all of it landing on Eliz at once, over the years — losing two fathers, then losing the aunt who used to actually show up, watching that aunt vanish into the same kind of marriage her own mother had barely survived. San wasn't paying attention by then. She was drowning in her own version of the same story.<br><br>\"I wasn't there,\" San says, once the ache in her shoulder fades to nothing. \"For any of it. I know that.\"<br><br>Eliz doesn't answer right away — that's just how she works through things, taking whatever time she actually needs instead of whatever time a conversation is supposed to allow. When she does answer, it isn't forgiveness dressed up as something bigger. It's smaller than that, and more honest.<br><br>\"You're here now,\" she says. \"That's the part I can work with.\"<br><br>It isn't everything undone. But San takes her hand anyway, and this time, neither of them lets go first.",
+    victoryScene: "One of them lands a solid hit before Eliz can even raise her hands — square into San's shoulder, hard enough to put her down on one knee. For once it's San who needs the help, and Eliz who's already there, palms glowing, steady in a way that has nothing rushed about it. She's done this before. She's good at it.<br><br>The memory comes in with the warmth of the healing — a baby in a house in Singapore that wasn't quite home yet for anyone in it, San dropping out of one university to chase a fresh start in another, her mother beside her, easy and unbothered in a house that was slowly running out of the kind of easy San could afford to be. Money trouble at the company, doors closing quieter than they should have. Then two men leaving Eliz's life within a few years of each other — her father first, and after him the one she'd cautiously started letting herself call something like a second dad — and San graduating and going home not long after, the way people who aren't stuck do.<br><br>Then San again, older, a man beside her that Eliz disliked on sight and never once reconsidered — a small, sharp instinct, the kind adults are usually too polite to trust in themselves. Nobody asked Eliz what she thought of Lim. She was right anyway.<br><br>San remembers all of it landing on Eliz at once, over the years — losing two fathers, then losing the aunt who used to actually show up, watching that aunt vanish into the same kind of marriage her own mother had barely survived. San wasn't paying attention by then. She was drowning in her own version of the same story.<br><br>\"I wasn't there,\" San says, once the ache in her shoulder fades to nothing. \"For any of it. I know that.\"<br><br>Eliz doesn't answer right away — that's just how she works through things, taking whatever time she actually needs instead of whatever time a conversation is supposed to allow. When she does answer, it isn't forgiveness dressed up as something bigger. It's smaller than that, and more honest.<br><br>\"You're here now,\" she says. \"That's the part I can work with.\"<br><br>It isn't everything undone. But San takes her hand anyway, and this time, neither of them lets go first.",
     rw: {xp:540, gold:170, rep:14} }
 ];
 function act3Unlocked() { return !!game.finalCleared; }
@@ -2117,7 +2132,10 @@ const GOODS = {
   porcelain: { name: 'Porcelain', icon: '🏺', basePrice: 110, weight: 1 },
   antiquities: { name: 'Antiquities', icon: '🏛️', basePrice: 180, weight: 1 },
   artifacts: { name: 'Sacred Artifacts', icon: '✨', basePrice: 220, weight: 1 },
-  contraband: { name: 'Contraband', icon: '💀', basePrice: 250, weight: 1 }
+  contraband: { name: 'Contraband', icon: '💀', basePrice: 250, weight: 1 },
+  camphor: { name: 'Camphor', icon: '🌲', basePrice: 210, weight: 1 },
+  gold_dust: { name: 'Gold Dust', icon: '✨', basePrice: 300, weight: 1 },
+  bezoar: { name: 'Bezoar Stones', icon: '💎', basePrice: 340, weight: 1 }
 };
 
 // ---------------------------------------------------------------------------
@@ -2136,7 +2154,15 @@ const ALL_PARTY = [
   {id:'zaki',        name:'ZAKI',       role:'Boarding Fighter',      combatRole:'Melee',    hp:88, mp:0,   portrait:'💥', portraitAsset:'assets/portraits/zaki.png', desc:'Boarding fighter. Fearless in close-quarters combat.'},
   {id:'ser_aldric',  name:'SER ALDRIC', role:'Knight of the Waves',   combatRole:'Tank',     hp:90, mp:0,   portrait:'🛡️', portraitAsset:'assets/portraits/aldric.png', desc:'Knight of the waves. A living fortress on deck.'},
   {id:'sister_wren', name:'SISTER WREN',role:'Tide Priestess',        combatRole:'Healer',   hp:72, mp:0,   portrait:'🙏', portraitAsset:'assets/portraits/wren.png', desc:'Tide priestess. Purifies curses and heals the soul.'},
-  {id:'soel',        name:'SOEL',       role:'Spirit Cat',            combatRole:'Support',  hp:50, mp:0,   portrait:'🐾', portraitAsset:'assets/portraits/soel.png', desc:"The ship's cat. Chose San, and can't be unchosen. Unkillable — he reforms from spirit flame."}
+  {id:'soel',        name:'SOEL',       role:'Spirit Cat',            combatRole:'Support',  hp:50, mp:0,   portrait:'🐾', portraitAsset:'assets/portraits/soel.png', desc:"The ship's cat. Chose San, and can't be unchosen. Unkillable — he reforms from spirit flame."},
+  // Arc IV recruits — unlocked via game.foundCompanions, same as every
+  // earlier companion, set the moment their introducing chapter is marked
+  // read (see markArc4ChapterRead's recruitment hook).
+  {id:'iris',        name:'IRIS',       role:'Scout / Kindled',       combatRole:'Rogue',    hp:72, mp:0,   portrait:'🦊', desc:'Scout, travelling with Ash. Quick hands, quicker instincts.'},
+  {id:'kw_liang',    name:'KW LIANG',   role:'Scout',                 combatRole:'Ranged',   hp:70, mp:0,   portrait:'🐇', desc:'Watches the port from the high ground. Rarely misses.'},
+  {id:'dr_aa',       name:'DR. AA',     role:'Physician / Healer',    combatRole:'Healer',   hp:70, mp:110, portrait:'🩺', desc:'Physician with a reputation that travels further than he does.'},
+  {id:'mimi',        name:'MIMI',       role:'Diviner',               combatRole:'Caster',   hp:68, mp:115, portrait:'🔮', desc:'Diviner. Reads the tide for what it remembers and what it hides.'},
+  {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', desc:"Mimi's partner. Songs, strategy, and steadier ground."}
 ];
 function memberUnlocked(m){
   if (m.id === 'san') return true;
@@ -2593,7 +2619,24 @@ const HARBOR_ENEMIES = {
   dock_thief:    { name: 'Dock Thief', icon: '🥷', hp: 150, dmg: 10, xp: 55,  gold: 25, desc: 'Fast hands, faster feet, gone before the watch turns.' },
   smuggler_crew: { name: 'Smuggler Crew', icon: '🏴', hp: 200, dmg: 12, xp: 70,  gold: 35, desc: 'Running contraband nobody\'s supposed to ask about.' },
   wreck_crab:    { name: 'Giant Wreck Crab', icon: '🦀', hp: 240, dmg: 14, xp: 85,  gold: 30, desc: 'Nests in shipwrecks, claws like cargo hooks.' },
-  harbor_ghoul:  { name: 'Harbor Ghoul', icon: '👺', hp: 260, dmg: 15, xp: 95,  gold: 40, desc: 'Something the tide dragged in and forgot to take back out.' }
+  harbor_ghoul:  { name: 'Harbor Ghoul', icon: '👺', hp: 260, dmg: 15, xp: 95,  gold: 40, desc: 'Something the tide dragged in and forgot to take back out.' },
+  // Reused from Arc III's memory-encounter fights (same enemies, same base
+  // stats) — now the regular mob pool for Kota Batu's harbor. scaleCrimsonEnemy
+  // scales 'harbor'-kind fights by the player's actual level, so these old
+  // base numbers stay appropriate even though Kota Batu is reached much later.
+  portside_rogues:      { name: 'Portside Rogues', icon: '🗡️', hp: 260, dmg: 14, xp: 220, gold: 90,  desc: 'A gang working the alleys behind the harbor.' },
+  market_row_toughs:    { name: 'Market Row Toughs', icon: '🥊', hp: 300, dmg: 15, xp: 240, gold: 100, desc: "Small-time muscle leaning on stallholders who can't afford to say no." },
+  quay_row_debt_runners:{ name: 'Quay Row Debt Runners', icon: '🧾', hp: 320, dmg: 16, xp: 260, gold: 110, desc: "Leaning on shopkeepers over debts that were never really theirs to collect." },
+  old_quarter_runners:  { name: 'Old Quarter Runners', icon: '🔪', hp: 310, dmg: 16, xp: 250, gold: 105, desc: "Small-time toughs who've learned the back alleys better than the watch ever will." },
+  back_lane_toughs:      { name: 'Back Lane Toughs', icon: '🥋', hp: 330, dmg: 16, xp: 270, gold: 115, desc: "Small-time trouble that knows exactly which streets the watch doesn't bother with." },
+  // Robin C. — recurring rival, not a one-time defeat. Deliberately added
+  // as a normal HARBOR_ENEMIES entry (not a separate registry) so it works
+  // with the existing enemyLookup/scaledEnemyForExplore/startHarborFight
+  // pipeline with zero changes needed there — the only new code is where
+  // he's rendered (see ct-build-v72-fairtide-arc4 below), which keeps him
+  // out of the generic per-port mob lists and shows him as his own
+  // "Challenge" card instead, unlocked once Chapter 8 is read.
+  robin: { name: 'Robin C.', icon: '⛓️', hp: 450, dmg: 20, xp: 400, gold: 200, desc: 'Senior Partner at R&C. Binding and freezing magic, and an unshakable belief that everyone has a price — including yours.' }
 };
 const SEA_ENEMIES = {
   giant_octopus: { name: 'Giant Octopus', art: '🐙', hp: 340, dmg: 16, xp: 110, gold: 60,  desc: 'Ink clouds the water an instant before the tentacles do.' },
@@ -4382,45 +4425,14 @@ function renderStory() {
   }
   html += `</div>`;
 
-  // ACT III
-  html += `<div class="story-act">
-    <div class="story-act-header">
-      <div class="story-act-kicker">Act III</div>
-      <div class="story-act-title">Origins</div>
-      <div class="story-act-tagline">Remember the life that existed before the storm.</div>
-    </div>`;
-
-  if (!act3Unlocked()) {
-    html += `<div class="story-chapter locked"><div class="story-chapter-title">🔒 Origins Locked</div>
-      <div class="story-chapter-text">The Origins arc opens after the current crew-recovery condition is met.</div></div>`;
-  } else {
-    ACT3_CHAPTERS.forEach((ch, i) => {
-      const done = i < game.act3Index;
-      const active = i === game.act3Index;
-      const names = (ch.companions || [ch.companion]).map(id => {
-        const m = ALL_PARTY.find(x => x.id === id);
-        return m ? m.name : id;
-      }).join(' & ');
-
-      html += `<article class="story-chapter ${done?'complete':''} ${active?'active':''}">
-        <div class="story-chapter-top">
-          <div class="story-chapter-title">Chapter ${ch.id} — ${esc(ch.title)}</div>
-          <div class="story-status">${done?'✓ REMEMBERED':active?'CURRENT':'LOCKED'}</div>
-        </div>
-        <div class="story-chapter-text">${esc(done ? `A memory of ${names} has been recovered.` : ch.setupBlurb)}</div>
-        <div class="story-meta">
-          <span class="story-chip gold">👤 ${esc(names)}</span>
-          <span class="story-chip">🧠 Memory</span>
-        </div>
-        ${active ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="startMemoryFight()">Walk the Old Streets Together</button></div>` : ''}
-        ${done && ch.victoryScene ? `<div class="comic-reader"><div class="panel-title" style="margin-bottom:7px;">🎞️ Comic Chapter</div>
-          <div class="comic-panel-slot">Comic panels for Chapter ${ch.id} will be placed here.</div>
-          <div class="comic-caption">${esc(ch.victoryScene.slice(0,260))}${ch.victoryScene.length>260?'…':''}</div>
-        </div>` : ''}
-      </article>`;
-    });
-  }
-  html += `</div>`;
+  // ACT III's standalone section previously rendered here has been folded
+  // into the unified "Arc III — Origins" section (see the ct-build-v71-arc3
+  // script below), which now covers chapters 1-26 continuously — including
+  // these same 5 memory-fight chapters, renumbered 22-26 to match. The
+  // underlying game.act3Index/ACT3_CHAPTERS/startMemoryFight() mechanics are
+  // untouched (Act IV's unlock still depends on them); only this duplicate
+  // rendering block is removed, to avoid showing two separate "Origins"
+  // chapter lists with different unlock conditions on the same screen.
 
   container.innerHTML = html;
   renderAct4();
@@ -4429,6 +4441,7 @@ function renderStory() {
 function bountyPool() {
   const pool = [];
   Object.entries(HARBOR_ENEMIES).forEach(([key, e]) => {
+    if(key==='robin') return; // named recurring rival, not a generic cullable mob type — excluded from the auto-generated bounty board so his name doesn't surface before Chapter 8 introduces him
     pool.push({id:'b_'+key, type:'kill', target:key, need: 2 + Math.floor(Math.random()*2),
       name: e.name + ' Cull', desc: `Defeat ${e.name} where you find them.`, icon: e.icon,
       rw: {xp: e.xp * 2, gold: e.gold * 2}});
@@ -4482,6 +4495,12 @@ function isPortUnlocked(portId){
   if(portId==='hanoi') return !!game.foundCompanions?.mezstorm;
   if(portId==='manila') return !!game.foundCompanions?.senedra;
   if(portId==='drowned_passage') return !!game.foundCompanions?.zaki;
+  // Kota Batu: the real historic port, as opposed to the illusion-memories
+  // of it visited in Arc III. Gated behind both a level milestone and having
+  // resolved every one of those illusions — narratively, the crew earns the
+  // real place only after finishing with its echoes.
+  if(portId==='kota_batu') return level()>=150 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
+  if(portId==='fair_tide') return level()>=60 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
   return false;
 }
 
@@ -5965,8 +5984,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V69 · Auto-Backup + Reload Nudge'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V69</strong> · Auto-Backup · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V75 · Arc IV Ch.1-14 + 5 New Companions'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V75</strong> · Arc IV Ch.1-14 + Companions · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6439,5 +6458,531 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   });
 })();
 </script>
+
+<!-- ARC 3 splash: shown once, the moment Arc II fully finishes -->
+<div id="arc3SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc3/arc3-cover-steady-hands.png" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc3Splash()">⚓ Begin Arc III</button>
+  </div>
+</div>
+<script id="ct-build-v70-arc3">
+(function(){
+  // Arc 3 — Origins: "Steady Hands". Same pattern as Arc 2: full finished
+  // pages, dialogue baked in, open in a new tab + Mark Chapter Read. Only
+  // Chapters 1-15 exist so far — more are coming later, so this array is
+  // built to extend cleanly: adding a chapter later is just appending an
+  // entry, same as Arc 2's design. No chapter here carries a mechanical
+  // gate (no fight/level requirement) — Arc 3 is explicitly a calmer,
+  // character-focused arc ("Origins"), unlike Arc 2's one real battle
+  // chapter, so pure sequential reads fit its tone.
+  const ARC3_CHAPTERS = [
+    {id:1,  title:'The Night at the Tavern',   focus:'Sometimes the journey brings you exactly where you\'re meant to be.', image:'assets/comics/arc3/ch01-the-night-at-the-tavern.png',   xp:150},
+    {id:2,  title:'What Are We?',               focus:'Same crew. A different kind of conversation.',                       image:'assets/comics/arc3/ch02-what-are-we.png',                xp:150},
+    {id:3,  title:'Familiar',                    focus:'Some feelings don\'t need a memory to be real.',                     image:'assets/comics/arc3/ch03-familiar.png',                   xp:150},
+    {id:4,  title:'The First Encounter',         focus:'Not every battle is against the world.',                            image:'assets/comics/arc3/ch04-the-first-encounter.png',       xp:150},
+    {id:5,  title:'Together in Battle',          focus:'Different strengths. The same direction.',                          image:'assets/comics/arc3/ch05-together-in-battle.png',        xp:150},
+    {id:6,  title:'First Mate',                  focus:'Different roles. The same direction.',                              image:'assets/comics/arc3/ch06-first-mate.png',                 xp:150},
+    {id:7,  title:'The Middle Sister',           focus:'Some distances can be crossed. If both sides are willing.',         image:'assets/comics/arc3/ch07-the-middle-sister.png',          xp:150},
+    {id:8,  title:'What We Don\'t Remember',     focus:'Some things are lost, but we\'re still here.',                       image:'assets/comics/arc3/ch08-what-we-dont-remember.png',      xp:150},
+    {id:9,  title:'The Men at the Port',         focus:'Some attention is easy to ignore. Some are not.',                   image:'assets/comics/arc3/ch09-the-men-at-the-port.png',        xp:150},
+    {id:10, title:'Closer',                      focus:'Sometimes the quietest feelings bring us the closest.',             image:'assets/comics/arc3/ch10-closer.png',                     xp:150},
+    {id:11, title:'You Said I Could',            focus:'Some promises don\'t need to be loud. They just need to be real.',   image:'assets/comics/arc3/ch11-you-said-i-could.png',           xp:150},
+    {id:12, title:'Us',                          focus:'Now we know what we are. And that\'s enough.',                      image:'assets/comics/arc3/ch12-us.png',                         xp:150},
+    {id:13, title:'Steady Hands',                focus:'Calmer days. Rougher days. It doesn\'t matter. Same crew.',          image:'assets/comics/arc3/ch13-steady-hands.png',               xp:175},
+    {id:14, title:'The Things We Don\'t Say',    focus:'Some things are understood. Some are chosen.',                      image:'assets/comics/arc3/ch14-the-things-we-dont-say.png',    xp:150},
+    {id:15, title:'What We Carry',               focus:'Different burdens. The same crew.',                                 image:'assets/comics/arc3/ch15-what-we-carry.png',             xp:175},
+    {id:16, title:'The Fight We Remember',       focus:'Not because we lost — but because we remember.',                    image:'assets/comics/arc3/ch16-the-fight-we-remember.png',    xp:175},
+    {id:17, title:'Captain and First Mate',      focus:'A captain to choose the path. A first mate to stand beside it.',    image:'assets/comics/arc3/ch17-captain-and-first-mate.png',   xp:150},
+    {id:18, title:'The Memory We Leave Behind',  focus:'It\'s also about what we leave in the places we\'ve been.',          image:'assets/comics/arc3/ch18-the-memory-we-leave-behind.png', xp:150},
+    {id:19, title:'Something Beneath the Familiar', focus:'Sometimes the unknown lies beneath the places we thought we knew.', image:'assets/comics/arc3/ch19-something-beneath-the-familiar.png', xp:175},
+    {id:20, title:'Neither Without the Other',   focus:'We are strong because we are different. Neither without the other.', image:'assets/comics/arc3/ch20-neither-without-the-other.png', xp:175},
+    {id:21, title:'The Choice We Made',          focus:'Not by chance. But by choice.',                                      image:'assets/comics/arc3/ch21-the-choice-we-made.png',        xp:175}
+  ];
+  window.ARC3_CHAPTERS = ARC3_CHAPTERS;
+
+  // Arc 3 unlocks once Arc 2 is fully finished. Terminal state deliberately
+  // distinct from a generic "complete" — more chapters are coming later, so
+  // this signals "everything currently available is read" without implying
+  // the whole arc (or game) is finished, which would be wrong right now.
+  window.arc3ObjectiveState = function(){
+    if(typeof window.arc2ObjectiveState!=='function' || window.arc2ObjectiveState()!=='arc2_complete') return null;
+    game.comicProgress3 = game.comicProgress3||{};
+    for(const ch of ARC3_CHAPTERS){
+      if(!game.comicProgress3[ch.id]) return 'complete_arc3_chapter_'+ch.id;
+    }
+    // Chapters 22-26: the five memory-encounter chapters. These complete via
+    // winning the corresponding fight (game.act3Index, the same real
+    // progression variable Act IV's own unlock condition already depends
+    // on), not via markArc3ChapterRead — so they're checked separately here,
+    // continuing the same chapter sequence past 21 rather than stopping.
+    if((game.act3Index||0) < ACT3_CHAPTERS.length){
+      const ch = ACT3_CHAPTERS[game.act3Index||0];
+      return 'complete_arc3_chapter_'+ch.id;
+    }
+    return 'arc3_chapters_complete_for_now';
+  };
+
+  window.markArc3ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC3_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc3] no chapter data for id', id); return; }
+    game.comicProgress3 = game.comicProgress3||{};
+    if(game.comicProgress3[id]){ toast('✓ Already marked read.'); return; }
+    const state = window.arc3ObjectiveState();
+    if(state !== 'complete_arc3_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress3[id] = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0)+1;
+    logEvent('📖 Arc 3 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if(typeof saveGame==='function') saveGame();
+    if(typeof renderMainGoal==='function') renderMainGoal();
+    if(typeof renderStory==='function') renderStory();
+  };
+
+  window.__ctShowArc3Splash = function(){
+    const overlay = document.getElementById('arc3SplashOverlay');
+    if(!overlay) return;
+    overlay.style.display='flex';
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    game.arc3SplashSeen = true;
+    if(typeof saveGame==='function') saveGame();
+  };
+  window.__ctCloseArc3Splash = function(){
+    const overlay = document.getElementById('arc3SplashOverlay');
+    if(overlay){
+      overlay.style.display='none';
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden','true');
+    }
+    document.body.style.overflow='';
+  };
+
+  // Append an Arc III section to the Story screen, right after Arc II's.
+  const oldRenderStoryForArc3 = window.renderStory;
+  window.renderStory = function(){
+    if(oldRenderStoryForArc3) oldRenderStoryForArc3();
+    const container = document.getElementById('storyContent');
+    if(!container) return;
+    const arc2Done = typeof window.arc2ObjectiveState==='function' && window.arc2ObjectiveState()==='arc2_complete';
+    // First Story-screen render after Arc II is truly finished shows the
+    // Arc III splash once — same reasoning as Arc II's splash: checked here
+    // rather than tied to the exact completion moment, so it also catches
+    // saves that finished Arc II before this feature existed, and never
+    // stacks on top of another overlay that's still closing.
+    if(arc2Done && !game.arc3SplashSeen && typeof window.__ctShowArc3Splash==='function'){
+      window.__ctShowArc3Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc3/arc3-cover-steady-hands.png" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc III — Origins</div><div class="story-act-title">Steady Hands</div>'+
+      '<div class="story-act-tagline">26 chapters so far. Calmer days, rougher days — the same crew.</div></div>';
+    if(!arc2Done){
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc III Locked</div><div class="story-chapter-sub">Finish all of Arc II first.</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc3ObjectiveState();
+    ARC3_CHAPTERS.forEach(ch=>{
+      const done = !!game.comicProgress3?.[ch.id];
+      const ready = !done && so===('complete_arc3_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc3ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    // Chapters 22-26 — memory encounters. Same visual card, but "reading"
+    // requires winning the linked fight first (startMemoryFight(), already
+    // wired to the existing combat engine and reward/prose system) rather
+    // than a simple Mark Read button.
+    ACT3_CHAPTERS.forEach((ch,i)=>{
+      const done = (game.act3Index||0) > i;
+      const ready = !done && so===('complete_arc3_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      const names = (ch.companions || [ch.companion]).map(id=>{
+        const m = (typeof ALL_PARTY!=='undefined') ? ALL_PARTY.find(x=>x.id===id) : null;
+        return m ? m.name : id;
+      }).join(' & ');
+      let action;
+      if(done) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a>';
+      else if(ready) action = '<button class="btn btn-small btn-magic" onclick="startMemoryFight()">⚔️ Walk the Old Streets Together</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">👤 '+esc(names)+' · 📍 '+esc(ch.location)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if(so==='arc3_chapters_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc III chapters read. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  // Extend the back-reading archive (landing page "Comic Chapters") to
+  // include Arc III, same "Read Again" pattern as Arc I and Arc II.
+  const oldRenderComicArchiveForArc3 = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if(oldRenderComicArchiveForArc3) oldRenderComicArchiveForArc3();
+    const el = document.getElementById('comicArchive'); if(!el) return;
+    const progress3 = (typeof game!=='undefined' && game.comicProgress3) || {};
+    const arc3Read = ARC3_CHAPTERS.filter(ch=>!!progress3[ch.id]);
+    // Memory-encounter chapters (22-26) completed via game.act3Index rather
+    // than comicProgress3, since they finish by winning a fight, not by
+    // markArc3ChapterRead — same reasoning as the Story-screen renderer.
+    const memoryRead = ACT3_CHAPTERS.filter((ch,i)=>(game.act3Index||0) > i);
+    const allRead = arc3Read.concat(memoryRead);
+    const section = !allRead.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc III chapters read yet.</div></div>'
+      : allRead.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc III — Origins: Steady Hands</div>' + section);
+  };
+})();
+</script>
+
+<!-- ARC 4 splash: shown once Arc III is finished AND level 80 is reached (Fair Tide itself unlocks earlier, at level 60) -->
+<div id="arc4SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc4/arc4-cover-gathering-tide.png" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc4Splash()">⚓ Begin Arc IV</button>
+  </div>
+</div>
+
+<script id="ct-build-v72-fairtide-arc4">
+(function(){
+  // -------------------------------------------------------------------
+  // FAIR TIDE — renovation (one-time) then upkeep (ongoing). Both phases
+  // reuse the same dispatch mechanic and the same wall-clock timestamp
+  // pattern already powering offline/AFK rewards elsewhere in this game,
+  // so a closed tab or app doesn't break the timer.
+  // -------------------------------------------------------------------
+  const FAIR_TIDE_TASKS = {
+    timber:     {label:'Gather timber for dock repairs',        need:10, icon:'🪵', companion:'Zaki'},
+    stone:      {label:'Collect stone for warehouse restoration', need:8,  icon:'🪨', companion:'Joel'},
+    food:       {label:'Deliver food supplies to the town',      need:5,  icon:'🍚', companion:'Aisyah'},
+    lighthouse: {label:"Assist clearing the old lighthouse",     need:1,  icon:'🗼', companion:'San'},
+    nets:       {label:"Help local fishermen with their nets",   need:3,  icon:'🎣', companion:'Mezstorm'}
+  };
+  const DISPATCH_MS = 5*60*1000;
+  const COOLDOWN_MS = 30*60*1000;
+  const DECAY_INTERVAL_MS = 2*60*60*1000; // -1 Supply per 2 real hours
+
+  function ftRenovation(){ game.fairTideRenovation = game.fairTideRenovation || {timber:0,stone:0,food:0,lighthouse:0,nets:0}; return game.fairTideRenovation; }
+  window.fairTideRenovationDone = function(){
+    const r = ftRenovation();
+    return Object.keys(FAIR_TIDE_TASKS).every(k => r[k] >= FAIR_TIDE_TASKS[k].need);
+  };
+  window.fairTideThriving = function(){
+    return window.fairTideRenovationDone() && (game.fairTideSupply||0) >= 50;
+  };
+  function decayFairTideSupply(){
+    if(!window.fairTideRenovationDone()) return;
+    const now = Date.now();
+    const last = game.fairTideSupplyLastTick || now;
+    const steps = Math.floor((now-last)/DECAY_INTERVAL_MS);
+    if(steps>0){
+      game.fairTideSupply = Math.max(0, (game.fairTideSupply||0) - steps);
+      game.fairTideSupplyLastTick = last + steps*DECAY_INTERVAL_MS;
+    }
+  }
+  window.fairTideDispatchStatus = function(){
+    const d = game.fairTideDispatch;
+    const now = Date.now();
+    if(d && d.startedAt){
+      const elapsed = now - d.startedAt;
+      if(elapsed < DISPATCH_MS) return {state:'out', secondsLeft: Math.ceil((DISPATCH_MS-elapsed)/1000), task:d.task};
+      return {state:'ready', task:d.task};
+    }
+    const cd = game.fairTideCooldownEnd || 0;
+    if(now < cd) return {state:'cooldown', secondsLeft: Math.ceil((cd-now)/1000)};
+    return {state:'idle'};
+  };
+  window.dispatchGatheringParty = function(task){
+    const status = window.fairTideDispatchStatus();
+    if(status.state!=='idle'){ toast('⏳ Not ready yet.'); return; }
+    if(!window.fairTideRenovationDone() && !FAIR_TIDE_TASKS[task]){ toast('Pick a task first.'); return; }
+    game.fairTideDispatch = {task: task||'supply', startedAt: Date.now()};
+    toast('⛵ A gathering party heads out...');
+    saveGameQuiet();
+    if(typeof renderExplore==='function') renderExplore();
+  };
+  window.claimGatheringParty = function(){
+    const status = window.fairTideDispatchStatus();
+    if(status.state!=='ready') return;
+    const task = status.task;
+    if(!window.fairTideRenovationDone()){
+      const r = ftRenovation();
+      r[task] = Math.min(FAIR_TIDE_TASKS[task].need, (r[task]||0) + 2);
+      toast('📦 The party returns with supplies! +2 toward: '+FAIR_TIDE_TASKS[task].label);
+      if(window.fairTideRenovationDone()){
+        game.fairTideSupply = 100;
+        game.fairTideSupplyLastTick = Date.now();
+        logEvent('🏮 Fair Tide is fully renovated! Upkeep begins.', 'gold');
+        toast('🏮 Fair Tide is fully renovated! The port is open for good.', 4200);
+      }
+    } else {
+      decayFairTideSupply();
+      game.fairTideSupply = Math.min(100, (game.fairTideSupply||0) + 15);
+      toast('📦 The gathering party returns. Port Supply +15');
+    }
+    game.fairTideDispatch = null;
+    game.fairTideCooldownEnd = Date.now() + COOLDOWN_MS;
+    saveGameQuiet();
+    if(typeof renderExplore==='function') renderExplore();
+  };
+
+  // Thriving bonus: -10% on Market buy prices at Fair Tide only. (Sell
+  // prices and Shipyard costs are untouched for now — scoped narrowly on
+  // purpose rather than reaching into functions this pass didn't need to.)
+  const oldHaggleForFairTide = window.haggleMultiplier;
+  window.haggleMultiplier = function(){
+    let m = oldHaggleForFairTide ? oldHaggleForFairTide() : 1;
+    if(game.location==='fair_tide' && window.fairTideThriving()) m *= 0.9;
+    return m;
+  };
+
+  function fmtClock(sec){
+    const m = Math.floor(sec/60), s = sec%60;
+    return m+':'+String(s).padStart(2,'0');
+  }
+
+  // Inject the Dock (renovation/upkeep) and Clinic (Senedra) panels into
+  // the existing Explore tab, only at Fair Tide — no new tab/screen needed,
+  // Explore already serves as "activities at this port."
+  const oldRenderExploreForFairTide = window.renderExplore;
+  window.renderExplore = function(){
+    if(oldRenderExploreForFairTide) oldRenderExploreForFairTide();
+    const container = document.getElementById('exploreContent');
+    if(!container) return;
+
+    // Robin C. — recurring rival, challengeable at any port once Chapter 8
+    // ("The Contract," his first defeat-but-escape) has been read. Kept
+    // separate from the generic per-port harbor list on purpose, so he
+    // reads as a named, ongoing threat rather than blending into random mobs.
+    if(!!game.comicProgress4?.[8]){
+      const robinBase = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES.robin : null;
+      if(robinBase){
+        container.insertAdjacentHTML('beforeend',
+          '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">⛓️ Rival: Robin C.</h3>'+
+          '<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;">'+
+          '<div style="font-size:1.8rem;">'+robinBase.icon+'</div><div style="flex:1;"><strong>'+esc(robinBase.name)+'</strong><br>'+
+          '<span style="font-size:.8rem;opacity:.8;">'+esc(robinBase.desc)+'</span></div>'+
+          '<button class="btn btn-small btn-danger" onclick="startHarborFight(\'robin\')">⚔️ Challenge</button></div></article>');
+      }
+    }
+
+    if(game.location!=='fair_tide') return;
+    decayFairTideSupply();
+    const status = window.fairTideDispatchStatus();
+    let dispatchHtml = '';
+    if(status.state==='idle'){
+      if(!window.fairTideRenovationDone()){
+        dispatchHtml = '<select id="ftTaskPick" class="btn btn-small" style="margin-right:6px;">'+
+          Object.entries(FAIR_TIDE_TASKS).filter(([k,t])=>ftRenovation()[k]<t.need).map(([k,t])=>'<option value="'+k+'">'+t.icon+' '+esc(t.label)+' ('+ftRenovation()[k]+'/'+t.need+')</option>').join('')+
+          '</select><button class="btn btn-small btn-success" onclick="dispatchGatheringParty(document.getElementById(\'ftTaskPick\').value)">⛵ Send Gathering Party</button>';
+      } else {
+        dispatchHtml = '<button class="btn btn-small btn-success" onclick="dispatchGatheringParty(\'supply\')">⛵ Send Gathering Party (restock Supply)</button>';
+      }
+    } else if(status.state==='out'){
+      dispatchHtml = '<div class="story-chip">⛵ Out gathering — back in '+fmtClock(status.secondsLeft)+'</div>';
+    } else if(status.state==='ready'){
+      dispatchHtml = '<button class="btn btn-small btn-magic" onclick="claimGatheringParty()">📦 Collect the Gathering Party</button>';
+    } else if(status.state==='cooldown'){
+      dispatchHtml = '<div class="story-chip">🌙 Crew resting — ready again in '+fmtClock(status.secondsLeft)+'</div>';
+    }
+    let dockHtml;
+    if(!window.fairTideRenovationDone()){
+      const r = ftRenovation();
+      dockHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🔨 The Dock — Renovating Fair Tide</h3>'+
+        '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;margin-bottom:8px;">A weathered harbour, worth bringing back to life. Send a gathering party out for whichever task needs it most.</div>'+
+        Object.entries(FAIR_TIDE_TASKS).map(([k,t])=>'<div style="font-size:.8rem;margin:3px 0;">'+t.icon+' '+esc(t.label)+' — <strong>'+r[k]+'/'+t.need+'</strong> <span style="opacity:.7;">('+t.companion+')</span></div>').join('')+
+        '<div style="margin-top:10px;">'+dispatchHtml+'</div></article>';
+    } else {
+      const supply = game.fairTideSupply||0;
+      const thriving = window.fairTideThriving();
+      dockHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">⚓ The Dock — Port Upkeep</h3>'+
+        '<article class="quest-item"><div style="font-size:.85rem;margin-bottom:6px;">Port Supply: <strong>'+supply+'/100</strong> '+(thriving?'<span style="color:#6fb57d;">· Fair Tide Thriving (better Market prices here)</span>':'')+'</div>'+
+        '<div style="margin-top:8px;">'+dispatchHtml+'</div></article>';
+    }
+    container.insertAdjacentHTML('beforeend', dockHtml);
+
+    // Clinic — Senedra, staffed the moment she's near real equipment,
+    // muscle memory taking over before she can explain why.
+    const clinicSeen = !!game.fairTideClinicSeen;
+    let clinicHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🩹 The Clinic</h3><article class="quest-item">';
+    if(!clinicSeen){
+      clinicHtml += '<div style="font-size:.85rem;opacity:.9;">Senedra wanders in to look the place over — and stops dead in the doorway. Her hands are already moving before she\'s decided to move them, checking supplies, straightening equipment like she\'s done it a thousand times. She doesn\'t remember being a paramedic. Her hands clearly do.</div>'+
+        '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest & Recover</button></div>';
+    } else {
+      clinicHtml += '<div style="font-size:.85rem;opacity:.85;">Senedra runs a tight clinic now, even if she still can\'t say why she knows how.</div>'+
+        '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest & Recover</button></div>';
+    }
+    clinicHtml += '</article>';
+    container.insertAdjacentHTML('beforeend', clinicHtml);
+  };
+  window.__ctOpenFairTideClinic = function(){
+    if(!game.fairTideClinicSeen){
+      game.fairTideClinicSeen = true;
+      toast('🩹 Senedra: "I don\'t know why I know this. I just... do."', 3600);
+    }
+    if(typeof freeRestAtPort==='function') freeRestAtPort();
+    else toast('🩹 The crew rests and recovers.');
+    saveGameQuiet();
+  };
+
+  // -------------------------------------------------------------------
+  // ARC 4 — "The Gathering Tide." Same pattern as Arc II/III: full pages,
+  // open in new tab + Mark Chapter Read. Chapter 1 only for now — more
+  // chapters get appended to this list as they're written. Deliberately
+  // gated higher than Fair Tide itself (level 80 vs. the port's level 60)
+  // so the port interlude has room to breathe before Arc IV's story
+  // content becomes available, rather than unlocking simultaneously.
+  // -------------------------------------------------------------------
+  const ARC4_CHAPTERS = [
+    {id:1,  title:'A Port Between Horizons',   focus:'The crew reaches Fair Tide and begins to make it their own.',                    image:'assets/comics/arc4/ch01-a-port-between-horizons.png',   xp:150},
+    {id:2,  title:'New Faces, Old Familiarity', focus:'Some people feel like a memory before the memory returns.',                      image:'assets/comics/arc4/ch02-new-faces-old-familiarity.png', xp:150},
+    {id:3,  title:'The Scout and the Fox',      focus:'Iris and Ash join the crew.',                                                    image:'assets/comics/arc4/ch03-the-scout-and-the-fox.png',     xp:175},
+    {id:4,  title:'The Rabbit at the Lookout',  focus:'KW Liang and Snowball join the crew.',                                           image:'assets/comics/arc4/ch04-the-rabbit-at-the-lookout.png', xp:175},
+    {id:5,  title:'A Familiar Kind of Trouble', focus:'Fragments of recognition, without the memories to explain them.',                image:'assets/comics/arc4/ch05-a-familiar-kind-of-trouble.png',xp:150},
+    {id:6,  title:'The Ship Worth Taking',      focus:'Robin C. of R&C notices Crimson Tide — and starts watching.',                    image:'assets/comics/arc4/ch06-the-ship-worth-taking.png',     xp:175},
+    {id:7,  title:'Terms of Capture',           focus:"Robin's first move against the crew.",                                          image:'assets/comics/arc4/ch07-terms-of-capture.png',          xp:200},
+    {id:8,  title:'The Contract',               focus:'Robin is defeated — but escapes.',                                              image:'assets/comics/arc4/ch08-the-contract.png',               xp:225},
+    {id:9,  title:'The Doctor on Shore',        focus:'Dr AA joins the crew.',                                                          image:'assets/comics/arc4/ch09-the-doctor-on-shore.png',       xp:175},
+    {id:10, title:"The Diviner's Path",         focus:'Mimi joins the crew.',                                                           image:'assets/comics/arc4/ch10-the-diviners-path.png',         xp:175},
+    {id:11, title:'Two Who Choose Each Other',  focus:'Brada Shah joins the crew, alongside Mimi.',                                     image:'assets/comics/arc4/ch11-two-who-choose-each-other.png', xp:175},
+    {id:12, title:'A Better Offer',             focus:'Jeff approaches Joel with an offer.',                                            image:'assets/comics/arc4/ch12-a-better-offer.png',             xp:150},
+    {id:13, title:"The First Mate's Answer",    focus:'Joel refuses Jeff.',                                                             image:'assets/comics/arc4/ch13-the-first-mates-answer.png',    xp:175},
+    {id:14, title:'The Night Raid',             focus:"Jeff attacks. A shore battle, not a sea battle.",                                image:'assets/comics/arc4/ch14-the-night-raid.png',             xp:225}
+    // Chapters 15 and 19 are still pending — chapters 16-18, 20, and 21 are
+    // already illustrated and saved to assets/comics/arc4/, but deliberately
+    // held out of this array for now. Chapter completion is tracked by ID,
+    // and the chain requires every ID in order; inserting 16-21 with a gap
+    // at 15 would let a player read ahead past where 15 belongs, and then
+    // get pulled backward to it once it's added later — same risk applies
+    // to 19. Appending them once 15 and 19 arrive avoids that entirely.
+  ];
+  window.ARC4_CHAPTERS = ARC4_CHAPTERS;
+
+  window.arc4ObjectiveState = function(){
+    if(typeof window.arc3ObjectiveState!=='function' || window.arc3ObjectiveState()!=='arc3_chapters_complete_for_now') return null;
+    if(level()<80) return null;
+    game.comicProgress4 = game.comicProgress4||{};
+    for(const ch of ARC4_CHAPTERS){
+      if(!game.comicProgress4[ch.id]) return 'complete_arc4_chapter_'+ch.id;
+    }
+    return 'arc4_chapters_complete_for_now';
+  };
+  // Chapter → companion recruitment. Fires once, the moment the chapter that
+  // introduces each ally is marked read — reuses game.foundCompanions, the
+  // exact same mechanism every earlier companion (Joel, Aisyah, etc.) is
+  // recruited through, so memberUnlocked() needs no changes at all.
+  const ARC4_RECRUITS = {3:'iris', 4:'kw_liang', 9:'dr_aa', 10:'mimi', 11:'brada_shah'};
+
+  window.markArc4ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC4_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc4] no chapter data for id', id); return; }
+    game.comicProgress4 = game.comicProgress4||{};
+    if(game.comicProgress4[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc4ObjectiveState() !== 'complete_arc4_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress4[id] = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0)+1;
+    logEvent('📖 Arc 4 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    const recruitId = ARC4_RECRUITS[id];
+    if(recruitId && !game.foundCompanions?.[recruitId]){
+      game.foundCompanions = game.foundCompanions||{};
+      game.foundCompanions[recruitId] = true;
+      const member = (typeof ALL_PARTY!=='undefined') ? ALL_PARTY.find(m=>m.id===recruitId) : null;
+      const label = member ? member.name : recruitId;
+      logEvent('⚓ '+label+' has joined the crew!', 'gold');
+      toast('⚓ '+label+' has joined the crew!', 3600);
+    }
+    if(typeof saveGame==='function') saveGame();
+    if(typeof renderMainGoal==='function') renderMainGoal();
+    if(typeof renderStory==='function') renderStory();
+  };
+  window.__ctShowArc4Splash = function(){
+    const overlay = document.getElementById('arc4SplashOverlay');
+    if(!overlay) return;
+    overlay.style.display='flex'; overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    game.arc4SplashSeen = true;
+    if(typeof saveGame==='function') saveGame();
+  };
+  window.__ctCloseArc4Splash = function(){
+    const overlay = document.getElementById('arc4SplashOverlay');
+    if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+  };
+
+  const oldRenderStoryForArc4 = window.renderStory;
+  window.renderStory = function(){
+    if(oldRenderStoryForArc4) oldRenderStoryForArc4();
+    const container = document.getElementById('storyContent');
+    if(!container) return;
+    const arc4Ready = typeof window.arc4ObjectiveState==='function' && window.arc4ObjectiveState()!==null;
+    if(arc4Ready && !game.arc4SplashSeen && typeof window.__ctShowArc4Splash==='function'){
+      window.__ctShowArc4Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc4/arc4-cover-gathering-tide.png" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc IV</div><div class="story-act-title">The Gathering Tide</div>'+
+      '<div class="story-act-tagline">1 chapter so far. New people, new horizons.</div></div>';
+    if(!arc4Ready){
+      const arc3Done = typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc IV Locked</div><div class="story-chapter-sub">'+
+        (!arc3Done ? 'Finish all of Arc III first.' : 'Reach Level 80 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc4ObjectiveState();
+    ARC4_CHAPTERS.forEach(ch=>{
+      const done = !!game.comicProgress4?.[ch.id];
+      const ready = !done && so===('complete_arc4_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc4ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if(so==='arc4_chapters_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc IV chapters read. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  const oldRenderComicArchiveForArc4 = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if(oldRenderComicArchiveForArc4) oldRenderComicArchiveForArc4();
+    const el = document.getElementById('comicArchive'); if(!el) return;
+    const progress4 = (typeof game!=='undefined' && game.comicProgress4) || {};
+    const arc4Read = ARC4_CHAPTERS.filter(ch=>!!progress4[ch.id]);
+    const section = !arc4Read.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc IV chapters read yet.</div></div>'
+      : arc4Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IV — The Gathering Tide</div>' + section);
+  };
+})();
+</script>
+
+<!-- END ARC4_MARKER -->
 </body>
 </html>
