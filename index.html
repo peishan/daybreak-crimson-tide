@@ -88,15 +88,13 @@
     btn.onclick = function(ev){ ev.stopPropagation(); if(typeof goScreen==='function') goScreen('intro'); };
     document.body.appendChild(btn);
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', addFloatingDebugButton, {once:true});
-  else addFloatingDebugButton();
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', addFloatingMenuButton, {once:true});
   else addFloatingMenuButton();
 })();
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V78</title>
+<title>Daybreak: Crimson Tide — Build V81</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -3928,11 +3926,30 @@ function renderComicArchive(){
     19:'ch19-crew-we-choose.png', 20:'ch20-senedra.png', 21:'ch21-zaki.png',
     22:'ch22-mezstorm.png', 23:'ch23-siblings.png', 24:'ch24-drowned-passage.png'
   };
+  // Remastered Arc I art (full comic-page format, replacing the old single-splash
+  // crop-simulation pages) — lives in its own folder so the original ch01-24
+  // files above stay untouched. Unlocks on the exact same progress1 flag as the
+  // original chapter, so a chapter becomes available to read back in BOTH the
+  // original and remastered form the moment the player first reads it — no
+  // separate gating logic to maintain.
+  const ARC1_REMASTERED_IMAGES = {
+    1:'ch01-the-storm-that-remained.png', 2:'ch02-the-first-port.png', 3:'ch03-a-crew-of-choice.png',
+    4:'ch04-the-guardians-fortress.png', 5:'ch05-the-voice-behind-the-wall.png', 6:'ch06-the-shield-returns.png',
+    7:'ch07-the-shield-that-remained.png', 8:'ch08-the-trader-winds-remember.png', 9:'ch09-the-shield-returns-promise-carried-forward.png',
+    10:'ch10-the-day-the-sea-rested.png', 11:'ch11-the-day-we-chose.png', 12:'ch12-the-debt-that-wasnt-hers.png',
+    13:'ch13-the-debt-collector.png', 14:'ch14-two-sisters-one-ship.png', 15:'ch15-the-one-who-stayed.png',
+    16:'ch16-the-mark-we-carried.png', 17:'ch17-the-things-we-do-without-knowing.png', 18:'ch18-the-storm-that-was-owed.png',
+    19:'ch19-the-crew-we-choose.png', 20:'ch20-senedra-the-watchful-signal.png', 21:'ch21-zaki-the-planner.png',
+    22:'ch22-mezstorm-the-regeneration.png', 23:'ch23-senedra-and-zaki-the-two-who-remembered.png', 24:'ch24-the-drowned-passage.png'
+  };
   const progress1 = (typeof game!=='undefined' && game.comicProgress) || {};
   const progress2 = (typeof game!=='undefined' && game.comicProgress2) || {};
   const arc1Read = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
     .filter(ch => !!progress1[ch.id] && ARC1_IMAGES[ch.id])
     .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1/'+ARC1_IMAGES[ch.id]}));
+  const arc1Remastered = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
+    .filter(ch => !!progress1[ch.id] && ARC1_REMASTERED_IMAGES[ch.id])
+    .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1-readback/'+ARC1_REMASTERED_IMAGES[ch.id]}));
   const arc2Read = (typeof window.ARC2_CHAPTERS!=='undefined' ? window.ARC2_CHAPTERS : [])
     .filter(ch => !!progress2[ch.id] && ch.image)
     .map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
@@ -3947,6 +3964,9 @@ function renderComicArchive(){
 
   el.innerHTML =
     '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read) +
+    '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc I — Remastered (New Art)</div>' +
+    (arc1Remastered.length ? '<img src="assets/comics/arc1-readback/cover-daybreak-crimson-tide.png" alt="Daybreak: Crimson Tide" style="width:100%;border-radius:8px;margin-bottom:10px;display:block;">' : '') +
+    section('Arc I Remastered', arc1Remastered) +
     '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc II — A Voyage to Remember</div>' + section('Arc II', arc2Read);
 }
 
@@ -5985,8 +6005,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V78 · Companion Portraits'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V78</strong> · Companion Portraits · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V81 · Debug Icon Removed'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V81</strong> · Debug Icon Removed</footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6403,7 +6423,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
-        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
     });
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
@@ -6457,6 +6477,105 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     e.preventDefault();
     e.returnValue = '';
   });
+})();
+</script>
+
+<script id="ct-build-v79-gold-nan-fix">
+(function(){
+  // BUG FIX: game.marketPrices is a cache generated once (on game start /
+  // port arrival) and then persisted in the save. Any good added after a
+  // player's save was created (camphor/gold_dust/bezoar, added with Fair
+  // Tide/Kota Batu) has no entry in that old cache until the cache is
+  // regenerated — so game.marketPrices[port][newGood] reads as undefined.
+  // buyGood/sellGood then compute totalPrice = undefined * qty = NaN, and
+  // critically, `if (game.gold < NaN)` is ALWAYS false (any comparison with
+  // NaN is), so the "not enough gold" guard never fires and the purchase
+  // proceeds anyway — permanently corrupting game.gold into NaN the moment
+  // it's touched. Three layers of fix below: self-heal the stale cache,
+  // guard the two purchase functions so this can never corrupt gold again
+  // even if some other stale-cache path is found later, and repair a
+  // save that's already been corrupted.
+
+  // 1) Self-heal: ensure every currently-registered GOODS key has a price
+  // at the current port before it's ever read. Cheap, and safe to call
+  // repeatedly — only fills in what's actually missing.
+  window.__ctEnsureMarketPrices = function(){
+    if(typeof GOODS==='undefined' || typeof PORTS==='undefined') return;
+    game.marketPrices = game.marketPrices || {};
+    const port = PORTS.find(p=>p.id===game.location);
+    if(!port) return;
+    game.marketPrices[port.id] = game.marketPrices[port.id] || {};
+    Object.keys(GOODS).forEach(function(goodId){
+      const existing = game.marketPrices[port.id][goodId];
+      if(existing!==undefined && Number.isFinite(existing)) return;
+      const good = GOODS[goodId];
+      let multiplier = 0.5 + Math.random();
+      if(port.specialties.includes(goodId)) multiplier *= 0.55;
+      multiplier *= (0.8 + Math.random()*0.4);
+      if(goodId==='contraband' && port.id!=='manila') multiplier = 0;
+      game.marketPrices[port.id][goodId] = Math.max(1, Math.round(good.basePrice * multiplier));
+    });
+  };
+
+  const oldRenderMarketForFix = window.renderMarket;
+  window.renderMarket = function(){
+    window.__ctEnsureMarketPrices();
+    return oldRenderMarketForFix.apply(this, arguments);
+  };
+
+  // 2) Guard rails: even with the self-heal above, never let a non-finite
+  // price actually mutate game.gold. Belt and suspenders.
+  const oldBuyGoodForFix = window.buyGood;
+  window.buyGood = function(goodId, qty){
+    window.__ctEnsureMarketPrices();
+    const priceCheck = game.marketPrices?.[game.location]?.[goodId];
+    if(!Number.isFinite(priceCheck)){
+      console.error('[GoldFix] blocked buyGood: non-finite price for', goodId, 'at', game.location);
+      toast('⚠️ Price unavailable right now — try again in a moment.');
+      return;
+    }
+    return oldBuyGoodForFix.apply(this, arguments);
+  };
+  const oldSellGoodForFix = window.sellGood;
+  window.sellGood = function(goodId, qty){
+    window.__ctEnsureMarketPrices();
+    const priceCheck = game.marketPrices?.[game.location]?.[goodId];
+    if(!Number.isFinite(priceCheck)){
+      console.error('[GoldFix] blocked sellGood: non-finite price for', goodId, 'at', game.location);
+      toast('⚠️ Price unavailable right now — try again in a moment.');
+      return;
+    }
+    return oldSellGoodForFix.apply(this, arguments);
+  };
+
+  // 3) Repair: if this save already has a corrupted (NaN) gold value from
+  // before this fix existed, reset it to 0 rather than leaving the wallet
+  // permanently broken. This can't recover the true prior amount — that
+  // information is gone the moment it became NaN — but a working wallet at
+  // 0 is strictly better than a permanently broken "NaN g" display.
+  // Hooked into loadGame() itself (not run once at script-parse time),
+  // since the save doesn't actually populate `game` until the player picks
+  // "Continue Voyage" — checking any earlier would just see the fresh
+  // default game object, never the corrupted save.
+  function repairGoldIfCorrupted(){
+    if(typeof game!=='undefined' && !Number.isFinite(game.gold)){
+      console.warn('[GoldFix] game.gold was non-finite ('+game.gold+') — resetting to 0.');
+      game.gold = 0;
+      toast('⚠️ Your gold total had become corrupted (a real bug, now fixed) and has been reset to 0. Sorry about that.', 6000);
+      if(typeof saveGame==='function') saveGame();
+    }
+  }
+  const oldLoadGameForFix = window.loadGame;
+  if(typeof oldLoadGameForFix==='function'){
+    window.loadGame = function(){
+      const result = oldLoadGameForFix.apply(this, arguments);
+      repairGoldIfCorrupted();
+      return result;
+    };
+  }
+  // Also covers the case where `game` is already corrupted and populated
+  // by the time this script runs (e.g. a session already in progress).
+  repairGoldIfCorrupted();
 })();
 </script>
 
@@ -6598,7 +6717,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
-        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
     });
     // Chapters 22-26 — memory encounters. Same visual card, but "reading"
     // requires winning the linked fight first (startMemoryFight(), already
@@ -6618,7 +6737,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">👤 '+esc(names)+' · 📍 '+esc(ch.location)+'</span><br>'+
-        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+(ch.rw&&ch.rw.xp||0)+'</span><div class="story-actions">'+action+'</div></article>';
     });
     if(so==='arc3_chapters_complete_for_now'){
       html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc III chapters read. More chapters are on the way — check back soon.</div></div>';
@@ -6988,7 +7107,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
-        '<span style="font-size:.78rem;">'+status+'</span><div class="story-actions">'+action+'</div></article>';
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
     });
     if(so==='arc4_chapters_complete_for_now'){
       html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc IV chapters read. More chapters are on the way — check back soon.</div></div>';
