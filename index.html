@@ -96,7 +96,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V77</title>
+<title>Daybreak: Crimson Tide — Build V78</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -2158,11 +2158,11 @@ const ALL_PARTY = [
   // Arc IV recruits — unlocked via game.foundCompanions, same as every
   // earlier companion, set the moment their introducing chapter is marked
   // read (see markArc4ChapterRead's recruitment hook).
-  {id:'iris',        name:'IRIS',       role:'Scout / Kindled',       combatRole:'Rogue',    hp:72, mp:0,   portrait:'🦊', desc:'Scout, travelling with Ash. Quick hands, quicker instincts.'},
-  {id:'kw_liang',    name:'KW LIANG',   role:'Scout',                 combatRole:'Ranged',   hp:70, mp:0,   portrait:'🐇', desc:'Watches the port from the high ground. Rarely misses.'},
-  {id:'dr_aa',       name:'DR. AA',     role:'Physician / Healer',    combatRole:'Healer',   hp:70, mp:110, portrait:'🩺', desc:'Physician with a reputation that travels further than he does.'},
-  {id:'mimi',        name:'MIMI',       role:'Diviner',               combatRole:'Caster',   hp:68, mp:115, portrait:'🔮', desc:'Diviner. Reads the tide for what it remembers and what it hides.'},
-  {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', desc:"Mimi's partner. Songs, strategy, and steadier ground."}
+  {id:'iris',        name:'IRIS',       role:'Scout / Kindled',       combatRole:'Rogue',    hp:72, mp:0,   portrait:'🦊', portraitAsset:'assets/portraits/iris.png', desc:'Scout, travelling with Ash. Quick hands, quicker instincts.'},
+  {id:'kw_liang',    name:'KW LIANG',   role:'Scout',                 combatRole:'Ranged',   hp:70, mp:0,   portrait:'🐇', portraitAsset:'assets/portraits/kw_liang.png', desc:'Watches the port from the high ground. Rarely misses.'},
+  {id:'dr_aa',       name:'DR. AA',     role:'Physician / Healer',    combatRole:'Healer',   hp:70, mp:110, portrait:'🩺', portraitAsset:'assets/portraits/dr_aa.png', desc:'Physician with a reputation that travels further than he does.'},
+  {id:'mimi',        name:'MIMI',       role:'Diviner',               combatRole:'Caster',   hp:68, mp:115, portrait:'🔮', portraitAsset:'assets/portraits/mimi.png', desc:'Diviner. Reads the tide for what it remembers and what it hides.'},
+  {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', portraitAsset:'assets/portraits/brada_shah.png', desc:"Mimi's partner. Songs, strategy, and steadier ground."}
 ];
 function memberUnlocked(m){
   if (m.id === 'san') return true;
@@ -5985,8 +5985,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V77 · Robin+Jeff Sea Ambush (Ch19 Gate)'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V77</strong> · Rivals + Sea Ambush · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
+<script>window.__CT_BUILD__='V78 · Companion Portraits'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V78</strong> · Companion Portraits · <span onclick="window.__ctShowDebugLog()" style="text-decoration:underline;cursor:pointer;color:#e8c547;">🐛 View Debug Log</span></footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
