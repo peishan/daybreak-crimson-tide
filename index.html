@@ -1542,6 +1542,10 @@ body{
       <div class="panel-title">✨ Select Spell</div>
       <div class="spell-grid" id="spellGrid"></div>
     </div>
+    <div id="skillMenu" style="display: none;">
+      <div class="panel-title">🎯 Select Skill</div>
+      <div class="spell-grid" id="skillGrid"></div>
+    </div>
     <div id="itemMenu" style="display: none;">
       <div class="panel-title">🧪 Use Item</div>
       <div id="itemGrid" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
@@ -1721,6 +1725,33 @@ body{
     <div class="panel">
       <div class="panel-title">🔧 Upgrade The <span id="yardShipName">Daybreak</span></div>
       <div id="shipyardContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAIR TIDE HUB SCREEN -->
+<div class="screen" id="fairTideScreen">
+  <div class="game-container">
+    <div class="header"><h1>🏮 Fair Tide</h1><div class="subtitle">A port worth keeping</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('port')">🏛️ Port</button>
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Sail</button>
+      <button class="nav-btn" onclick="goScreen('story')">📖 Story</button>
+      <button class="nav-btn" onclick="goScreen('party')">👥 Crew</button>
+      <button class="nav-btn" onclick="goScreen('shipyard')">⚓ Shipyard</button>
+      <button class="nav-btn" onclick="goScreen('log')">📜 Log</button>
+    </div>
+    <div class="tab-bar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="tab-btn active" id="ft-tab-btn-buildings" onclick="switchFairTideTab('buildings')">🏗️ Buildings</button>
+      <button class="tab-btn" id="ft-tab-btn-trade" onclick="switchFairTideTab('trade')">💱 Trade</button>
+      <button class="tab-btn" id="ft-tab-btn-dispatch" onclick="switchFairTideTab('dispatch')">⚓ Dispatch</button>
+      <button class="tab-btn" id="ft-tab-btn-clinic" onclick="switchFairTideTab('clinic')">🩹 Clinic</button>
+    </div>
+    <div class="panel">
+      <div id="ft-tab-buildings" class="tab-content active"></div>
+      <div id="ft-tab-trade" class="tab-content"></div>
+      <div id="ft-tab-dispatch" class="tab-content"></div>
+      <div id="ft-tab-clinic" class="tab-content"></div>
     </div>
   </div>
 </div>
@@ -2160,7 +2191,10 @@ const ALL_PARTY = [
   {id:'kw_liang',    name:'KW LIANG',   role:'Scout',                 combatRole:'Ranged',   hp:70, mp:0,   portrait:'🐇', portraitAsset:'assets/portraits/kw_liang.png', desc:'Watches the port from the high ground. Rarely misses.'},
   {id:'dr_aa',       name:'DR. AA',     role:'Physician / Healer',    combatRole:'Healer',   hp:70, mp:110, portrait:'🩺', portraitAsset:'assets/portraits/dr_aa.png', desc:'Physician with a reputation that travels further than he does.'},
   {id:'mimi',        name:'MIMI',       role:'Diviner',               combatRole:'Caster',   hp:68, mp:115, portrait:'🔮', portraitAsset:'assets/portraits/mimi.png', desc:'Diviner. Reads the tide for what it remembers and what it hides.'},
-  {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', portraitAsset:'assets/portraits/brada_shah.png', desc:"Mimi's partner. Songs, strategy, and steadier ground."}
+  {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', portraitAsset:'assets/portraits/brada_shah.png', desc:"Mimi's partner. Songs, strategy, and steadier ground."},
+  // Arc V recruit — unlocked via game.foundCompanions, same mechanism as
+  // every earlier companion (see markArc5ChapterRead's recruitment hook).
+  {id:'renn',        name:'RENN',       role:'Arcane Trickster',      combatRole:'Caster',   hp:70, mp:120, portrait:'🔮', portraitAsset:'assets/portraits/renn.png', desc:'A curious, mischievous mage who treats sailing as one enormous magical experiment.'}
 ];
 function memberUnlocked(m){
   if (m.id === 'san') return true;
@@ -2577,7 +2611,7 @@ const CLASS_KIT = {
       {name:"Meteor Swarm", icon:"🔥", mp:60, levelReq:26, desc:"Destruction from the sky.", dice:"4d10", status:{type:'burn',chance:0.5,dmg:8,turns:3}}
     ],
     skill:{name:"Daybreak Ward", icon:'🛡️', mp:10, effect:'ward'}},
-  joel:        {role:'tank',   spell:null, skill:{name:"Guardian's Oath", icon:'⚔️', mp:0, effect:'taunt'}},
+  joel:        {role:'tank',   spell:null, skill:{name:"Shield Wall", icon:'⚔️', mp:0, effect:'taunt'}},
   aisyah:      {role:'melee',  spell:null, skill:{name:'Coup de Grace', icon:'💀', mp:0, mult:1.8}},
   eliz:        {role:'healer',
     spells:[
@@ -2596,7 +2630,22 @@ const CLASS_KIT = {
   zaki:        {role:'melee',  spell:null, skill:{name:'Power Strike', icon:'💥', mp:0, mult:1.5}},
   ser_aldric:  {role:'tank',   spell:null, skill:{name:'Holy Strike', icon:'✝️', mp:0, mult:1.4}},
   sister_wren: {role:'healer', spell:{name:'Blessing of Faith', icon:'🙏', mp:0, healMult:1.1}, skill:{name:'Purify', icon:'🌿', mp:0, effect:'cleanse'}},
-  soel:        {role:'caster', spell:{name:"Nine Lives' Ward", icon:'🐾', mp:0, healMult:0.6}, skill:{name:'Lucky Pounce', icon:'✨', mp:0, mult:1.3}}
+  soel:        {role:'caster', spell:{name:"Nine Lives' Ward", icon:'🐾', mp:0, healMult:0.6}, skill:{name:'Lucky Pounce', icon:'✨', mp:0, mult:1.3}},
+  // Renn (Arc V, Ch.6-9): a caster like San/Mezstorm/Mimi, plus a signature
+  // "hex" skill. The brief described an AoE hex that can friendly-fire the
+  // whole team, but this combat engine only ever has one enemy on screen
+  // (game.combatEnemyHp is a single scalar, no multi-target system) — so
+  // "AoE" doesn't map directly. Adapted as a high-risk/high-reward gamble
+  // instead: most of the time it's a big hit + a team haste buff; ~1 in 5
+  // it misfires, doing less damage and clipping a random ally (never
+  // fatally) rather than buffing anyone. See combatAction's 'hex' branch.
+  renn: {role:'caster',
+    spells:[
+      {name:'Gale Dart', icon:'💨', mp:9,  levelReq:1,  desc:'A quick burst of wind, sharp as a blade.', dice:'1d9'},
+      {name:'Mirror Currents', icon:'🌊', mp:14, levelReq:5,  desc:'Bends the light and the tide together.', dice:'1d11', status:{type:'shock',chance:0.25,turns:1}},
+      {name:'Phantom Fleet', icon:'👻', mp:18, levelReq:10, desc:"Illusory ships crowd the enemy's vision.", dice:'1d13'}
+    ],
+    skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}}
 };
 function kitFor(id){ return CLASS_KIT[id] || {role:'melee', spell:null, skill:null}; }
 
@@ -2891,7 +2940,7 @@ let game = {
   equippedGear: {},
   equipmentTraders: {},
 
-  autoBattle: false, spellMenuOpen: false, itemMenuOpen: false,
+  autoBattle: false, spellMenuOpen: false, itemMenuOpen: false, skillMenuOpen: false,
   discoveredAbilities: [], growthUsedThisBattle: {}, nervousCourageActive: false,
   exploreTarget: null,
   lastActiveAt: null,
@@ -3736,6 +3785,7 @@ function goScreen(name) {
   if (name === 'inventory') renderInventory();
   if (name === 'equipment') { renderEquipment(); ctPlayMusic('port'); }
   if (name === 'shipyard') renderShipyard();
+  if (name === 'fairtide') { renderFairTideHub(); ctPlayMusic('port'); }
   if (name === 'tavern') { renderTavern(); ctPlayMusic('tavern'); }
   if (name === 'story') renderStory();
   if (name === 'log') renderLog();
@@ -5039,15 +5089,22 @@ function getCrimsonCombatParty() {
     // get overwritten below.
     const realMaxHp = effectiveMaxHp(m);
     const realMaxMp = effectiveMaxMp(m);
+    // Bonded by the Tide (Arc V, Ch.4): +5% max HP/MP for San and Joel while
+    // the bond is active. See window.bondedTideActive() (defined in the
+    // Arc V script block, guarded with typeof so this never breaks if that
+    // block hasn't loaded for some reason).
+    const bondUp = (typeof window.bondedTideActive === 'function' && window.bondedTideActive() && (m.id === 'san' || m.id === 'joel')) ? 1.05 : 1;
+    const bondedMaxHp = Math.round(realMaxHp * bondUp);
+    const bondedMaxMp = Math.round(realMaxMp * bondUp);
     return {
       ...m,
       temp: false,
-      hp: Number((game.partyHp || {})[m.id] ?? realMaxHp),
-      maxHp: realMaxHp,
-      _scaledMaxHp: realMaxHp,
-      mp: Number((game.partyMp || {})[m.id] ?? realMaxMp),
-      maxMp: realMaxMp,
-      _scaledMaxMp: realMaxMp
+      hp: Number((game.partyHp || {})[m.id] ?? bondedMaxHp),
+      maxHp: bondedMaxHp,
+      _scaledMaxHp: bondedMaxHp,
+      mp: Number((game.partyMp || {})[m.id] ?? bondedMaxMp),
+      maxMp: bondedMaxMp,
+      _scaledMaxMp: bondedMaxMp
     };
   });
 
@@ -5116,6 +5173,7 @@ function startCombat(encounter) {
   game.nervousCourageActive = false;
   game.spellMenuOpen = false;
   game.itemMenuOpen = false;
+  game.skillMenuOpen = false;
 
   const party = getCrimsonCombatParty();
   syncCrimsonCombatParty(party);
@@ -5212,7 +5270,7 @@ function renderCombat() {
     actionsDiv.innerHTML =
       '<button class="btn btn-combat" onclick="combatAction(\'ATTACK\')">⚔️ Attack</button>' +
       '<button class="btn btn-magic" onclick="toggleSpellMenu()">✨ Spell</button>' +
-      '<button class="btn" onclick="combatAction(\'SKILL\')">🎯 Skill</button>' +
+      '<button class="btn" onclick="handleSkillButton()">🎯 Skill</button>' +
       '<button class="btn" onclick="combatAction(\'DEFEND\')">🛡️ Defend</button>' +
       '<button class="btn btn-success" onclick="toggleItemMenu()">🧪 Item</button>' +
       '<button class="btn btn-danger" onclick="fleeCombat()">🏃 Flee</button>';
@@ -5231,6 +5289,23 @@ function renderCombat() {
     ).join('') || '<p style="opacity:0.6;font-size:0.85rem;">No spells available.</p>';
   } else {
     spellMenu.style.display = 'none';
+  }
+
+  const skillMenu = document.getElementById('skillMenu');
+  if (game.skillMenuOpen && actor) {
+    skillMenu.style.display = 'block';
+    const kit = kitFor(actor.id);
+    const options = [];
+    if (kit.skill) options.push({fn: "combatAction('SKILL')", icon: kit.skill.icon, name: kit.skill.name, desc: 'Default skill'});
+    if (aegisAvailable(actor)) options.push({fn: 'useFirstMatesAegis()', icon: '🛡️✨', name: "First Mate's Aegis", desc: 'Arm the mark to shield San from the next hit she takes — once per day.'});
+    document.getElementById('skillGrid').innerHTML = options.map(o =>
+      `<button class="spell-btn" onclick="${o.fn}">
+      <div class="spell-name">${o.icon} ${o.name}</div>
+      <div class="spell-cost">${o.desc}</div>
+      </button>`
+    ).join('') || '<p style="opacity:0.6;font-size:0.85rem;">No skills available.</p>';
+  } else {
+    skillMenu.style.display = 'none';
   }
 
   const itemMenu = document.getElementById('itemMenu');
@@ -5262,7 +5337,7 @@ function renderCombat() {
   if (game.inCombat && allFallen) { handleDefeat(); return; }
   if (game.inCombat && game.combatEnemyHp <= 0) { handleVictory(); return; }
 
-  if (game.inCombat && game.autoBattle && actor && !game.spellMenuOpen && !game.itemMenuOpen) {
+  if (game.inCombat && game.autoBattle && actor && !game.spellMenuOpen && !game.itemMenuOpen && !game.skillMenuOpen) {
     const session = game.combatSessionId;
     if (game.combatActionTimer) clearTimeout(game.combatActionTimer);
     game.combatActionTimer = setTimeout(() => {
@@ -5329,6 +5404,24 @@ function combatAction(action) {
       const skill = kit.skill;
       if (skill.effect === 'taunt') {
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on them.');
+        // Bonded by the Tide (Ch.4): when Joel uses Shield Wall with the
+        // bond active, San catches a brief haste windfall off the surge.
+        if (actor.id === 'joel' && typeof window.bondedTideActive === 'function' && window.bondedTideActive()) {
+          game.hasteTurns = Math.max(game.hasteTurns || 0, 2);
+          game.hastePct = Math.max(game.hastePct || 0, 10);
+          // Small recovery bonus (the art's own "possible small recovery/
+          // resistance bonus" line) — a modest HP tick for both of them,
+          // piggybacking on the existing heal path rather than a new system.
+          const sanM = party.find(m => m.id === 'san');
+          const joelM = party.find(m => m.id === 'joel');
+          [sanM, joelM].forEach(m => {
+            if (!m) return;
+            const cur = partyHpOf(m);
+            const max = effectiveMaxHp(m);
+            game.partyHp[m.id] = Math.min(max, cur + Math.round(max * 0.06));
+          });
+          logCombat('🌊 The bond surges — San feels the Tide quicken her strikes, and they both catch their breath.');
+        }
       } else if (skill.effect === 'mark') {
         game.markedBoss = true;
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + "! San's next strike will land true.");
@@ -5351,6 +5444,34 @@ function combatAction(action) {
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! ' + esc(fallen.name) + ' returns to the fight.');
       } else if (skill.effect === 'cleanse') {
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The crew feels lighter.');
+      } else if (skill.effect === 'hex') {
+        const mpCost = skill.mp || 0;
+        const curMp = game.partyMp[actor.id] || 0;
+        if (curMp < mpCost) { toast('Not enough MP!'); return; }
+        game.partyMp[actor.id] = curMp - mpCost;
+        const gb = gearBonuses(actor.id);
+        const misfire = Math.random() < 0.2;
+        if (!misfire) {
+          let hexDmg = Math.round((30 + rollDice('2d10') + gb.magic) * (1 + (game.ship.cannons * 0.1)));
+          if (game.hasteTurns > 0) hexDmg = Math.round(hexDmg * (1 + game.hastePct / 100));
+          game.combatEnemyHp = Math.max(0, game.combatEnemyHp - hexDmg);
+          game.hasteTurns = Math.max(game.hasteTurns || 0, 2);
+          game.hastePct = Math.max(game.hastePct || 0, 12);
+          logCombat(esc(actor.name) + ' unleashes ' + skill.icon + ' ' + skill.name + ' for <span class="damage">' + hexDmg + '</span> damage — the whole crew feels the surge!');
+        } else {
+          let hexDmg = Math.round((14 + rollDice('1d10') + gb.magic) * 0.5);
+          game.combatEnemyHp = Math.max(0, game.combatEnemyHp - hexDmg);
+          const party = getCrimsonCombatParty();
+          const targets = party.filter(m => partyHpOf(m) > 0 && m.id !== actor.id);
+          if (targets.length) {
+            const victim = targets[Math.floor(Math.random() * targets.length)];
+            const ff = Math.round(10 + rollDice('1d10'));
+            game.partyHp[victim.id] = Math.max(1, partyHpOf(victim) - ff);
+            logCombat('💥 ' + esc(actor.name) + "'s " + skill.icon + ' ' + skill.name + ' misfires! It clips ' + esc(victim.name) + ' for <span class="damage">' + ff + '</span> — "Still calibrating!"');
+          } else {
+            logCombat('💥 ' + esc(actor.name) + "'s " + skill.icon + ' ' + skill.name + ' misfires, but the crew\'s clear.');
+          }
+        }
       } else if (skill.mult) {
         const gb = gearBonuses(actor.id);
         let sdmg = Math.round((18 + rollDice('1d20') + gb.atk + gb.magic) * skill.mult * (1 + (game.ship.cannons * 0.12)));
@@ -5370,8 +5491,60 @@ function combatAction(action) {
 
   game.spellMenuOpen = false;
   game.itemMenuOpen = false;
+  game.skillMenuOpen = false;
   endTurn();
 }
+
+// First Mate's Aegis (Arc V, Ch.5) — a real activated skill, per the art's
+// own "(Active Skill)" callout. Joel spends his turn to arm the mark; it
+// then blocks the next hit landing on San (see enemyCounterAttack), for as
+// long as that stays true within the same in-game day. Once-per-day is
+// enforced at arm-time via game.aegisUsedDay, not at trigger-time, since
+// the mark can sit armed for a while before it's actually needed.
+function aegisAvailable(actor){
+  if (!actor || actor.id !== 'joel') return false;
+  if (!(game.comicProgress5 && game.comicProgress5[5])) return false;
+  if (game.aegisUsedDay === game.day) return false;
+  return true;
+}
+window.useFirstMatesAegis = function(){
+  if (!game.inCombat || game.combatResolved || game.combatEnemyHp <= 0) return;
+  const party = getCrimsonCombatParty();
+  const alive = party.filter(m => partyHpOf(m) > 0);
+  const actor = alive[game.combatTurn];
+  if (!aegisAvailable(actor)) { toast('🔒 Not available right now.'); return; }
+  game.aegisArmed = true;
+  game.aegisUsedDay = game.day;
+  logCombat('🛡️✨ ' + esc(actor.name) + ' channels the mark — <b>First Mate\'s Aegis</b> stands ready to shield San.');
+  game.skillMenuOpen = false;
+  game.spellMenuOpen = false;
+  game.itemMenuOpen = false;
+  endTurn();
+};
+// The main action row's Skill button is a single hardcoded button shared
+// by every character (see renderCombat's actionsDiv template) — that's
+// the exact spot the Aegis button silently vanished from last session,
+// because the template never re-renders per-actor options. Rather than
+// bolt another conditional button onto that fixed row again, this keeps
+// the row itself completely unchanged and instead makes the one Skill
+// button smart: for everyone (and for Joel outside his Aegis window) it
+// fires the single default skill exactly as before; only when Joel has
+// a genuine second option available does it open a small choice menu,
+// the same dynamic-menu pattern the Spell button already uses safely.
+window.handleSkillButton = function(){
+  const party = getCrimsonCombatParty();
+  const alive = party.filter(m => partyHpOf(m) > 0);
+  const actor = alive[game.combatTurn];
+  if (!actor) return;
+  if (aegisAvailable(actor) && !game.aegisArmed) {
+    game.skillMenuOpen = !game.skillMenuOpen;
+    game.spellMenuOpen = false;
+    game.itemMenuOpen = false;
+    renderCombat();
+    return;
+  }
+  combatAction('SKILL');
+};
 
 function castSpell(spellIndex) {
   if (!game.inCombat || game.combatResolved || game.combatEnemyHp <= 0) return;
@@ -5433,11 +5606,12 @@ function castSpell(spellIndex) {
   }
 
   game.spellMenuOpen = false;
+  game.skillMenuOpen = false;
   endTurn();
 }
 
-function toggleSpellMenu() { game.spellMenuOpen = !game.spellMenuOpen; game.itemMenuOpen = false; renderCombat(); }
-function toggleItemMenu() { game.itemMenuOpen = !game.itemMenuOpen; game.spellMenuOpen = false; renderCombat(); }
+function toggleSpellMenu() { game.spellMenuOpen = !game.spellMenuOpen; game.itemMenuOpen = false; game.skillMenuOpen = false; renderCombat(); }
+function toggleItemMenu() { game.itemMenuOpen = !game.itemMenuOpen; game.spellMenuOpen = false; game.skillMenuOpen = false; renderCombat(); }
 
 function useItem(itemId) {
   if (!game.inCombat || game.combatResolved || game.combatEnemyHp <= 0) return;
@@ -5466,6 +5640,7 @@ function useItem(itemId) {
   }
 
   game.itemMenuOpen = false;
+  game.skillMenuOpen = false;
   endTurn();
 }
 
@@ -5508,11 +5683,32 @@ function enemyCounterAttack() {
   const tb = trinketBonus(target.id);
   if (tb && tb.defPct) dmg = Math.round(dmg * (1 - tb.defPct));
 
+  // First Mate's Aegis (Arc V, Ch.5): a real activated skill now (see
+  // useFirstMatesAegis()) rather than an automatic trigger — Joel spends
+  // his turn to arm the mark, and it blocks the next hit that lands on
+  // San, whenever that turn comes. game.aegisArmed is the live charge;
+  // game.aegisUsedDay just prevents re-arming again the same in-game day
+  // (checked at arm-time in useFirstMatesAegis, not needed again here).
+  let aegisTriggered = false;
+  if (target.id === 'san' && game.aegisArmed) {
+    dmg = Math.max(1, Math.round(dmg * 0.15));
+    game.aegisArmed = false;
+    aegisTriggered = true;
+  }
+  // Bonded by the Tide (Ch.4): small defensive synergy for San/Joel while
+  // both are fielded and alive — doesn't stack with an Aegis block above.
+  if (!aegisTriggered && (target.id === 'san' || target.id === 'joel') && typeof window.bondedTideActive === 'function' && window.bondedTideActive()) {
+    dmg = Math.max(1, Math.round(dmg * 0.92));
+  }
+
   const curHp = game.partyHp[target.id] != null ? game.partyHp[target.id] : target.hp;
   let nextHp = Math.max(0, curHp - dmg);
   if (UNKILLABLE_IDS.has(target.id)) nextHp = Math.max(1, nextHp);
   game.partyHp[target.id] = nextHp;
 
+  if (aegisTriggered) {
+    logCombat('🛡️✨ The mark on Joel\'s arm flares — <b>First Mate\'s Aegis</b> shields San from the worst of it!');
+  }
   logCombat(esc(enemy.name) + ' strikes ' + esc(target.name) + ' for <span class="damage">' + dmg + '</span> damage!' +
     (nextHp === 0 ? ' <span style="color:#e74c3c">' + esc(target.name) + ' has fallen!</span>' : ''));
 
@@ -5568,6 +5764,7 @@ function handleSanFlee() {
   if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
   game.spellMenuOpen = false;
   game.itemMenuOpen = false;
+  game.skillMenuOpen = false;
   logCombat('🏃 <b>SAN FLEES!</b> She falls to 0 HP and is forced out of the battle. No victory rewards are granted.');
   showPostBattleAction('San fled. No victory rewards were granted.');
   document.getElementById('combatActions').innerHTML =
@@ -5671,6 +5868,14 @@ function fleeCombat() {
 function toggleAutoBattle() { game.autoBattle = !game.autoBattle; renderCombat(); }
 function autoBattleAction(actor) {
   if (!game.inCombat || game.combatResolved || !actor || partyHpOf(actor) <= 0) return;
+  // First Mate's Aegis: auto-battle arms it the moment it's available,
+  // same as a player would — checked first since it's a once-a-day
+  // opportunity that's easy for an AI turn to otherwise skip entirely
+  // (autoBattleAction never calls SKILL for tank/melee roles below).
+  if (typeof aegisAvailable === 'function' && aegisAvailable(actor) && !game.aegisArmed) {
+    useFirstMatesAegis();
+    return;
+  }
   const kit = kitFor(actor.id);
   const mp = game.partyMp[actor.id] || 0;
   if (kit.role === 'healer') {
@@ -6081,7 +6286,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V83 · Party AI + Equipment Overhaul'</script>
+<script>window.__CT_BUILD__='V87 · Arc V Part II — Renn'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -6933,7 +7138,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     return Object.keys(FAIR_TIDE_TASKS).every(k => r[k] >= FAIR_TIDE_TASKS[k].need);
   };
   window.fairTideThriving = function(){
-    return window.fairTideRenovationDone() && (game.fairTideSupply||0) >= 50;
+    // Was gated on the old decaying Port Supply meter — now on Port HQ
+    // being built at all (see the Buildings script block below). Kept as
+    // its own function since a few other spots already call it by name.
+    return window.fairTideRenovationDone() && !!(game.fairTideBuildings && game.fairTideBuildings.port_hq > 0);
   };
   function decayFairTideSupply(){
     if(!window.fairTideRenovationDone()) return;
@@ -6981,9 +7189,24 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         toast('🏮 Fair Tide is fully renovated! The port is open for good.', 4200);
       }
     } else {
-      decayFairTideSupply();
-      game.fairTideSupply = Math.min(100, (game.fairTideSupply||0) + 15);
-      toast('📦 The gathering party returns. Port Supply +15');
+      // Post-renovation gathering now yields the typed resource economy
+      // (see the Buildings script block below) instead of the old flat
+      // Port Supply number. game.fairTideSupply/decayFairTideSupply are
+      // kept as harmless legacy fields for old saves — nothing reads
+      // fairTideSupply for Thriving anymore (see fairTideThriving below).
+      const yields = (typeof window.fairTideDispatchYield === 'function')
+        ? window.fairTideDispatchYield()
+        : {timber:4, stone:3, food:3, trade:2};
+      game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0};
+      const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999;
+      const gained = [];
+      Object.entries(yields).forEach(([k, v]) => {
+        const before = game.fairTideResources[k] || 0;
+        game.fairTideResources[k] = Math.min(cap, before + v);
+        const actual = game.fairTideResources[k] - before;
+        if (actual > 0) gained.push(actual + ' ' + k);
+      });
+      toast('📦 The gathering party returns with ' + (gained.join(', ') || 'nothing new — storage is full') + '.');
     }
     game.fairTideDispatch = null;
     game.fairTideCooldownEnd = Date.now() + COOLDOWN_MS;
@@ -6991,13 +7214,17 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if(typeof renderExplore==='function') renderExplore();
   };
 
-  // Thriving bonus: -10% on Market buy prices at Fair Tide only. (Sell
-  // prices and Shipyard costs are untouched for now — scoped narrowly on
-  // purpose rather than reaching into functions this pass didn't need to.)
+  // Thriving bonus: Market buy discount at Fair Tide, now scaled by the
+  // Trading Post building's level (see Buildings script block below)
+  // instead of a flat rate. (Sell prices and Shipyard costs are untouched,
+  // scoped narrowly on purpose.)
   const oldHaggleForFairTide = window.haggleMultiplier;
   window.haggleMultiplier = function(){
     let m = oldHaggleForFairTide ? oldHaggleForFairTide() : 1;
-    if(game.location==='fair_tide' && window.fairTideThriving()) m *= 0.9;
+    if(game.location==='fair_tide' && window.fairTideThriving()){
+      const tpLevel = (game.fairTideBuildings && game.fairTideBuildings.trading_post) || 0;
+      m *= (1 - Math.min(0.25, 0.04 * tpLevel));
+    }
     return m;
   };
 
@@ -7044,8 +7271,6 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         dispatchHtml = '<select id="ftTaskPick" class="btn btn-small" style="margin-right:6px;">'+
           Object.entries(FAIR_TIDE_TASKS).filter(([k,t])=>ftRenovation()[k]<t.need).map(([k,t])=>'<option value="'+k+'">'+t.icon+' '+esc(t.label)+' ('+ftRenovation()[k]+'/'+t.need+')</option>').join('')+
           '</select><button class="btn btn-small btn-success" onclick="dispatchGatheringParty(document.getElementById(\'ftTaskPick\').value)">⛵ Send Gathering Party</button>';
-      } else {
-        dispatchHtml = '<button class="btn btn-small btn-success" onclick="dispatchGatheringParty(\'supply\')">⛵ Send Gathering Party (restock Supply)</button>';
       }
     } else if(status.state==='out'){
       dispatchHtml = '<div class="story-chip">⛵ Out gathering — back in '+fmtClock(status.secondsLeft)+'</div>';
@@ -7054,35 +7279,22 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     } else if(status.state==='cooldown'){
       dispatchHtml = '<div class="story-chip">🌙 Crew resting — ready again in '+fmtClock(status.secondsLeft)+'</div>';
     }
-    let dockHtml;
     if(!window.fairTideRenovationDone()){
       const r = ftRenovation();
-      dockHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🔨 The Dock — Renovating Fair Tide</h3>'+
+      const dockHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🔨 The Dock — Renovating Fair Tide</h3>'+
         '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;margin-bottom:8px;">A weathered harbour, worth bringing back to life. Send a gathering party out for whichever task needs it most.</div>'+
         Object.entries(FAIR_TIDE_TASKS).map(([k,t])=>'<div style="font-size:.8rem;margin:3px 0;">'+t.icon+' '+esc(t.label)+' — <strong>'+r[k]+'/'+t.need+'</strong> <span style="opacity:.7;">('+t.companion+')</span></div>').join('')+
         '<div style="margin-top:10px;">'+dispatchHtml+'</div></article>';
+      container.insertAdjacentHTML('beforeend', dockHtml);
     } else {
-      const supply = game.fairTideSupply||0;
-      const thriving = window.fairTideThriving();
-      dockHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">⚓ The Dock — Port Upkeep</h3>'+
-        '<article class="quest-item"><div style="font-size:.85rem;margin-bottom:6px;">Port Supply: <strong>'+supply+'/100</strong> '+(thriving?'<span style="color:#6fb57d;">· Fair Tide Thriving (better Market prices here)</span>':'')+'</div>'+
-        '<div style="margin-top:8px;">'+dispatchHtml+'</div></article>';
+      // Renovation's done — the Dock, Buildings, Trade, and Clinic all
+      // moved to their own Fair Tide Hub screen (see the Buildings script
+      // block below) rather than staying crammed into the Explore tab.
+      const hubHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🏮 Fair Tide</h3>'+
+        '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;margin-bottom:10px;">The port is open for good. Buildings, trade, gathering, and the Clinic are all run from the hub now.</div>'+
+        '<button class="btn btn-success" onclick="goScreen(\'fairtide\')">🏮 Enter Fair Tide Hub</button></article>';
+      container.insertAdjacentHTML('beforeend', hubHtml);
     }
-    container.insertAdjacentHTML('beforeend', dockHtml);
-
-    // Clinic — Senedra, staffed the moment she's near real equipment,
-    // muscle memory taking over before she can explain why.
-    const clinicSeen = !!game.fairTideClinicSeen;
-    let clinicHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🩹 The Clinic</h3><article class="quest-item">';
-    if(!clinicSeen){
-      clinicHtml += '<div style="font-size:.85rem;opacity:.9;">Senedra wanders in to look the place over — and stops dead in the doorway. Her hands are already moving before she\'s decided to move them, checking supplies, straightening equipment like she\'s done it a thousand times. She doesn\'t remember being a paramedic. Her hands clearly do.</div>'+
-        '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest & Recover</button></div>';
-    } else {
-      clinicHtml += '<div style="font-size:.85rem;opacity:.85;">Senedra runs a tight clinic now, even if she still can\'t say why she knows how.</div>'+
-        '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest & Recover</button></div>';
-    }
-    clinicHtml += '</article>';
-    container.insertAdjacentHTML('beforeend', clinicHtml);
   };
   window.__ctOpenFairTideClinic = function(){
     if(!game.fairTideClinicSeen){
@@ -7264,5 +7476,402 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 </script>
 
 <!-- END ARC4_MARKER -->
+
+<!-- ARC 5 splash: shown once Arc IV is finished AND level 100 is reached -->
+<div id="arc5SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc5/arc5-cover-the-bond.png" alt="Arc V — The Bond" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc5Splash()">⚓ Begin Arc V</button>
+  </div>
+</div>
+
+<script id="ct-build-v84-arc5-part1">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC V — "The Bond" (Parts I-II: Ch.1-9). Gated on Arc IV completion +
+  // level 100 (San's call, not from the brief — Arc IV's own gate was 80).
+  // Chapters 10-24 (Jovie, the Fair Tide recruitment wave) land in later
+  // batches; this block wires Parts I-II plus the combat systems they
+  // introduce — Bonded by the Tide, First Mate's Aegis, and Renn's
+  // Trickster's Hex. See ways-of-working: incremental batching, clean
+  // extension points, never speculate beyond current content.
+  // -------------------------------------------------------------------
+  const ARC5_CHAPTERS = [
+    {id:1, title:'The Hidden Cove',       focus:"San and Joel find an ancient rune in a sea cove. Nothing is explained yet.",                 image:'assets/comics/arc5/ch01-the-hidden-cove.png',       xp:175},
+    {id:2, title:'Something Changed',     focus:'They notice faster recovery and unusually good coordination together — and no reason why.',  image:'assets/comics/arc5/ch02-something-changed.png',     xp:150},
+    {id:3, title:'Shield Wall',           focus:"A hard battle. San's magic grows stronger while Joel shields her — the bond's first sign.",   image:'assets/comics/arc5/ch03-shield-wall.png',           xp:200},
+    {id:4, title:'The Mark',              focus:'Joel pushes Shield Wall past its limit. A tattoo appears on his skin, tied to the bond.',      image:'assets/comics/arc5/ch04-the-mark.png',              xp:200},
+    {id:5, title:"First Mate's Aegis",    focus:'Joel learns the mark can be deliberately channelled to protect San from a powerful attack.',   image:'assets/comics/arc5/ch05-first-mates-aegis.png',     xp:225},
+    // Part II — Renn (Ch.6-9). Recruited into full combat at Ch.8 — see
+    // ARC5_RECRUITS below.
+    {id:6, title:'The Mage Who Stole the Wind', focus:'An unnatural wind fills the sails, then vanishes — the crew finds Renn, an arcane trickster, nearby.', image:'assets/comics/arc5/ch06-the-mage-who-stole-the-wind.png', xp:175},
+    {id:7, title:'Tricks of the Trade',         focus:'Renn demonstrates his brand of magical mischief — false lights, phantom ships, illusory cargo.',       image:'assets/comics/arc5/ch07-tricks-of-the-trade.png',         xp:150},
+    {id:8, title:'Aboard the Crimson Tide',     focus:'Renn joins the crew, at least for now — and immediately causes a stir.',                              image:'assets/comics/arc5/ch08-aboard-the-crimson-tide.png',     xp:200},
+    {id:9, title:'Why Renn Stays',              focus:"He has other options. He chooses the Crimson Tide anyway — a genuine choice, not destiny.",           image:'assets/comics/arc5/ch09-why-renn-stays.png',               xp:200}
+  ];
+  window.ARC5_CHAPTERS = ARC5_CHAPTERS;
+
+  window.arc5ObjectiveState = function(){
+    if(typeof window.arc4ObjectiveState!=='function' || window.arc4ObjectiveState()!=='arc4_chapters_complete_for_now') return null;
+    if(level()<100) return null;
+    game.comicProgress5 = game.comicProgress5||{};
+    for(const ch of ARC5_CHAPTERS){
+      if(!game.comicProgress5[ch.id]) return 'complete_arc5_chapter_'+ch.id;
+    }
+    return 'arc5_part1_complete_for_now';
+  };
+
+  // Bonded by the Tide — active once Ch.4 is read, whenever San and Joel
+  // are both fielded and alive. Read by getCrimsonCombatParty() (stat
+  // bonus), enemyCounterAttack() (damage reduction), and combatAction()
+  // (Shield Wall haste windfall) — all guarded with typeof checks so
+  // nothing breaks if this block hasn't loaded.
+  window.bondedTideActive = function(){
+    if(!(game.comicProgress5 && game.comicProgress5[4])) return false;
+    const activeIds = new Set((typeof getActiveParty==='function' ? getActiveParty() : []).map(m=>m.id));
+    if(!activeIds.has('san') || !activeIds.has('joel')) return false;
+    const sanHp = (game.partyHp && game.partyHp['san'] != null) ? game.partyHp['san'] : 1;
+    const joelHp = (game.partyHp && game.partyHp['joel'] != null) ? game.partyHp['joel'] : 1;
+    return sanHp > 0 && joelHp > 0;
+  };
+
+  // Renn joins full combat the moment Ch.8 ("Aboard the Crimson Tide") is
+  // marked read. Everyone from Part III onward (Jovie, Gino, Wahyu, Dudin,
+  // Imah, Nurul, Dre, Jorvin) is confirmed non-combat — they stay at Fair
+  // Tide rather than joining the fielded party — so they won't get entries
+  // here; that recruitment will go through the Fair Tide building/roster
+  // system instead once those chapters are wired.
+  const ARC5_RECRUITS = {8:'renn'};
+
+  window.markArc5ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC5_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc5] no chapter data for id', id); return; }
+    game.comicProgress5 = game.comicProgress5||{};
+    if(game.comicProgress5[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc5ObjectiveState() !== 'complete_arc5_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress5[id] = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0)+1;
+    logEvent('📖 Arc 5 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    const recruitId = ARC5_RECRUITS[id];
+    if(recruitId && !game.foundCompanions?.[recruitId]){
+      game.foundCompanions = game.foundCompanions||{};
+      game.foundCompanions[recruitId] = true;
+      const member = (typeof ALL_PARTY!=='undefined') ? ALL_PARTY.find(m=>m.id===recruitId) : null;
+      const label = member ? member.name : recruitId;
+      logEvent('⚓ '+label+' has joined the crew!', 'gold');
+      toast('⚓ '+label+' has joined the crew!', 3600);
+    }
+    if(typeof saveGame==='function') saveGame();
+    if(typeof renderMainGoal==='function') renderMainGoal();
+    if(typeof renderStory==='function') renderStory();
+  };
+
+  window.__ctShowArc5Splash = function(){
+    const overlay = document.getElementById('arc5SplashOverlay');
+    if(!overlay) return;
+    overlay.style.display='flex'; overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    game.arc5SplashSeen = true;
+    if(typeof saveGame==='function') saveGame();
+  };
+  window.__ctCloseArc5Splash = function(){
+    const overlay = document.getElementById('arc5SplashOverlay');
+    if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+  };
+
+  const oldRenderStoryForArc5 = window.renderStory;
+  window.renderStory = function(){
+    if(oldRenderStoryForArc5) oldRenderStoryForArc5();
+    const container = document.getElementById('storyContent');
+    if(!container) return;
+    const arc5Ready = typeof window.arc5ObjectiveState==='function' && window.arc5ObjectiveState()!==null;
+    if(arc5Ready && !game.arc5SplashSeen && typeof window.__ctShowArc5Splash==='function'){
+      window.__ctShowArc5Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc5/arc5-cover-the-bond.png" alt="Arc V — The Bond" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc V</div><div class="story-act-title">The Bond</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC5_CHAPTERS.length+' of 24. What we build now becomes its own history.</div></div>';
+    if(!arc5Ready){
+      const arc4Done = typeof window.arc4ObjectiveState==='function' && window.arc4ObjectiveState()==='arc4_chapters_complete_for_now';
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc V Locked</div><div class="story-chapter-sub">'+
+        (!arc4Done ? 'Finish all of Arc IV first.' : 'Reach Level 100 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc5ObjectiveState();
+    ARC5_CHAPTERS.forEach(ch=>{
+      const done = !!game.comicProgress5?.[ch.id];
+      const ready = !done && so===('complete_arc5_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc5ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if(so==='arc5_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc V chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  const oldRenderComicArchiveForArc5 = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if(oldRenderComicArchiveForArc5) oldRenderComicArchiveForArc5();
+    const el = document.getElementById('comicArchive'); if(!el) return;
+    const progress5 = (typeof game!=='undefined' && game.comicProgress5) || {};
+    const arc5Read = ARC5_CHAPTERS.filter(ch=>!!progress5[ch.id]);
+    const section = !arc5Read.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc V chapters read yet.</div></div>'
+      : arc5Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc V — The Bond</div>' + section);
+  };
+})();
+</script>
+
+<!-- END ARC5_MARKER (Part I) -->
+
+<script id="ct-build-v85-fairtide-buildings">
+(function(){
+  // -------------------------------------------------------------------
+  // FAIR TIDE BUILDINGS + TRADE — extends the existing renovate-then-
+  // upkeep loop (ct-build-v72-fairtide-arc4, kept intact above) into a
+  // small gathering-game layer: Port HQ + 4 buildings, each independently
+  // levelable, paid for with a 4-resource economy earned from the same
+  // gathering-party dispatch mechanic. Buildings are named after the
+  // Arc V companions who'll eventually staff them (Part IV/V, not yet
+  // wired in) so nothing needs renaming later — just a "staffed" flag
+  // once those chapters land.
+  //
+  // Scope note: this is v1. Curated to 4 buildings rather than one per
+  // every Part IV/V NPC, and the resource-per-dispatch-task picker was
+  // simplified to a flat bundle rather than resource-specific tasks —
+  // both easy to expand later without breaking saves.
+  // -------------------------------------------------------------------
+  const FT_BUILDINGS = {
+    port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:5},
+    warehouse:    {name:'Warehouse',     icon:'📦', desc:'Bigger hauls from every gathering party, and higher resource storage.', companion:'Dudin — foreshadowed', cost:{timber:30,stone:20}},
+    trading_post: {name:'Trading Post',  icon:'🏪', desc:'Better Market prices at Fair Tide, and better rates at the Trade screen.', companion:'Wahyu — foreshadowed', cost:{trade:30,food:15}},
+    galley:       {name:'Galley',        icon:'🍲', desc:'More Food from every gathering run, and better Trade rates on Food.', companion:'Gino — foreshadowed', cost:{food:30,timber:15}},
+    workshop:     {name:'Workshop',      icon:'🔧', desc:'Cheaper Shipyard hull upgrades.', companion:'Jorvin — foreshadowed', cost:{stone:30,trade:15}}
+  };
+  const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
+  const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
+
+  function ftResources(){ game.fairTideResources = game.fairTideResources || {timber:0,stone:0,food:0,trade:0}; return game.fairTideResources; }
+  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0}; return game.fairTideBuildings; }
+  function fmtClockFT(sec){ const m = Math.floor(sec/60), s = sec%60; return m+':'+String(s).padStart(2,'0'); }
+
+  window.fairTideResourceCap = function(){
+    return 200 + (ftBuildings().warehouse||0) * 100;
+  };
+  window.fairTideBuildingCap = function(key){
+    if(key==='port_hq') return FT_BUILDINGS.port_hq.cap;
+    return Math.min(FT_BUILDINGS.port_hq.cap, ftBuildings().port_hq||0);
+  };
+  window.fairTideBuildingCost = function(key){
+    const cfg = FT_BUILDINGS[key];
+    if(!cfg) return {};
+    const nextLevel = (ftBuildings()[key]||0) + 1;
+    const cost = {};
+    Object.entries(cfg.cost).forEach(([res, base]) => { cost[res] = Math.round(base * nextLevel); });
+    return cost;
+  };
+  window.canAffordFairTideBuilding = function(key){
+    const cost = window.fairTideBuildingCost(key);
+    const res = ftResources();
+    return Object.entries(cost).every(([r,amt]) => (res[r]||0) >= amt);
+  };
+  window.upgradeFairTideBuilding = function(key){
+    if(!window.fairTideRenovationDone()){ toast('🔒 Finish renovating Fair Tide first.'); return; }
+    const cfg = FT_BUILDINGS[key];
+    if(!cfg) return;
+    const b = ftBuildings();
+    const cur = b[key] || 0;
+    const cap = window.fairTideBuildingCap(key);
+    if(cur >= cap){ toast(key==='port_hq' ? '🔒 Port HQ is at its current cap.' : "🔒 Raise Port HQ's level first."); return; }
+    if(!window.canAffordFairTideBuilding(key)){ toast('Not enough resources.'); return; }
+    const cost = window.fairTideBuildingCost(key);
+    const res = ftResources();
+    Object.entries(cost).forEach(([r,amt]) => { res[r] = (res[r]||0) - amt; });
+    b[key] = cur + 1;
+    logEvent('🏗️ '+cfg.icon+' '+cfg.name+' upgraded to level '+b[key]+'!', 'gold');
+    toast('🏗️ '+cfg.name+' is now level '+b[key]+'!');
+    saveGameQuiet();
+    window.renderFairTideHub();
+  };
+
+  // Read by claimGatheringParty() (see the edited dispatch code above).
+  window.fairTideDispatchYield = function(){
+    const b = ftBuildings();
+    const hqMult = 1 + 0.05*(b.port_hq||0);
+    const whMult = 1 + 0.10*(b.warehouse||0);
+    const galleyFoodMult = 1 + 0.15*(b.galley||0);
+    return {
+      timber: Math.round(4*hqMult*whMult),
+      stone:  Math.round(3*hqMult*whMult),
+      food:   Math.round(3*hqMult*whMult*galleyFoodMult),
+      trade:  Math.round(2*hqMult*whMult)
+    };
+  };
+
+  // Trade screen — sell/buy resources for gold, rates scaled by Trading Post.
+  window.fairTideSellRate = function(res){
+    const tp = ftBuildings().trading_post||0;
+    const foodBonus = (res==='food') ? 1 + 0.05*(ftBuildings().galley||0) : 1;
+    return Math.round(FT_TRADE_BASE[res] * (1 + 0.05*tp) * foodBonus);
+  };
+  window.fairTideBuyRate = function(res){
+    const tp = ftBuildings().trading_post||0;
+    return Math.max(1, Math.round(FT_TRADE_BASE[res] * 1.6 * (1 - Math.min(0.3, 0.04*tp))));
+  };
+  window.fairTideSellResource = function(res, amt){
+    amt = Math.max(1, Number(amt)||1);
+    const r = ftResources();
+    if((r[res]||0) < amt){ toast('Not enough '+res+'.'); return; }
+    const rate = window.fairTideSellRate(res);
+    r[res] -= amt;
+    game.gold += rate*amt;
+    toast('💱 Sold '+amt+' '+res+' for '+(rate*amt)+'g');
+    saveGameQuiet();
+    window.renderFairTideHub();
+  };
+  window.fairTideBuyResource = function(res, amt){
+    amt = Math.max(1, Number(amt)||1);
+    const rate = window.fairTideBuyRate(res);
+    const cost = rate*amt;
+    if(game.gold < cost){ toast('Not enough gold.'); return; }
+    const r = ftResources();
+    const cap = window.fairTideResourceCap();
+    const before = r[res]||0;
+    r[res] = Math.min(cap, before+amt);
+    const actual = r[res]-before;
+    const spent = Math.round(rate*actual);
+    game.gold -= spent;
+    toast(actual>0 ? '💱 Bought '+actual+' '+res+' for '+spent+'g' : 'Storage is full.');
+    saveGameQuiet();
+    window.renderFairTideHub();
+  };
+
+  // Workshop — cheaper hull upgrades at the Shipyard. Global once built,
+  // same as every other building's bonus (not location-gated).
+  const oldShipUpgradeCostForFT = window.shipUpgradeCost;
+  window.shipUpgradeCost = function(type){
+    let c = oldShipUpgradeCostForFT ? oldShipUpgradeCostForFT(type) : 0;
+    if(type==='hull'){
+      const ws = ftBuildings().workshop||0;
+      c = Math.round(c * (1 - Math.min(0.3, 0.05*ws)));
+    }
+    return c;
+  };
+
+  // -------------------------------------------------------------------
+  // Rendering — Fair Tide Hub screen (fairTideScreen), 4 tabs.
+  // -------------------------------------------------------------------
+  window.switchFairTideTab = function(tab){
+    game.fairTideActiveTab = tab;
+    window.renderFairTideHub();
+  };
+  window.renderFairTideHub = function(){
+    const tab = game.fairTideActiveTab || 'buildings';
+    ['buildings','trade','dispatch','clinic'].forEach(t=>{
+      const el = document.getElementById('ft-tab-'+t);
+      const btn = document.getElementById('ft-tab-btn-'+t);
+      if(el) el.classList.toggle('active', t===tab);
+      if(btn) btn.classList.toggle('active', t===tab);
+    });
+    if(tab==='buildings') renderFTBuildingsTab();
+    if(tab==='trade') renderFTTradeTab();
+    if(tab==='dispatch') renderFTDispatchTab();
+    if(tab==='clinic') renderFTClinicTab();
+  };
+
+  function renderFTBuildingsTab(){
+    const el = document.getElementById('ft-tab-buildings');
+    if(!el) return;
+    const res = ftResources();
+    const b = ftBuildings();
+    let html = '<div class="panel-title">🧱 Resources</div><div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:.85rem;">'+
+      Object.entries(FT_RES_LABEL).map(([k,label])=>'<span>'+label+': <strong>'+(res[k]||0)+'</strong></span>').join('')+
+      '<span style="opacity:.7;">(cap '+window.fairTideResourceCap()+' each)</span></div>';
+    Object.entries(FT_BUILDINGS).forEach(([key,cfg])=>{
+      const level = b[key]||0;
+      const cap = window.fairTideBuildingCap(key);
+      const maxed = level >= cap;
+      const cost = window.fairTideBuildingCost(key);
+      const afford = window.canAffordFairTideBuilding(key);
+      const costText = Object.entries(cost).map(([r,amt])=>amt+' '+r).join(', ');
+      html += '<article class="quest-item"><strong>'+cfg.icon+' '+cfg.name+'</strong> — Level '+level+'/'+cap+
+        (cfg.companion ? ' <span style="opacity:.7;font-size:.78rem;">('+esc(cfg.companion)+')</span>' : '')+'<br>'+
+        '<span style="font-size:.8rem;opacity:.82;">'+esc(cfg.desc)+'</span><br>'+
+        (maxed ? '<div class="story-chip" style="margin-top:6px;">'+(key==='port_hq'?'At current cap':"Raise Port HQ's level first")+'</div>'
+          : '<div style="margin-top:6px;font-size:.8rem;">Next level: '+costText+'</div><button class="btn btn-small btn-success" style="margin-top:4px;" '+(afford?'':'disabled')+' onclick="upgradeFairTideBuilding(\''+key+'\')">🏗️ Upgrade</button>')+
+        '</article>';
+    });
+    el.innerHTML = html;
+  }
+
+  function renderFTTradeTab(){
+    const el = document.getElementById('ft-tab-trade');
+    if(!el) return;
+    const res = ftResources();
+    let html = '<div class="panel-title">💱 Trade</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Sell surplus resources for gold, or buy what the gathering parties haven\'t brought back yet. Rates improve with the Trading Post.</p>'+
+      '<p style="font-size:.85rem;">💰 Gold: <strong>'+(game.gold||0)+'</strong></p>';
+    Object.keys(FT_RES_LABEL).forEach(res_key=>{
+      const sellRate = window.fairTideSellRate(res_key);
+      const buyRate = window.fairTideBuyRate(res_key);
+      html += '<article class="quest-item"><strong>'+FT_RES_LABEL[res_key]+'</strong> — you have '+(res[res_key]||0)+'<br>'+
+        '<span style="font-size:.8rem;opacity:.8;">Sell '+sellRate+'g each · Buy '+buyRate+'g each</span><br>'+
+        '<div style="margin-top:6px;display:flex;gap:6px;">'+
+        '<button class="btn btn-small" onclick="fairTideSellResource(\''+res_key+'\',10)">Sell 10</button>'+
+        '<button class="btn btn-small" onclick="fairTideBuyResource(\''+res_key+'\',10)">Buy 10</button>'+
+        '</div></article>';
+    });
+    el.innerHTML = html;
+  }
+
+  function renderFTDispatchTab(){
+    const el = document.getElementById('ft-tab-dispatch');
+    if(!el) return;
+    const status = window.fairTideDispatchStatus();
+    let dispatchHtml = '';
+    if(status.state==='idle') dispatchHtml = '<button class="btn btn-small btn-success" onclick="dispatchGatheringParty(\'supply\')">⛵ Send Gathering Party</button>';
+    else if(status.state==='out') dispatchHtml = '<div class="story-chip">⛵ Out gathering — back in '+fmtClockFT(status.secondsLeft)+'</div>';
+    else if(status.state==='ready') dispatchHtml = '<button class="btn btn-small btn-magic" onclick="claimGatheringParty()">📦 Collect the Gathering Party</button>';
+    else if(status.state==='cooldown') dispatchHtml = '<div class="story-chip">🌙 Crew resting — ready again in '+fmtClockFT(status.secondsLeft)+'</div>';
+    const yields = window.fairTideDispatchYield();
+    el.innerHTML = '<div class="panel-title">⚓ Dispatch</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:8px;">Send a gathering party out — Port HQ and the Warehouse make every run count for more.</p>'+
+      '<p style="font-size:.8rem;opacity:.8;">Typical haul: 🪵'+yields.timber+' 🪨'+yields.stone+' 🍚'+yields.food+' 💰'+yields.trade+'</p>'+
+      '<div style="margin-top:8px;">'+dispatchHtml+'</div>';
+  }
+
+  function renderFTClinicTab(){
+    const el = document.getElementById('ft-tab-clinic');
+    if(!el) return;
+    const clinicSeen = !!game.fairTideClinicSeen;
+    let html = '<div class="panel-title">🩹 The Clinic</div><article class="quest-item">';
+    html += clinicSeen
+      ? '<div style="font-size:.85rem;opacity:.85;">Senedra runs a tight clinic now, even if she still can\'t say why she knows how.</div>'
+      : '<div style="font-size:.85rem;opacity:.9;">Senedra wanders in to look the place over — and stops dead in the doorway. Her hands are already moving before she\'s decided to move them, checking supplies, straightening equipment like she\'s done it a thousand times. She doesn\'t remember being a paramedic. Her hands clearly do.</div>';
+    html += '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest & Recover</button></div></article>';
+    el.innerHTML = html;
+  }
+})();
+</script>
+
+
 </body>
 </html>
