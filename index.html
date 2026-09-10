@@ -94,7 +94,7 @@
 </script>
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daybreak: Crimson Tide — Build V81</title>
+<title>Daybreak: Crimson Tide — Build V83</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -2245,7 +2245,23 @@ const EQUIPMENT_CATALOG = [
   {id:'wren_circlet', name:'Circlet of Intercession', icon:'👑', slot:'head', family:'any', defense:12, hp:18, price:650, tier:3, trader:'Ferris', forCompanion:'Sister Wren', desc:'Circlet for Sister Wren. +12 DEF, +18 HP.'},
   {id:'kw_quick_boots', name:"Quick Hands' Boots", icon:'🥾', slot:'feet', family:'light', spd:12, defense:6, price:650, tier:3, trader:'Ferris', forCompanion:'KW Liang', desc:"Boots for KW Liang. +12 SPD, +6 DEF."},
   {id:'iris_ash_claw', name:"Ash's Claw", icon:'💍', slot:'ring1', family:'any', atk:10, spd:8, price:650, tier:3, trader:'Ferris', forCompanion:'Iris', desc:'Ring for Iris. +10 ATK, +8 SPD.'},
-  {id:'renn_spectacles', name:'Centuries-Worn Spectacles', icon:'👓', slot:'head', family:'any', atk:8, defense:8, hp:10, price:650, tier:3, trader:'Ferris', forCompanion:'Renn Evergreen', desc:'Spectacles for Renn. +8 ATK, +8 DEF, +10 HP.'}
+  {id:'renn_spectacles', name:'Centuries-Worn Spectacles', icon:'👓', slot:'head', family:'any', atk:8, defense:8, hp:10, price:650, tier:3, trader:'Ferris', forCompanion:'Renn Evergreen', desc:'Spectacles for Renn. +8 ATK, +8 DEF, +10 HP.'},
+
+  // Robe & heavy-armor progression. Previously the ONLY items in these two
+  // families were free starter pieces (one each) plus a single tier-3 heavy
+  // item for Joel — meaning San (armor:['robe'], no 'any' fallback) and
+  // every other robe/heavy-restricted character had zero possible armor
+  // upgrades for the entire rest of the game, no matter their level or
+  // gold. These are general (no forCompanion) so any character whose
+  // GEAR_ROLE_RULES allows that family can equip them.
+  {id:'apprentice_robe', name:"Apprentice's Robe", icon:'🥋', slot:'armor', family:'robe', defense:6, magic:2, price:55, tier:1, trader:'Lewis', desc:'+6 DEF, +2 MAG. A step up from threadbare.'},
+  {id:'recruits_plate', name:"Recruit's Plate", icon:'🛡️', slot:'armor', family:'heavy', defense:6, price:55, tier:1, trader:'Lewis', desc:'+6 DEF. Standard-issue, but sturdier than nothing.'},
+  {id:'focus_robe', name:'Robe of Deep Focus', icon:'🥋', slot:'armor', family:'robe', defense:10, magic:5, mpRegen:2, price:170, tier:2, trader:'Ribald', desc:'+10 DEF, +5 MAG, +2 MP regen.'},
+  {id:'hardened_cuirass', name:'Hardened Cuirass', icon:'🛡️', slot:'armor', family:'heavy', defense:11, hp:10, price:170, tier:2, trader:'Ribald', desc:'+11 DEF, +10 HP.'},
+  {id:'tidecallers_vestment', name:"Tidecaller's Vestment", icon:'🥋', slot:'armor', family:'robe', defense:16, magic:9, price:430, tier:3, trader:'Farrow', desc:'+16 DEF, +9 MAG.'},
+  {id:'bulwark_of_the_line', name:'Bulwark of the Line', icon:'🛡️', slot:'armor', family:'heavy', defense:20, hp:15, price:420, tier:3, trader:'Farrow', desc:'+20 DEF, +15 HP.'},
+  {id:'robe_of_vecna', name:'Robe of Vecna', icon:'🥋', slot:'armor', family:'robe', defense:26, magic:16, hp:15, price:4300, tier:5, trader:'Vessa', desc:'+26 DEF, +16 MAG, +15 HP. Old robes, carried from a world with a different name for magic like this. Something in the weave still remembers.'},
+  {id:'platemail_unbroken', name:'Platemail of the Unbroken', icon:'🛡️', slot:'armor', family:'heavy', defense:32, hp:40, price:4400, tier:5, trader:'Vessa', desc:"+32 DEF, +40 HP. Dented, re-forged, dented again. Never once failed to get its wearer home."}
 ];
 
 
@@ -2340,20 +2356,20 @@ function gearSummaryText(memberId) {
 
 const EQUIPMENT_TRADERS = [
   {id:'lewis', name:'Lewis', title:'Wandering Merchant', zone:'Whispering Woods', minLevel:1,
-   greeting:'Lewis has a few practical pieces to get a voyage started.', stock:['traveler_charm']},
+   greeting:'Lewis has a few practical pieces to get a voyage started.', stock:['traveler_charm','apprentice_robe','recruits_plate']},
   {id:'ribald', name:'Ribald', title:'Adventurers Mart', zone:'Cursed Catacombs', minLevel:2,
-   greeting:'Ribald opens a case of equipment that has seen blood.', stock:['flaming_longsword','cloak_of_protection','ring_of_wizardry','rodofthe_resurrection','joels_bulwark','aisyahs_twin_blades']},
+   greeting:'Ribald opens a case of equipment that has seen blood.', stock:['flaming_longsword','cloak_of_protection','ring_of_wizardry','rodofthe_resurrection','joels_bulwark','aisyahs_twin_blades','focus_robe','hardened_cuirass']},
   {id:'nym', name:'Nym', title:'Targos Quartermaster', zone:'Stormhold', minLevel:5,
    greeting:"Nym's prices are fair. His jokes are not.", stock:['gnome_hooked_hammer','leather_armor_plus1','gnomish_goggles','mezstorm_conduit','senedra_hawkeye_lens']},
   {id:'deidre', name:'Deidre', title:'Exotic Wares', zone:'Frostspire Ruins', minLevel:6,
    greeting:'Deidre deals in the extraordinary — especially anything with a little frost on it.', stock:['frostbrand','icingdeath_scimitar','belt_hill_giant','eliz_serenity_orb','zaki_temper_band']},
   {id:'farrow', name:'Farrow', title:'The Reclaimer', zone:'The Static Fields', minLevel:26,
-   greeting:'Farrow rebuilds gear from whatever the road leaves behind.', stock:['bulwark_steadfast','steadfast_bulwark','sisterblades_edge','sisterblades_wraps']},
+   greeting:'Farrow rebuilds gear from whatever the road leaves behind.', stock:['bulwark_steadfast','steadfast_bulwark','sisterblades_edge','sisterblades_wraps','tidecallers_vestment','bulwark_of_the_line']},
   {id:'ferris', name:'Ferris', title:'The Quartermaster', zone:'The Breaking', minLevel:30,
    greeting:'Ferris keeps a ledger for the crew members who never seem to get a full rack of gear. He finally has something for the wider roster.',
    stock:['aldric_oath_ring','mimi_dreamsight_locket','brada_resonance_charm','dr_aa_steady_gloves','wren_circlet','kw_quick_boots','iris_ash_claw','renn_spectacles']},
   {id:'vessa', name:'Vessa', title:'The Hoardkeeper', zone:"The Architect's Chamber", minLevel:43,
-   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal']}
+   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken']}
 ];
 
 function normalizeGearItem(item) {
@@ -3926,30 +3942,11 @@ function renderComicArchive(){
     19:'ch19-crew-we-choose.png', 20:'ch20-senedra.png', 21:'ch21-zaki.png',
     22:'ch22-mezstorm.png', 23:'ch23-siblings.png', 24:'ch24-drowned-passage.png'
   };
-  // Remastered Arc I art (full comic-page format, replacing the old single-splash
-  // crop-simulation pages) — lives in its own folder so the original ch01-24
-  // files above stay untouched. Unlocks on the exact same progress1 flag as the
-  // original chapter, so a chapter becomes available to read back in BOTH the
-  // original and remastered form the moment the player first reads it — no
-  // separate gating logic to maintain.
-  const ARC1_REMASTERED_IMAGES = {
-    1:'ch01-the-storm-that-remained.png', 2:'ch02-the-first-port.png', 3:'ch03-a-crew-of-choice.png',
-    4:'ch04-the-guardians-fortress.png', 5:'ch05-the-voice-behind-the-wall.png', 6:'ch06-the-shield-returns.png',
-    7:'ch07-the-shield-that-remained.png', 8:'ch08-the-trader-winds-remember.png', 9:'ch09-the-shield-returns-promise-carried-forward.png',
-    10:'ch10-the-day-the-sea-rested.png', 11:'ch11-the-day-we-chose.png', 12:'ch12-the-debt-that-wasnt-hers.png',
-    13:'ch13-the-debt-collector.png', 14:'ch14-two-sisters-one-ship.png', 15:'ch15-the-one-who-stayed.png',
-    16:'ch16-the-mark-we-carried.png', 17:'ch17-the-things-we-do-without-knowing.png', 18:'ch18-the-storm-that-was-owed.png',
-    19:'ch19-the-crew-we-choose.png', 20:'ch20-senedra-the-watchful-signal.png', 21:'ch21-zaki-the-planner.png',
-    22:'ch22-mezstorm-the-regeneration.png', 23:'ch23-senedra-and-zaki-the-two-who-remembered.png', 24:'ch24-the-drowned-passage.png'
-  };
   const progress1 = (typeof game!=='undefined' && game.comicProgress) || {};
   const progress2 = (typeof game!=='undefined' && game.comicProgress2) || {};
   const arc1Read = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
     .filter(ch => !!progress1[ch.id] && ARC1_IMAGES[ch.id])
     .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1/'+ARC1_IMAGES[ch.id]}));
-  const arc1Remastered = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
-    .filter(ch => !!progress1[ch.id] && ARC1_REMASTERED_IMAGES[ch.id])
-    .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1-readback/'+ARC1_REMASTERED_IMAGES[ch.id]}));
   const arc2Read = (typeof window.ARC2_CHAPTERS!=='undefined' ? window.ARC2_CHAPTERS : [])
     .filter(ch => !!progress2[ch.id] && ch.image)
     .map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
@@ -3964,9 +3961,6 @@ function renderComicArchive(){
 
   el.innerHTML =
     '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read) +
-    '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc I — Remastered (New Art)</div>' +
-    (arc1Remastered.length ? '<img src="assets/comics/arc1-readback/cover-daybreak-crimson-tide.png" alt="Daybreak: Crimson Tide" style="width:100%;border-radius:8px;margin-bottom:10px;display:block;">' : '') +
-    section('Arc I Remastered', arc1Remastered) +
     '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc II — A Voyage to Remember</div>' + section('Arc II', arc2Read);
 }
 
@@ -4949,10 +4943,48 @@ function gainXP(amount) {
 // ---------------------------------------------------------------------------
 // COMBAT SYSTEM
 // ---------------------------------------------------------------------------
-function effectiveMaxHp(m) { const t = trinketBonus(m.id); const g = gearBonuses(m.id); return Number(m.maxHp ?? m.hp ?? 1) + (t && t.hpBonus ? t.hpBonus : 0) + g.hp; }
-function partyHpOf(m) { return game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp; }
-function partyMpOf(m) { return game.partyMp[m.id] != null ? game.partyMp[m.id] : m.mp; }
-function effectiveMaxMp(m) { const t = trinketBonus(m.id); return Number(m.maxMp ?? m.mp ?? 0) + (t && t.mpBonus ? t.mpBonus : 0); }
+// Level-based HP/MP growth. Previously effectiveMaxHp/Mp had NO level term at
+// all — HP only ever grew from equipped gear, meaning a level-280 character
+// with no HP gear was stuck at the exact same tiny base stat as level 1,
+// while enemies (scaleCrimsonEnemy, 'harbor'/'sea' kind) scale up to 2.8x HP
+// by around level 19 and then stay flat forever after that. Calibrated so
+// player HP reaches roughly that same 2.8x by a comparable point (~level 60,
+// intentionally a bit past enemies' plateau so the player feels ahead, not
+// just caught up), then keeps growing slowly through the long late-game
+// instead of flatlining, capping at 6x base (HP) / 5x base (MP) — reached
+// around level 168 / 161 respectively. Soel is deliberately excluded: his
+// flavor text is "unkillable — he reforms from spirit flame," a fixed-stat
+// mascot/support unit rather than a scaling combatant.
+function levelStatMult(kind){
+  const lv = Math.max(1, level());
+  const steps = Math.max(0, lv - 1);
+  if(kind==='mp') return Math.min(5, 1 + steps*0.025);
+  return Math.min(6, 1 + steps*0.03);
+}
+function effectiveMaxHp(m) {
+  // Idempotency guard: getCrimsonCombatParty() calls this once per member
+  // to build its transformed combat-party objects, and stamps the result
+  // onto _scaledMaxHp. Combat code then calls effectiveMaxHp again many
+  // times on those SAME transformed objects (heal targeting, damage calc,
+  // etc.) — without this guard, each call would re-apply the level
+  // multiplier on top of an already-scaled number, compounding without
+  // bound. Raw ALL_PARTY members never have this field, so they always
+  // compute fresh; already-transformed objects always short-circuit.
+  if (m._scaledMaxHp != null) return m._scaledMaxHp;
+  const t = trinketBonus(m.id); const g = gearBonuses(m.id);
+  const base = Number(m.maxHp ?? m.hp ?? 1);
+  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('hp'));
+  return scaledBase + (t && t.hpBonus ? t.hpBonus : 0) + g.hp;
+}
+function partyHpOf(m) { return game.partyHp[m.id] != null ? game.partyHp[m.id] : effectiveMaxHp(m); }
+function partyMpOf(m) { return game.partyMp[m.id] != null ? game.partyMp[m.id] : effectiveMaxMp(m); }
+function effectiveMaxMp(m) {
+  if (m._scaledMaxMp != null) return m._scaledMaxMp;
+  const t = trinketBonus(m.id);
+  const base = Number(m.maxMp ?? m.mp ?? 0);
+  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('mp'));
+  return scaledBase + (t && t.mpBonus ? t.mpBonus : 0);
+}
 function trinketBonus(memberId) {
   const trophy = game.equippedTrophies && game.equippedTrophies[memberId];
   if (!trophy) return null;
@@ -4995,14 +5027,29 @@ function syncTemporaryCrewHp(roster) {
 
 
 function getCrimsonCombatParty() {
-  const permanent = (typeof getActiveParty === 'function' ? getActiveParty() : []).map(m => ({
-    ...m,
-    temp: false,
-    hp: Number((game.partyHp || {})[m.id] ?? m.hp ?? m.maxHp ?? 1),
-    maxHp: Number(m.maxHp ?? m.hpMax ?? 1),
-    mp: Number((game.partyMp || {})[m.id] ?? m.mp ?? m.maxMp ?? 0),
-    maxMp: Number(m.maxMp ?? m.mpMax ?? 0)
-  }));
+  const permanent = (typeof getActiveParty === 'function' ? getActiveParty() : []).map(m => {
+    // BUG FIX: this used to compute maxHp/maxMp via `m.maxHp ?? m.hpMax ?? 1`
+    // — but ALL_PARTY entries only ever define `.hp`/`.mp` (never `.maxHp`/
+    // `.hpMax`), so that always fell through to the literal fallback `1`.
+    // Every combat-party object's maxHp was silently 1 this whole time,
+    // which then poisoned effectiveMaxHp's own `m.maxHp ?? m.hp` check on
+    // the SAME object (since maxHp was no longer undefined — it was really
+    // 1). Now computed from the real effectiveMaxHp/Mp on the raw member
+    // (base stat + level scaling + gear), before this object's own fields
+    // get overwritten below.
+    const realMaxHp = effectiveMaxHp(m);
+    const realMaxMp = effectiveMaxMp(m);
+    return {
+      ...m,
+      temp: false,
+      hp: Number((game.partyHp || {})[m.id] ?? realMaxHp),
+      maxHp: realMaxHp,
+      _scaledMaxHp: realMaxHp,
+      mp: Number((game.partyMp || {})[m.id] ?? realMaxMp),
+      maxMp: realMaxMp,
+      _scaledMaxMp: realMaxMp
+    };
+  });
 
   const temporary = (game.temporaryCrew || []).map(t => ({
     ...t,
@@ -5205,10 +5252,12 @@ function renderCombat() {
   document.getElementById('autoBattleBtn').style.display = '';
   document.getElementById('fleeBtn').style.display = 'none';
 
-  // A fallen San always resolves as a flee, even if the same exchange
-  // also reduced the enemy to 0 HP. Never award a victory in that case.
-  const san = party.find(m => m.id === 'san');
-  if (game.inCombat && san && partyHpOf(san) <= 0) { handleSanFlee(); return; }
+  // San falling no longer force-ends the battle as an automatic flee/loss —
+  // she's now treated the same as any other party member: if she's at 0 HP,
+  // she's incapacitated but the fight continues with whoever's still
+  // standing, and Eliz's Resurrect (now prioritizing San, see castSpell/
+  // SKILL revive handling above) can bring her back mid-fight. Combat only
+  // ends in defeat if the whole active party — San included — is down.
   const allFallen = party.every(m => partyHpOf(m) <= 0);
   if (game.inCombat && allFallen) { handleDefeat(); return; }
   if (game.inCombat && game.combatEnemyHp <= 0) { handleVictory(); return; }
@@ -5292,7 +5341,10 @@ function combatAction(action) {
       } else if (skill.effect === 'revive') {
         const mp = game.partyMp[actor.id] || 0;
         if (mp < skill.mp) { toast('Not enough MP!'); return; }
-        const fallen = party.find(m => partyHpOf(m) <= 0);
+        // Priority to San if she's among the fallen, matching the same
+        // "Eliz looks after San first" relationship as her heal spell.
+        const sanFallen = party.find(m => m.id === 'san' && partyHpOf(m) <= 0);
+        const fallen = sanFallen || party.find(m => partyHpOf(m) <= 0);
         if (!fallen) { toast('No one has fallen.'); return; }
         game.partyMp[actor.id] = mp - skill.mp;
         game.partyHp[fallen.id] = Math.round(effectiveMaxHp(fallen) * 0.5);
@@ -5345,10 +5397,20 @@ function castSpell(spellIndex) {
     game.hastePct = spell.buffVal;
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! Haste active for ' + game.hasteTurns + ' turns.');
   } else if (spell.healMult) {
-    const healTarget = party.reduce((a, b) => {
-      const aHp = game.partyHp[a.id] || a.hp;
-      const bHp = game.partyHp[b.id] || b.hp;
-      return (aHp / a.hp) < (bHp / b.hp) ? a : b;
+    // Eliz is San's dedicated healer — the story treats this as a specific
+    // relationship, not generic "whoever's lowest %". If San's not at full
+    // HP, Eliz heals San even when someone else is technically lower;
+    // otherwise (and for every other healer — Wren, Soel) fall back to the
+    // original lowest-HP% targeting. Also fixed a real scaling bug here:
+    // this used to divide by the character's raw unscaled base HP instead
+    // of their real current max (effectiveMaxHp), so the "lowest %" pick
+    // was wrong for anyone whose max had grown from gear or level.
+    const sanMember = party.find(m => m.id === 'san');
+    const sanNotFull = sanMember && partyHpOf(sanMember) < effectiveMaxHp(sanMember);
+    const healTarget = (actor.id === 'eliz' && sanNotFull) ? sanMember : party.reduce((a, b) => {
+      const aPct = partyHpOf(a) / effectiveMaxHp(a);
+      const bPct = partyHpOf(b) / effectiveMaxHp(b);
+      return aPct < bPct ? a : b;
     });
     const healAmt = Math.round(25 * spell.healMult * (1 + (game.ship.hull * 0.1)));
     const curHp = partyHpOf(healTarget);
@@ -5454,11 +5516,10 @@ function enemyCounterAttack() {
   logCombat(esc(enemy.name) + ' strikes ' + esc(target.name) + ' for <span class="damage">' + dmg + '</span> damage!' +
     (nextHp === 0 ? ' <span style="color:#e74c3c">' + esc(target.name) + ' has fallen!</span>' : ''));
 
-  if (target.id === 'san' && nextHp <= 0) {
-    handleSanFlee();
-    return;
-  }
-
+  // San falling no longer immediately ends combat as a flee — see the
+  // matching note above the allFallen check in renderCombat(). She's
+  // incapacitated like anyone else; the fight (and hull damage below)
+  // continues normally.
   const hullDmg = Math.round(dmg * 0.2);
   game.health = Math.max(0, game.health - hullDmg);
 
@@ -5625,6 +5686,21 @@ function autoBattleAction(actor) {
       const allSpells = kit.spells.filter(s => (s.levelReq || 1) <= level());
       const idx = allSpells.indexOf(spells[Math.floor(Math.random() * spells.length)]);
       if (idx >= 0) { castSpell(idx); return; }
+    }
+  }
+  // Core party members (not hired/temporary crew) can also draw on
+  // consumables during auto-battle — previously items only ever got used
+  // via the manual item menu, so a full stock of potions and Cannon Shots
+  // just sat unused the whole fight once auto-battle was toggled on.
+  if (actor.temp !== true) {
+    const ownPct = partyHpOf(actor) / effectiveMaxHp(actor);
+    if (ownPct < 0.3) {
+      const healId = (game.consumables?.greater_health > 0) ? 'greater_health'
+        : (game.consumables?.health_potion > 0 ? 'health_potion' : null);
+      if (healId) { useItem(healId); return; }
+    }
+    if (kit.role !== 'healer' && kit.role !== 'caster' && (game.consumables?.cannon_shot > 0) && Math.random() < 0.25) {
+      useItem('cannon_shot'); return;
     }
   }
   combatAction('ATTACK');
@@ -5811,10 +5887,10 @@ function renderPartyScreen() {
   const party = getActiveParty();
   container.innerHTML = '<div class="main-grid">' +
     party.map(m => {
-      const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp;
-      const mp = game.partyMp[m.id] != null ? game.partyMp[m.id] : m.mp;
       const maxHp = effectiveMaxHp(m);
       const maxMp = effectiveMaxMp(m);
+      const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : maxHp;
+      const mp = game.partyMp[m.id] != null ? game.partyMp[m.id] : maxMp;
       const kit = kitFor(m.id);
       const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level());
       const trophy = game.equippedTrophies && game.equippedTrophies[m.id];
@@ -6005,8 +6081,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V81 · Debug Icon Removed'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V81</strong> · Debug Icon Removed</footer>
+<script>window.__CT_BUILD__='V83 · Party AI + Equipment Overhaul'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
@@ -6136,6 +6212,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if(!game.comicProgress?.[12]) return 'complete_chapter_12';
       if(!game.comicProgress?.[13]) return 'complete_chapter_13';
       return 'rescue_aisyah';
+    } else if(!game.comicProgress?.[9] || !game.comicProgress?.[10] || !game.comicProgress?.[11] || !game.comicProgress?.[12] || !game.comicProgress?.[13]) {
+      // Aisyah found before finishing 9-13 (e.g. direct guardian fight, or an
+      // older save). Patch those chapters closed instead of leaving them
+      // stuck forever — same reconciliation as Joel's chain above.
+      game.comicProgress[9]=true; game.comicProgress[10]=true; game.comicProgress[11]=true;
+      game.comicProgress[12]=true; game.comicProgress[13]=true;
+      if(typeof saveGame==='function') saveGame();
     }
     // Chapters 14, 16, 17 previously had no gate anywhere in this chain and
     // were unreachable through normal play despite having full art+panels.
@@ -6147,11 +6230,19 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if(game.location!=='batavia') return 'sail_batavia';
       if(!game.comicProgress?.[15]) return 'complete_chapter_15';
       return 'rescue_eliz';
+    } else if(!game.comicProgress?.[15]) {
+      // Same reconciliation as above: Eliz found before Chapter 15 closed.
+      game.comicProgress[15]=true;
+      if(typeof saveGame==='function') saveGame();
     }
     if(!game.foundCompanions?.mezstorm){
       if(game.location!=='bangkok') return 'sail_bangkok';
       if(!game.comicProgress?.[18]) return 'complete_chapter_18';
       return 'rescue_mezstorm';
+    } else if(!game.comicProgress?.[18]) {
+      // Same reconciliation again: Mezstorm found before Chapter 18 closed.
+      game.comicProgress[18]=true;
+      if(typeof saveGame==='function') saveGame();
     }
     if(!game.comicProgress?.[19]) return 'complete_chapter_19';
     if(!game.comicProgress?.[20]) return 'complete_chapter_20';
@@ -6576,6 +6667,46 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // Also covers the case where `game` is already corrupted and populated
   // by the time this script runs (e.g. a session already in progress).
   repairGoldIfCorrupted();
+})();
+</script>
+
+<script id="ct-build-v82-hp-level-scaling">
+(function(){
+  // One-time migration for existing saves: effectiveMaxHp/Mp just gained a
+  // real level-scaling term (see COMBAT SYSTEM section) where there was
+  // none before. A character whose stored game.partyHp[id] exactly equals
+  // their OLD raw base m.hp (the only value "full health" could have been
+  // under the old formula) gets topped up to their new, much higher max —
+  // so "was at full health" stays "at full health" instead of suddenly
+  // reading as critically wounded purely from a balance change. Partial-
+  // health cases are left alone; a rest at any port already tops those off.
+  function migratePartyHpMpForLevelScaling(){
+    if(typeof ALL_PARTY==='undefined' || typeof game==='undefined') return;
+    if(game.hpLevelScalingMigrated) return;
+    game.partyHp = game.partyHp || {};
+    game.partyMp = game.partyMp || {};
+    ALL_PARTY.forEach(function(m){
+      const oldBaseHp = Number(m.maxHp ?? m.hp ?? 1);
+      const oldBaseMp = Number(m.maxMp ?? m.mp ?? 0);
+      if(game.partyHp[m.id] === oldBaseHp){
+        game.partyHp[m.id] = effectiveMaxHp(m);
+      }
+      if(oldBaseMp > 0 && game.partyMp[m.id] === oldBaseMp){
+        game.partyMp[m.id] = effectiveMaxMp(m);
+      }
+    });
+    game.hpLevelScalingMigrated = true;
+    if(typeof saveGame==='function') saveGame();
+  }
+  const oldLoadGameForHpFix = window.loadGame;
+  if(typeof oldLoadGameForHpFix==='function'){
+    window.loadGame = function(){
+      const result = oldLoadGameForHpFix.apply(this, arguments);
+      migratePartyHpMpForLevelScaling();
+      return result;
+    };
+  }
+  migratePartyHpMpForLevelScaling();
 })();
 </script>
 
