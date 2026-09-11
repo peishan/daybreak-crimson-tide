@@ -169,10 +169,10 @@ h1, h2, h3, .title-font { font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px
 .btn-success { background: linear-gradient(to bottom, #1e8449, #145a32); border-color: var(--success); }
 .btn-magic { background: linear-gradient(to bottom, #4a2c6a, #2d1b3d); border-color: #9b59b6; }
 .btn-combat { background: linear-gradient(to bottom, #7b241c, #5c1a14); border-color: #e74c3c; }
-.tabs { display: flex; gap: 4px; margin-bottom: 15px; flex-wrap: wrap; }
+.tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
 .tab-btn {
   background: rgba(0,0,0,0.3); border: 1px solid var(--sand); color: var(--parchment);
-  padding: 8px 14px; border-radius: 8px 8px 0 0; cursor: pointer;
+  padding: 10px 16px; border-radius: 8px 8px 0 0; cursor: pointer;
   font-family: 'Cinzel', serif; font-size: 0.8rem; transition: all 0.2s;
 }
 .tab-btn:hover { background: rgba(196,163,90,0.2); }
@@ -324,12 +324,12 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .buff-shield { background: rgba(52,152,219,0.3); color: #3498db; }
 .buff-mark { background: rgba(231,76,60,0.3); color: #e74c3c; }
 .nav-bar {
-  display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
-  background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; margin-bottom: 15px;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 15px;
 }
 .nav-btn {
   background: rgba(0,0,0,0.3); border: 1px solid var(--sand); color: var(--parchment);
-  padding: 8px 14px; border-radius: 8px; cursor: pointer; font-family: 'Cinzel', serif;
+  padding: 10px 16px; border-radius: 8px; cursor: pointer; font-family: 'Cinzel', serif;
   font-size: 0.8rem; transition: all 0.2s;
 }
 .nav-btn:hover { background: rgba(196,163,90,0.2); }
@@ -1754,7 +1754,7 @@ body{
       <button class="nav-btn" onclick="goScreen('shipyard')">⚓ Shipyard</button>
       <button class="nav-btn" onclick="goScreen('log')">📜 Log</button>
     </div>
-    <div class="tab-bar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+    <div class="tabs" style="margin-bottom:12px;">
       <button class="tab-btn active" id="ft-tab-btn-buildings" onclick="switchFairTideTab('buildings')">🏗️ Buildings</button>
       <button class="tab-btn" id="ft-tab-btn-trade" onclick="switchFairTideTab('trade')">💱 Trade</button>
       <button class="tab-btn" id="ft-tab-btn-dispatch" onclick="switchFairTideTab('dispatch')">⚓ Dispatch</button>
@@ -6536,7 +6536,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V111 · Market Strip + Detail Panel'</script>
+<script>window.__CT_BUILD__='V112 · Tab/Nav Spacing'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
