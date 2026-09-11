@@ -6474,7 +6474,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V101 · Arc VI Ch.5 — A Ship of Our Own'</script>
+<script>window.__CT_BUILD__='V102 · Arc VI Ch.6-7'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -8694,7 +8694,9 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:2, title:'The Ships We Inherit', focus:"San decides what to do with two captured ships and their crews — not everyone here chose to be. Freedom isn't given to the strongest. It's given to the right people.", image:'assets/comics/arc6/ch02-the-ships-we-inherit.png', xp:300},
     {id:3, title:"Didn't Have Rice?", focus:"Joel finds Jeff doing his community service and finally says what he never got to say. The crowd Jeff spent years dismissing has its own answer.", image:'assets/comics/arc6/ch03-didnt-have-rice.png', xp:300},
     {id:4, title:'The People We Keep', focus:"Too many people, too many ships. San gives everyone a real choice instead of a new set of orders — and Fair Tide grows because of it.", image:'assets/comics/arc6/ch04-the-people-we-keep.png', xp:325},
-    {id:5, title:'A Ship of Our Own', focus:"San inspects the inherited ships and decides what each one becomes — fleet, trade, transport, or let go. Renn finds something unusual in the rigging of one of them.", image:'assets/comics/arc6/ch05-a-ship-of-our-own.png', xp:325}
+    {id:5, title:'A Ship of Our Own', focus:"San inspects the inherited ships and decides what each one becomes — fleet, trade, transport, or let go. Renn finds something unusual in the rigging of one of them.", image:'assets/comics/arc6/ch05-a-ship-of-our-own.png', xp:325},
+    {id:6, title:'What They Were Good At', focus:"Former workers start revealing skills Robin never saw — a cook, a carpenter, a navigator, a trader. He saw job titles. San sees people.", image:'assets/comics/arc6/ch06-what-they-were-good-at.png', xp:325},
+    {id:7, title:'The Empty Office', focus:"Robin watches Fair Tide laugh together, unafraid, uninterested in his approval. No dramatic redemption. Just the quiet realization that his old authority is simply gone.", image:'assets/comics/arc6/ch07-the-empty-office.png', xp:300}
   ];
   window.ARC6_CHAPTERS = ARC6_CHAPTERS;
 
@@ -9125,6 +9127,88 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (typeof renderStory === 'function') renderStory();
   };
 
+  // -------------------------------------------------------------------
+  // Ch.6 — "What They Were Good At." Specialist recruitment: unlike
+  // Ch.2/Ch.3's generic "Fair Tide Crew" placeholder recruits, these four
+  // arrive with a specific skill already revealed, so they're
+  // auto-assigned the matching civilian role (window.FT_CIVILIAN_ROLES,
+  // Ch.4) immediately rather than needing a manual pick from the Roster
+  // tab. Matches the brief's point directly: Robin saw job titles, San
+  // sees people with abilities — the mechanic should reflect that these
+  // people were never actually generic.
+  // -------------------------------------------------------------------
+  const ARC6_CH6_SPECIALISTS = [
+    {id:'former_cook', name:'A Former Cook', civilianRole:'cook', icon:'🍲', desc:"Robin never asked what she could do. Turns out it was quite a lot."},
+    {id:'former_carpenter', name:'A Former Carpenter', civilianRole:'craftsperson', icon:'🔨', desc:'Kept every tool in good order the whole time he was indentured. Never once got asked to use them for anything that mattered.'},
+    {id:'former_navigator', name:'A Former Navigator', civilianRole:'sailor', icon:'⚓', desc:"Knows currents Robin's own charts didn't."},
+    {id:'former_trader', name:'A Former Trader', civilianRole:'trader', icon:'💰', desc:'Good with numbers, better with people. Robin only ever saw the numbers.'}
+  ];
+  window.completeArc6Chapter6 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_6') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[6]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[6] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===6);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    game.fairTideRoster = game.fairTideRoster || {};
+    let joined = 0;
+    ARC6_CH6_SPECIALISTS.forEach(s => {
+      if (!game.fairTideRoster[s.id]) {
+        const roleDef = FT_CIVILIAN_ROLES[s.civilianRole];
+        game.fairTideRoster[s.id] = {name:s.name, role:roleDef.name, icon:s.icon, desc:s.desc, civilianRole:s.civilianRole};
+        joined++;
+      }
+    });
+    logEvent('🔧 Chapter 6 complete: What They Were Good At — ' + joined + ' specialist(s) joined Fair Tide, already sorted into roles.', 'gold');
+    toast('🔧 ' + joined + ' specialist(s) joined Fair Tide — already exactly where their skills fit.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'What They Were Good At',
+        blurb: 'One by one, former workers start stepping forward.<br><br>' +
+          '"I\'ve spent years at sea. I can help with navigation and ship repair." "I know trading." "I have medical knowledge." "I can cook." "I\'ve worked with accounts before." "I\'m good with children."<br><br>' +
+          '"That counts too," San says, and means it.<br><br>' +
+          'Robin saw job titles and usefulness. San sees people with abilities and lives.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.7 — "The Empty Office." A quiet beat, deliberately no new
+  // mechanic: no recruits, no ships, no fight. Robin's own finite
+  // community-service term (see ct-build-v94, window.communityServiceState)
+  // is untouched by this — this chapter is a realization DURING his
+  // service, not its completion (that's still "Robin's Last Day," fired
+  // separately by claimCommunityLabor when his 20 days are actually up).
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter7 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_7') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[7]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[7] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===7);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🏮 Chapter 7 complete: The Empty Office.', 'gold');
+    toast('🏮 Chapter 7 complete: The Empty Office.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Empty Office',
+        blurb: 'Robin pauses mid-task and watches people laughing together at Fair Tide.<br><br>' +
+          'Nobody is afraid of him.<br><br>' +
+          'Nobody is waiting for his sarcasm.<br><br>' +
+          'Nobody cares about his approval.<br><br>' +
+          'His old authority didn\'t get taken from him in some dramatic confrontation. It just... stopped mattering. No redemption speech. No apology. Just consequences.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
   const oldRenderStoryForArc6 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc6) oldRenderStoryForArc6();
@@ -9167,6 +9251,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter5()">🚢 Sort the Fleet</button>';
         else action = done ? '<div class="story-chip">✓ The fleet is sorted.</div>' : '<div class="story-chip">Designate every ship in the Roster tab first, then follow the current Objective.</div>';
+      } else if (ch.id === 6) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter6()">🔧 Hear Them Out</button>';
+        else action = done ? '<div class="story-chip">✓ Specialists found their place.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 7) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter7()">🏮 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ The office stays empty.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else {
         // Fallback for future chapters — standard mark-as-read pattern,
         // same as every other arc, until this one needs its own mechanic.
