@@ -1239,12 +1239,20 @@ body{
 .gear-slot-label{font-size:.64rem;text-transform:uppercase;letter-spacing:.5px;color:var(--sand);margin-bottom:5px}
 .gear-slot-item{font-size:.72rem;line-height:1.35;min-height:32px}
 .gear-slot-item small{opacity:.7;font-size:.62rem}
-.gear-inventory-row,.gear-shop-row{display:flex;align-items:center;gap:10px;border:1px solid rgba(205,163,55,.25);border-radius:7px;padding:9px;margin-bottom:7px;background:rgba(0,0,0,.14)}
 .gear-item-icon{font-size:1.45rem;width:32px;text-align:center}
 .gear-item-main{flex:1;min-width:0}
 .gear-item-main strong{display:block;color:var(--gold)}
 .gear-item-main span,.gear-trader-meta{display:block;font-size:.67rem;opacity:.72;line-height:1.35}
-.gear-equip-buttons{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.gear-equip-buttons{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-start}
+/* Bug fix, take 3: two prior attempts both lived inside
+   @media(max-width:720px), and the bug was still reported after both —
+   rather than try a third variant of a conditional rule that may or may
+   not be matching/loading correctly, this removes the condition
+   entirely. This game only ever runs on mobile, so there's no real
+   downside to always stacking icon+text above the button row instead of
+   trying to fit them side by side — it just always looks right instead
+   of depending on a breakpoint. */
+.gear-inventory-row,.gear-shop-row{display:flex;flex-direction:column;align-items:stretch;gap:6px;border:1px solid rgba(205,163,55,.25);border-radius:7px;padding:9px;margin-bottom:7px;background:rgba(0,0,0,.14)}
 .gear-trader{border:1px solid rgba(205,163,55,.35);border-radius:9px;padding:11px;margin-bottom:10px}
 .gear-trader.locked{opacity:.6}
 .gear-trader-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -1253,17 +1261,6 @@ body{
 .gear-shop-row strong{color:var(--gold)}
 @media(max-width:720px){
   .gear-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
-  /* Bug fix: rows with many eligible companions (e.g. a ring any of the
-     10 unlocked party members can wear) used to squeeze the item's own
-     title/description down to a sliver next to a wide button row, since
-     both were flex siblings fighting for the same horizontal space —
-     the text would wrap to 1-3 characters per line and look broken/
-     "doubled". Stacking icon+text above the button row on mobile gives
-     each its own full-width line instead. */
-  .gear-inventory-row,.gear-shop-row{flex-wrap:wrap;align-items:flex-start}
-  .gear-inventory-row .gear-item-icon,.gear-shop-row>div:first-child{flex:0 0 auto}
-  .gear-inventory-row .gear-item-main,.gear-shop-row>div:first-child{flex:1 1 100%;min-width:0}
-  .gear-equip-buttons{flex:1 1 100%;justify-content:flex-start}
 }
 
 
@@ -6474,7 +6471,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V106 · Arc IV Robin/Jeff Real Fights'</script>
+<script>window.__CT_BUILD__='V108 · Equipment Layout Fix v3 (Unconditional)'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
