@@ -6474,7 +6474,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V102 · Arc VI Ch.6-7'</script>
+<script>window.__CT_BUILD__='V104 · Arc VI Ch.9-14'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -8696,7 +8696,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:4, title:'The People We Keep', focus:"Too many people, too many ships. San gives everyone a real choice instead of a new set of orders — and Fair Tide grows because of it.", image:'assets/comics/arc6/ch04-the-people-we-keep.png', xp:325},
     {id:5, title:'A Ship of Our Own', focus:"San inspects the inherited ships and decides what each one becomes — fleet, trade, transport, or let go. Renn finds something unusual in the rigging of one of them.", image:'assets/comics/arc6/ch05-a-ship-of-our-own.png', xp:325},
     {id:6, title:'What They Were Good At', focus:"Former workers start revealing skills Robin never saw — a cook, a carpenter, a navigator, a trader. He saw job titles. San sees people.", image:'assets/comics/arc6/ch06-what-they-were-good-at.png', xp:325},
-    {id:7, title:'The Empty Office', focus:"Robin watches Fair Tide laugh together, unafraid, uninterested in his approval. No dramatic redemption. Just the quiet realization that his old authority is simply gone.", image:'assets/comics/arc6/ch07-the-empty-office.png', xp:300}
+    {id:7, title:'The Empty Office', focus:"Robin watches Fair Tide laugh together, unafraid, uninterested in his approval. No dramatic redemption. Just the quiet realization that his old authority is simply gone.", image:'assets/comics/arc6/ch07-the-empty-office.png', xp:300},
+    {id:8, title:"Joel's Rest", focus:"After everything with Jeff, Joel finally talks about the strangeness of watching the old hierarchy reverse. San doesn't give him a speech. She just stays beside him.", image:'assets/comics/arc6/ch08-joels-rest.png', xp:300},
+    {id:9, title:'The Crew That Chose Us', focus:"The people who voluntarily stayed formally become part of the Crimson Tide network. They aren't indentured anymore. They chose to stay.", image:'assets/comics/arc6/ch09-the-crew-that-chose-us.png', xp:350},
+    {id:10, title:'The First Voyage', focus:"San takes some of the newly recruited crew on their first voyage. They aren't Robin's workers anymore. They're sailors aboard their own chosen future.", image:'assets/comics/arc6/ch10-the-first-voyage.png', xp:300},
+    {id:11, title:'Something in the Cargo', focus:"Renn digs deeper into the artifact from the captured cargo — the first real bridge back toward the larger magical-world storyline.", image:'assets/comics/arc6/ch11-something-in-the-cargo.png', xp:325},
+    {id:12, title:'The Price of a Ship', focus:"Taking possession of Robin's fleet has consequences — other merchants and authorities notice. San has to negotiate rather than simply fight.", image:'assets/comics/arc6/ch12-the-price-of-a-ship.png', xp:350},
+    {id:13, title:'The People Who Left', focus:"Some freed workers return briefly — one reunited with parents, one found work, one just wanted to leave the sea. Freedom doesn't mean everyone should join San.", image:'assets/comics/arc6/ch13-the-people-who-left.png', xp:300},
+    {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.png', xp:300}
   ];
   window.ARC6_CHAPTERS = ARC6_CHAPTERS;
 
@@ -9209,6 +9216,205 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (typeof renderStory === 'function') renderStory();
   };
 
+  // -------------------------------------------------------------------
+  // Ch.8 — "Joel's Rest." Another deliberately quiet chapter, same shape
+  // as Ch.7: no recruits, no gold, no ships. Just XP, reputation, and a
+  // story beat.
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter8 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_8') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[8]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[8] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===8);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🌊 Chapter 8 complete: Joel\'s Rest.', 'gold');
+    toast('🌊 Chapter 8 complete: Joel\'s Rest.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: "Joel's Rest",
+        blurb: 'That evening, Joel finally talks about it — how strange it is, watching the old hierarchy reverse. The people who used to answer to men like Jeff now watch Jeff answer to them.<br><br>' +
+          'San doesn\'t have a speech ready. She doesn\'t try to find one.<br><br>' +
+          'She just stays beside him.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.9 — "The Crew That Chose Us." No new individual recruits — the
+  // people this chapter is about are already in game.fairTideRoster,
+  // recruited across Ch.2/3/6. This is the formal, emotional payoff of
+  // everything since Ch.1, so it gets a bigger reputation grant than the
+  // usual +1, plus a flag (game.crewFormalized) for anything later that
+  // wants to check whether this moment has happened.
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter9 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_9') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[9]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[9] = true;
+    game.crewFormalized = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===9);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 3;
+    const crewCount = Object.keys(game.fairTideRoster || {}).length;
+    logEvent('⚓ Chapter 9 complete: The Crew That Chose Us — ' + crewCount + ' people, chosen not owed.', 'gold');
+    toast('⚓ The crew is formal now. ' + crewCount + ' people chose to be here.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Crew That Chose Us',
+        blurb: 'One by one, the people who stayed become part of the Crimson Tide network for real — not workers anymore, not indentured, not owed anything.<br><br>' +
+          'They chose this.<br><br>' +
+          'That\'s the whole difference.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Ch.10 — "The First Voyage." Quiet, same shape as Ch.7/8.
+  window.completeArc6Chapter10 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_10') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[10]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[10] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===10);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('⛵ Chapter 10 complete: The First Voyage.', 'gold');
+    toast('⛵ Chapter 10 complete: The First Voyage.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The First Voyage',
+        blurb: 'The newly recruited crew take their first watch, haul their first lines, share their first meal aboard.<br><br>' +
+          'They aren\'t Robin\'s workers anymore.<br><br>' +
+          'They\'re sailors aboard their own chosen future.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.11 — "Something in the Cargo." Advances the artifact thread from
+  // Ch.5 by one stage — a tracked flag only, no mechanic yet, matching
+  // the deliberate restraint on the whole magical-world thread (San's
+  // own call: the crossing itself waits for Arc VII/VIII+, with a real
+  // level-gated gap in between). game.arc6Artifact.stage is there for
+  // Ch.18/19/20 to read later.
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter11 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_11') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[11]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[11] = true;
+    game.arc6Artifact = game.arc6Artifact || {stage:0};
+    game.arc6Artifact.stage = Math.max(game.arc6Artifact.stage, 1);
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===11);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🔮 Chapter 11 complete: Something in the Cargo.', 'gold');
+    toast('🔮 Renn keeps digging into whatever that thing actually is.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'Something in the Cargo',
+        blurb: 'Renn spreads books and diagrams across an entire table, the crystal from Ch.5 sitting in the middle of all of it, doing nothing in particular.<br><br>' +
+          '"It\'s not nothing," he says, before anyone asks. "It\'s just not ready to be something yet."<br><br>' +
+          'Whatever it is, it doesn\'t belong to the world San knows.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.12 — "The Price of a Ship." Taking Robin's fleet has consequences
+  // — deducts up to 500g (never below 0, never blocks completion if San
+  // can't afford the full amount) as the cost of smoothing things over
+  // with concerned merchants/authorities, and grants a bigger reputation
+  // gain (+5) for handling it diplomatically rather than by force.
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter12 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_12') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[12]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[12] = true;
+    const cost = Math.min(500, game.gold||0);
+    game.gold = (game.gold||0) - cost;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===12);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 5;
+    logEvent('🤝 Chapter 12 complete: The Price of a Ship — paid ' + cost + 'g to smooth things over.', 'gold');
+    toast('🤝 Negotiated, not fought. -' + cost + 'g, +5 reputation.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Price of a Ship',
+        blurb: 'Word travels fast when a captain\'s fleet changes hands by force. Other merchants want reassurance. Local authorities want answers.<br><br>' +
+          'San could fight every question that comes her way.<br><br>' +
+          'She negotiates instead — pays what needs paying, explains what needs explaining. Not everything has to be won at the point of a sword.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Ch.13 — "The People Who Left." Quiet — reinforces that freedom
+  // doesn't mean everyone should join San.
+  window.completeArc6Chapter13 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_13') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[13]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[13] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===13);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('👋 Chapter 13 complete: The People Who Left.', 'gold');
+    toast('👋 Chapter 13 complete: The People Who Left.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The People Who Left',
+        blurb: 'A few of the freed crew pass back through Fair Tide, briefly.<br><br>' +
+          'One reunited with parents she hadn\'t seen in years. One found steady work on land. One just wanted to be done with the sea entirely.<br><br>' +
+          'Freedom doesn\'t mean everyone should have joined San. It just means they got to choose.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Ch.14 — "The People Who Stayed." Quiet — the mirror of Ch.13.
+  window.completeArc6Chapter14 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_14') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[14]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[14] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===14);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🏮 Chapter 14 complete: The People Who Stayed.', 'gold');
+    toast('🏮 Chapter 14 complete: The People Who Stayed.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The People Who Stayed',
+        blurb: 'The ones who chose Fair Tide explain why, when San finally asks.<br><br>' +
+          'Not because she owns them.<br><br>' +
+          'Because they believe in what she\'s building.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
   const oldRenderStoryForArc6 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc6) oldRenderStoryForArc6();
@@ -9259,6 +9465,34 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter7()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ The office stays empty.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 8) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter8()">🌊 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ She just stays beside him.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 9) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter9()">⚓ Make It Formal</button>';
+        else action = done ? '<div class="story-chip">✓ They chose this.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 10) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter10()">⛵ Continue</button>';
+        else action = done ? '<div class="story-chip">✓ Sailors aboard their own chosen future.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 11) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter11()">🔮 Let Renn Look Closer</button>';
+        else action = done ? '<div class="story-chip">✓ Not nothing. Just not ready yet.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 12) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter12()">🤝 Negotiate</button>';
+        else action = done ? '<div class="story-chip">✓ Negotiated, not fought.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 13) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter13()">👋 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ They got to choose.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 14) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter14()">🏮 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ They believe in what she\'s building.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else {
         // Fallback for future chapters — standard mark-as-read pattern,
         // same as every other arc, until this one needs its own mechanic.
