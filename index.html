@@ -6474,7 +6474,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V104 · Arc VI Ch.9-14'</script>
+<script>window.__CT_BUILD__='V106 · Arc IV Robin/Jeff Real Fights'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -7567,6 +7567,43 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // recruited through, so memberUnlocked() needs no changes at all.
   const ARC4_RECRUITS = {3:'iris', 4:'kw_liang', 9:'dr_aa', 10:'mimi', 11:'brada_shah'};
 
+  // Real fights for Ch.8/Ch.14's story beats (see the renderStory edit
+  // above). Reuses HARBOR_ENEMIES.robin/jeff — the exact same stat block
+  // the repeatable "Rival: Robin — Challenge" fight already uses — via
+  // scaleCrimsonEnemy, same as every other fight in the game.
+  function generateArc4StoryEnemy(key){
+    const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[key] : null;
+    if(!base) return null;
+    return (typeof scaleCrimsonEnemy==='function') ? scaleCrimsonEnemy(base,'harbor') : base;
+  }
+  window.startArc4RobinFight = function(){
+    if (window.arc4ObjectiveState() !== 'complete_arc4_chapter_8') { toast('🔒 Not available right now.'); return; }
+    const enemy = generateArc4StoryEnemy('robin');
+    if (!enemy) { toast('Something\'s missing — Robin isn\'t available to fight right now.'); return; }
+    startCombat({kind:'arc4_robin_story', key:'robin', enemy});
+  };
+  window.startArc4JeffFight = function(){
+    if (window.arc4ObjectiveState() !== 'complete_arc4_chapter_14') { toast('🔒 Not available right now.'); return; }
+    const enemy = generateArc4StoryEnemy('jeff');
+    if (!enemy) { toast('Something\'s missing — Jeff isn\'t available to fight right now.'); return; }
+    startCombat({kind:'arc4_jeff_story', key:'jeff', enemy});
+  };
+
+  const oldHandleVictoryForArc4Story = window.handleVictory;
+  window.handleVictory = function(){
+    if (oldHandleVictoryForArc4Story) oldHandleVictoryForArc4Story();
+    const enemy = game.combatEnemy;
+    if (!enemy) return;
+    // Reuses markArc4ChapterRead entirely — same XP/reputation/
+    // recruitment/save logic as every other Arc IV chapter, just
+    // triggered by a fight win instead of a direct button click. That
+    // function already re-checks the objective state and already-done
+    // status itself, so this can't double-grant even if handleVictory
+    // somehow fired twice for the same win.
+    if (enemy.kind === 'arc4_robin_story') markArc4ChapterRead(8);
+    else if (enemy.kind === 'arc4_jeff_story') markArc4ChapterRead(14);
+  };
+
   window.markArc4ChapterRead = function(id){
     id = Number(id);
     const ch = ARC4_CHAPTERS.find(c=>c.id===id);
@@ -7633,7 +7670,23 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc4_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      // Ch.8 ("The Contract" — Robin defeated) and Ch.14 ("The Night
+      // Raid" — Jeff attacks) both explicitly describe a fight in their
+      // own chapter text, but were wired with the same generic "Mark
+      // Chapter Read" button as every quiet chapter — no combat actually
+      // happened. Fixed by requiring a real fight first, reusing the
+      // same HARBOR_ENEMIES.robin/jeff stats the repeatable Challenge
+      // fights already use, and reusing markArc4ChapterRead for the
+      // actual completion (XP/reputation/recruitment/save all stay
+      // exactly as they were — this only changes HOW the chapter
+      // completes, not what completing it does).
+      if (ready && ch.id === 8) {
+        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-danger" onclick="startArc4RobinFight()">⚔️ Fight Robin</button>';
+      } else if (ready && ch.id === 14) {
+        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-danger" onclick="startArc4JeffFight()">⚔️ Fight Jeff</button>';
+      } else if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
         '<button class="btn btn-small btn-success" onclick="markArc4ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -8703,7 +8756,21 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:11, title:'Something in the Cargo', focus:"Renn digs deeper into the artifact from the captured cargo — the first real bridge back toward the larger magical-world storyline.", image:'assets/comics/arc6/ch11-something-in-the-cargo.png', xp:325},
     {id:12, title:'The Price of a Ship', focus:"Taking possession of Robin's fleet has consequences — other merchants and authorities notice. San has to negotiate rather than simply fight.", image:'assets/comics/arc6/ch12-the-price-of-a-ship.png', xp:350},
     {id:13, title:'The People Who Left', focus:"Some freed workers return briefly — one reunited with parents, one found work, one just wanted to leave the sea. Freedom doesn't mean everyone should join San.", image:'assets/comics/arc6/ch13-the-people-who-left.png', xp:300},
-    {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.png', xp:300}
+    {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.png', xp:300},
+    // Ch.15/16 (Robin's Last Day / Jeff's Last Excuse) deliberately not
+    // here yet — Ch.15 needs the special non-sequential gating discussed
+    // separately (depends on Robin's real 20-day timer, not just story
+    // progress) and gets its own dedicated pass. Array order determines
+    // gating order, not the numeric id, so slotting them in later between
+    // Ch.14 and Ch.17 will work correctly without touching anything below.
+    {id:17, title:'The Fair Tide Grows', focus:"The settlement expands significantly — new stalls, workshops, storage, a community taking shape. Fair Tide has room to grow further now.", image:'assets/comics/arc6/ch17-the-fair-tide-grows.png', xp:350},
+    {id:18, title:'The Strange Cargo', focus:"Renn finally identifies the artifact from the captured cargo. It's a kind of magic none of them have ever encountered. He still can't explain where it came from.", image:'assets/comics/arc6/ch18-the-strange-cargo.png', xp:325},
+    {id:19, title:'Beyond the Map', focus:"The Crimson Tide follows the clue and finds something that shouldn't exist on their charts at all.", image:'assets/comics/arc6/ch19-beyond-the-map.png', xp:325},
+    {id:20, title:'The Door Renn Found', focus:"Renn finally understands what he's looking at. It's a passage — not one they can safely cross yet, but real.", image:'assets/comics/arc6/ch20-the-door-renn-found.png', xp:350},
+    {id:21, title:"Captain's Choice", focus:"San decides they won't rush through. She wants the Crimson Tide ready first — ships, crew, supplies, magic, family. Joel agrees: \"Then we'll be ready when you are.\"", image:'assets/comics/arc6/ch21-the-captains-choice.png', xp:325},
+    {id:22, title:'The Sea Is Bigger Now', focus:"The crew sails home. The historical world hasn't disappeared — Fair Tide is still there, their people are still there. But the horizon has changed.", image:'assets/comics/arc6/ch22-the-sea-is-bigger-now.png', xp:300},
+    {id:23, title:'Everyone Has a Place', focus:"A celebration at Fair Tide — former workers, new crew, old crew, friends. What began as a ship has become something much larger.", image:'assets/comics/arc6/ch23-everyone-has-a-place.png', xp:325},
+    {id:24, title:'The Next Horizon', focus:"San stands at the bow. Renn studies the artifact. Joel joins her. The next journey won't be another port. It might be another world.", image:'assets/comics/arc6/ch24-the-next-horizon.png', xp:500}
   ];
   window.ARC6_CHAPTERS = ARC6_CHAPTERS;
 
@@ -9415,6 +9482,236 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (typeof renderStory === 'function') renderStory();
   };
 
+  // -------------------------------------------------------------------
+  // Ch.17 — "The Fair Tide Grows." The big expansion chapter. Rather
+  // than inventing new building types, this raises the level ceiling on
+  // the existing Buildings system (Port HQ + the 4 leveled buildings),
+  // wrapping window.fairTideBuildingCap (already exposed, see
+  // ct-build-v85-fairtide-buildings) instead of reaching into that
+  // block's private FT_BUILDINGS object directly. Real, mechanically
+  // meaningful growth using what's already there.
+  // -------------------------------------------------------------------
+  const oldFairTideBuildingCapForCh17 = window.fairTideBuildingCap;
+  window.fairTideBuildingCap = function(key){
+    const base = oldFairTideBuildingCapForCh17 ? oldFairTideBuildingCapForCh17(key) : 5;
+    return base + (game.arc6PortHqCapBonus || 0);
+  };
+  window.completeArc6Chapter17 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_17') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[17]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[17] = true;
+    game.arc6PortHqCapBonus = (game.arc6PortHqCapBonus||0) + 3;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===17);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 2;
+    logEvent('🏮 Chapter 17 complete: The Fair Tide Grows — every building\'s level ceiling raised.', 'gold');
+    toast('🏮 Fair Tide grows. Every building can be pushed further now.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Fair Tide Grows',
+        blurb: 'New stalls. Workshops. Storage. Ship services. A community, not just a stopover.<br><br>' +
+          'San realizes they\'re no longer merely maintaining a port. They\'re building a home base.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.18-20 — the artifact thread continuing from Ch.11 (stage 1). Each
+  // advances game.arc6Artifact.stage by one. Ch.20 additionally sets
+  // game.arc6DoorFound — a flag marking the door exists narratively,
+  // with deliberately NO functional travel mechanic attached (San's own
+  // call: the actual crossing waits for Arc VII/VIII+, and there'll be a
+  // real level-gated gap in between — not to be designed yet).
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter18 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_18') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[18]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[18] = true;
+    game.arc6Artifact = game.arc6Artifact || {stage:0};
+    game.arc6Artifact.stage = Math.max(game.arc6Artifact.stage, 2);
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===18);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🔮 Chapter 18 complete: The Strange Cargo.', 'gold');
+    toast('🔮 Renn identifies the magic. He still can\'t explain where it\'s from.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Strange Cargo',
+        blurb: '"It\'s a kind of magic," Renn says finally. "I know that much now. What I don\'t know is where it\'s from — nothing here matches it. Not the old world. Not this one either."<br><br>' +
+          'Whatever it is, it didn\'t come from anywhere San has ever been.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  window.completeArc6Chapter19 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_19') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[19]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[19] = true;
+    game.arc6Artifact = game.arc6Artifact || {stage:0};
+    game.arc6Artifact.stage = Math.max(game.arc6Artifact.stage, 3);
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===19);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🗺️ Chapter 19 complete: Beyond the Map.', 'gold');
+    toast('🗺️ They found something that shouldn\'t be on any chart.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'Beyond the Map',
+        blurb: 'Following the artifact\'s pull, the Crimson Tide sails somewhere its own charts have no name for.<br><br>' +
+          'The water looks the same. The sky doesn\'t, quite.<br><br>' +
+          '"Are we lost?" someone asks.<br><br>' +
+          '"No," Renn says, staring at the crystal, now glowing faintly. "I think we\'re early."'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  window.completeArc6Chapter20 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_20') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[20]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[20] = true;
+    game.arc6Artifact = game.arc6Artifact || {stage:0};
+    game.arc6Artifact.stage = Math.max(game.arc6Artifact.stage, 4);
+    game.arc6DoorFound = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===20);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 2;
+    logEvent('🚪 Chapter 20 complete: The Door Renn Found.', 'gold');
+    toast('🚪 It\'s a passage. Not one they can cross yet — but it\'s real.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Door Renn Found',
+        blurb: 'Renn finally puts a name to it.<br><br>' +
+          '"It\'s a door," he says. "Not safe to open yet. Maybe not for a long while. But it\'s real, and it\'s ours to find, whenever we\'re ready."<br><br>' +
+          'San looks at it a long moment.<br><br>' +
+          '"Not yet," she says. "But someday."'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Ch.21-23 — quiet, same shape as Ch.7/8/10/13/14. Ch.21 sets a flag
+  // (arc6ReadinessChosen) marking San's deliberate choice not to rush
+  // the crossing — read by nothing yet, but there for whatever Arc VII
+  // eventually wants to check.
+  window.completeArc6Chapter21 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_21') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[21]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[21] = true;
+    game.arc6ReadinessChosen = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===21);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('⚓ Chapter 21 complete: Captain\'s Choice.', 'gold');
+    toast('⚓ Chapter 21 complete: Captain\'s Choice.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: "Captain's Choice",
+        blurb: 'San decides they won\'t rush through.<br><br>' +
+          'Ships. Crew. Supplies. Magic. Family. Everything, first.<br><br>' +
+          'Joel agrees. "Then we\'ll be ready when you are."'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  window.completeArc6Chapter22 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_22') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[22]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[22] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===22);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🌊 Chapter 22 complete: The Sea Is Bigger Now.', 'gold');
+    toast('🌊 Chapter 22 complete: The Sea Is Bigger Now.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Sea Is Bigger Now',
+        blurb: 'The crew sails home.<br><br>' +
+          'The historical world hasn\'t disappeared. Fair Tide is still there. Their people are still there.<br><br>' +
+          'But the horizon has changed.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  window.completeArc6Chapter23 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_23') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[23]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[23] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===23);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 2;
+    logEvent('🎉 Chapter 23 complete: Everyone Has a Place.', 'gold');
+    toast('🎉 A celebration at Fair Tide. Everyone has a place.', 4200);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'Everyone Has a Place',
+        blurb: 'Former workers. New crew. Old crew. Friends. All of them, in one place, at once.<br><br>' +
+          'San looks around and realizes what began as a ship has become something much larger.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
+  // Ch.24 — "The Next Horizon." The finale. Bigger payoff than any other
+  // chapter (500 XP, +5 reputation, matching how Arc V's own finale was
+  // treated), and sets game.arc6Complete — a clean flag for Arc VII to
+  // gate on later, separate from arc6ObjectiveState()'s own terminal
+  // string (which already reflects "every chapter built so far is
+  // read," but a dedicated flag is clearer for a future arc to check).
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter24 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_24') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[24]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[24] = true;
+    game.arc6Complete = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===24);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 500);
+    game.reputation = (game.reputation||0) + 5;
+    logEvent('🌅 Arc VI complete: The Next Horizon.', 'gold');
+    toast('🌅 Arc VI complete. The next journey won\'t be another port.', 5000);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: 'The Next Horizon',
+        blurb: 'San stands at the bow. Renn studies the artifact, still glowing faintly. Joel joins her, close enough that she doesn\'t have to reach for him.<br><br>' +
+          '"We came here looking for somewhere to stop," San says.<br><br>' +
+          '"And stayed," Joel says.<br><br>' +
+          '"We built something."<br><br>' +
+          'The Crimson Tide sails out.<br><br>' +
+          'The next journey won\'t be another port. It might be another world.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
   const oldRenderStoryForArc6 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc6) oldRenderStoryForArc6();
@@ -9493,6 +9790,38 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter14()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ They believe in what she\'s building.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 17) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter17()">🏮 Let Fair Tide Grow</button>';
+        else action = done ? '<div class="story-chip">✓ A home base, not just a port.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 18) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter18()">🔮 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ A kind of magic none of them have seen.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 19) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter19()">🗺️ Continue</button>';
+        else action = done ? '<div class="story-chip">✓ Not lost. Early.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 20) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter20()">🚪 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ Not yet. But someday.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 21) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter21()">⚓ Continue</button>';
+        else action = done ? '<div class="story-chip">✓ We\'ll be ready when you are.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 22) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter22()">🌊 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ The horizon has changed.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 23) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter23()">🎉 Celebrate</button>';
+        else action = done ? '<div class="story-chip">✓ Something much larger.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 24) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-danger" onclick="completeArc6Chapter24()">🌅 Sail Out</button>';
+        else action = done ? '<div class="story-chip">✓ Arc VI complete. It might be another world.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else {
         // Fallback for future chapters — standard mark-as-read pattern,
         // same as every other arc, until this one needs its own mechanic.
