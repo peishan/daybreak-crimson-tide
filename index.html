@@ -3107,15 +3107,6 @@ function checkQuestProgress(type, target, amount) {
   game.activeQuests = game.activeQuests.filter(q => !q.done);
   refreshQuests();
 }
-// BUG FIX: renderTavern() called questBoardHTML() but it was never defined
-// (only its Temple counterpart, templeQuestBoardHTML(), existed) — the
-// resulting ReferenceError aborted renderTavern() before it reached the
-// potionShop line right after it, which is why Potions looked broken too.
-function questBoardHTML() {
-  refreshQuests();
-  if (!game.activeQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No contracts posted right now — check back after your next voyage.</p>';
-  return `<div class="chapter-grid">${game.activeQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
-}
 function potionShopHTML(filterFn) {
   const items = POTION_CATALOG.filter(filterFn);
   if (!items.length) return '<p style="font-size:0.85rem;opacity:0.7;">Nothing in stock right now.</p>';
@@ -3181,6 +3172,17 @@ function templeQuestBoardHTML() {
 // GAME STATE
 // ---------------------------------------------------------------------------
 const SAVE_KEY = 'daybreak_crimson_tide_v2'; // intentionally unchanged for save compatibility
+// Root-cause flag for the "hard refresh resets progress to level 1" bug:
+// persistAFKTimestamp() is wired to the browser's visibilitychange/pagehide
+// events, which fire on EVERY tab hide, close, or refresh — including a
+// hard refresh sitting on the landing screen before "Continue Voyage" has
+// ever been clicked this session. Since `game` starts as the fresh default
+// object below until loadGame()/startGame() actually runs, that unconditional
+// write was overwriting the real save in localStorage with a blank level-1
+// game the instant the page was hidden or reloaded. This flag is set true
+// only once a real voyage (loaded or new) is actually active, and
+// persistAFKTimestamp() below no-ops until then.
+let gameSessionActive = false;
 let game = {
   temporaryCrew: [],
   gold: 300, day: 1, location: 'singapore', health: 100, maxHealth: 100,
@@ -3789,6 +3791,7 @@ function loadGame() {
     updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
     logEvent('📂 Voyage resumed from Day ' + game.day, 'good');
     maybeLaunchPendingStory();
+    gameSessionActive = true;
   } catch (e) {
     toast('Could not read that save file.');
   }
@@ -3820,6 +3823,7 @@ function importSave(event) {
       document.getElementById('portScreen').classList.add('active');
       updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
       logEvent('📥 Save imported successfully.', 'good');
+      gameSessionActive = true;
     } catch(e) { toast('Could not import that file.'); }
     event.target.value = '';
   };
@@ -4178,6 +4182,7 @@ function processAFKRewards() {
 }
 function persistAFKTimestamp() {
   try {
+    if (!gameSessionActive) return; // see the note by gameSessionActive's declaration
     game.lastActiveAt = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
   } catch(e) {}
@@ -4342,6 +4347,7 @@ function startGame() {
   renderLandingV24(); renderAFKWelcome(); renderMainGoal();
   toast('🎯 New Objective: Begin Chapter 1 — open Story.', 5200);
   // Story Mode is manual: the Objective tells the player to open Story.
+  gameSessionActive = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -7357,7 +7363,18 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       return result;
     };
   }
-  migratePartyHpMpForLevelScaling();
+  // IMPORTANT: this used to be a bare, unconditional call, which — unlike
+  // repairGoldIfCorrupted's self-invocation elsewhere in this file (safe by
+  // accident, since its own NaN-check can never be true on a fresh default
+  // game object) — had no natural guard: game.hpLevelScalingMigrated is
+  // simply absent on a fresh object, so this ran on every single page
+  // load, mutated the pristine default `game`, and called saveGame(),
+  // overwriting the real save in localStorage with a blank level-1 game
+  // before the player ever got to click "Continue Voyage". This was the
+  // actual cause of the "hard refresh resets progress to level 1" bug —
+  // gated behind gameSessionActive now (see its declaration near SAVE_KEY),
+  // which the wrapped loadGame() above already sets before reaching here.
+  if (typeof gameSessionActive !== 'undefined' && gameSessionActive) migratePartyHpMpForLevelScaling();
 })();
 </script>
 
