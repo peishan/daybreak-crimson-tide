@@ -3238,12 +3238,27 @@ let game = {
 function crimsonXPPercent() {
   const xp = Number(game.xpTotal || 0);
   const lv = level();
-  const prev = Math.max(0, (lv - 1) * 100);
-  const next = Math.max(100, lv * 100);
+  const prev = xpForLevel(lv);
+  const next = xpForLevel(lv + 1);
   return Math.max(0, Math.min(100, ((xp - prev) / Math.max(1, next - prev)) * 100));
 }
 
-function level() { let l = 1; while (l * 100 <= game.xpTotal) l++; return l; }
+// BUG FIX: level() used to be `let l=1; while(l*100<=xpTotal) l++`, i.e. a
+// flat 100 XP per level forever — no growth curve at all. xpTotal (fed by
+// kills, quests, bounties, temple vows, and AFK rewards) climbing into the
+// tens of thousands over extended play is how a save ends up reporting
+// something like "Level 1808" — technically correct arithmetic, just on a
+// curve that never got harder to climb. xpForLevel(l) is the cumulative XP
+// required to REACH level l; it grows quadratically so each level costs
+// progressively more, which keeps the level number sane under normal play
+// without an artificial ceiling — deliberately uncapped since Arc 5–8
+// content will need to gate on levels above the old level-26 range.
+function xpForLevel(l) { return 50 * (l - 1) * l; }
+function level() {
+  let l = 1;
+  while (xpForLevel(l + 1) <= game.xpTotal) l++;
+  return l;
+}
 
 // ---------------------------------------------------------------------------
 
@@ -3255,8 +3270,6 @@ function renderLanding() {
   const port = portNames[game.location] || (game.location ? String(game.location).replace(/\b\w/g, c => c.toUpperCase()) : 'Singapore');
   const lvl = level();
   const xp = Number(game.xpTotal || 0);
-  const next = Math.max(100, lvl * 100);
-  const prev = Math.max(0, (lvl - 1) * 100);
   const pct = crimsonXPPercent();
 
   const portEl = document.getElementById('landingPort');
@@ -3354,13 +3367,13 @@ function renderLandingV24(){
   const xpTotal = Math.max(0, Number(display.xpTotal || 0));
   const lvl = (() => {
     let l = 1;
-    while (l * 100 <= xpTotal) l++;
+    while (xpForLevel(l + 1) <= xpTotal) l++;
     return l;
   })();
 
   const pct = (() => {
-    const prev = Math.max(0, (lvl - 1) * 100);
-    const next = lvl * 100;
+    const prev = xpForLevel(lvl);
+    const next = xpForLevel(lvl + 1);
     if (next <= prev) return 0;
     return Math.max(0, Math.min(100, ((xpTotal - prev) / (next - prev)) * 100));
   })();
