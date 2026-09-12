@@ -2834,20 +2834,6 @@ const CLASS_KIT = {
     skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}}
 };
 function kitFor(id){ return CLASS_KIT[id] || {role:'melee', spell:null, skill:null}; }
-// Two shapes exist across CLASS_KIT: most casters/healers use a `spells`
-// array (San, Eliz, Mezstorm, Dr. AA, Mimi, Renn), but Sister Wren and Soel
-// each use a single `spell` object instead. Every place that read
-// `kit.spells` directly (the manual Spell menu, castSpell itself, the party
-// detail screen, and auto-battle) only ever checked the plural form — so
-// Wren and Soel's heal/ward spell was completely unreachable, manually or
-// automatically, despite being fully defined. This normalizes both shapes
-// into one list so all four call sites treat them identically.
-function kitSpellList(kit) {
-  if (!kit) return [];
-  if (kit.spells) return kit.spells;
-  if (kit.spell) return [kit.spell];
-  return [];
-}
 
 // ---------------------------------------------------------------------------
 // AFFINITY TIERS & GROWTH ABILITIES — ported from the source game's passive
@@ -3195,17 +3181,6 @@ function templeQuestBoardHTML() {
 // GAME STATE
 // ---------------------------------------------------------------------------
 const SAVE_KEY = 'daybreak_crimson_tide_v2'; // intentionally unchanged for save compatibility
-// Root-cause flag for the "hard refresh resets progress to level 1" bug:
-// persistAFKTimestamp() is wired to the browser's visibilitychange/pagehide
-// events, which fire on EVERY tab hide, close, or refresh — including a
-// hard refresh sitting on the landing screen before "Continue Voyage" has
-// ever been clicked this session. Since `game` starts as the fresh default
-// object below until loadGame()/startGame() actually runs, that unconditional
-// write was overwriting the real save in localStorage with a blank level-1
-// game the instant the page was hidden or reloaded. This flag is set true
-// only once a real voyage (loaded or new) is actually active, and
-// persistAFKTimestamp() below no-ops until then.
-let gameSessionActive = false;
 let game = {
   temporaryCrew: [],
   gold: 300, day: 1, location: 'singapore', health: 100, maxHealth: 100,
@@ -3238,35 +3213,12 @@ let game = {
 function crimsonXPPercent() {
   const xp = Number(game.xpTotal || 0);
   const lv = level();
-  const prev = xpForLevel(lv);
-  const next = xpForLevel(lv + 1);
+  const prev = Math.max(0, (lv - 1) * 100);
+  const next = Math.max(100, lv * 100);
   return Math.max(0, Math.min(100, ((xp - prev) / Math.max(1, next - prev)) * 100));
 }
 
-// BUG FIX: level() used to be `let l=1; while(l*100<=xpTotal) l++`, i.e. a
-// flat 100 XP per level forever — no growth curve at all. xpTotal (fed by
-// kills, quests, bounties, temple vows, and AFK rewards) climbing into the
-// tens of thousands over extended play is how a save ends up reporting
-// something like "Level 1808" — technically correct arithmetic, just on a
-// curve that never got harder to climb. xpForLevel(l) is the cumulative XP
-// required to REACH level l; it grows quadratically so each level costs
-// progressively more, which keeps the level number sane under normal play
-// without an artificial ceiling — deliberately uncapped since Arc 5–8
-// content will need to gate on levels above the old level-26 range.
-// Curve steepness: this constant is the single knob for how fast leveling
-// feels. k=50 puts ~180k XP (roughly what a week of heavy dev/testing play
-// generates) at level 60, which matches expectations for that much testing
-// — that 7-day span was development/testing time, not typical player
-// pacing, so it's a reasonable anchor rather than something to slow down.
-// Since the game is ongoing (Arc 5 in progress, more planned indefinitely),
-// there's no ceiling — bump this up later if real player pacing runs hot
-// once Arc 5+ content and its level gates are actually in.
-function xpForLevel(l) { return 50 * (l - 1) * l; }
-function level() {
-  let l = 1;
-  while (xpForLevel(l + 1) <= game.xpTotal) l++;
-  return l;
-}
+function level() { let l = 1; while (l * 100 <= game.xpTotal) l++; return l; }
 
 // ---------------------------------------------------------------------------
 
@@ -3278,6 +3230,8 @@ function renderLanding() {
   const port = portNames[game.location] || (game.location ? String(game.location).replace(/\b\w/g, c => c.toUpperCase()) : 'Singapore');
   const lvl = level();
   const xp = Number(game.xpTotal || 0);
+  const next = Math.max(100, lvl * 100);
+  const prev = Math.max(0, (lvl - 1) * 100);
   const pct = crimsonXPPercent();
 
   const portEl = document.getElementById('landingPort');
@@ -3375,13 +3329,13 @@ function renderLandingV24(){
   const xpTotal = Math.max(0, Number(display.xpTotal || 0));
   const lvl = (() => {
     let l = 1;
-    while (xpForLevel(l + 1) <= xpTotal) l++;
+    while (l * 100 <= xpTotal) l++;
     return l;
   })();
 
   const pct = (() => {
-    const prev = xpForLevel(lvl);
-    const next = xpForLevel(lvl + 1);
+    const prev = Math.max(0, (lvl - 1) * 100);
+    const next = lvl * 100;
     if (next <= prev) return 0;
     return Math.max(0, Math.min(100, ((xpTotal - prev) / (next - prev)) * 100));
   })();
@@ -3835,7 +3789,6 @@ function loadGame() {
     updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
     logEvent('📂 Voyage resumed from Day ' + game.day, 'good');
     maybeLaunchPendingStory();
-    gameSessionActive = true;
   } catch (e) {
     toast('Could not read that save file.');
   }
@@ -3867,7 +3820,6 @@ function importSave(event) {
       document.getElementById('portScreen').classList.add('active');
       updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
       logEvent('📥 Save imported successfully.', 'good');
-      gameSessionActive = true;
     } catch(e) { toast('Could not import that file.'); }
     event.target.value = '';
   };
@@ -4226,7 +4178,6 @@ function processAFKRewards() {
 }
 function persistAFKTimestamp() {
   try {
-    if (!gameSessionActive) return; // see the note by gameSessionActive's declaration
     game.lastActiveAt = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
   } catch(e) {}
@@ -4391,7 +4342,6 @@ function startGame() {
   renderLandingV24(); renderAFKWelcome(); renderMainGoal();
   toast('🎯 New Objective: Begin Chapter 1 — open Story.', 5200);
   // Story Mode is manual: the Objective tells the player to open Story.
-  gameSessionActive = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -4882,12 +4832,14 @@ function isPortUnlocked(portId){
   if(portId==='hanoi') return !!game.foundCompanions?.mezstorm;
   if(portId==='manila') return !!game.foundCompanions?.senedra;
   if(portId==='drowned_passage') return !!game.foundCompanions?.zaki;
-  // Kota Batu: the real historic Brunei port, as opposed to the
-  // illusion-memories of it visited in Arc III. Gated behind both a level
-  // milestone and having resolved every one of those memory-fragment
-  // illusions — narratively, the crew earns the real place only after
-  // finishing with its echoes. Unlocks BEFORE Fair Tide (lower level
-  // threshold) — Brunei comes first, then the crew's own home base.
+  // Kota Batu: the real historic port, as opposed to the illusion-memories
+  // of it visited in Arc III. Gated behind both a level milestone and having
+  // resolved every one of those illusions — narratively, the crew earns the
+  // real place only after finishing with its echoes. Unlocks BEFORE Fair
+  // Tide (lower level threshold) — Brunei/Kota Batu comes first, then the
+  // crew's own home base. (A later branch briefly set this to 70 based on
+  // Arc III/IV tier reasoning alone, which put it above Fair Tide's 60 and
+  // broke that ordering — reverted back to 50.)
   if(portId==='kota_batu') return level()>=50 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
   // Fair Tide: the crew's home base, still under construction at this point
   // in the story — unlocks after Kota Batu. Level 60 is deliberate: by Arc
@@ -5227,6 +5179,37 @@ function restAtTavern() {
   updateUI();
   renderPort();
   if (typeof renderTavern === 'function') renderTavern();
+  if (typeof renderTemporaryCrew === 'function') renderTemporaryCrew();
+}
+
+// Same full recovery as restAtTavern, but free and only available once the
+// Captain's Quarters is actually built at Fair Tide (see FT_BUILDINGS) —
+// home, unlike an inn, doesn't charge the captain to sleep in her own bed.
+function restAtCaptainsQuarters() {
+  const built = game.fairTideBuildings && game.fairTideBuildings.captains_quarters > 0;
+  if (!built) { toast('🔒 Build the Captain\'s Quarters first.'); return; }
+
+  game.partyHp = game.partyHp || {};
+  game.partyMp = game.partyMp || {};
+
+  const permanent = typeof getActiveParty === 'function' ? getActiveParty() : [];
+  permanent.forEach(m => {
+    game.partyHp[m.id] = effectiveMaxHp(m);
+    game.partyMp[m.id] = effectiveMaxMp(m);
+  });
+
+  (game.temporaryCrew || []).forEach(m => {
+    game.partyHp[m.id] = Number(m.maxHp || m.hp || 1);
+    game.partyMp[m.id] = Number(m.maxMp || m.mp || 0);
+  });
+
+  if ('health' in game && 'maxHealth' in game) game.health = game.maxHealth;
+
+  logEvent('🛏️ San and Joel see the whole crew settled in for the night. Everyone wakes up fully rested — no charge, this is home.', 'good');
+  toast('🛏️ Everyone aboard is fully rested.');
+  if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  updateUI();
+  if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   if (typeof renderTemporaryCrew === 'function') renderTemporaryCrew();
 }
 function listenForRumors() {
@@ -5631,7 +5614,7 @@ function renderCombat() {
   if (game.spellMenuOpen && actor) {
     spellMenu.style.display = 'block';
     const kit = kitFor(actor.id);
-    const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level() && (game.partyMp[actor.id] || 0) >= s.mp);
+    const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level() && (game.partyMp[actor.id] || 0) >= s.mp);
     document.getElementById('spellGrid').innerHTML = spells.map((s, i) =>
       `<button class="spell-btn" onclick="castSpell(${i})">
       <div class="spell-name">${s.icon} ${s.name}</div>
@@ -5931,7 +5914,7 @@ function castSpell(spellIndex) {
   const actor = alive[game.combatTurn];
   if (!actor) return;
   const kit = kitFor(actor.id);
-  const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
+  const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level());
   const spell = spells[spellIndex];
   if (!spell) return;
 
@@ -6308,80 +6291,29 @@ function autoBattleAction(actor) {
   if (!game.inCombat || game.combatResolved || !actor || partyHpOf(actor) <= 0) return;
   // First Mate's Aegis: auto-battle arms it the moment it's available,
   // same as a player would — checked first since it's a once-a-day
-  // opportunity that's easy for an AI turn to otherwise skip entirely.
+  // opportunity that's easy for an AI turn to otherwise skip entirely
+  // (autoBattleAction never calls SKILL for tank/melee roles below).
   if (typeof aegisAvailable === 'function' && aegisAvailable(actor) && !game.aegisArmed) {
     useFirstMatesAegis();
     return;
   }
   const kit = kitFor(actor.id);
   const mp = game.partyMp[actor.id] || 0;
-  const combatParty = getCrimsonCombatParty();
-  const spellList = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
-
-  // A revive skill is only ever worth attempting if someone's actually
-  // down — combatAction('SKILL') toasts "No one has fallen" and returns
-  // WITHOUT advancing the turn otherwise (see its 'revive' branch), which
-  // would soft-lock auto-battle into retrying the same actor's turn
-  // forever. UNKILLABLE_IDS (Soel etc.) can never actually be "fallen".
-  if (kit.skill && kit.skill.effect === 'revive' && mp >= (kit.skill.mp || 0)) {
-    const fallen = combatParty.find(m => partyHpOf(m) <= 0 && !UNKILLABLE_IDS.has(m.id));
-    if (fallen) { combatAction('SKILL'); return; }
-  }
-
   if (kit.role === 'healer') {
-    const hurt = combatParty.some(m => { const h = partyHpOf(m); return h > 0 && h / effectiveMaxHp(m) < 0.4; });
-    const healSpells = spellList.filter(s => s.healMult && mp >= s.mp);
-    if (hurt && healSpells.length) {
-      // Strongest affordable heal, same idea as picking the best damage
-      // spell below rather than always defaulting to spellList[0].
-      const best = healSpells.reduce((a, b) => (b.healMult > a.healMult ? b : a));
-      castSpell(spellList.indexOf(best));
-      return;
+    const hurt = getCrimsonCombatParty().some(m => { const h = partyHpOf(m); return h > 0 && h / effectiveMaxHp(m) < 0.4; });
+    if (hurt && kit.spells && kit.spells.length && mp >= kit.spells[0].mp) {
+      const idx = (kit.spells || []).filter(s => (s.levelReq || 1) <= level()).indexOf(kit.spells[0]);
+      if (idx >= 0) { castSpell(idx); return; }
     }
   }
-
-  if (kit.role === 'caster') {
-    const dmgSpells = spellList.filter(s => s.dice && mp >= s.mp);
-    if (dmgSpells.length && Math.random() < 0.7) {
-      const chosen = dmgSpells[Math.floor(Math.random() * dmgSpells.length)];
-      castSpell(spellList.indexOf(chosen));
-      return;
+  if (kit.role === 'caster' && kit.spells && kit.spells.length && mp >= kit.spells[0].mp) {
+    const spells = kit.spells.filter(s => (s.levelReq || 1) <= level() && s.dice);
+    if (spells.length && Math.random() < 0.7) {
+      const allSpells = kit.spells.filter(s => (s.levelReq || 1) <= level());
+      const idx = allSpells.indexOf(spells[Math.floor(Math.random() * spells.length)]);
+      if (idx >= 0) { castSpell(idx); return; }
     }
   }
-
-  if (kit.role === 'support') {
-    // Keep buffs topped up rather than burning MP recasting them every
-    // single turn: only refresh one that's about to lapse or isn't up at
-    // all. Encore (MP restore) only matters once San's actually running low.
-    const shieldSpell = spellList.find(s => s.buffType === 'defense' && mp >= s.mp && (game.shieldTurns || 0) <= 1);
-    const hasteSpell = spellList.find(s => s.buffType === 'haste' && mp >= s.mp && (game.hasteTurns || 0) <= 1);
-    const mpRestoreSpell = spellList.find(s => s.effect === 'restoreMp' && mp >= s.mp);
-    const sanMember = combatParty.find(m => m.id === 'san');
-    const sanLowMp = sanMember && sanMember.mp > 0 && (game.partyMp.san || 0) / effectiveMaxMp(sanMember) < 0.3;
-    const chosen = shieldSpell || hasteSpell || (sanLowMp ? mpRestoreSpell : null);
-    if (chosen) { castSpell(spellList.indexOf(chosen)); return; }
-  }
-
-  // Free/paid utility or damage skills for everyone else — and as a
-  // fallback for healer/caster/support when nothing above applied. Before
-  // this, NOTHING outside the healer/caster spell branches above ever
-  // called SKILL at all, so Iris's Ash's Pounce, KW Liang's Snowball's
-  // Leap, Zaki's Power Strike, Aisyah's Coup de Grace, Ser Aldric's Holy
-  // Strike, Senedra's Hunter's Mark, Soel's Lucky Pounce, Renn's and
-  // Mimi's mark skills, and Brada's Showstopper never fired in auto-battle
-  // no matter how long a fight ran — every one of them a free (mp:0) or
-  // affordable upgrade over a plain Attack that just sat unused.
-  if (kit.skill && kit.skill.effect !== 'taunt' && kit.skill.effect !== 'revive' && mp >= (kit.skill.mp || 0)) {
-    if (Math.random() < 0.55) { combatAction('SKILL'); return; }
-  }
-  // Joel's Shield Wall (taunt) specifically: worth using proactively while
-  // he's healthy, so it actually benefits auto-battle instead of sitting
-  // manual-only.
-  if (kit.skill && kit.skill.effect === 'taunt' && partyHpOf(actor) / effectiveMaxHp(actor) > 0.3 && Math.random() < 0.5) {
-    combatAction('SKILL');
-    return;
-  }
-
   // Core party members (not hired/temporary crew) can also draw on
   // consumables during auto-battle — previously items only ever got used
   // via the manual item menu, so a full stock of potions and Cannon Shots
@@ -6651,7 +6583,7 @@ function renderPartyScreen() {
       const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : maxHp;
       const mp = game.partyMp[m.id] != null ? game.partyMp[m.id] : maxMp;
       const kit = kitFor(m.id);
-      const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
+      const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level());
       const trophy = game.equippedTrophies && game.equippedTrophies[m.id];
       const affinity = affinityFor(m.id);
 
@@ -7465,18 +7397,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       return result;
     };
   }
-  // IMPORTANT: this used to be a bare, unconditional call, which — unlike
-  // repairGoldIfCorrupted's self-invocation elsewhere in this file (safe by
-  // accident, since its own NaN-check can never be true on a fresh default
-  // game object) — had no natural guard: game.hpLevelScalingMigrated is
-  // simply absent on a fresh object, so this ran on every single page
-  // load, mutated the pristine default `game`, and called saveGame(),
-  // overwriting the real save in localStorage with a blank level-1 game
-  // before the player ever got to click "Continue Voyage". This was the
-  // actual cause of the "hard refresh resets progress to level 1" bug —
-  // gated behind gameSessionActive now (see its declaration near SAVE_KEY),
-  // which the wrapped loadGame() above already sets before reaching here.
-  if (typeof gameSessionActive !== 'undefined' && gameSessionActive) migratePartyHpMpForLevelScaling();
+  migratePartyHpMpForLevelScaling();
 })();
 </script>
 
@@ -7906,6 +7827,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc4ObjectiveState = function(){
     if(typeof window.arc3ObjectiveState!=='function' || window.arc3ObjectiveState()!=='arc3_chapters_complete_for_now') return null;
+    // Level 60 — matches Fair Tide's own port-unlock threshold exactly,
+    // since Ch.1 of this arc is literally "the crew reaches Fair Tide."
+    // (A later branch set this to 80 as part of a flat +10-per-arc scheme;
+    // reverted so Arc IV lines up with the location it opens in.)
     if(level()<60) return null;
     game.comicProgress4 = game.comicProgress4||{};
     for(const ch of ARC4_CHAPTERS){
@@ -8107,7 +8032,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 (function(){
   // -------------------------------------------------------------------
   // ARC V — "The Bond" (Parts I-II: Ch.1-9). Gated on Arc IV completion +
-  // level 100 (San's call, not from the brief — Arc IV's own gate was 80).
+  // level 90 (Arc IV's own gate is 80; Arc IV-VII now step by +10 each,
+  // not the original +20 — see Arc VI's gate for the full note on why).
   // Chapters 10-24 (Jovie, the Fair Tide recruitment wave) land in later
   // batches; this block wires Parts I-II plus the combat systems they
   // introduce — Bonded by the Tide, First Mate's Aegis, and Renn's
@@ -8156,6 +8082,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc5ObjectiveState = function(){
     if(typeof window.arc4ObjectiveState!=='function' || window.arc4ObjectiveState()!=='arc4_chapters_complete_for_now') return null;
+    // Level 75 — a real step up from Arc IV's 60 as Fair Tide becomes a true
+    // home base, without the extreme jump the original 100 represented.
+    // (A later branch set this to 90 as part of a flat +10-per-arc scheme;
+    // reverted to keep the +15-per-arc pace agreed for Arcs IV-VI.)
     if(level()<75) return null;
     game.comicProgress5 = game.comicProgress5||{};
     for(const ch of ARC5_CHAPTERS){
@@ -8263,7 +8193,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if(!arc5Ready){
       const arc4Done = typeof window.arc4ObjectiveState==='function' && window.arc4ObjectiveState()==='arc4_chapters_complete_for_now';
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc V Locked</div><div class="story-chapter-sub">'+
-        (!arc4Done ? 'Finish all of Arc IV first.' : 'Reach Level 100 to begin.')+'</div></div></section>';
+        (!arc4Done ? 'Finish all of Arc IV first.' : 'Reach Level 90 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
@@ -8357,7 +8287,17 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     if (typeof window.arc6ObjectiveState === 'function') {
       const s6 = window.arc6ObjectiveState();
-      if (s6 !== null) return s6;
+      // BUG FIX: every earlier arc in this chain checks its own terminal
+      // "...complete_for_now" string and falls through to the next arc when
+      // it sees one — this one just returned s6 unconditionally, so once
+      // Arc VI's chapters were all read the chain stopped here forever and
+      // Arc VII (below) could never surface even once it existed.
+      if (s6 !== null && s6 !== 'arc6_part1_complete_for_now') return s6;
+      if (s6 === 'arc6_part1_complete_for_now') lastTerminal = s6;
+    }
+    if (typeof window.arc7ObjectiveState === 'function') {
+      const s7 = window.arc7ObjectiveState();
+      if (s7 !== null) return s7;
     }
     return lastTerminal || base;
   };
@@ -8381,6 +8321,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (state === 'arc5_part1_complete_for_now') return ['Arc V — All Caught Up', 'Every available Arc V chapter is read. More is on the way.'];
     if ((m = /^complete_arc6_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VI', m[1], window.ARC6_CHAPTERS);
     if (state === 'arc6_part1_complete_for_now') return ['Arc VI — All Caught Up', 'Every available Arc VI chapter is read. More is on the way.'];
+    if ((m = /^complete_arc7_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VII', m[1], window.ARC7_CHAPTERS);
+    if (state === 'arc7_chapters_complete_for_now') return ['Arc VII — All Caught Up', 'Every available Arc VII chapter is read. More is on the way.'];
     return null;
   }
 
@@ -8429,13 +8371,23 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     galley:       {name:'Galley',        icon:'🍲', desc:'More Food from every gathering run, and better Trade rates on Food.', rosterKey:'gino',   companionName:'Gino',   cost:{food:30,timber:15},
       tierNames:['A Cookfire','A Real Kitchen','The Galley','Food Enough for Everyone','Gino\'s Galley']},
     workshop:     {name:'Workshop',      icon:'🔧', desc:'Cheaper Shipyard hull upgrades.', rosterKey:'jorvin', companionName:'Jorvin', cost:{stone:30,trade:15},
-      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']}
+      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']},
+    // Unlike the four buildings above, this one isn't foreshadowing a future
+    // Arc V companion — it's for San and Joel themselves, and the crew they
+    // already have. Single-tier (cap 1, see fairTideBuildingCap's special
+    // case below) since "built" is the whole point, not a leveling economy
+    // sink. Its actual effect (free full-party rest) is wired separately —
+    // see restAtCaptainsQuarters and the dedicated panel in
+    // renderFTBuildingsTab, since the generic per-building loop only knows
+    // how to render an "Upgrade" button, not a "Rest" one.
+    captains_quarters: {name:"Captain's Quarters", icon:'🛏️', desc:"A real room for San and Joel, and a place for the whole crew to actually rest — free, whenever they need it, now that Fair Tide is home.", cost:{timber:35,stone:35,food:20}, cap:1,
+      tierNames:["The Captain's Quarters"]}
   };
   const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
   const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
 
   function ftResources(){ game.fairTideResources = game.fairTideResources || {timber:0,stone:0,food:0,trade:0}; return game.fairTideResources; }
-  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0}; return game.fairTideBuildings; }
+  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0,captains_quarters:0}; return game.fairTideBuildings; }
   function fmtClockFT(sec){ const m = Math.floor(sec/60), s = sec%60; return m+':'+String(s).padStart(2,'0'); }
 
   window.fairTideResourceCap = function(){
@@ -8443,6 +8395,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
   window.fairTideBuildingCap = function(key){
     if(key==='port_hq') return FT_BUILDINGS.port_hq.cap;
+    if(key==='captains_quarters') return 1;
     return Math.min(FT_BUILDINGS.port_hq.cap, ftBuildings().port_hq||0);
   };
   window.fairTideBuildingCost = function(key){
@@ -8465,7 +8418,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const b = ftBuildings();
     const cur = b[key] || 0;
     const cap = window.fairTideBuildingCap(key);
-    if(cur >= cap){ toast(key==='port_hq' ? '🔒 Port HQ is at its current cap.' : "🔒 Raise Port HQ's level first."); return; }
+    if(cur >= cap){ toast(key==='port_hq' ? '🔒 Port HQ is at its current cap.' : key==='captains_quarters' ? '✓ The Captain\'s Quarters is already built.' : "🔒 Raise Port HQ's level first."); return; }
     if(!window.canAffordFairTideBuilding(key)){ toast('Not enough resources.'); return; }
     const cost = window.fairTideBuildingCost(key);
     const res = ftResources();
@@ -8601,10 +8554,15 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         companionTag+'<br>'+
         (tierName ? '<span style="font-size:.78rem;opacity:.75;font-style:italic;">"'+esc(tierName)+'"</span><br>' : '')+
         '<span style="font-size:.8rem;opacity:.82;">'+esc(cfg.desc)+'</span><br>'+
-        (maxed ? '<div class="story-chip" style="margin-top:6px;">'+(key==='port_hq'?'At current cap':"Raise Port HQ's level first")+'</div>'
+        (maxed ? '<div class="story-chip" style="margin-top:6px;">'+(key==='port_hq'?'At current cap':key==='captains_quarters'?'✓ Built':"Raise Port HQ's level first")+'</div>'
           : '<div style="margin-top:6px;font-size:.8rem;">Next level: '+costText+(cfg.tierNames && cfg.tierNames[level] ? ' → "'+esc(cfg.tierNames[level])+'"' : '')+'</div><button class="btn btn-small btn-success" style="margin-top:4px;" '+(afford?'':'disabled')+' onclick="upgradeFairTideBuilding(\''+key+'\')">🏗️ Upgrade</button>')+
         '</article>';
     });
+    if (b.captains_quarters >= 1) {
+      html += '<article class="quest-item" style="margin-top:10px;"><strong>🛏️ Captain\'s Quarters</strong><br>'+
+        '<span style="font-size:.8rem;opacity:.82;">San\'s room, Joel\'s room, and bunks for the whole crew. Free rest, whenever they need it.</span><br>'+
+        '<button class="btn btn-small btn-success" style="margin-top:6px;" onclick="restAtCaptainsQuarters()">🛌 Rest (Free)</button></article>';
+    }
     el.innerHTML = html;
   }
 
@@ -9166,9 +9124,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc6ObjectiveState = function(){
     if (typeof window.arc5ObjectiveState !== 'function' || window.arc5ObjectiveState() !== 'arc5_part1_complete_for_now') return null;
-    // Level gate added — Arc VI has the crew capturing Robin and Jeff, so it
-    // should read as a genuine step up in strength from Fair Tide's own
-    // level-60 unlock, not just "whenever Arc V's chapters are done."
+    // Level 90 — Arc VI has the crew capturing Robin and Jeff, the former
+    // employers who hurt San and Joel, so it should read as clearly more
+    // formidable than Fair Tide's level-60 threshold, not just "whenever
+    // Arc V's chapters are done." Continues the +15-per-arc pace from Arc
+    // IV (60) and Arc V (75). (A later branch used a flat +10-per-arc
+    // scheme instead — 80/90/100/110 — landing this at 100; reverted.)
     if (level() < 90) return null;
     game.comicProgress6 = game.comicProgress6 || {};
     for (const ch of ARC6_CHAPTERS) {
@@ -10372,6 +10333,125 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         (cs.active ? '<button class="btn btn-small btn-success" style="margin-top:6px;" '+(canClaim?'':'disabled')+' onclick="claimCommunityLabor(\''+key+'\')">'+framing.icon+' Collect Today\'s Labor</button>' : '')+
         '</article>');
     });
+  };
+})();
+</script>
+<script id="ct-build-v95-arc7">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC VII — "The Farseer". Gated behind game.arc6Complete (the flag Arc
+  // VI's finale set specifically for this), plus a level floor continuing
+  // Arc IV/V's +20 step (80, 100, 120 for the Arc VI fix above, 140 here).
+  // All 24 chapters are pure narrative/dialogue beats per the brief — no
+  // chapter here calls for a bespoke fight/choice mechanic the way Arc VI's
+  // opening chapters did — so every chapter uses the same generic
+  // mark-as-read flow (markArc7ChapterRead), same as Arc III's pattern.
+  // -------------------------------------------------------------------
+  const ARC7_CHAPTERS = [
+    {id:1,  title:'The Door Renn Found',        focus:"Renn discovers a door that shouldn't exist — the deeper the crew investigates, the less certain ordinary navigation becomes.", image:'assets/comics/arc7/ch01-the-door-renn-found.png',        xp:350},
+    {id:2,  title:'A World Without a Name',     focus:"The crew realizes they've never once asked what this world is actually called. The locals call it Veyren.",                    image:'assets/comics/arc7/ch02-a-world-without-a-name.png',     xp:350},
+    {id:3,  title:'The Man Who Knows the Door', focus:'Erynn Farseer is investigating the same phenomenon — cautious at first, until Renn starts comparing notes with him.',            image:'assets/comics/arc7/ch03-the-man-who-knows-the-door.png', xp:350},
+    {id:4,  title:'Erynn Farseer',              focus:"Erynn introduces himself properly — the Farseer name carries generations of documenting Veyren's strangest phenomena.",         image:'assets/comics/arc7/ch04-erynn-farseer.png',              xp:350},
+    {id:5,  title:'The Name of the World',      focus:"San hears \"Veyren\" for the first time and realizes they've built a whole life here without ever learning its name.",          image:'assets/comics/arc7/ch05-the-name-of-the-world.png',      xp:375},
+    {id:6,  title:'Varel',                      focus:'Erynn tells the crew about Varel Farseer, the scholar-explorer who first documented Veyren\'s impossible geography.',            image:'assets/comics/arc7/ch06-varel.png',                      xp:350},
+    {id:7,  title:'Tenn',                       focus:"The generation after Varel preserved, studied, and challenged his work — Farseer knowledge was never a static set of truths.",   image:'assets/comics/arc7/ch07-tenn.png',                       xp:350},
+    {id:8,  title:'The Farseer Archives',       focus:"Renn gains access to the archives and finds his own discoveries both overlapping with, and going beyond, generations of records.", image:'assets/comics/arc7/ch08-the-farseer-archives.png',     xp:375},
+    {id:9,  title:'The Woman in the Painting',  focus:'Erynn recognizes Mimi from a generations-old Farseer painting of a woman who shares her name, her gift, and her questions.',     image:'assets/comics/arc7/ch09-the-woman-in-the-painting.png',  xp:450},
+    {id:10, title:'Three Ways of Knowing',      focus:"Renn's experiments, Erynn's inherited records, and Mimi's divination begin revealing something none of them could find alone.", image:'assets/comics/arc7/ch10-three-ways-of-knowing.png',     xp:450},
+    {id:11, title:'The Sea That Turns Back',    focus:'Ships keep returning to the same point no matter how they navigate — Erynn recognizes it from an old Farseer account.',          image:'assets/comics/arc7/ch11-the-sea-that-turns-back.png',   xp:375},
+    {id:12, title:'Beyond the Boundary',        focus:"The crew deliberately crosses into the strange region and learns some of Veyren's boundaries bend distance, direction, even magic itself.", image:'assets/comics/arc7/ch12-beyond-the-boundary.png', xp:400},
+    {id:13, title:"What Varel Couldn't Explain", focus:'Varel documented this exact phenomenon generations ago — and never solved it either.',                                          image:'assets/comics/arc7/ch13-what-varel-couldnt-explain.png', xp:375},
+    {id:14, title:"Renn's Theory",              focus:"Renn, Erynn, and Mimi's different methods start fitting together into something stronger than any one of them alone.",          image:'assets/comics/arc7/ch14-renns-theory.png',              xp:425},
+    {id:15, title:"Erynn's Burden",             focus:"Erynn admits he doesn't want his whole life to be preserving old records — he wants to discover something of his own.",          image:'assets/comics/arc7/ch15-erynns-burden.png',             xp:375},
+    {id:16, title:'The Two Researchers',        focus:'Renn and Erynn get so absorbed chasing a mystery together that Joel has to go retrieve them — much to San\'s unimpressed silence.', image:'assets/comics/arc7/ch16-the-two-researchers.png',      xp:375},
+    {id:17, title:'Fair Tide',                  focus:'Erynn visits Fair Tide and sees what San has built — and starts to understand history isn\'t only something written down.',      image:'assets/comics/arc7/ch17-fair-tide.png',                 xp:375},
+    {id:18, title:'What Survives',              focus:'San and Erynn talk about memory — and how some things survive even when nothing was ever written down to remember them by.',    image:'assets/comics/arc7/ch18-what-survives.png',             xp:375},
+    {id:19, title:'The Old Marker',             focus:'The crew finds an ancient Farseer marker placed deliberately far from any known route — even the records don\'t fully explain why.', image:'assets/comics/arc7/ch19-the-old-marker.png',          xp:400},
+    {id:20, title:'The Door Again',             focus:"The old marker reacts to Renn's door. It was never just a random anomaly — something connects the two.",                        image:'assets/comics/arc7/ch20-the-door-again.png',            xp:450},
+    {id:21, title:"Varel's Warning",            focus:"The oldest surviving Farseer record ends not with an answer, but a warning: some boundaries may exist for a reason.",            image:'assets/comics/arc7/ch21-varels-warning.png',            xp:425},
+    {id:22, title:"Don't Open It",              focus:'Renn and Erynn want to push forward. Mimi says no. San sides with her — not every mystery needs opening immediately.',           image:'assets/comics/arc7/ch22-dont-open-it.png',              xp:400},
+    {id:23, title:'The Farseer Who Stayed',     focus:"Erynn becomes part of Fair Tide's extended circle — no longer just someone they met on an investigation.",                       image:'assets/comics/arc7/ch23-the-farseer-who-stayed.png',    xp:400},
+    {id:24, title:'Veyren',                     focus:'San looks across the horizon, finally knowing the name of the world she calls home — and everything still left to discover in it.', image:'assets/comics/arc7/ch24-veyren.png',                  xp:600}
+  ];
+  window.ARC7_CHAPTERS = ARC7_CHAPTERS;
+
+  window.arc7ObjectiveState = function(){
+    if (!game.arc6Complete) return null;
+    // Continues the +15-per-arc pace from Arc IV (60) / V (75) / VI (90).
+    // (A later branch used a flat +10-per-arc scheme instead, landing this
+    // at 110; reverted to 105 to keep the spacing consistent.)
+    if (level() < 105) return null;
+    game.comicProgress7 = game.comicProgress7 || {};
+    for (const ch of ARC7_CHAPTERS) {
+      if (game.comicProgress7[ch.id]) continue;
+      return 'complete_arc7_chapter_' + ch.id;
+    }
+    return 'arc7_chapters_complete_for_now';
+  };
+
+  // Generic mark-as-read for every chapter — see the header note above for
+  // why none of Arc VII needs a bespoke completion mechanic. Ch.24 is the
+  // one exception worth a special case: it closes the arc, so (mirroring
+  // Arc VI Ch.24) it also sets game.arc7Complete — a clean flag for a
+  // future Arc VIII to gate on — and grants the same +5 reputation bump
+  // every arc finale so far has given.
+  window.markArc7ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC7_CHAPTERS.find(c => c.id === id);
+    if (!ch) return;
+    game.comicProgress7 = game.comicProgress7 || {};
+    if (game.comicProgress7[id]) { toast('✓ Already marked read.'); return; }
+    if (window.arc7ObjectiveState() !== 'complete_arc7_chapter_' + id) { toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress7[id] = true;
+    if (typeof gainXP === 'function') gainXP(ch.xp);
+    game.reputation = (game.reputation || 0) + (id === 24 ? 5 : 1);
+    logEvent('📖 Arc 7 Chapter ' + id + ' complete: ' + ch.title + ' · +' + ch.xp + ' XP', 'gold');
+    toast('📖 Chapter ' + id + ' complete! +' + ch.xp + ' Story XP');
+    if (id === 24) {
+      game.arc7Complete = true;
+      logEvent('🧭 Arc VII complete: Veyren.', 'gold');
+      toast('🧭 Arc VII complete. They aren\'t done discovering Veyren.', 5000);
+      if (typeof game.storyModalQueue !== 'undefined') {
+        game.storyModalQueue.push({
+          title: 'Veyren',
+          blurb: 'Once, this world was simply the place they ended up after the storm.<br><br>' +
+            'Now she knows its name.<br><br>' +
+            'Veyren.<br><br>' +
+            'She knows it has history. She knows there are mysteries older than the crew. She knows the Farseers have been asking questions for generations.<br><br>' +
+            'And now three very different people — Renn, Erynn, and Mimi — have begun asking new ones.<br><br>' +
+            'The Crimson Tide sails onward. They aren\'t done discovering Veyren.'
+        });
+      }
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  const oldRenderStoryForArc7 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc7) oldRenderStoryForArc7();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const so = window.arc7ObjectiveState();
+    if (so === null) return;
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">' +
+      '<div class="story-act-kicker">Arc VII</div><div class="story-act-title">The Farseer</div>' +
+      '<div class="story-act-tagline">Some knowledge survives generations.</div></div>';
+    ARC7_CHAPTERS.forEach(ch => {
+      const done = !!game.comicProgress7?.[ch.id];
+      const ready = !done && so === ('complete_arc7_chapter_' + ch.id);
+      const status = done ? '✓ COMPLETE' : (ready ? 'CURRENT' : '🔒 LOCKED');
+      let action;
+      if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="' + ch.image + '" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> ' +
+        '<button class="btn btn-small btn-success" onclick="markArc7ChapterRead(' + ch.id + ')">✓ Mark Chapter Read</button>';
+      else action = done ? '<div class="story-chip">✓ Complete.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item ' + (done ? 'completed' : '') + '"><strong>Chapter ' + ch.id + ' — ' + esc(ch.title) + '</strong><br>' +
+        '<span style="font-size:.82rem;opacity:.82;">' + esc(ch.focus) + '</span><br>' +
+        '<span style="font-size:.78rem;">' + status + '</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +' + ch.xp + '</span><div class="story-actions">' + action + '</div></article>';
+    });
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
   };
 })();
 </script>
