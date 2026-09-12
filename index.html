@@ -3253,6 +3253,14 @@ function crimsonXPPercent() {
 // progressively more, which keeps the level number sane under normal play
 // without an artificial ceiling — deliberately uncapped since Arc 5–8
 // content will need to gate on levels above the old level-26 range.
+// Curve steepness: this constant is the single knob for how fast leveling
+// feels. k=50 puts ~180k XP (roughly what a week of heavy dev/testing play
+// generates) at level 60, which matches expectations for that much testing
+// — that 7-day span was development/testing time, not typical player
+// pacing, so it's a reasonable anchor rather than something to slow down.
+// Since the game is ongoing (Arc 5 in progress, more planned indefinitely),
+// there's no ceiling — bump this up later if real player pacing runs hot
+// once Arc 5+ content and its level gates are actually in.
 function xpForLevel(l) { return 50 * (l - 1) * l; }
 function level() {
   let l = 1;
@@ -4874,11 +4882,18 @@ function isPortUnlocked(portId){
   if(portId==='hanoi') return !!game.foundCompanions?.mezstorm;
   if(portId==='manila') return !!game.foundCompanions?.senedra;
   if(portId==='drowned_passage') return !!game.foundCompanions?.zaki;
-  // Kota Batu: the real historic port, as opposed to the illusion-memories
-  // of it visited in Arc III. Gated behind both a level milestone and having
-  // resolved every one of those illusions — narratively, the crew earns the
-  // real place only after finishing with its echoes.
-  if(portId==='kota_batu') return level()>=150 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
+  // Kota Batu: the real historic Brunei port, as opposed to the
+  // illusion-memories of it visited in Arc III. Gated behind both a level
+  // milestone and having resolved every one of those memory-fragment
+  // illusions — narratively, the crew earns the real place only after
+  // finishing with its echoes. Unlocks BEFORE Fair Tide (lower level
+  // threshold) — Brunei comes first, then the crew's own home base.
+  if(portId==='kota_batu') return level()>=50 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
+  // Fair Tide: the crew's home base, still under construction at this point
+  // in the story — unlocks after Kota Batu. Level 60 is deliberate: by Arc
+  // 6 the crew captures Robin and Jeff, the former employers who hurt San
+  // and Joel, and a level-60+ crew is meant to read as just formidable
+  // enough to actually take both of them on.
   if(portId==='fair_tide') return level()>=60 && typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
   return false;
 }
