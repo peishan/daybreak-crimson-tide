@@ -7906,7 +7906,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc4ObjectiveState = function(){
     if(typeof window.arc3ObjectiveState!=='function' || window.arc3ObjectiveState()!=='arc3_chapters_complete_for_now') return null;
-    if(level()<80) return null;
+    if(level()<60) return null;
     game.comicProgress4 = game.comicProgress4||{};
     for(const ch of ARC4_CHAPTERS){
       if(!game.comicProgress4[ch.id]) return 'complete_arc4_chapter_'+ch.id;
@@ -8156,7 +8156,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc5ObjectiveState = function(){
     if(typeof window.arc4ObjectiveState!=='function' || window.arc4ObjectiveState()!=='arc4_chapters_complete_for_now') return null;
-    if(level()<100) return null;
+    if(level()<75) return null;
     game.comicProgress5 = game.comicProgress5||{};
     for(const ch of ARC5_CHAPTERS){
       if(!game.comicProgress5[ch.id]) return 'complete_arc5_chapter_'+ch.id;
@@ -9166,6 +9166,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.arc6ObjectiveState = function(){
     if (typeof window.arc5ObjectiveState !== 'function' || window.arc5ObjectiveState() !== 'arc5_part1_complete_for_now') return null;
+    // Level gate added — Arc VI has the crew capturing Robin and Jeff, so it
+    // should read as a genuine step up in strength from Fair Tide's own
+    // level-60 unlock, not just "whenever Arc V's chapters are done."
+    if (level() < 90) return null;
     game.comicProgress6 = game.comicProgress6 || {};
     for (const ch of ARC6_CHAPTERS) {
       if (game.comicProgress6[ch.id]) continue;
