@@ -2834,6 +2834,20 @@ const CLASS_KIT = {
     skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}}
 };
 function kitFor(id){ return CLASS_KIT[id] || {role:'melee', spell:null, skill:null}; }
+// Two shapes exist across CLASS_KIT: most casters/healers use a `spells`
+// array (San, Eliz, Mezstorm, Dr. AA, Mimi, Renn), but Sister Wren and Soel
+// each use a single `spell` object instead. Every place that read
+// `kit.spells` directly (the manual Spell menu, castSpell itself, the party
+// detail screen, and auto-battle) only ever checked the plural form — so
+// Wren and Soel's heal/ward spell was completely unreachable, manually or
+// automatically, despite being fully defined. This normalizes both shapes
+// into one list so all four call sites treat them identically.
+function kitSpellList(kit) {
+  if (!kit) return [];
+  if (kit.spells) return kit.spells;
+  if (kit.spell) return [kit.spell];
+  return [];
+}
 
 // ---------------------------------------------------------------------------
 // AFFINITY TIERS & GROWTH ABILITIES — ported from the source game's passive
@@ -5580,7 +5594,7 @@ function renderCombat() {
   if (game.spellMenuOpen && actor) {
     spellMenu.style.display = 'block';
     const kit = kitFor(actor.id);
-    const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level() && (game.partyMp[actor.id] || 0) >= s.mp);
+    const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level() && (game.partyMp[actor.id] || 0) >= s.mp);
     document.getElementById('spellGrid').innerHTML = spells.map((s, i) =>
       `<button class="spell-btn" onclick="castSpell(${i})">
       <div class="spell-name">${s.icon} ${s.name}</div>
@@ -5880,7 +5894,7 @@ function castSpell(spellIndex) {
   const actor = alive[game.combatTurn];
   if (!actor) return;
   const kit = kitFor(actor.id);
-  const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level());
+  const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
   const spell = spells[spellIndex];
   if (!spell) return;
 
@@ -6257,29 +6271,80 @@ function autoBattleAction(actor) {
   if (!game.inCombat || game.combatResolved || !actor || partyHpOf(actor) <= 0) return;
   // First Mate's Aegis: auto-battle arms it the moment it's available,
   // same as a player would — checked first since it's a once-a-day
-  // opportunity that's easy for an AI turn to otherwise skip entirely
-  // (autoBattleAction never calls SKILL for tank/melee roles below).
+  // opportunity that's easy for an AI turn to otherwise skip entirely.
   if (typeof aegisAvailable === 'function' && aegisAvailable(actor) && !game.aegisArmed) {
     useFirstMatesAegis();
     return;
   }
   const kit = kitFor(actor.id);
   const mp = game.partyMp[actor.id] || 0;
+  const combatParty = getCrimsonCombatParty();
+  const spellList = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
+
+  // A revive skill is only ever worth attempting if someone's actually
+  // down — combatAction('SKILL') toasts "No one has fallen" and returns
+  // WITHOUT advancing the turn otherwise (see its 'revive' branch), which
+  // would soft-lock auto-battle into retrying the same actor's turn
+  // forever. UNKILLABLE_IDS (Soel etc.) can never actually be "fallen".
+  if (kit.skill && kit.skill.effect === 'revive' && mp >= (kit.skill.mp || 0)) {
+    const fallen = combatParty.find(m => partyHpOf(m) <= 0 && !UNKILLABLE_IDS.has(m.id));
+    if (fallen) { combatAction('SKILL'); return; }
+  }
+
   if (kit.role === 'healer') {
-    const hurt = getCrimsonCombatParty().some(m => { const h = partyHpOf(m); return h > 0 && h / effectiveMaxHp(m) < 0.4; });
-    if (hurt && kit.spells && kit.spells.length && mp >= kit.spells[0].mp) {
-      const idx = (kit.spells || []).filter(s => (s.levelReq || 1) <= level()).indexOf(kit.spells[0]);
-      if (idx >= 0) { castSpell(idx); return; }
+    const hurt = combatParty.some(m => { const h = partyHpOf(m); return h > 0 && h / effectiveMaxHp(m) < 0.4; });
+    const healSpells = spellList.filter(s => s.healMult && mp >= s.mp);
+    if (hurt && healSpells.length) {
+      // Strongest affordable heal, same idea as picking the best damage
+      // spell below rather than always defaulting to spellList[0].
+      const best = healSpells.reduce((a, b) => (b.healMult > a.healMult ? b : a));
+      castSpell(spellList.indexOf(best));
+      return;
     }
   }
-  if (kit.role === 'caster' && kit.spells && kit.spells.length && mp >= kit.spells[0].mp) {
-    const spells = kit.spells.filter(s => (s.levelReq || 1) <= level() && s.dice);
-    if (spells.length && Math.random() < 0.7) {
-      const allSpells = kit.spells.filter(s => (s.levelReq || 1) <= level());
-      const idx = allSpells.indexOf(spells[Math.floor(Math.random() * spells.length)]);
-      if (idx >= 0) { castSpell(idx); return; }
+
+  if (kit.role === 'caster') {
+    const dmgSpells = spellList.filter(s => s.dice && mp >= s.mp);
+    if (dmgSpells.length && Math.random() < 0.7) {
+      const chosen = dmgSpells[Math.floor(Math.random() * dmgSpells.length)];
+      castSpell(spellList.indexOf(chosen));
+      return;
     }
   }
+
+  if (kit.role === 'support') {
+    // Keep buffs topped up rather than burning MP recasting them every
+    // single turn: only refresh one that's about to lapse or isn't up at
+    // all. Encore (MP restore) only matters once San's actually running low.
+    const shieldSpell = spellList.find(s => s.buffType === 'defense' && mp >= s.mp && (game.shieldTurns || 0) <= 1);
+    const hasteSpell = spellList.find(s => s.buffType === 'haste' && mp >= s.mp && (game.hasteTurns || 0) <= 1);
+    const mpRestoreSpell = spellList.find(s => s.effect === 'restoreMp' && mp >= s.mp);
+    const sanMember = combatParty.find(m => m.id === 'san');
+    const sanLowMp = sanMember && sanMember.mp > 0 && (game.partyMp.san || 0) / effectiveMaxMp(sanMember) < 0.3;
+    const chosen = shieldSpell || hasteSpell || (sanLowMp ? mpRestoreSpell : null);
+    if (chosen) { castSpell(spellList.indexOf(chosen)); return; }
+  }
+
+  // Free/paid utility or damage skills for everyone else — and as a
+  // fallback for healer/caster/support when nothing above applied. Before
+  // this, NOTHING outside the healer/caster spell branches above ever
+  // called SKILL at all, so Iris's Ash's Pounce, KW Liang's Snowball's
+  // Leap, Zaki's Power Strike, Aisyah's Coup de Grace, Ser Aldric's Holy
+  // Strike, Senedra's Hunter's Mark, Soel's Lucky Pounce, Renn's and
+  // Mimi's mark skills, and Brada's Showstopper never fired in auto-battle
+  // no matter how long a fight ran — every one of them a free (mp:0) or
+  // affordable upgrade over a plain Attack that just sat unused.
+  if (kit.skill && kit.skill.effect !== 'taunt' && kit.skill.effect !== 'revive' && mp >= (kit.skill.mp || 0)) {
+    if (Math.random() < 0.55) { combatAction('SKILL'); return; }
+  }
+  // Joel's Shield Wall (taunt) specifically: worth using proactively while
+  // he's healthy, so it actually benefits auto-battle instead of sitting
+  // manual-only.
+  if (kit.skill && kit.skill.effect === 'taunt' && partyHpOf(actor) / effectiveMaxHp(actor) > 0.3 && Math.random() < 0.5) {
+    combatAction('SKILL');
+    return;
+  }
+
   // Core party members (not hired/temporary crew) can also draw on
   // consumables during auto-battle — previously items only ever got used
   // via the manual item menu, so a full stock of potions and Cannon Shots
@@ -6549,7 +6614,7 @@ function renderPartyScreen() {
       const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : maxHp;
       const mp = game.partyMp[m.id] != null ? game.partyMp[m.id] : maxMp;
       const kit = kitFor(m.id);
-      const spells = (kit.spells || []).filter(s => (s.levelReq || 1) <= level());
+      const spells = kitSpellList(kit).filter(s => (s.levelReq || 1) <= level());
       const trophy = game.equippedTrophies && game.equippedTrophies[m.id];
       const affinity = affinityFor(m.id);
 
