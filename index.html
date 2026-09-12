@@ -95,6 +95,22 @@
 <meta name="generator" content="Daybreak: Crimson Tide GitHub Pages Master V61">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daybreak: Crimson Tide — Build V83</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1f2d">
+<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon-16x16.png">
+
+<!-- iOS: Safari ignores the manifest icons entirely, so it needs its own tags -->
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180x180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="assets/icons/icon-167x167.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crimson Tide">
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
 :root {
@@ -1433,6 +1449,7 @@ body{
           <button class="tab-btn" onclick="switchPortTab('cargo')">📦 Cargo Hold</button>
           <button class="tab-btn" onclick="switchPortTab('intel')">📈 Intelligence</button>
           <button class="tab-btn" onclick="switchPortTab('explore')">⚔️ Explore</button>
+          <button class="tab-btn" onclick="switchPortTab('temple')">⛩️ Temple</button>
         </div>
         <div class="tab-content active" id="port-tab-market">
           <div class="panel">
@@ -1459,6 +1476,20 @@ body{
           <div class="panel">
             <div class="panel-title">⚔️ Explore the Harbor</div>
             <div id="exploreContent"></div>
+          </div>
+        </div>
+        <div class="tab-content" id="port-tab-temple">
+          <div class="panel">
+            <div class="panel-title">⛩️ The Shrine of Quiet Tides</div>
+            <p style="font-size:0.85rem;opacity:0.8;">A temple keeper tends the old shrine, taking vows from any captain willing to clear the waters of what threatens pilgrims and traders alike. In return: coin, standing, and elixirs blessed stronger than anything a market apothecary can bottle.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-title">✨ Blessed Offerings</div>
+            <div id="templePotionShop"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">🕊️ Temple Vows</div>
+            <div id="templeQuestBoard"></div>
           </div>
         </div>
       </div>
@@ -1811,13 +1842,7 @@ body{
         </div>
         <div class="panel">
           <div class="panel-title">🧪 Potions</div>
-          <div class="chapter-grid">
-            <article class="quest-item"><strong>🧪 Health Potion</strong><br><span style="font-size:0.8rem;">Restores 30 HP</span><br><button class="btn btn-small btn-success" onclick="buyPotion('health_potion')">20g</button></article>
-            <article class="quest-item"><strong>🔵 Mana Potion</strong><br><span style="font-size:0.8rem;">Restores 25 MP</span><br><button class="btn btn-small btn-success" onclick="buyPotion('mana_potion')">18g</button></article>
-            <article class="quest-item"><strong>💊 Greater Health</strong><br><span style="font-size:0.8rem;">Restores 75 HP</span><br><button class="btn btn-small btn-success" onclick="buyPotion('greater_health')">55g</button></article>
-            <article class="quest-item"><strong>🔧 Repair Kit</strong><br><span style="font-size:0.8rem;">Repairs 25% hull</span><br><button class="btn btn-small btn-success" onclick="buyPotion('ship_repair')">30g</button></article>
-            <article class="quest-item"><strong>💣 Cannon Shot</strong><br><span style="font-size:0.8rem;">50 flat damage in battle</span><br><button class="btn btn-small btn-success" onclick="buyPotion('cannon_shot')">25g</button></article>
-          </div>
+          <div id="potionShop"></div>
         </div>
       </div>
       <div class="right-col">
@@ -2250,7 +2275,7 @@ const GEAR_ROLE_RULES = {
   sister_wren: {weapon:['wren_censer','any'], armor:['robe'], label:"Censer / Robes"},
   soel:        {weapon:['charm','any'], armor:['fur'], hidden:['head','hands','feet','ring2'], labels:{amulet:'Collar',ring1:'Blessing'}, label:'Spirit Charm / Warded Fur'},
   mimi:        {weapon:['san_focus','any'], armor:['robe'], label:'Focus / Robes'},
-  brada_shah: {weapon:['instrument','any'], armor:['light','heavy'], label:'Instrument / Armor'},
+  brada_shah: {weapon:['moon_lute','any'], armor:['light','heavy'], label:'Moon Lute / Armor'},
   kw_liang:   {weapon:['bow','any'], armor:['light'], label:'Bow / Light Armor'},
   dr_aa:      {weapon:['staff','mace','any'], armor:['robe'], label:'Medical Kit / Coat'},
   iris:       {weapon:['dagger','any'], armor:['light'], label:'Knives / Light Armor'},
@@ -2295,6 +2320,11 @@ const EQUIPMENT_CATALOG = [
   {id:'aldric_oath_ring', name:"The Other Kind of Found's Oath Ring", icon:'💍', slot:'ring1', family:'any', defense:14, hp:20, price:650, tier:3, trader:'Ferris', forCompanion:'Ser Aldric', desc:'Ring for Ser Aldric. +14 DEF, +20 HP.'},
   {id:'mimi_dreamsight_locket', name:'Dreamsight Locket', icon:'🔮', slot:'amulet', family:'any', atk:12, spd:6, price:650, tier:3, trader:'Ferris', forCompanion:'Mimi', desc:'Amulet for Mimi. +12 ATK, +6 SPD.'},
   {id:'brada_resonance_charm', name:'Resonance Charm', icon:'🎼', slot:'amulet', family:'any', atk:8, defense:6, hp:15, price:700, tier:3, trader:'Ferris', forCompanion:'Brada Shah', desc:'Amulet for Brada Shah. +8 ATK, +6 DEF, +15 HP.'},
+  // GEAR_ROLE_RULES.brada_shah lists 'moon_lute' as his weapon family, but no
+  // item of that family existed anywhere in the catalog — his weapon slot was
+  // silently falling back to 'any' only. This is his round-bodied lute (a
+  // yueqin / "moon guitar"), giving that family an actual item to equip.
+  {id:'brada_moonlit_pipa', name:'Moonlit Pipa', icon:'🪕', slot:'weapon', family:'moon_lute', atk:14, spd:8, hp:10, price:700, tier:3, trader:'Ferris', forCompanion:'Brada Shah', desc:"Brada Shah's round-bodied moon lute. +14 ATK, +8 SPD, +10 HP."},
   {id:'dr_aa_steady_gloves', name:"Steady Hands' Gloves", icon:'🧤', slot:'hands', family:'any', atk:10, defense:8, price:650, tier:3, trader:'Ferris', forCompanion:'Dr. AA', desc:"Gloves for Dr. AA. +10 ATK, +8 DEF."},
   {id:'wren_circlet', name:'Circlet of Intercession', icon:'👑', slot:'head', family:'any', defense:12, hp:18, price:650, tier:3, trader:'Ferris', forCompanion:'Sister Wren', desc:'Circlet for Sister Wren. +12 DEF, +18 HP.'},
   {id:'kw_quick_boots', name:"Quick Hands' Boots", icon:'🥾', slot:'feet', family:'light', spd:12, defense:6, price:650, tier:3, trader:'Ferris', forCompanion:'KW Liang', desc:"Boots for KW Liang. +12 SPD, +6 DEF."},
@@ -2451,9 +2481,13 @@ function gearCanEquip(memberId, item) {
   if (!item || !item.slot) return false;
   const rules = gearMemberRules(memberId);
   if (rules.hidden && rules.hidden.includes(item.slot)) return false;
+  // Ownership check must run before the ring/amulet/head/hands/feet early
+  // return below — otherwise every companion-specific accessory (rings,
+  // amulets, head/hand/foot gear) is equippable by anyone, since only
+  // weapon/armor slots ever reached this check.
+  if (item.forCompanion && item.forCompanion !== 'any' && item.forCompanion.toLowerCase().replace(/[^a-z]/g,'') !== memberId.toLowerCase().replace(/[^a-z]/g,'')) return false;
   if (item.slot === 'ring1' || item.slot === 'ring2' || item.slot === 'amulet' ||
       item.slot === 'head' || item.slot === 'hands' || item.slot === 'feet') return true;
-  if (item.forCompanion && item.forCompanion !== 'any' && item.forCompanion.toLowerCase().replace(/[^a-z]/g,'') !== memberId.toLowerCase().replace(/[^a-z]/g,'')) return false;
   if (item.slot === 'weapon') return (rules.weapon || ['any']).includes('any') || (rules.weapon || []).includes(item.family);
   if (item.slot === 'armor') return (rules.armor || ['any']).includes('any') || (rules.armor || []).includes(item.family);
   return false;
@@ -2722,6 +2756,75 @@ const CLASS_KIT = {
   // instead: most of the time it's a big hit + a team haste buff; ~1 in 5
   // it misfires, doing less damage and clipping a random ally (never
   // fatally) rather than buffing anyone. See combatAction's 'hex' branch.
+  // Dr. AA (Arc IV recruit): the first of 5 recruits (Iris, KW Liang,
+  // Dr. AA, Mimi, Brada Shah) fixed from having no CLASS_KIT entry at all
+  // — they fell through to kitFor's {role:'melee', spell:null, skill:null}
+  // default, so Attack/Defend/Item/Flee were the only buttons that ever
+  // did anything for them, and Dr. AA's whole 110 MP pool sat unused.
+  // Picked him first of the five: he's the only Healer among them, so the
+  // gap was the most visible (a "physician" who could never actually
+  // heal). Mirrors Eliz's Heal spell (same healMult formula, no San-
+  // priority targeting since that's specifically her relationship, not
+  // his), plus a revive skill — thematically the obvious fit for a
+  // physician, and exercises the same already-working 'revive' branch
+  // Eliz's HIGHSKILL uses, rather than inventing anything new.
+  // All five originally-melee-fallback Arc IV recruits (Iris, KW Liang,
+  // Dr. AA, Mimi, Brada Shah) are now covered below — fixed one at a time
+  // across a few passes rather than all at once.
+  dr_aa: {role:'healer',
+    spells:[
+      {name:'Field Treatment', icon:'🩹', mp:12, levelReq:1, desc:'Restores HP to the lowest-HP ally.', healMult:1.05}
+    ],
+    skill:{name:'Emergency Resuscitation', icon:'⚕️', mp:30, effect:'revive'}},
+  // Iris and KW Liang (Arc IV recruits, second/third of the five): both
+  // Scouts with mp:0, same shape as Senedra's kit (role:'ranged'/'melee',
+  // spell:null, one free mp:0 skill) — so modeled directly on hers rather
+  // than inventing a new pattern. Their skill is their spirit familiar
+  // joining the strike (Ash the fox for Iris; Snowball the spirit rabbit
+  // for Liang) rather than Senedra's utility 'mark' effect, so this reuses
+  // the 'mult' damage-skill branch instead (same one Aisyah/Zaki/Ser
+  // Aldric already use) — the log line already reads as "IRIS uses 🦊
+  // Ash's Pounce for NN damage!", which carries the familiar-assist
+  // flavor on its own with no new effect type needed. combatRole 'Rogue'
+  // (dagger, per her gear rule) maps to CLASS_KIT's 'melee' bucket;
+  // 'Ranged' (bow, per his gear rule) maps to 'ranged' — same mapping
+  // Aisyah/Senedra use.
+  iris:        {role:'melee',  spell:null, skill:{name:"Ash's Pounce", icon:'🦊', mp:0, mult:1.6}},
+  kw_liang:    {role:'ranged', spell:null, skill:{name:"Snowball's Leap", icon:'🐇', mp:0, mult:1.5}},
+  // Mimi and Brada Shah (Arc IV recruits, last two of the five): both have
+  // a real MP pool (115 / 60) and a specific class fantasy, so — unlike
+  // Iris/Liang's single free skill — they get proper spellbooks, same
+  // depth as Renn/Mezstorm.
+  // Mimi (Diviner, mp:115): a caster like San/Mezstorm/Renn, reusing the
+  // same 'dice'+'status' damage-spell shape. Her skill leans into
+  // "reads the tide for what it hides" rather than raw damage — reuses
+  // the same 'mark' effect Senedra's Hunter's Mark already uses (San's
+  // next hit lands true), which reads naturally as Mimi calling the
+  // opening rather than Senedra spotting it. Free (mp:0) like Senedra's,
+  // since it's a utility read, not a spell.
+  mimi: {role:'caster',
+    spells:[
+      {name:'Tide Sight', icon:'🔮', mp:9,  levelReq:1,  desc:'Strikes at a weakness only she can see.', dice:'1d9'},
+      {name:"Fortune's Edge", icon:'🌊', mp:14, levelReq:6,  desc:'Bends probability against the enemy.', dice:'1d11', status:{type:'shock',chance:0.25,turns:1}},
+      {name:'Foretold Ruin', icon:'💀', mp:20, levelReq:12, desc:'A future she has already seen happen.', dice:'1d14'}
+    ],
+    skill:{name:"Reader's Omen", icon:'👁️', mp:0, effect:'mark'}},
+  // Brada Shah (Bard/Support, mp:60): "songs, strategy, and steadier
+  // ground" maps directly onto the buffType mechanic San's own Shield/
+  // Haste spells already use (same shared game.shieldTurns/hasteTurns
+  // state — a bard's rally song and a mage's haste spell stacking into
+  // the same buff window is fine, not a bug). Encore reuses Eliz's
+  // restoreMp effect, refocused on San since she's the one who actually
+  // burns through MP fastest. Showstopper is a free (mp:0) mult skill,
+  // same as Iris/Liang, so he's never reduced to Attack-only if the MP
+  // runs dry mid-fight.
+  brada_shah: {role:'support',
+    spells:[
+      {name:'Rally Cry', icon:'🎵', mp:15, levelReq:1,  desc:'A driving rhythm speeds the whole crew.', buffType:'haste', buffVal:6, buffTurns:3},
+      {name:'Steadfast Ballad', icon:'🎶', mp:15, levelReq:8,  desc:'Steels the crew against the next few blows.', buffType:'defense', buffVal:5, buffTurns:3},
+      {name:'Encore', icon:'🎼', mp:12, levelReq:14, desc:"An old favorite — restores San's focus.", effect:'restoreMp', restoreAmt:35}
+    ],
+    skill:{name:'Showstopper', icon:'🥁', mp:0, mult:1.3}},
   renn: {role:'caster',
     spells:[
       {name:'Gale Dart', icon:'💨', mp:9,  levelReq:1,  desc:'A quick burst of wind, sharp as a blade.', dice:'1d9'},
@@ -2833,11 +2936,23 @@ const RUMORS = [
 ];
 
 const POTION_CATALOG = [
-  {id:'health_potion', name:'Health Potion', icon:'🧪', effect:'heal', value:30, price:20},
-  {id:'mana_potion', name:'Mana Potion', icon:'🔵', effect:'mana', value:25, price:18},
-  {id:'greater_health', name:'Greater Health', icon:'💊', effect:'heal', value:75, price:55},
-  {id:'ship_repair', name:'Repair Kit', icon:'🔧', effect:'repair', value:25, price:30},
-  {id:'cannon_shot', name:'Cannon Shot', icon:'💣', effect:'damage', value:50, price:25}
+  // Tier 1 — Tavern, early game
+  {id:'health_potion', name:'Health Potion', icon:'🧪', effect:'heal', value:30, price:20, tier:1},
+  {id:'mana_potion', name:'Mana Potion', icon:'🔵', effect:'mana', value:25, price:18, tier:1},
+  {id:'ship_repair', name:'Repair Kit', icon:'🔧', effect:'repair', value:25, price:30, tier:1},
+  {id:'cannon_shot', name:'Cannon Shot', icon:'💣', effect:'damage', value:50, price:25, tier:1},
+  // Tier 2 — Tavern, mid game
+  {id:'greater_health', name:'Greater Health', icon:'💊', effect:'heal', value:75, price:55, tier:2},
+  {id:'greater_mana', name:'Greater Mana', icon:'🔷', effect:'mana', value:60, price:50, tier:2},
+  {id:'reinforced_repair_kit', name:'Reinforced Repair Kit', icon:'⚙️', effect:'repair', value:50, price:70, tier:2},
+  {id:'heavy_cannon_shot', name:'Heavy Cannon Shot', icon:'🧨', effect:'damage', value:100, price:60, tier:2},
+  // Tier 3 — Temple only. Consecrated versions of the same four effects,
+  // sold exclusively at the shrine (see potionShopHTML/renderTemple) so the
+  // temple has a mechanical reason to visit beyond its quest board.
+  {id:'elixir_of_vitality', name:'Elixir of Vitality', icon:'✨', effect:'heal', value:200, price:150, tier:3, temple:true},
+  {id:'elixir_of_focus', name:'Elixir of Focus', icon:'🔮', effect:'mana', value:150, price:130, tier:3, temple:true},
+  {id:'shipwrights_blessing', name:"Shipwright's Blessing", icon:'⛩️', effect:'repair', value:100, price:160, tier:3, temple:true},
+  {id:'consecrated_broadside', name:'Consecrated Broadside', icon:'💥', effect:'damage', value:200, price:140, tier:3, temple:true}
 ];
 
 const LOOT_THEMES = [
@@ -2992,10 +3107,65 @@ function checkQuestProgress(type, target, amount) {
   game.activeQuests = game.activeQuests.filter(q => !q.done);
   refreshQuests();
 }
-function questBoardHTML() {
-  refreshQuests();
-  if (!game.activeQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No contracts posted right now — check back after your next voyage.</p>';
-  return `<p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Standing contracts — bigger jobs, bigger pay. A finished one is replaced by a new posting.</p><div class="chapter-grid">${game.activeQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.type === 'trade_volume' ? `${q.c}/${q.need} units` : `${q.c}/${q.need}`} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
+function potionShopHTML(filterFn) {
+  const items = POTION_CATALOG.filter(filterFn);
+  if (!items.length) return '<p style="font-size:0.85rem;opacity:0.7;">Nothing in stock right now.</p>';
+  return `<div class="chapter-grid">${items.map(p => {
+    const label = p.effect === 'heal' ? `Restores ${p.value} HP`
+      : p.effect === 'mana' ? `Restores ${p.value} MP`
+      : p.effect === 'repair' ? `Repairs ${p.value}% hull`
+      : p.effect === 'damage' ? `${p.value} flat damage in battle` : '';
+    return `<article class="quest-item"><strong>${p.icon} ${p.name}</strong><br><span style="font-size:0.8rem;">${label}</span><br><span style="font-size:0.7rem;opacity:0.6;">Tier ${p.tier}</span><br><button class="btn btn-small btn-success" onclick="buyPotion('${p.id}')">${p.price}g</button></article>`;
+  }).join('')}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// TEMPLE VOWS — a smaller, slower-turning companion to the Tavern's Quest
+// Board (5 posted vs 10, cap of 4 active vs 4 available at a time out of a
+// wider pool so postings actually rotate). Tracked separately from
+// game.activeQuests so completing a tavern contract and a temple vow that
+// happen to target the same enemy both progress independently.
+// ---------------------------------------------------------------------------
+const TEMPLE_QUEST_POOL = [
+  {id:'tq_ghouls',    type:'kill', target:'harbor_ghoul',  need:6,  icon:'👺', name:'Cleanse the Dock Steps',  desc:'Harbor ghouls keep dragging themselves up near the shrine stairs. Clear them before they frighten off worshippers.', rw:{xp:260, gold:140, rep:8}},
+  {id:'tq_smugglers', type:'kill', target:'smuggler_crew', need:5,  icon:'🏴', name:'Guard the Pilgrim Road',   desc:'Smugglers have been shaking down pilgrims on the road up to the shrine. Put a stop to it.',                          rw:{xp:280, gold:150, rep:9}},
+  {id:'tq_sirens',    type:'kill', target:'siren_pack',    need:2,  icon:'🧜‍♀️', name:'Silence the Chorus',      desc:'The keeper believes sirens are luring pilgrim boats off course before they ever reach the shrine.',                 rw:{xp:300, gold:190, rep:10}},
+  {id:'tq_frigates',  type:'kill', target:'rival_frigate', need:2,  icon:'🏴‍☠️', name:"The Shrine's Toll",       desc:'A rival crew has been extorting a "toll" from ships carrying offerings to the temple. They can stop, one way or another.', rw:{xp:340, gold:210, rep:12}},
+  {id:'tq_galleon',   type:'kill', target:'ghost_galleon', need:1,  icon:'👻', name:'Lay the Dead to Rest',    desc:"A ghost galleon has circled the strait for weeks, its crew unable to find peace. The temple asks you to end its wandering.", rw:{xp:420, gold:260, rep:15}},
+  {id:'tq_kraken',    type:'kill', target:'kraken',        need:1,  icon:'🦑', name:"The Deep One's Due",      desc:'The oldest carvings in the shrine warn of a debt owed to something in the deep. Pay it in steel instead.',           rw:{xp:600, gold:380, rep:22}},
+  {id:'tq_tithe',     type:'trade_volume', target:null,    need:100,icon:'🕯️', name:'Tithe for the Shrine',    desc:'Move 100 units of cargo through your hold — the temple takes a tithe from every trade you make while this vow stands.', rw:{xp:220, gold:200, rep:12}}
+];
+function refreshTempleQuests() {
+  if (!game.activeTempleQuests) game.activeTempleQuests = [];
+  while (game.activeTempleQuests.length < 4) {
+    const activeIds = new Set(game.activeTempleQuests.map(q => q.id));
+    const available = TEMPLE_QUEST_POOL.filter(q => !activeIds.has(q.id));
+    if (!available.length) break;
+    const pick = available[Math.floor(Math.random() * available.length)];
+    game.activeTempleQuests.push(Object.assign({}, pick, {c: 0, done: false}));
+  }
+}
+function checkTempleQuestProgress(type, target, amount) {
+  refreshTempleQuests();
+  game.activeTempleQuests.forEach(q => {
+    if (q.done || q.type !== type) return;
+    if (type === 'kill' && q.target !== target) return;
+    q.c = Math.min(q.need, q.c + amount);
+    if (q.c >= q.need) {
+      q.done = true;
+      gainXP(q.rw.xp);
+      game.gold += q.rw.gold;
+      game.reputation += q.rw.rep || 0;
+      toast(`⛩️ Vow fulfilled: ${q.name} · +${q.rw.xp} XP · +${q.rw.gold}g`);
+    }
+  });
+  game.activeTempleQuests = game.activeTempleQuests.filter(q => !q.done);
+  refreshTempleQuests();
+}
+function templeQuestBoardHTML() {
+  refreshTempleQuests();
+  if (!game.activeTempleQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No vows posted right now — check back after your next voyage.</p>';
+  return `<p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Sacred vows — fewer than the Tavern's contracts, but the shrine remembers who keeps them.</p><div class="chapter-grid">${game.activeTempleQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -3012,7 +3182,7 @@ let game = {
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
   bounties: [], bountyDay: null,
-  activeQuests: [], completedQuestIds: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {}, arc1Objective: null, malaccaPrepStep: 0,
+  activeQuests: [], completedQuestIds: [], activeTempleQuests: [], tradeVolume: 0, act2Index: 0, act3Index: 0, act4Index: 0, comicProgress: {}, storyQuestProgress: {}, arc1Objective: null, malaccaPrepStep: 0,
   inCombat: false, combatEnemy: null, combatEnemyHp: 0,
   combatTurn: 0, combatRound: 1, combatLog: [], combatSessionId: 0, combatResolved: false,
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
@@ -3862,7 +4032,7 @@ function goScreen(name) {
   window.scrollTo({top: 0, left: 0, behavior: 'instant'});
   document.getElementById(name + 'Screen').scrollIntoView({block: 'start', behavior: 'instant'});
   if (name === 'comics') renderComicArchive();
-  if (name === 'port') { renderMarket(); renderCargo(); renderIntel(); renderExplore(); ctPlayMusic('port'); }
+  if (name === 'port') { renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderTemple(); ctPlayMusic('port'); }
   if (name === 'navigate') { renderNavigation(); ctPlayMusic('explore'); }
   if (name === 'party') renderPartyScreen();
   if (name === 'inventory') renderInventory();
@@ -3885,6 +4055,7 @@ function switchPortTab(tab) {
   if (tab === 'cargo') renderCargo();
   if (tab === 'intel') renderIntel();
   if (tab === 'explore') renderExplore();
+  if (tab === 'temple') renderTemple();
 }
 
 // ---------------------------------------------------------------------------
@@ -4200,6 +4371,7 @@ function buyGood(goodId, qty) {
     oldQty > 0 ? ((oldCost * oldQty) + totalPrice) / (oldQty + qty) : price;
   game.cargoUsed += totalWeight;
   checkQuestProgress('trade_volume', null, qty);
+  checkTempleQuestProgress('trade_volume', null, qty);
 
   logEvent('Bought ' + qty + 'x ' + good.name + ' for ' + totalPrice + 'g', 'neutral');
   updateUI(); renderMarket(); renderCargo();
@@ -4230,6 +4402,7 @@ function sellGood(goodId, qty) {
   const baseCost = good.basePrice * qty * 0.8;
   if (totalPrice > baseCost) gainXP(Math.floor((totalPrice - baseCost) / 10));
   checkQuestProgress('trade_volume', null, qty);
+  checkTempleQuestProgress('trade_volume', null, qty);
   checkQuestProgress('deliver', {good: goodId, portId: game.location}, qty);
 
   logEvent('Sold ' + qty + 'x ' + good.name + ' for ' + totalPrice + 'g', 'gold');
@@ -4240,6 +4413,12 @@ function sellGood(goodId, qty) {
 // EXPLORE HARBOR — pick a fight with the port's local threats any time, plus
 // the port's guardian if that companion hasn't been found yet.
 // ---------------------------------------------------------------------------
+function renderTemple() {
+  const potionEl = document.getElementById('templePotionShop');
+  const questEl = document.getElementById('templeQuestBoard');
+  if (potionEl) potionEl.innerHTML = potionShopHTML(p => p.temple);
+  if (questEl) questEl.innerHTML = templeQuestBoardHTML();
+}
 function renderExplore() {
   const container = document.getElementById('exploreContent');
   if (!container) return;
@@ -4827,13 +5006,18 @@ function freeRestAtPort() {
     updateUI();
     renderPort();
     setTimeout(() => {
-      if (typeof startRandomEncounter === 'function') {
-        startRandomEncounter();
-      } else if (typeof ENCOUNTERS !== 'undefined' && ENCOUNTERS.length) {
-        startCombat(ENCOUNTERS[Math.floor(Math.random() * ENCOUNTERS.length)]);
-      } else {
-        toast('Ambush! Prepare for trouble.');
-      }
+      // BUG FIX: this used to call startRandomEncounter()/ENCOUNTERS, neither
+      // of which exist anywhere in this build — so the 20% roll fired, logged
+      // the warning line, and then silently did nothing (no fight, no log
+      // entry, no XP). Reusing the exact same pool/scaling/startCombat path
+      // that the Explore tab's harbor fights already use, so the ambush is
+      // always a real, level-appropriate, location-appropriate fight.
+      const port = PORTS.find(p => p.id === game.location);
+      const pool = (port && port.harbor && port.harbor.length)
+        ? port.harbor
+        : Object.keys(HARBOR_ENEMIES).filter(k => k !== 'robin' && k !== 'jeff');
+      const key = pool[Math.floor(Math.random() * pool.length)];
+      startCombat({ kind: 'harbor', key, enemy: scaledEnemyForExplore(key, 'harbor') });
     }, 350);
     return;
   }
@@ -4999,6 +5183,7 @@ function renderTavern() {
     (game.rumors.slice(-5).map(r => '<li>' + r + '</li>').join('') || '<li>No rumors heard yet.</li>') +
     '</ul>';
   document.getElementById('questBoard').innerHTML = questBoardHTML();
+  document.getElementById('potionShop').innerHTML = potionShopHTML(p => !p.temple);
 }
 
 // ---------------------------------------------------------------------------
@@ -5914,6 +6099,7 @@ function handleVictory() {
   game.reputation += 5;
   checkBountyProgress('kill', enemy.key, 1);
   checkQuestProgress('kill', enemy.key, 1);
+  checkTempleQuestProgress('kill', enemy.key, 1);
 
   // Training bouts (see ct-build-v93-training-room) are practice, not
   // loot runs — no trophy, and gold is already forced to 0 at the source
@@ -10057,7 +10243,18 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 })();
 </script>
-
+<script>
+// Register the service worker (see sw.js) for offline play + installability.
+// Registered with a relative path so it works whether the game is served
+// from a domain root or a GitHub Pages subpath.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+</script>
 
 </body>
 </html>
