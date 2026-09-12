@@ -3121,6 +3121,15 @@ function checkQuestProgress(type, target, amount) {
   game.activeQuests = game.activeQuests.filter(q => !q.done);
   refreshQuests();
 }
+// BUG FIX: renderTavern() called questBoardHTML() but it was never defined
+// (only its Temple counterpart, templeQuestBoardHTML(), existed) — the
+// resulting ReferenceError aborted renderTavern() before it reached the
+// potionShop line right after it, which is why Potions looked broken too.
+function questBoardHTML() {
+  refreshQuests();
+  if (!game.activeQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No contracts posted right now — check back after your next voyage.</p>';
+  return `<div class="chapter-grid">${game.activeQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
+}
 function potionShopHTML(filterFn) {
   const items = POTION_CATALOG.filter(filterFn);
   if (!items.length) return '<p style="font-size:0.85rem;opacity:0.7;">Nothing in stock right now.</p>';
