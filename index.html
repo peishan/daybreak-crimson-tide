@@ -146,6 +146,7 @@ h1, h2, h3, .title-font { font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px
 .stat-pill.cargo { color: var(--sky); border-color: var(--sky); }
 .stat-pill.day { color: #f39c12; border-color: #f39c12; }
 .main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.main-grid > .left-col, .main-grid > .right-col { min-width: 0; }
 @media (min-width: 900px) { .main-grid { grid-template-columns: 300px 1fr; } }
 .panel {
   background: rgba(0,0,0,0.25); border: 1px solid rgba(196,163,90,0.3);
@@ -169,10 +170,10 @@ h1, h2, h3, .title-font { font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px
 .btn-success { background: linear-gradient(to bottom, #1e8449, #145a32); border-color: var(--success); }
 .btn-magic { background: linear-gradient(to bottom, #4a2c6a, #2d1b3d); border-color: #9b59b6; }
 .btn-combat { background: linear-gradient(to bottom, #7b241c, #5c1a14); border-color: #e74c3c; }
-.tabs { display: flex; gap: 4px; margin-bottom: 15px; flex-wrap: wrap; }
+.tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
 .tab-btn {
   background: rgba(0,0,0,0.3); border: 1px solid var(--sand); color: var(--parchment);
-  padding: 8px 14px; border-radius: 8px 8px 0 0; cursor: pointer;
+  padding: 10px 16px; border-radius: 8px 8px 0 0; cursor: pointer;
   font-family: 'Cinzel', serif; font-size: 0.8rem; transition: all 0.2s;
 }
 .tab-btn:hover { background: rgba(196,163,90,0.2); }
@@ -211,6 +212,20 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .party-hp-bar { height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; margin-top: 4px; overflow: hidden; }
 .party-hp-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
 .party-mp-bar { height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; margin-top: 2px; overflow: hidden; }
+.party-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;}
+.party-strip-item{flex:0 0 auto;width:48px;text-align:center;}
+.party-strip-portrait{width:44px;height:44px;border-radius:50%;margin:0 auto 3px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--wood),var(--sand));border:1px solid rgba(232,197,71,.5);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.party-strip-portrait img{width:100%;height:100%;object-fit:cover;}
+.party-strip-hp{position:absolute;bottom:0;left:0;right:0;height:3px;}
+.party-strip-name{font-size:.62rem;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.party-strip-fallen{opacity:.45;}
+.market-strip-item{flex:0 0 auto;width:60px;text-align:center;padding:7px 4px;border-radius:8px;border:2px solid transparent;cursor:pointer;}
+.market-strip-item.selected{border-color:var(--gold);background:rgba(232,197,71,.12);}
+.market-strip-icon{font-size:1.3rem;}
+.market-strip-name{font-size:.62rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;margin-top:2px;}
+.market-strip-price{font-size:.6rem;opacity:.65;display:block;}
+.market-detail-buybtns,.market-detail-sellbtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.market-detail-buybtns .btn,.market-detail-sellbtns .btn{flex:1;min-width:60px;}
 .party-mp-fill { height: 100%; border-radius: 2px; transition: width 0.3s; background: #3498db; }
 .ship-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(196,163,90,0.1); }
 .ship-stat-bar { width: 100px; height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden; }
@@ -310,12 +325,12 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .buff-shield { background: rgba(52,152,219,0.3); color: #3498db; }
 .buff-mark { background: rgba(231,76,60,0.3); color: #e74c3c; }
 .nav-bar {
-  display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
-  background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; margin-bottom: 15px;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 15px;
 }
 .nav-btn {
   background: rgba(0,0,0,0.3); border: 1px solid var(--sand); color: var(--parchment);
-  padding: 8px 14px; border-radius: 8px; cursor: pointer; font-family: 'Cinzel', serif;
+  padding: 10px 16px; border-radius: 8px; cursor: pointer; font-family: 'Cinzel', serif;
   font-size: 0.8rem; transition: all 0.2s;
 }
 .nav-btn:hover { background: rgba(196,163,90,0.2); }
@@ -826,26 +841,6 @@ tr:hover { background: rgba(196,163,90,0.08); }
     line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .nav-btn.active{font-weight:700;}
-
-  /* Turn the commodity table into readable stacked trading cards. */
-  #marketTable{display:block; width:100%; overflow:visible;}
-  #marketTable tr{
-    display:grid; grid-template-columns:minmax(0,1.35fr) minmax(70px,.65fr);
-    gap:6px 10px; padding:10px 0;
-    border:1px solid rgba(196,163,90,.22); border-radius:10px;
-    margin-bottom:8px; background:rgba(0,0,0,.18);
-  }
-  #marketTable td{display:block; border:0; padding:2px 8px; min-width:0;}
-  #marketTable td:nth-child(1){font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; font-weight:700;}
-  #marketTable td:nth-child(2){text-align:right; font-size:.95rem;}
-  #marketTable td:nth-child(3){grid-column:1 / -1; font-size:.76rem;}
-  #marketTable td:nth-child(4), #marketTable td:nth-child(5){
-    grid-column:span 1; display:flex; flex-wrap:wrap; align-items:center; gap:3px;
-  }
-  #marketTable td:nth-child(4)::before{content:'BUY'; font-family:'Cinzel',serif; color:var(--success); font-size:.68rem; margin-right:3px;}
-  #marketTable td:nth-child(5)::before{content:'SELL'; font-family:'Cinzel',serif; color:var(--sand); font-size:.68rem; margin-right:3px;}
-  #marketTable .btn-small{min-height:34px; padding:5px 8px; font-size:.68rem; margin:1px;}
-  #marketTable thead{display:none;}
 }
 
 /* ============================================================
@@ -1196,13 +1191,6 @@ body{
 }
 
 
-/* V27 — compact bulk trading controls */
-#marketTable .btn-small{
-  margin:2px 1px;
-  min-width:42px;
-}
-
-
 .ct-v28-afk{margin:8px 12px 0;padding:9px 12px;border:1px solid rgba(168,201,107,.45);border-radius:10px;background:#0c1713;color:#b9d88a;text-align:center;font-size:.74rem}
 .crew-portrait{display:block;flex:none;border-radius:50%;border:1px solid rgba(205,163,55,.6);background:#111820}
 .crew-portrait.fallback{display:grid;place-items:center;color:#d8bd72}
@@ -1425,10 +1413,13 @@ body{
       <button class="btn btn-success" style="margin-top:9px;" onclick="freeRestAtPort()">🛏️ Rest Here — Free</button>
       <div id="freeRestStatus" style="font-size:.72rem;opacity:.65;margin-top:6px;"></div>
     </div>
-    <div id="shipCrewCapacityDisplay" style="font-size:.78rem;opacity:.78;margin:6px 0;">⚓ Crew: <span id="crewCapacityLabel">—</span></div><div class="main-grid">
+    <div id="shipCrewCapacityDisplay" style="font-size:.78rem;opacity:.78;margin:6px 0;">⚓ Crew: <span id="crewCapacityLabelPort">—</span></div><div class="main-grid">
       <div class="left-col">
         <div class="panel">
-          <div class="panel-title">🧑‍✈️ Your Crew</div>
+          <div class="panel-title" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="togglePartyListExpanded()">
+            <span>🧑‍✈️ Your Crew</span>
+            <span id="partyListToggleLabel" style="font-size:.75rem;font-weight:normal;opacity:.75;"></span>
+          </div>
           <div id="partyList"></div>
         </div>
         <div class="panel">
@@ -1447,8 +1438,8 @@ body{
           <div class="panel">
             <div class="panel-title">🏪 Commodity Market — <span id="marketPortName">Singapore</span></div>
             <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 12px;">Prices fluctuate daily. Buy low, sail to another port, sell high!</p>
-            <table><thead><tr><th>Good</th><th>Price</th><th>Trend</th><th>Buy</th><th>Sell</th></tr></thead>
-            <tbody id="marketTable"></tbody></table>
+            <div id="marketStrip" class="party-strip" style="margin-bottom:10px;"></div>
+            <div id="marketDetail"></div>
           </div>
         </div>
         <div class="tab-content" id="port-tab-cargo">
@@ -1764,7 +1755,7 @@ body{
       <button class="nav-btn" onclick="goScreen('shipyard')">⚓ Shipyard</button>
       <button class="nav-btn" onclick="goScreen('log')">📜 Log</button>
     </div>
-    <div class="tab-bar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+    <div class="tabs" style="margin-bottom:12px;">
       <button class="tab-btn active" id="ft-tab-btn-buildings" onclick="switchFairTideTab('buildings')">🏗️ Buildings</button>
       <button class="tab-btn" id="ft-tab-btn-trade" onclick="switchFairTideTab('trade')">💱 Trade</button>
       <button class="tab-btn" id="ft-tab-btn-dispatch" onclick="switchFairTideTab('dispatch')">⚓ Dispatch</button>
@@ -1791,7 +1782,7 @@ body{
     <div class="header"><h1>🍺 The Rusted Anchor</h1><div class="subtitle">Rumors, rest, and supplies</div>
       <div class="panel" style="margin:10px 0;border-color:rgba(232,197,71,.45);">
         <div class="panel-title">🍺 Hire Temporary Crew</div>
-        <div id="crewCapacityLabel" style="font-size:.78rem;opacity:.75;margin-bottom:7px;"></div>
+        <div id="crewCapacityLabelTavern" style="font-size:.78rem;opacity:.75;margin-bottom:7px;"></div>
         <div style="font-size:.78rem;opacity:.8;margin-bottom:8px;">Fill the ship with temporary crew until permanent companions join. Hires leave when their voyage ends or when dismissed.</div>
         <div id="temporaryCrewList"></div>
       </div>
@@ -4918,8 +4909,18 @@ function getTotalCrewCount() {
 
 function renderTemporaryCrew() {
   const el = document.getElementById('temporaryCrewList');
-  const cap = document.getElementById('crewCapacityLabel');
-  if (cap) cap.textContent = `${getTotalCrewCount()} / ${getShipCrewCapacity()} crew`;
+  // Two different labels, two different jobs — used to share one id
+  // (only the first ever actually updated; the Tavern's copy was
+  // silently stuck). The Port screen's is just an at-a-glance count, so
+  // it drops the "/capacity" — that cap only ever limits temporary
+  // hires, not permanent story crew, and showing it there made a normal
+  // 15-person crew look like it was somehow over a 5-person limit. The
+  // Tavern's keeps the ratio, since that's exactly the number that
+  // matters when you're deciding whether you can hire someone here.
+  const portLabel = document.getElementById('crewCapacityLabelPort');
+  if (portLabel) portLabel.textContent = `${getTotalCrewCount()} crew`;
+  const tavernLabel = document.getElementById('crewCapacityLabelTavern');
+  if (tavernLabel) tavernLabel.textContent = `${getTotalCrewCount()} / ${getShipCrewCapacity()} crew aboard`;
   if (!el) return;
 
   el.innerHTML = TEMP_CREW.map(c => {
@@ -6158,16 +6159,44 @@ function updateUI() {
 function portraitMarkup(member, mode='party') {
   const asset = member && member.portraitAsset;
   const fallback = (member && (member.portrait || member.icon)) || '⚓';
-  const cls = mode === 'combat' ? 'combat-portrait-frame' : 'party-portrait-frame';
-  const imgCls = mode === 'combat' ? 'combat-portrait-img' : 'party-portrait-img';
+  const cls = mode === 'combat' ? 'combat-portrait-frame' : mode === 'strip' ? 'party-strip-portrait' : 'party-portrait-frame';
+  const imgCls = mode === 'combat' ? 'combat-portrait-img' : mode === 'strip' ? '' : 'party-portrait-img';
   if (!asset) return `<div class="${cls}" aria-label="${esc(member.name || '')}">${fallback}</div>`;
   return `<div class="${cls}" aria-label="${esc(member.name || '')}">
     <img class="${imgCls}" src="${asset}" alt="${esc(member.name || '')}" onerror="this.style.display='none';this.parentElement.textContent='${fallback.replace(/'/g, "\\'")}'">
   </div>`;
 }
+function togglePartyListExpanded() {
+  game.partyListExpanded = !game.partyListExpanded;
+  renderPartyList();
+}
 function renderPartyList() {
   const container = document.getElementById('partyList');
   const party = getActiveParty();
+  const toggleLabel = document.getElementById('partyListToggleLabel');
+  const expanded = !!game.partyListExpanded;
+  if (toggleLabel) toggleLabel.textContent = party.length + ' crew ' + (expanded ? '▲' : '▼');
+
+  if (!expanded) {
+    // Collapsed by default — was the whole reason this changed: with
+    // 15+ crew, the old always-full-cards view meant scrolling past the
+    // entire roster before reaching Market/Cargo/Explore below it. This
+    // is a single-row horizontal strip; tapping the header (or any
+    // portrait) expands back to the full detail view below, nothing
+    // lost, just not shown by default.
+    container.innerHTML = '<div class="party-strip">' + party.map(m => {
+      const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp;
+      const maxHp = effectiveMaxHp(m);
+      const hpPct = Math.max(0, hp / maxHp * 100);
+      const hpColor = hpPct > 50 ? 'var(--success)' : hpPct > 25 ? '#f39c12' : 'var(--danger)';
+      return `<div class="party-strip-item ${hp<=0?'party-strip-fallen':''}" onclick="togglePartyListExpanded()">
+        <div class="party-strip-portrait">${portraitMarkup(m,'strip')}<div class="party-strip-hp" style="width:${hpPct}%;background:${hpColor};"></div></div>
+        <span class="party-strip-name">${esc(m.name)}</span>
+      </div>`;
+    }).join('') + '</div>';
+    return;
+  }
+
   container.innerHTML = party.map(m => {
     const hp = game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp;
     const maxHp = effectiveMaxHp(m);
@@ -6198,42 +6227,79 @@ function renderShipStats() {
     <span style="font-size:0.8rem;min-width:30px;text-align:right;">${s.value}/${s.max}</span></div>`
   ).join('');
 }
+function marketGoodInfo(goodId) {
+  const good = GOODS[goodId];
+  const price = Math.round(game.marketPrices[game.location][goodId] * haggleMultiplier());
+  const inCargo = game.cargo[goodId] || 0;
+  const avgCost = Number((game.cargoPurchaseCost || {})[goodId] || 0);
+  const atLoss = inCargo > 0 && avgCost > 0 && price < avgCost;
+  const trend = atLoss ? '🔻' : price > good.basePrice ? '📈' : price < good.basePrice ? '📉' : '➡️';
+  const trendClass = atLoss ? 'event-bad' : price > good.basePrice ? 'event-bad' : price < good.basePrice ? 'event-good' : 'event-neutral';
+  return { good, price, inCargo, avgCost, atLoss, trend, trendClass };
+}
+function selectMarketGood(goodId) {
+  game.marketSelectedGood = goodId;
+  renderMarket();
+}
 function renderMarket() {
   // The landing page can now enter Port directly, so market prices must
   // exist even when startGame() has not been called in this session.
   if (!game.marketPrices || !game.marketPrices[game.location]) {
     generateMarketPrices();
   }
-  const tbody = document.getElementById('marketTable');
-  tbody.innerHTML = '';
-  Object.keys(GOODS).forEach(goodId => {
-    const good = GOODS[goodId];
+  const strip = document.getElementById('marketStrip');
+  const detail = document.getElementById('marketDetail');
+  if (!strip || !detail) return;
+
+  // Same 21 goods, same price/trend math as before — this only changed
+  // how they're displayed. Was previously all 21 goods shown at once,
+  // each with 8 buy/sell buttons already visible — a lot of scrolling
+  // to get past. Now: a horizontal strip to pick a good, one detail
+  // panel below showing that good's full buy/sell controls.
+  const validGoodIds = Object.keys(GOODS).filter(goodId => {
     const price = Math.round(game.marketPrices[game.location][goodId] * haggleMultiplier());
-    if (price === 0) return;
-    const inCargo = game.cargo[goodId] || 0;
-    const avgCost = Number((game.cargoPurchaseCost || {})[goodId] || 0);
-    const atLoss = inCargo > 0 && avgCost > 0 && price < avgCost;
-    const trend = atLoss ? '🔻' : price > good.basePrice ? '📈' : price < good.basePrice ? '📉' : '➡️';
-    const trendClass = atLoss ? 'event-bad' : price > good.basePrice ? 'event-bad' : price < good.basePrice ? 'event-good' : 'event-neutral';
-    const priceStyle = atLoss ? 'color:var(--danger);' : '';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${good.icon} ${good.name}</td>
-      <td style="${priceStyle}"><strong>${price}g</strong>${atLoss ? `<br><span style="font-size:.68rem;color:var(--danger);">Loss · paid ${Math.round(avgCost)}g</span>` : ""}</td>
-      <td class="${trendClass}">${trend}</td>
-      <td>
-      <button class="btn btn-small btn-success" onclick="buyGood('${goodId}',1);checkBountyProgress('trade',null,1)">+1</button>
-      <button class="btn btn-small btn-success" onclick="buyGood('${goodId}',5);checkBountyProgress('trade',null,1)">+5</button>
-      <button class="btn btn-small btn-success" onclick="buyGood('${goodId}',50);checkBountyProgress('trade',null,1)">+50</button>
-      <button class="btn btn-small btn-success" onclick="buyGood('${goodId}',100);checkBountyProgress('trade',null,1)">+100</button>
-      </td>
-      <td>
-      <button class="btn btn-small" onclick="sellGood('${goodId}',1);checkBountyProgress('trade',null,1)" ${inCargo < 1 ? 'disabled' : ''}>-1</button>
-      <button class="btn btn-small" onclick="sellGood('${goodId}',5);checkBountyProgress('trade',null,1)" ${inCargo < 5 ? 'disabled' : ''}>-5</button>
-      <button class="btn btn-small" onclick="sellGood('${goodId}',50);checkBountyProgress('trade',null,1)" ${inCargo < 50 ? 'disabled' : ''}>-50</button>
-      <button class="btn btn-small" onclick="sellGood('${goodId}',100);checkBountyProgress('trade',null,1)" ${inCargo < 100 ? 'disabled' : ''}>-100</button>
-      </td>`;
-    tbody.appendChild(tr);
+    return price !== 0;
   });
+
+  if (!game.marketSelectedGood || !validGoodIds.includes(game.marketSelectedGood)) {
+    game.marketSelectedGood = validGoodIds[0];
+  }
+  const selected = game.marketSelectedGood;
+
+  strip.innerHTML = validGoodIds.map(goodId => {
+    const info = marketGoodInfo(goodId);
+    return `<div class="market-strip-item ${goodId===selected?'selected':''}" onclick="selectMarketGood('${goodId}')">
+      <div class="market-strip-icon">${info.good.icon}</div>
+      <span class="market-strip-name">${esc(info.good.name)}</span>
+      <span class="market-strip-price">${info.price}g</span>
+    </div>`;
+  }).join('');
+
+  if (!selected) { detail.innerHTML = '<p style="opacity:.6;">No goods available here.</p>'; return; }
+  const info = marketGoodInfo(selected);
+  const priceStyle = info.atLoss ? 'color:var(--danger);' : '';
+  detail.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+    <div style="font-size:1.8rem;">${info.good.icon}</div>
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;">${esc(info.good.name)}</div>
+      <div style="${priceStyle}"><strong>${info.price}g</strong> <span class="${info.trendClass}">${info.trend}</span>${info.atLoss ? ` <span style="font-size:.7rem;color:var(--danger);">Loss · paid ${Math.round(info.avgCost)}g</span>` : ''}</div>
+    </div>
+    <div style="text-align:right;font-size:.75rem;opacity:.75;">Holding<br><strong style="font-size:.95rem;opacity:1;">${info.inCargo}</strong></div>
+  </div>
+  <div style="font-size:.75rem;opacity:.75;margin-bottom:2px;">BUY</div>
+  <div class="market-detail-buybtns">
+    <button class="btn btn-small btn-success" onclick="buyGood('${selected}',1);checkBountyProgress('trade',null,1)">+1</button>
+    <button class="btn btn-small btn-success" onclick="buyGood('${selected}',5);checkBountyProgress('trade',null,1)">+5</button>
+    <button class="btn btn-small btn-success" onclick="buyGood('${selected}',50);checkBountyProgress('trade',null,1)">+50</button>
+    <button class="btn btn-small btn-success" onclick="buyGood('${selected}',100);checkBountyProgress('trade',null,1)">+100</button>
+  </div>
+  <div style="font-size:.75rem;opacity:.75;margin:8px 0 2px;">SELL</div>
+  <div class="market-detail-sellbtns">
+    <button class="btn btn-small" onclick="sellGood('${selected}',1);checkBountyProgress('trade',null,1)" ${info.inCargo<1?'disabled':''}>-1</button>
+    <button class="btn btn-small" onclick="sellGood('${selected}',5);checkBountyProgress('trade',null,1)" ${info.inCargo<5?'disabled':''}>-5</button>
+    <button class="btn btn-small" onclick="sellGood('${selected}',50);checkBountyProgress('trade',null,1)" ${info.inCargo<50?'disabled':''}>-50</button>
+    <button class="btn btn-small" onclick="sellGood('${selected}',100);checkBountyProgress('trade',null,1)" ${info.inCargo<100?'disabled':''}>-100</button>
+  </div>`;
 }
 function renderCargo() {
   if (!game.marketPrices || !game.marketPrices[game.location]) generateMarketPrices();
@@ -6471,7 +6537,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V108 · Equipment Layout Fix v3 (Unconditional)'</script>
+<script>window.__CT_BUILD__='V113 · Grid Overflow Fix'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -8754,12 +8820,15 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:12, title:'The Price of a Ship', focus:"Taking possession of Robin's fleet has consequences — other merchants and authorities notice. San has to negotiate rather than simply fight.", image:'assets/comics/arc6/ch12-the-price-of-a-ship.png', xp:350},
     {id:13, title:'The People Who Left', focus:"Some freed workers return briefly — one reunited with parents, one found work, one just wanted to leave the sea. Freedom doesn't mean everyone should join San.", image:'assets/comics/arc6/ch13-the-people-who-left.png', xp:300},
     {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.png', xp:300},
-    // Ch.15/16 (Robin's Last Day / Jeff's Last Excuse) deliberately not
-    // here yet — Ch.15 needs the special non-sequential gating discussed
-    // separately (depends on Robin's real 20-day timer, not just story
-    // progress) and gets its own dedicated pass. Array order determines
-    // gating order, not the numeric id, so slotting them in later between
-    // Ch.14 and Ch.17 will work correctly without touching anything below.
+    // Ch.15 is special: it only becomes readable once Robin's real
+    // 20-day community service term actually finishes (see
+    // robinServiceDone() below), not just when story progress reaches
+    // it. arc6ObjectiveState() skips past it if he's not done yet, so it
+    // never blocks Ch.16+ — and the Story tab renders it as
+    // independently available the moment his term completes, even if
+    // the player's already well past it in the main sequence.
+    {id:15, title:"Robin's Last Day", focus:"Robin reaches the end of his community service. No redemption speech. He simply finishes what he was ordered to do, and moves on.", image:'assets/comics/arc6/ch15-robins-last-day.png', xp:300},
+    {id:16, title:"Jeff's Last Excuse", focus:"Jeff finally runs out of excuses — no powerful in-law, no employees to blame, no authority. Just himself. His labor stays exactly as permanent as it was.", image:'assets/comics/arc6/ch16-jeffs-last-excuse.png', xp:300},
     {id:17, title:'The Fair Tide Grows', focus:"The settlement expands significantly — new stalls, workshops, storage, a community taking shape. Fair Tide has room to grow further now.", image:'assets/comics/arc6/ch17-the-fair-tide-grows.png', xp:350},
     {id:18, title:'The Strange Cargo', focus:"Renn finally identifies the artifact from the captured cargo. It's a kind of magic none of them have ever encountered. He still can't explain where it came from.", image:'assets/comics/arc6/ch18-the-strange-cargo.png', xp:325},
     {id:19, title:'Beyond the Map', focus:"The Crimson Tide follows the clue and finds something that shouldn't exist on their charts at all.", image:'assets/comics/arc6/ch19-beyond-the-map.png', xp:325},
@@ -8771,11 +8840,23 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   ];
   window.ARC6_CHAPTERS = ARC6_CHAPTERS;
 
+  // Robin's real 20-day service completing, not story progress, is what
+  // makes Ch.15 available — used by arc6ObjectiveState's skip-logic
+  // below, the Story tab's independent-readiness check, and Ch.15's own
+  // completion gate, so all three always agree with each other.
+  function robinServiceDone(){
+    const cs = (typeof window.communityServiceState === 'function') ? window.communityServiceState() : null;
+    return !!(cs && cs.robin && cs.robin.active === false);
+  }
+  window.robinServiceDone = robinServiceDone;
+
   window.arc6ObjectiveState = function(){
     if (typeof window.arc5ObjectiveState !== 'function' || window.arc5ObjectiveState() !== 'arc5_part1_complete_for_now') return null;
     game.comicProgress6 = game.comicProgress6 || {};
     for (const ch of ARC6_CHAPTERS) {
-      if (!game.comicProgress6[ch.id]) return 'complete_arc6_chapter_' + ch.id;
+      if (game.comicProgress6[ch.id]) continue;
+      if (ch.id === 15 && !robinServiceDone()) continue; // skip — doesn't block Ch.16+, see above
+      return 'complete_arc6_chapter_' + ch.id;
     }
     return 'arc6_part1_complete_for_now';
   };
@@ -8869,20 +8950,21 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       resKeys.forEach(r => { const b = game.fairTideResources[r]||0; game.fairTideResources[r] = Math.min(cap, b+15); });
       msg += ' — his term is complete.';
       logEvent('🧹 ' + name + "'s community service term is complete.", 'gold');
-      // Robin gets a real closing beat — quiet, no redemption speech, per
-      // the brief. Gated to key==='robin' explicitly rather than relying
-      // on Jeff simply never reaching this branch (his totalDays is
-      // Infinity, so served >= cs.totalDays is never true for him — but
-      // being explicit here means this stays correct even if that ever
-      // changes).
-      if (key === 'robin' && typeof game.storyModalQueue !== 'undefined') {
-        game.storyModalQueue.push({
-          title: "Robin's Last Day",
-          blurb: '"He\'s finished," San says.<br><br>"Good," says Joel.<br><br>"What do we do now?"<br><br>"Keep building Fair Tide."'
-        });
+      // Used to auto-fire the full "Robin's Last Day" story modal right
+      // here — moved to Ch.15 as a real chapter instead (see
+      // completeArc6Chapter15 and the Story tab's special independent-
+      // readiness check for it), so this now just flags the moment
+      // mechanically without spoiling the actual scene. BUG FIX: this
+      // used to call toast() here directly, which the unconditional
+      // toast(msg, 3600) right below immediately overwrote — so the
+      // completion notice never actually displayed. Appending to msg
+      // instead means there's only ever one toast call, so nothing can
+      // clobber it.
+      if (key === 'robin') {
+        msg += ' "Robin\'s Last Day" is ready in the Story tab.';
       }
     }
-    toast(msg, 3600);
+    toast(msg, 4600);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   };
@@ -9480,6 +9562,66 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 
   // -------------------------------------------------------------------
+  // Ch.15 — "Robin's Last Day." Gate is robinServiceDone(), NOT the
+  // normal arc6ObjectiveState() === 'complete_arc6_chapter_15' check —
+  // that check would wrongly block this once the player's read past it,
+  // since the objective pointer would already be sitting on whatever
+  // chapter comes later by then. This mirrors the exact same condition
+  // used in arc6ObjectiveState's skip-logic and the Story tab's
+  // independent-readiness check above, so all three always agree.
+  // -------------------------------------------------------------------
+  window.completeArc6Chapter15 = function(){
+    if (!robinServiceDone()) { toast('🔒 Robin\'s community service isn\'t finished yet.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[15]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[15] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===15);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 2;
+    logEvent('🏮 Chapter 15 complete: Robin\'s Last Day.', 'gold');
+    toast('🏮 Chapter 15 complete: Robin\'s Last Day.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: "Robin's Last Day",
+        blurb: '"He\'s finished," San says.<br><br>"Good," says Joel.<br><br>"What do we do now?"<br><br>"Keep building Fair Tide."'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Ch.16 — "Jeff's Last Excuse." Normal sequential gating — reads fine
+  // whether or not Ch.15 has happened yet (San's own call: it doesn't
+  // matter if Jeff's chapter comes first). Purely narrative: not a
+  // completion, just Jeff running out of things to say. Does NOT touch
+  // window.communityServiceState().jeff at all — his labor stays exactly
+  // as permanent as it already is.
+  window.completeArc6Chapter16 = function(){
+    if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_16') { toast('🔒 Not available right now.'); return; }
+    game.comicProgress6 = game.comicProgress6 || {};
+    if (game.comicProgress6[16]) { toast('✓ Already marked read.'); return; }
+    game.comicProgress6[16] = true;
+    const chDef = ARC6_CHAPTERS.find(c=>c.id===16);
+    if (typeof gainXP === 'function') gainXP(chDef ? chDef.xp : 300);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('🏮 Chapter 16 complete: Jeff\'s Last Excuse.', 'gold');
+    toast('🏮 Chapter 16 complete: Jeff\'s Last Excuse.', 3600);
+    if (typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({
+        title: "Jeff's Last Excuse",
+        blurb: 'No powerful in-law left to invoke. No employees left to blame. No authority left at all.<br><br>' +
+          'Just Jeff, and whatever excuse he tries this time.<br><br>' +
+          'It doesn\'t land. It never really did.<br><br>' +
+          'His labor continues, exactly as permanent as it\'s always been.'
+      });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // -------------------------------------------------------------------
   // Ch.17 — "The Fair Tide Grows." The big expansion chapter. Rather
   // than inventing new building types, this raises the level ceiling on
   // the existing Buildings system (Port HQ + the 4 leveled buildings),
@@ -9721,7 +9863,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       '<div class="story-act-tagline">Power gives San the choice to do better.</div></div>';
     ARC6_CHAPTERS.forEach(ch=>{
       const done = !!game.comicProgress6?.[ch.id];
-      const ready = !done && so===('complete_arc6_chapter_'+ch.id);
+      // Ch.15 doesn't follow the normal "matches the current objective"
+      // rule — it's independently ready the moment Robin's service is
+      // actually done, even if the player's already read chapters well
+      // past it (see robinServiceDone() above).
+      const ready = ch.id === 15
+        ? (!done && window.robinServiceDone())
+        : (!done && so===('complete_arc6_chapter_'+ch.id));
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action, extra = '';
       if (ch.id === 1) {
@@ -9787,6 +9935,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter14()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ They believe in what she\'s building.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
+      } else if (ch.id === 15) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter15()">🏮 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ He\'s finished. Fair Tide keeps going.</div>' : '<div class="story-chip">Waiting on Robin\'s community service to finish — check back later.</div>';
+      } else if (ch.id === 16) {
+        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="completeArc6Chapter16()">🏮 Continue</button>';
+        else action = done ? '<div class="story-chip">✓ Just himself, now.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 17) {
         if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter17()">🏮 Let Fair Tide Grow</button>';
