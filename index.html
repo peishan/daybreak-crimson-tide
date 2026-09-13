@@ -2239,7 +2239,13 @@ const ALL_PARTY = [
   {id:'brada_shah',  name:'BRADA SHAH', role:'Bard (Support)',        combatRole:'Support',  hp:78, mp:60,  portrait:'🎵', portraitAsset:'assets/portraits/brada_shah.png', desc:"Mimi's partner. Songs, strategy, and steadier ground."},
   // Arc V recruit — unlocked via game.foundCompanions, same mechanism as
   // every earlier companion (see markArc5ChapterRead's recruitment hook).
-  {id:'renn',        name:'RENN',       role:'Arcane Trickster',      combatRole:'Caster',   hp:70, mp:120, portrait:'🔮', portraitAsset:'assets/portraits/renn.png', desc:'A curious, mischievous mage who treats sailing as one enormous magical experiment.'}
+  {id:'renn',        name:'RENN',       role:'Arcane Trickster',      combatRole:'Caster',   hp:70, mp:120, portrait:'🔮', portraitAsset:'assets/portraits/renn.png', desc:'A curious, mischievous mage who treats sailing as one enormous magical experiment.'},
+  // Arc VII recruit — unlocked via game.foundCompanions, same mechanism as
+  // every earlier companion (see ARC7_RECRUITS / markArc7ChapterRead's
+  // recruitment hook, Ch.23). Sturdier than Mimi/Renn by design (he's an
+  // adult researcher, not thrown into the same fragile-caster mold) —
+  // lower MP pool fits his lighter 12-22 mp spell costs vs. their 9-18.
+  {id:'erynn',       name:'ERYNN',      role:'Farseer Descendant',    combatRole:'Support',  hp:85, mp:90,  portrait:'🧭', portraitAsset:'assets/portraits/erynn.png', desc:'Descendant of Varel Farseer. Generations of documented weaknesses mean he rarely has to guess.'}
 ];
 function memberUnlocked(m){
   if (m.id === 'san') return true;
@@ -2280,6 +2286,11 @@ const GEAR_ROLE_RULES = {
   dr_aa:      {weapon:['staff','mace','any'], armor:['robe'], label:'Medical Kit / Coat'},
   iris:       {weapon:['dagger','any'], armor:['light'], label:'Knives / Light Armor'},
   renn:       {weapon:['staff','any'], armor:['robe'], label:'Staff / Robes'},
+  // Astrolabe, not staff — a Farseer researcher's tool (navigation,
+  // documentation, measurement), distinct from Renn's/Mimi's/San's
+  // spellcasting foci. Robe or light armor: sturdier than the pure casters
+  // per the brainstorm, but still not built for melee.
+  erynn:      {weapon:['astrolabe','any'], armor:['robe','light'], label:'Astrolabe / Robes'},
 };
 
 const EQUIPMENT_CATALOG = [
@@ -2316,6 +2327,13 @@ const EQUIPMENT_CATALOG = [
   {id:'hoarders_signet', name:"The Hoarder's Signet", icon:'💍', slot:'ring1', family:'any', atk:8, defense:8, goldFind:.15, price:3400, tier:5, trader:'Vessa', desc:'A signet that seems to make the gold listen.'},
   {id:'heart_hoard', name:'Heart of the Hoard', icon:'💎', slot:'amulet', family:'any', atk:8, defense:8, magic:4, wis:4, price:4800, tier:5, trader:'Vessa', desc:"At the center of every great hoard, there is one piece that isn't for sale. This is someone else's."},
   {id:'joels_aegis_eternal', name:"Joel's Aegis Eternal", icon:'🛡️', slot:'weapon', family:'any', atk:8, defense:16, hp:40, price:3200, tier:5, trader:'Vessa', forCompanion:'Joel', desc:'+8 ATK, +16 DEF, +40 HP.'}
+,
+  // GEAR_ROLE_RULES.erynn lists 'astrolabe' as his weapon family — same gap
+  // Brada's moon_lute had before it got an item (see brada_moonlit_pipa
+  // above). Tier 5/Vessa rather than Brada's tier 3/Ferris, since Erynn
+  // joins in Arc VII, not Arc IV — stats lean into "sturdier support,"
+  // not a glass-cannon nuker's.
+  {id:'farseers_astrolabe', name:"The Farseer's Astrolabe", icon:'🧭', slot:'weapon', family:'astrolabe', atk:10, magic:14, hp:20, price:4200, tier:5, trader:'Vessa', forCompanion:'Erynn', desc:"Erynn's brass astrolabe, passed down through five generations of Farseers. +10 ATK, +14 MAG, +20 HP."}
 ,
   {id:'aldric_oath_ring', name:"The Other Kind of Found's Oath Ring", icon:'💍', slot:'ring1', family:'any', defense:14, hp:20, price:650, tier:3, trader:'Ferris', forCompanion:'Ser Aldric', desc:'Ring for Ser Aldric. +14 DEF, +20 HP.'},
   {id:'mimi_dreamsight_locket', name:'Dreamsight Locket', icon:'🔮', slot:'amulet', family:'any', atk:12, spd:6, price:650, tier:3, trader:'Ferris', forCompanion:'Mimi', desc:'Amulet for Mimi. +12 ATK, +6 SPD.'},
@@ -2453,7 +2471,7 @@ const EQUIPMENT_TRADERS = [
    greeting:'Ferris keeps a ledger for the crew members who never seem to get a full rack of gear. He finally has something for the wider roster.',
    stock:['aldric_oath_ring','mimi_dreamsight_locket','brada_resonance_charm','dr_aa_steady_gloves','wren_circlet','kw_quick_boots','iris_ash_claw','renn_spectacles']},
   {id:'vessa', name:'Vessa', title:'The Hoardkeeper', zone:"The Architect's Chamber", minLevel:43,
-   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken']}
+   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken','farseers_astrolabe']}
 ];
 
 function normalizeGearItem(item) {
@@ -2831,7 +2849,26 @@ const CLASS_KIT = {
       {name:'Mirror Currents', icon:'🌊', mp:14, levelReq:5,  desc:'Bends the light and the tide together.', dice:'1d11', status:{type:'shock',chance:0.25,turns:1}},
       {name:'Phantom Fleet', icon:'👻', mp:18, levelReq:10, desc:"Illusory ships crowd the enemy's vision.", dice:'1d13'}
     ],
-    skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}}
+    skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}},
+  // Erynn Farseer (Arc VII, recruited Ch.23 "The Farseer Who Stayed").
+  // Deliberately NOT a third damage-nuker alongside Renn/Mimi, who are
+  // otherwise near-identical (dice-damage + one shock spell + one utility
+  // skill). "Three Ways of Knowing" (Ch.10) frames the trio as three
+  // different approaches — Renn experiments, Mimi divines, Erynn inherits —
+  // so his kit is built around buffType:'expose' (see castSpell), a
+  // genuinely new mechanic: instead of hitting harder himself, he makes
+  // every subsequent hit against the enemy land harder, for every ally,
+  // basic attacks included. Spell names pull straight from the Farseer
+  // archive chapters (Varel Ch.6, Tenn Ch.7, the marker/warning Ch.19-21).
+  // Free skill mechanically realizes the trio dynamic — see the
+  // exposeTrio effect branch above.
+  erynn: {role:'support',
+    spells:[
+      {name:"Varel's Ledger", icon:'📜', mp:12, levelReq:1,  desc:'A documented weakness, generations old and still accurate.', buffType:'expose', buffVal:15, buffTurns:3},
+      {name:"Tenn's Correction", icon:'🧭', mp:16, levelReq:8,  desc:"A refinement of Varel's original theory — sharper, and it shows.", buffType:'expose', buffVal:22, buffTurns:3},
+      {name:"The Old Marker's Warning", icon:'⚠️', mp:22, levelReq:14, desc:'Not every mystery needs solving to be useful.', buffType:'expose', buffVal:30, buffTurns:4}
+    ],
+    skill:{name:'Three Ways of Knowing', icon:'📖', mp:0, effect:'exposeTrio'}}
 };
 function kitFor(id){ return CLASS_KIT[id] || {role:'melee', spell:null, skill:null}; }
 // Two shapes exist across CLASS_KIT: most casters/healers use a `spells`
@@ -3221,6 +3258,7 @@ let game = {
   combatTurn: 0, combatRound: 1, combatLog: [], combatSessionId: 0, combatResolved: false,
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
   hasteTurns: 0, hastePct: 0, timeStopTurns: 0, markedBoss: false,
+  enemyVulnerable: 0, enemyVulnerablePct: 0,
   defending: {}, enemyStatus: null,
   inventory: [], consumables: {}, equippedTrophies: {},
   equipmentInventory: [],
@@ -5516,6 +5554,7 @@ function startCombat(encounter) {
   game.combatLog = [];
   game.shieldTurns = 0; game.shieldPct = 0;
   game.hasteTurns = 0; game.hastePct = 0;
+  game.enemyVulnerable = 0; game.enemyVulnerablePct = 0;
   game.timeStopTurns = 0;
   game.markedBoss = false;
   game.defending = {};
@@ -5583,6 +5622,7 @@ function renderCombat() {
   if (statusEl) {
     let s = '';
     if (game.enemyStatus) s += `<span class="buff-icon buff-mark">${game.enemyStatus.type === 'burn' ? '🔥' : game.enemyStatus.type === 'poison' ? '🧪' : '⚡'} ${game.enemyStatus.type} x${game.enemyStatus.turns}</span>`;
+    if (game.enemyVulnerable > 0) s += `<span class="buff-icon buff-mark">🧭 exposed x${game.enemyVulnerable}</span>`;
     if (game.markedBoss) s += '<span class="buff-icon buff-mark">🎯 marked</span>';
     statusEl.innerHTML = s;
   }
@@ -5740,6 +5780,7 @@ function combatAction(action) {
       const gb = gearBonuses(actor.id);
       let dmg = Math.round((18 + rollDice('1d20') + gb.atk) * (1 + (game.ship.cannons * 0.12)));
       if (game.hasteTurns > 0) dmg = Math.round(dmg * (1 + game.hastePct / 100));
+      if (game.enemyVulnerable > 0) dmg = Math.round(dmg * (1 + game.enemyVulnerablePct));
       if (game.nervousCourageActive && (actor.id === 'zaki' || actor.id === 'san')) dmg += 6;
       const t = trinketBonus(actor.id);
       if (t && t.dmgPct) dmg = Math.round(dmg * (1 + t.dmgPct));
@@ -5813,6 +5854,18 @@ function combatAction(action) {
           game.partyMp[actor.id] = curMp - mpCost;
         }
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The crew feels lighter.');
+      } else if (skill.effect === 'exposeTrio') {
+        // Erynn's free skill. Renn (Experimentation), Erynn (Inherited
+        // Knowledge), and Mimi (Divination) are written as three different
+        // ways of knowing the same thing — when all three are actually in
+        // the fight together, the debuff should visibly reflect that,
+        // not just be flavor text. Base case still works fine solo.
+        const trio = party.some(m => m.id === 'renn') && party.some(m => m.id === 'mimi');
+        game.enemyVulnerable = trio ? 4 : 2;
+        game.enemyVulnerablePct = trio ? 0.30 : 0.15;
+        logCombat(trio
+          ? esc(actor.name) + " uses " + skill.icon + ' ' + skill.name + "! Renn's experiments, Mimi's sight, and Erynn's records all line up at once — the enemy has nowhere left to hide."
+          : esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! An old weakness, right where the records said it would be.');
       } else if (skill.effect === 'hex') {
         const mpCost = skill.mp || 0;
         const curMp = game.partyMp[actor.id] || 0;
@@ -5823,6 +5876,7 @@ function combatAction(action) {
         if (!misfire) {
           let hexDmg = Math.round((30 + rollDice('2d10') + gb.magic) * (1 + (game.ship.cannons * 0.1)));
           if (game.hasteTurns > 0) hexDmg = Math.round(hexDmg * (1 + game.hastePct / 100));
+          if (game.enemyVulnerable > 0) hexDmg = Math.round(hexDmg * (1 + game.enemyVulnerablePct));
           game.combatEnemyHp = Math.max(0, game.combatEnemyHp - hexDmg);
           game.hasteTurns = Math.max(game.hasteTurns || 0, 2);
           game.hastePct = Math.max(game.hastePct || 0, 12);
@@ -5845,6 +5899,7 @@ function combatAction(action) {
         const gb = gearBonuses(actor.id);
         let sdmg = Math.round((18 + rollDice('1d20') + gb.atk + gb.magic) * skill.mult * (1 + (game.ship.cannons * 0.12)));
         if (game.hasteTurns > 0) sdmg = Math.round(sdmg * (1 + game.hastePct / 100));
+        if (game.enemyVulnerable > 0) sdmg = Math.round(sdmg * (1 + game.enemyVulnerablePct));
         game.combatEnemyHp = Math.max(0, game.combatEnemyHp - sdmg);
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + ' for <span class="damage">' + sdmg + '</span> damage!');
       } else {
@@ -5947,6 +6002,15 @@ function castSpell(spellIndex) {
     game.hasteTurns = spell.buffTurns || 3;
     game.hastePct = spell.buffVal;
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! Haste active for ' + game.hasteTurns + ' turns.');
+  } else if (spell.buffType === 'expose') {
+    // Erynn's kit: a documented weakness, not a raw damage nuke — the enemy
+    // takes more from EVERY subsequent hit (basic attacks included, not
+    // just spells) for buffTurns turns. Genuinely new state (enemyVulnerable/
+    // enemyVulnerablePct), not a reskin of shieldTurns/hasteTurns, since
+    // those buff the party rather than weakening the enemy.
+    game.enemyVulnerable = spell.buffTurns || 3;
+    game.enemyVulnerablePct = spell.buffVal / 100;
+    logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! The enemy is exposed for ' + game.enemyVulnerable + ' turns.');
   } else if (spell.healMult) {
     // Eliz is San's dedicated healer — the story treats this as a specific
     // relationship, not generic "whoever's lowest %". If San's not at full
@@ -5978,6 +6042,7 @@ function castSpell(spellIndex) {
     const tb = trinketBonus(actor.id);
     if (tb && tb.spellPct) sdmg = Math.round(sdmg * (1 + tb.spellPct));
     if (game.hasteTurns > 0) sdmg = Math.round(sdmg * (1 + game.hastePct / 100));
+    if (game.enemyVulnerable > 0) sdmg = Math.round(sdmg * (1 + game.enemyVulnerablePct));
     game.combatEnemyHp = Math.max(0, game.combatEnemyHp - sdmg);
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' <span class="spell">' + spell.name + '</span> for <span class="damage">' + sdmg + '</span> damage!');
     applyStatus(spell);
@@ -6028,6 +6093,7 @@ function endTurn() {
 
   if (game.shieldTurns > 0) game.shieldTurns--;
   if (game.hasteTurns > 0) game.hasteTurns--;
+  if (game.enemyVulnerable > 0) game.enemyVulnerable--;
   tickEnemyStatus();
 
   if (game.combatEnemyHp > 0) {
@@ -8356,8 +8422,19 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (s5 === 'arc5_part1_complete_for_now') lastTerminal = s5;
     }
     if (typeof window.arc6ObjectiveState === 'function') {
+      // BUG FIX: this always returned s6 once non-null, even when it was
+      // arc6's own terminal 'arc6_part1_complete_for_now' string — unlike
+      // every arc before it, which falls through via lastTerminal so the
+      // NEXT arc gets a chance to take over. That meant the Current
+      // Objective panel would get stuck on "Arc VI — All Caught Up"
+      // forever once reached, never advancing to Arc VII.
       const s6 = window.arc6ObjectiveState();
-      if (s6 !== null) return s6;
+      if (s6 !== null && s6 !== 'arc6_part1_complete_for_now') return s6;
+      if (s6 === 'arc6_part1_complete_for_now') lastTerminal = s6;
+    }
+    if (typeof window.arc7ObjectiveState === 'function') {
+      const s7 = window.arc7ObjectiveState();
+      if (s7 !== null) return s7;
     }
     return lastTerminal || base;
   };
@@ -8381,6 +8458,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (state === 'arc5_part1_complete_for_now') return ['Arc V — All Caught Up', 'Every available Arc V chapter is read. More is on the way.'];
     if ((m = /^complete_arc6_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VI', m[1], window.ARC6_CHAPTERS);
     if (state === 'arc6_part1_complete_for_now') return ['Arc VI — All Caught Up', 'Every available Arc VI chapter is read. More is on the way.'];
+    if ((m = /^complete_arc7_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VII', m[1], window.ARC7_CHAPTERS);
+    if (state === 'arc7_part1_complete_for_now') return ['Arc VII — All Caught Up', 'Every available Arc VII chapter is read. More is on the way.'];
     return null;
   }
 
@@ -10375,6 +10454,166 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 })();
 </script>
+
+<!-- ARC 7 splash: shown once Arc VI is finished AND level 105 is reached -->
+<div id="arc7SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc7/arc7-cover-the-farseer.png" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc7Splash()">⚓ Begin Arc VII</button>
+  </div>
+</div>
+
+<script id="ct-build-v98-arc7-part1">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC VII — "The Farseer". Gated behind game.arc6Complete (the flag Arc
+  // VI's Ch.24 sets) + level 105, continuing the +15-per-arc pace from
+  // Arc IV (60) / V (75) / VI (90). Ch.23 ("The Farseer Who Stayed")
+  // recruits Erynn into full combat — see ARC7_RECRUITS below.
+  // -------------------------------------------------------------------
+  const ARC7_CHAPTERS = [
+    {id:1,  title:'The Door Renn Found',        focus:'Renn discovers a strange door that should not exist — the compass fails, the sea feels wrong, and the crew passes through into somewhere unfamiliar.', image:'assets/comics/arc7/ch01-the-door-renn-found.png',        xp:200},
+    {id:2,  title:'A World Without a Name',     focus:"The crew knows their ports, their routes, Fair Tide, the sea — but nobody ever asked what the world itself was called. The locals call it Veyren.", image:'assets/comics/arc7/ch02-a-world-without-a-name.png',      xp:175},
+    {id:3,  title:'The Man Who Knows the Door', focus:'The crew meets Erynn Farseer, investigating the same phenomenon. Cautious at first — but he and Renn are already asking the same questions.',       image:'assets/comics/arc7/ch03-the-man-who-knows-the-door.png',  xp:175},
+    {id:4,  title:'Erynn Farseer',              focus:'Erynn introduces himself properly — heir to generations of Farseers who documented what refuses to behave like ordinary magic.',                    image:'assets/comics/arc7/ch04-erynn-farseer.png',                xp:200},
+    {id:5,  title:'The Name of the World',      focus:'Erynn confirms it: Veyren. Ordinary to everyone else. For San, the moment the crew realizes they live inside a world with its own history.',        image:'assets/comics/arc7/ch05-the-name-of-the-world.png',        xp:200},
+    {id:6,  title:'Varel',                      focus:'Erynn tells the crew about Varel Farseer — a scholar who documented magical boundaries and impossible geography, not an all-knowing legend.',       image:'assets/comics/arc7/ch06-varel.png',                        xp:175},
+    {id:7,  title:'Tenn',                       focus:"The generation after Varel preserved, studied, and challenged his work. Farseer knowledge isn't static — each generation interprets it differently.", image:'assets/comics/arc7/ch07-tenn.png',                         xp:175},
+    {id:8,  title:'The Farseer Archives',       focus:"Renn gains access to the archives — some of his own findings overlap with them, some don't. The Farseers don't have every answer.",                  image:'assets/comics/arc7/ch08-the-farseer-archives.png',         xp:200},
+    {id:9,  title:'The Woman in the Painting',  focus:'Erynn meets Mimi and recognizes her instantly — a painting of a Diviner named Mimi, generations old, uncanny in its resemblance. A distinct person, still.', image:'assets/comics/arc7/ch09-the-woman-in-the-painting.png', xp:250},
+    {id:10, title:'Three Ways of Knowing',      focus:'Renn (experimentation), Erynn (inherited knowledge), and Mimi (divination) start working together — none sufficient alone, all three needed.',       image:'assets/comics/arc7/ch10-three-ways-of-knowing.png',        xp:250},
+    {id:11, title:'The Sea That Turns Back',    focus:'A region where ships return to where they started no matter how far they sail — Erynn recognizes it from a Farseer account.',                       image:'assets/comics/arc7/ch11-the-sea-that-turns-back.png',      xp:200},
+    {id:12, title:'Beyond the Boundary',        focus:'The crew deliberately enters the strange region and learns some boundaries in Veyren affect distance, direction, and perception itself.',            image:'assets/comics/arc7/ch12-beyond-the-boundary.png',          xp:200},
+    {id:13, title:"What Varel Couldn't Explain",focus:"Varel documented this same phenomenon once — and never solved it. The Farseers inherited knowledge, not omniscience.",                                image:'assets/comics/arc7/ch13-what-varel-couldnt-explain.png',   xp:200},
+    {id:14, title:"Renn's Theory",              focus:"Renn proposes an explanation, Erynn disagrees with part of it, and Mimi notices something neither considered — together, stronger than any one alone.", image:'assets/comics/arc7/ch14-renns-theory.png',                xp:225},
+    {id:15, title:"Erynn's Burden",             focus:'His family expects him to preserve their knowledge. He wants to discover something himself — and Renn gives him that chance.',                       image:'assets/comics/arc7/ch15-erynns-burden.png',                xp:200},
+    {id:16, title:'The Two Researchers',        focus:"Renn and Erynn get themselves into serious trouble chasing an anomaly. Joel retrieves them. San isn't impressed. They're delighted.",                image:'assets/comics/arc7/ch16-the-two-researchers.png',          xp:225},
+    {id:17, title:'Fair Tide',                  focus:'Erynn visits Fair Tide and sees what San has built — history preserved as people and community, not just records and archives.',                    image:'assets/comics/arc7/ch17-fair-tide.png',                    xp:200},
+    {id:18, title:'What Survives',              focus:"San and Erynn talk about memory — how things survive even when people don't remember everything. Ties gently back to Arc III without reopening it.", image:'assets/comics/arc7/ch18-what-survives.png',                xp:225},
+    {id:19, title:'The Old Marker',             focus:'The crew finds an ancient Farseer marker, deliberately placed, far from any known route. Even the records don\'t fully explain why it\'s there.',    image:'assets/comics/arc7/ch19-the-old-marker.png',               xp:225},
+    {id:20, title:'The Door Again',             focus:"The marker reacts to Renn's original door. Something connects them — but not who made it, or why.",                                                  image:'assets/comics/arc7/ch20-the-door-again.png',               xp:250},
+    {id:21, title:"Varel's Warning",            focus:"The oldest surviving record isn't an explanation. It's a warning — some boundaries may exist for a reason.",                                        image:'assets/comics/arc7/ch21-varels-warning.png',               xp:250},
+    {id:22, title:"Don't Open It",              focus:"Renn and Erynn want to investigate further. Mimi says no. San sides with her. Not every mystery needs opening immediately.",                        image:'assets/comics/arc7/ch22-dont-open-it.png',                 xp:250},
+    {id:23, title:'The Farseer Who Stayed',     focus:'Erynn spends more time at Fair Tide, working with Renn, Mimi, and the crew — no longer just someone they met investigating a door. He stays.',        image:'assets/comics/arc7/ch23-the-farseer-who-stayed.png',       xp:350},
+    {id:24, title:'Veyren',                     focus:'San looks across the horizon, knowing the world\'s name now, its history, its older mysteries — and that three very different people have started asking new ones.', image:'assets/comics/arc7/ch24-veyren.png', xp:550}
+  ];
+  window.ARC7_CHAPTERS = ARC7_CHAPTERS;
+
+  window.arc7ObjectiveState = function(){
+    if (!game.arc6Complete) return null;
+    // Continues the +15-per-arc pace from Arc IV (60) / V (75) / VI (90).
+    if (level() < 105) return null;
+    game.comicProgress7 = game.comicProgress7 || {};
+    for (const ch of ARC7_CHAPTERS) {
+      if (!game.comicProgress7[ch.id]) return 'complete_arc7_chapter_' + ch.id;
+    }
+    return 'arc7_part1_complete_for_now';
+  };
+
+  // Erynn joins full combat the moment Ch.23 ("The Farseer Who Stayed") is
+  // marked read — same recruitment mechanism as every companion since Arc
+  // IV (game.foundCompanions + an ALL_PARTY entry already in place).
+  const ARC7_RECRUITS = {
+    23: {type:'combat', id:'erynn'}
+  };
+
+  window.markArc7ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC7_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc7] no chapter data for id', id); return; }
+    game.comicProgress7 = game.comicProgress7||{};
+    if(game.comicProgress7[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc7ObjectiveState() !== 'complete_arc7_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress7[id] = true;
+    if (id === 24) game.arc7Complete = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
+    logEvent('📖 Arc 7 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    const recruit = ARC7_RECRUITS[id];
+    if(recruit && recruit.type==='combat' && !game.foundCompanions?.[recruit.id]){
+      game.foundCompanions = game.foundCompanions||{};
+      game.foundCompanions[recruit.id] = true;
+      const member = (typeof ALL_PARTY!=='undefined') ? ALL_PARTY.find(m=>m.id===recruit.id) : null;
+      const label = member ? member.name : recruit.id;
+      logEvent('⚓ '+label+' has joined the crew!', 'gold');
+      toast('⚓ '+label+' has joined the crew!', 3600);
+    }
+    if(typeof saveGame==='function') saveGame();
+    if(typeof renderMainGoal==='function') renderMainGoal();
+    if(typeof renderStory==='function') renderStory();
+  };
+
+  window.__ctShowArc7Splash = function(){
+    const overlay = document.getElementById('arc7SplashOverlay');
+    if(!overlay) return;
+    overlay.style.display='flex'; overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    game.arc7SplashSeen = true;
+    if(typeof saveGame==='function') saveGame();
+  };
+  window.__ctCloseArc7Splash = function(){
+    const overlay = document.getElementById('arc7SplashOverlay');
+    if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+  };
+
+  const oldRenderStoryForArc7 = window.renderStory;
+  window.renderStory = function(){
+    if(oldRenderStoryForArc7) oldRenderStoryForArc7();
+    const container = document.getElementById('storyContent');
+    if(!container) return;
+    const arc7Ready = typeof window.arc7ObjectiveState==='function' && window.arc7ObjectiveState()!==null;
+    if(arc7Ready && !game.arc7SplashSeen && typeof window.__ctShowArc7Splash==='function'){
+      window.__ctShowArc7Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc7/arc7-cover-the-farseer.png" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc VII</div><div class="story-act-title">The Farseer</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC7_CHAPTERS.length+' of 24. Some knowledge survives generations.</div></div>';
+    if(!arc7Ready){
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc VII Locked</div><div class="story-chapter-sub">'+
+        (!game.arc6Complete ? 'Finish Arc VI first.' : 'Reach Level 105 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc7ObjectiveState();
+    ARC7_CHAPTERS.forEach(ch=>{
+      const done = !!game.comicProgress7?.[ch.id];
+      const ready = !done && so===('complete_arc7_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc7ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if(so==='arc7_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc VII chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  const oldRenderComicArchiveForArc7 = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if(oldRenderComicArchiveForArc7) oldRenderComicArchiveForArc7();
+    const el = document.getElementById('comicArchive'); if(!el) return;
+    const progress7 = (typeof game!=='undefined' && game.comicProgress7) || {};
+    const arc7Read = ARC7_CHAPTERS.filter(ch=>!!progress7[ch.id]);
+    const section = !arc7Read.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VII chapters read yet.</div></div>'
+      : arc7Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VII — The Farseer</div>' + section);
+  };
+})();
+</script>
+
 <script>
 // Register the service worker (see sw.js) for offline play + installability.
 // Registered with a relative path so it works whether the game is served
