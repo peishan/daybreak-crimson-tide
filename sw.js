@@ -1,7 +1,9 @@
 // Daybreak: Crimson Tide — Service Worker
-// Bump CACHE_VERSION on any deploy where index.html (or other precached
-// files) changed, so old clients pick up the new shell instead of a stale
-// cached copy.
+// Bump CACHE_VERSION whenever index.html or any other PRECACHE_URLS file
+// changes — that's the only way returning clients pick up a new app shell.
+// NOTE: this does NOT cover runtime-cached assets like portraits/comics/
+// audio (see below) — those now self-update via stale-while-revalidate,
+// so swapping a portrait file no longer requires a version bump at all.
 const CACHE_VERSION = 'crimson-tide-v1';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
@@ -52,9 +54,32 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Everything else (assets/*, fonts, etc.): cache-first for speed, then
-  // fetch from the network and stash a copy for next time. If both fail
-  // (offline + never fetched before), the request just fails as normal.
+  // Everything else (assets/*, fonts, etc.): images (portraits, comics,
+  // icons) use stale-while-revalidate — serve the cached copy instantly
+  // for speed, but always kick off a background fetch to refresh the
+  // cache for next time. This is the actual fix for stale portraits:
+  // previously this was pure cache-first, so once a portrait URL was
+  // cached it was served forever, no matter how many times the underlying
+  // file changed, since the filename itself never changes. Non-image
+  // assets (fonts, etc., which genuinely never change post-deploy) keep
+  // the original cache-first behavior for speed.
+  const isImage = /\.(png|jpe?g|webp|gif|svg|ico)$/i.test(new URL(req.url).pathname);
+  if (isImage) {
+    event.respondWith(
+      caches.match(req).then(cached => {
+        const network = fetch(req).then(res => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(RUNTIME).then(cache => cache.put(req, copy));
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || network;
+      })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
