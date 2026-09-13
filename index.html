@@ -3880,6 +3880,21 @@ function loadGame() {
     }
     if (!Number.isFinite(Number(game.xpTotal))) game.xpTotal = 0;
     game.cargoPurchaseCost = game.cargoPurchaseCost || {};
+    // One-time repair for saves from before the Uncharted Reach
+    // state-sync fix (see startCombat's guard): if a save already has
+    // uncharted.active stuck true from before that fix existed, with no
+    // genuinely active Reach fight behind it (either not in combat at
+    // all, or the last combat wasn't actually an uncharted encounter),
+    // clear it here. Without this, the Fair Tide Hub's "Return to the
+    // fight" button keeps showing forever on an old save, and tapping
+    // it just does goScreen('combat') — which never calls startCombat,
+    // so it would keep landing on whatever stale fight happened to be
+    // saved (e.g. an already-finished Training Room bout) rather than a
+    // real Reach encounter. New saves never get into this state at all
+    // now, so this only ever does anything once per affected save.
+    if (game.uncharted && game.uncharted.active && (!game.inCombat || !game.combatEnemy || game.combatEnemy.kind !== 'uncharted')) {
+      game.uncharted.active = false;
+    }
     refreshBounties(); refreshQuests();
     document.getElementById('introScreen').classList.remove('active');
     document.getElementById('portScreen').classList.add('active');
@@ -5665,6 +5680,18 @@ function exitBattleToPort() {
   // Stop any remaining combat loop/timers if the build exposes them.
   try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
   try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  // BUG FIX: leaving combat this way (Return to Port, or the "← Leave"
+  // button after a Reach victory) never cleared game.uncharted.active —
+  // only the dedicated Retreat button did that. So finishing a Reach
+  // wave and exiting through any other path left the Fair Tide Hub
+  // stuck showing "Currently out at Wave N — Return to the Fight"
+  // forever, even though the player had genuinely left. Neither of the
+  // earlier fixes caught this: the saved combatEnemy really was
+  // kind:'uncharted' (a real wave was fought), so this is a distinct
+  // gap from both of those, not a repeat of either.
+  if (game.uncharted && game.uncharted.active) {
+    game.uncharted.active = false;
+  }
   game.inCombat = false;
   game.pendingPostBattle = null;
   hidePostBattleAction();
@@ -7021,8 +7048,21 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V118 · Always-Visible Combat Leave Button'</script>
-<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
+<script>window.__CT_BUILD__='V121 · Exit-to-Port Reach Cleanup Fix'</script>
+<footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
+<script>
+  // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
+  // Party AI + Equipment") completely disconnected from
+  // window.__CT_BUILD__ — every build since V83 updated that variable
+  // (used correctly by the debug log panel) but never touched this
+  // footer text, since nothing ever read it back out. Wired here to
+  // read the live value instead, so it can't go stale again no matter
+  // how many future builds ship.
+  document.addEventListener('DOMContentLoaded', function(){
+    const el = document.getElementById('ctBuildFooterVersion');
+    if (el) el.textContent = 'Build ' + (window.__CT_BUILD__ || '?');
+  });
+</script>
 
 <script id="ct-build-v62-arc1">
 /* Build V62 — full Arc I Story Mode panel pass + rescue gates.
