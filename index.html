@@ -5711,7 +5711,19 @@ function renderCombat() {
   }).join('');
 
   const actionsDiv = document.getElementById('combatActions');
-  if (!actor) {
+  // BUG FIX: this used to unconditionally overwrite combatActions with
+  // the normal Attack/Spell/Skill/Defend/Item/Flee row, with no check
+  // for whether a post-battle state (Continue/Retreat for the Uncharted
+  // Reach, Back to Training Room, Return to Port, etc.) was supposed to
+  // be showing instead. handleVictory calls renderPendingPostBattle()
+  // to set the correct buttons, then calls renderCombat() right after —
+  // which immediately wiped them out again, leaving the player with
+  // either the wrong buttons or none at all. Reapplying the pending
+  // state here instead of the normal row fixes that without needing to
+  // touch handleVictory's own call order.
+  if (game.combatResolved && game.pendingPostBattle) {
+    renderPendingPostBattle();
+  } else if (!actor) {
     actionsDiv.innerHTML = '<span style="color:var(--sand);">Waiting for next able crew member...</span>';
   } else {
     actionsDiv.innerHTML =
@@ -6977,7 +6989,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V114 · Arc VIII — The Horizon Engine'</script>
+<script>window.__CT_BUILD__='V115 · Uncharted Reach Post-Battle Button Fix'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
