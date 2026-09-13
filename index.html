@@ -2343,11 +2343,18 @@ const EQUIPMENT_CATALOG = [
   // silently falling back to 'any' only. This is his round-bodied lute (a
   // yueqin / "moon guitar"), giving that family an actual item to equip.
   {id:'brada_moonlit_pipa', name:'Moonlit Pipa', icon:'🪕', slot:'weapon', family:'moon_lute', atk:14, spd:8, hp:10, price:700, tier:3, trader:'Ferris', forCompanion:'Brada Shah', desc:"Brada Shah's round-bodied moon lute. +14 ATK, +8 SPD, +10 HP."},
+  // Brada's armor slot only ever had generic light/heavy armor to fall
+  // back on — this is his own piece, completing weapon+armor+amulet.
+  {id:'brada_performers_coat', name:"Performer's Traveling Coat", icon:'🧥', slot:'armor', family:'light', defense:14, spd:8, hp:10, price:700, tier:3, trader:'Ferris', forCompanion:'Brada Shah', desc:"Brada Shah's road-worn stage coat — more pockets than pageantry. +14 DEF, +8 SPD, +10 HP."},
   {id:'dr_aa_steady_gloves', name:"Steady Hands' Gloves", icon:'🧤', slot:'hands', family:'any', atk:10, defense:8, price:650, tier:3, trader:'Ferris', forCompanion:'Dr. AA', desc:"Gloves for Dr. AA. +10 ATK, +8 DEF."},
   {id:'wren_circlet', name:'Circlet of Intercession', icon:'👑', slot:'head', family:'any', defense:12, hp:18, price:650, tier:3, trader:'Ferris', forCompanion:'Sister Wren', desc:'Circlet for Sister Wren. +12 DEF, +18 HP.'},
   {id:'kw_quick_boots', name:"Quick Hands' Boots", icon:'🥾', slot:'feet', family:'light', spd:12, defense:6, price:650, tier:3, trader:'Ferris', forCompanion:'KW Liang', desc:"Boots for KW Liang. +12 SPD, +6 DEF."},
   {id:'iris_ash_claw', name:"Ash's Claw", icon:'💍', slot:'ring1', family:'any', atk:10, spd:8, price:650, tier:3, trader:'Ferris', forCompanion:'Iris', desc:'Ring for Iris. +10 ATK, +8 SPD.'},
-  {id:'renn_spectacles', name:'Centuries-Worn Spectacles', icon:'👓', slot:'head', family:'any', atk:8, defense:8, hp:10, price:650, tier:3, trader:'Ferris', forCompanion:'Renn Evergreen', desc:'Spectacles for Renn. +8 ATK, +8 DEF, +10 HP.'},
+  {id:'renn_spectacles', name:'Centuries-Worn Spectacles', icon:'👓', slot:'head', family:'any', atk:8, defense:8, hp:10, price:650, tier:3, trader:'Ferris', forCompanion:'Renn', desc:'Spectacles for Renn. +8 ATK, +8 DEF, +10 HP.'},
+  // GEAR_ROLE_RULES.renn lists 'staff' as his weapon family (same gap
+  // brada_moonlit_pipa fixed for moon_lute) — no item of that family
+  // existed anywhere in the catalog for him specifically.
+  {id:'renn_tidereaders_wand', name:"Tidereader's Wand", icon:'🪄', slot:'weapon', family:'staff', atk:10, magic:14, hp:10, price:700, tier:3, trader:'Ferris', forCompanion:'Renn', desc:"Renn's wind-carved wand, still humming faintly with borrowed currents. +10 ATK, +14 MAG, +10 HP."},
 
   // Robe & heavy-armor progression. Previously the ONLY items in these two
   // families were free starter pieces (one each) plus a single tier-3 heavy
@@ -2469,7 +2476,7 @@ const EQUIPMENT_TRADERS = [
    greeting:'Farrow rebuilds gear from whatever the road leaves behind.', stock:['bulwark_steadfast','steadfast_bulwark','sisterblades_edge','sisterblades_wraps','tidecallers_vestment','bulwark_of_the_line']},
   {id:'ferris', name:'Ferris', title:'The Quartermaster', zone:'The Breaking', minLevel:30,
    greeting:'Ferris keeps a ledger for the crew members who never seem to get a full rack of gear. He finally has something for the wider roster.',
-   stock:['aldric_oath_ring','mimi_dreamsight_locket','brada_resonance_charm','dr_aa_steady_gloves','wren_circlet','kw_quick_boots','iris_ash_claw','renn_spectacles']},
+   stock:['aldric_oath_ring','mimi_dreamsight_locket','brada_resonance_charm','brada_moonlit_pipa','brada_performers_coat','dr_aa_steady_gloves','wren_circlet','kw_quick_boots','iris_ash_claw','renn_spectacles','renn_tidereaders_wand']},
   {id:'vessa', name:'Vessa', title:'The Hoardkeeper', zone:"The Architect's Chamber", minLevel:43,
    greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken','farseers_astrolabe']}
 ];
@@ -2604,10 +2611,15 @@ function equipGear(memberId, invIndex) {
   }
   if (!game.equippedGear) game.equippedGear = {};
   if (!game.equippedGear[memberId]) game.equippedGear[memberId] = {};
-  const slot = item.slot === 'ring1' ? 'ring1' : item.slot;
-  if (item.slot === 'ring1' && game.equippedGear[memberId].ring1) {
-    addGearToInventory(game.equippedGear[memberId].ring1);
-  }
+  // BUG FIX: this used to also have a `ring1`-specific block above this line
+  // that re-checked `item.slot === 'ring1' && game.equippedGear[memberId].ring1`
+  // and pushed that same item back to inventory — but `slot` here was always
+  // just `item.slot` anyway (the ternary that set it was a no-op), so for any
+  // ring1-for-ring1 swap this general check below was pushing the exact same
+  // already-equipped item back a second time, duplicating it in inventory.
+  // Every other slot only ever had this one general check, so only rings were
+  // affected. Non-ring1 slots keep working exactly as before.
+  const slot = item.slot;
   if (game.equippedGear[memberId][slot]) addGearToInventory(game.equippedGear[memberId][slot]);
   game.equipmentInventory.splice(invIndex,1);
   game.equippedGear[memberId][slot] = {...item};
