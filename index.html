@@ -6918,7 +6918,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V113 · Grid Overflow Fix'</script>
+<script>window.__CT_BUILD__='V114 · Arc VIII — The Horizon Engine'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -8446,7 +8446,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     if (typeof window.arc7ObjectiveState === 'function') {
       const s7 = window.arc7ObjectiveState();
-      if (s7 !== null) return s7;
+      if (s7 !== null && s7 !== 'arc7_part1_complete_for_now') return s7;
+      if (s7 === 'arc7_part1_complete_for_now') lastTerminal = s7;
+    }
+    if (typeof window.arc8ObjectiveState === 'function') {
+      const s8 = window.arc8ObjectiveState();
+      if (s8 !== null) return s8;
     }
     return lastTerminal || base;
   };
@@ -8472,6 +8477,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (state === 'arc6_part1_complete_for_now') return ['Arc VI — All Caught Up', 'Every available Arc VI chapter is read. More is on the way.'];
     if ((m = /^complete_arc7_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VII', m[1], window.ARC7_CHAPTERS);
     if (state === 'arc7_part1_complete_for_now') return ['Arc VII — All Caught Up', 'Every available Arc VII chapter is read. More is on the way.'];
+    if ((m = /^complete_arc8_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VIII', m[1], window.ARC8_CHAPTERS);
+    if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
     return null;
   }
 
@@ -10622,6 +10629,165 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
           '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VII — The Farseer</div>' + section);
+  };
+})();
+</script>
+
+<div id="arc8SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc8/arc8-cover-the-horizon-engine.png" alt="Arc VIII — The Horizon Engine" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc8Splash()">⚓ Begin Arc VIII</button>
+  </div>
+</div>
+
+<script id="ct-build-v114-arc8-part1">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC VIII — "The Horizon Engine". Gated behind game.arc7Complete (set
+  // by Arc VII's Ch.24) + level 120, continuing the +15-per-arc pace
+  // from Arc IV (60) / V (75) / VI (90) / VII (105). Almost entirely
+  // narrative — no new mechanics needed per the brief itself ("mostly
+  // storyline based"), so this uses the same single reusable
+  // markArc8ChapterRead pattern Arc II-IV use, not per-chapter bespoke
+  // functions like Arc VI needed. A few narratively load-bearing
+  // chapters (11, 18, 23, 24) set small flags for whatever later
+  // content wants to check them — no functional system attached to any
+  // of them yet, matching "understand first, build later" restraint:
+  // the Horizon Engine itself isn't built by the end of this arc, and
+  // dragons are only teased in the final line, not implemented as a
+  // creature type. Ch.24 explicitly ends the arc with nothing built —
+  // per San's plan, the actual Horizon Engine hub (Fair-Tide-shaped,
+  // dragon blood as its first requirement) is Arc IX+ content, once
+  // dragons exist as something combat can reference.
+  // -------------------------------------------------------------------
+  const ARC8_CHAPTERS = [
+    {id:1,  title:'Something Changed',            focus:"Life at Fair Tide looks normal after Arc VII. But Renn notices the magical readings around the settlement have shifted. Erynn checks the Farseer records — nothing matches. Mimi senses something else: something is looking back.", image:'assets/comics/arc8/ch01-something-changed.png', xp:200},
+    {id:2,  title:'The Second Door',               focus:"Renn finds another strange door — not hidden away this time, but somewhere completely ordinary. Erynn recognizes markings older than Varel's own records.", image:'assets/comics/arc8/ch02-the-second-door.png', xp:200},
+    {id:3,  title:'The Map That Moves',            focus:"Maps of the same region disagree with each other — roads shift, landmarks move. Erynn proposes something worse than bad cartography: the maps may all be correct, just at different times.", image:'assets/comics/arc8/ch03-the-map-that-moves.png', xp:200},
+    {id:4,  title:'The Missing Island',            focus:"Sailors describe an island that only appears sometimes. Nobody agrees where it is. An old Farseer record insists it's real.", image:'assets/comics/arc8/ch04-the-missing-island.png', xp:200},
+    {id:5,  title:'Where the Sea Ends',            focus:"Crimson Tide follows the phenomenon to a region where the horizon itself looks wrong. The crew crosses the boundary — the sea continues beneath them, but the sky doesn't behave.", image:'assets/comics/arc8/ch05-where-the-sea-ends.png', xp:225},
+    {id:6,  title:'The Island That Remembers',     focus:"They find the missing island, apparently abandoned — yet someone was there recently, and the objects scattered across it come from wildly different periods of Veyren's history.", image:'assets/comics/arc8/ch06-the-island-that-remembers.png', xp:225},
+    {id:7,  title:'The Farseer Marker',            focus:"Erynn finds an ancient marker that predates Varel entirely. His family's history with these boundaries may run much further back than he ever knew.", image:'assets/comics/arc8/ch07-the-farseer-marker.png', xp:225},
+    {id:8,  title:'Three Answers',                 focus:"Renn, Erynn, and Mimi each read the island differently — magical phenomenon, ancient boundary, or neither: Mimi wonders if the island isn't the one moving. Maybe Veyren is.", image:'assets/comics/arc8/ch08-three-answers.png', xp:250},
+    {id:9,  title:'The Old Camp',                  focus:"The crew finds a previous expedition's camp — journals, equipment, no people.", image:'assets/comics/arc8/ch09-the-old-camp.png', xp:200},
+    {id:10, title:'The Last Entry',                 focus:"The surviving journal describes the earlier expedition reaching the island's centre — and never coming back. Crimson Tide has to decide whether to go further.", image:'assets/comics/arc8/ch10-the-last-entry.png', xp:225},
+    {id:11, title:"San's Rule",                     focus:"San sets one rule before they continue: nobody gets left behind. The boundary is already proving it can separate people and show different crew members different versions of the same place.", image:'assets/comics/arc8/ch11-sans-rule.png', xp:250},
+    {id:12, title:"Joel's Compass",                 focus:"Separated from San, Joel's compass fails him. Instead of trying to understand the magic, he uses something simpler — the sound of the sea — and finds her anyway.", image:'assets/comics/arc8/ch12-joels-compass.png', xp:250},
+    {id:13, title:'The Place Between Places',       focus:"At the island's centre, no treasure — an enormous ancient structure built around a magical boundary. Erynn recognizes its purpose immediately: it was built to observe.", image:'assets/comics/arc8/ch13-the-place-between-places.png', xp:250},
+    {id:14, title:'What They Were Watching',        focus:"Mimi realizes the structure wasn't watching the island — it was watching the boundaries around Veyren itself. The first glimpse of something that could eventually become their own research.", image:'assets/comics/arc8/ch14-what-they-were-watching.png', xp:250},
+    {id:15, title:'The Broken Observer',            focus:"Some of the structure still works. Renn wants to repair it. Erynn warns they don't know what it was built to observe. Mimi isn't comfortable activating it at all.", image:'assets/comics/arc8/ch15-the-broken-observer.png', xp:250},
+    {id:16, title:"The Thing They Didn't Activate", focus:"The three deliberately choose not to activate it. They document it instead — the philosophy that will define their research going forward: understand first, build later.", image:'assets/comics/arc8/ch16-the-thing-they-didnt-activate.png', xp:275},
+    {id:17, title:'The Island Disappears',          focus:"The boundary starts collapsing. Crimson Tide races to escape as the island fades behind them.", image:'assets/comics/arc8/ch17-the-island-disappears.png', xp:250},
+    {id:18, title:'What Came Back',                 focus:"Something returns with them — not a creature, not an object. A strange magical residue. For the first time, Mimi, Renn, and Erynn independently identify the exact same phenomenon, each in their own way.", image:'assets/comics/arc8/ch18-what-came-back.png', xp:275},
+    {id:19, title:"The Record That Wasn't There",   focus:"Erynn searches the Farseer archives for a record he remembers clearly. The page is blank. Some boundaries, it turns out, may affect records and memory themselves.", image:'assets/comics/arc8/ch19-the-record-that-wasnt-there.png', xp:250},
+    {id:20, title:'The Farseer Question',           focus:"Erynn starts questioning how much of Farseer history has actually survived intact. His family preserved knowledge for generations — but preservation was never the same thing as perfection.", image:'assets/comics/arc8/ch20-the-farseer-question.png', xp:250},
+    {id:21, title:"Renn's Idea",                    focus:"Renn proposes a new direction: instead of chasing every anomaly in person, build an instrument to observe them remotely. Not a weapon. Not a portal. An instrument.", image:'assets/comics/arc8/ch21-renns-idea.png', xp:275},
+    {id:22, title:'Three Pieces',                   focus:"Renn, Erynn, and Mimi identify exactly what the project needs from each of them — and realize none of them can solve it alone. They still have nothing to actually build it with.", image:'assets/comics/arc8/ch22-three-pieces.png', xp:275},
+    {id:23, title:'The Name of the Horizon',        focus:"The three can't agree on a name. San hands the choice to Joel, who finally gives their research one: The Horizon Engine. Still only a research project — nothing built yet.", image:'assets/comics/arc8/ch23-the-name-of-the-horizon.png', xp:350},
+    {id:24, title:'The First Material',             focus:"Renn identifies a material that might interact with the residue they brought home — nobody knows where to find enough of it, until Mimi has a vision. Something enormous, flying. A dragon.", image:'assets/comics/arc8/ch24-the-first-material.png', xp:550}
+  ];
+  window.ARC8_CHAPTERS = ARC8_CHAPTERS;
+
+  window.arc8ObjectiveState = function(){
+    if (!game.arc7Complete) return null;
+    // Continues the +15-per-arc pace from Arc V (75) / VI (90) / VII (105).
+    if (level() < 120) return null;
+    game.comicProgress8 = game.comicProgress8 || {};
+    for (const ch of ARC8_CHAPTERS) {
+      if (!game.comicProgress8[ch.id]) return 'complete_arc8_chapter_' + ch.id;
+    }
+    return 'arc8_part1_complete_for_now';
+  };
+
+  window.markArc8ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC8_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc8] no chapter data for id', id); return; }
+    game.comicProgress8 = game.comicProgress8||{};
+    if(game.comicProgress8[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc8ObjectiveState() !== 'complete_arc8_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress8[id] = true;
+    // Narratively load-bearing beats get a flag for later content to
+    // check — no functional system attached to any of them yet.
+    if (id === 11) game.sansRuleEstablished = true; // "nobody gets left behind"
+    if (id === 18) game.arc8Residue = true; // the magical residue brought back from the island
+    if (id === 23) game.horizonEngineNamed = true; // the research project has a name, nothing built yet
+    if (id === 24) { game.arc8Complete = true; game.arc8DragonVisionSeen = true; }
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
+    logEvent('📖 Arc 8 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if(typeof saveGame==='function') saveGame();
+    if(typeof renderMainGoal==='function') renderMainGoal();
+    if(typeof renderStory==='function') renderStory();
+  };
+
+  window.__ctShowArc8Splash = function(){
+    const overlay = document.getElementById('arc8SplashOverlay');
+    if(!overlay) return;
+    overlay.style.display='flex'; overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    game.arc8SplashSeen = true;
+    if(typeof saveGame==='function') saveGame();
+  };
+  window.__ctCloseArc8Splash = function(){
+    const overlay = document.getElementById('arc8SplashOverlay');
+    if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+  };
+
+  const oldRenderStoryForArc8 = window.renderStory;
+  window.renderStory = function(){
+    if(oldRenderStoryForArc8) oldRenderStoryForArc8();
+    const container = document.getElementById('storyContent');
+    if(!container) return;
+    const arc8Ready = typeof window.arc8ObjectiveState==='function' && window.arc8ObjectiveState()!==null;
+    if(arc8Ready && !game.arc8SplashSeen && typeof window.__ctShowArc8Splash==='function'){
+      window.__ctShowArc8Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc8/arc8-cover-the-horizon-engine.png" alt="Arc VIII — The Horizon Engine" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc VIII</div><div class="story-act-title">The Horizon Engine</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC8_CHAPTERS.length+' of 24. The world is larger than the map.</div></div>';
+    if(!arc8Ready){
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc VIII Locked</div><div class="story-chapter-sub">'+
+        (!game.arc7Complete ? 'Finish Arc VII first.' : 'Reach Level 120 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc8ObjectiveState();
+    ARC8_CHAPTERS.forEach(ch=>{
+      const done = !!game.comicProgress8?.[ch.id];
+      const ready = !done && so===('complete_arc8_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc8ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if(so==='arc8_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc VIII chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  const oldRenderComicArchiveForArc8 = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if(oldRenderComicArchiveForArc8) oldRenderComicArchiveForArc8();
+    const el = document.getElementById('comicArchive'); if(!el) return;
+    const progress8 = (typeof game!=='undefined' && game.comicProgress8) || {};
+    const arc8Read = ARC8_CHAPTERS.filter(ch=>!!progress8[ch.id]);
+    const section = !arc8Read.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VIII chapters read yet.</div></div>'
+      : arc8Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — The Horizon Engine</div>' + section);
   };
 })();
 </script>
