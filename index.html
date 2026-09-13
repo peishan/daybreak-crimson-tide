@@ -1641,7 +1641,7 @@ body{
     </div>
     <div id="partyDetail"></div>
     <div style="text-align:center;margin:16px 0;">
-      <button class="btn btn-success" onclick="goScreen('training')">⚔️ Training Room</button>
+      <button class="btn btn-success" onclick="goScreen('fairtide'); if (typeof window.switchFairTideTab === 'function') window.switchFairTideTab('training');">⚔️ Training Room</button>
     </div>
     <div class="crew-visual-sheet-wrap" style="margin-top:22px;text-align:center;">
       <img src="assets/crew/crew-visual-sheet.png" alt="Daybreak: Crimson Tide crew visual reference sheet" style="width:100%;border-radius:10px;border:1px solid rgba(196,163,90,.28);display:block;">
@@ -4133,11 +4133,27 @@ function ctSetMusicVolume(value) {
 // ---------------------------------------------------------------------------
 function goScreen(name) {
   if (name === 'intro') { renderLanding(); ctPlayMusic('landing'); }
+  // BUG FIX: this used to do document.getElementById(name + 'Screen')
+  // directly, twice, with no null-check. Every screen id matches that
+  // pattern except Fair Tide's, whose actual id is "fairTideScreen"
+  // (capital T) — so goScreen('fairtide') built "fairtideScreen", got
+  // null back, and threw on .classList before ever reaching the
+  // fairtide-specific render call below. The line just above it (removing
+  // .active from every screen) had already run by then, so the result
+  // was every screen losing .active and none gaining it back — a
+  // genuinely blank page, not just a failed render. SCREEN_ID_OVERRIDES
+  // exists so this one mismatch (and any future one) doesn't need the
+  // HTML id itself renamed, and the null-check below means a typo'd or
+  // missing screen name logs a warning instead of blanking the page.
+  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen' };
+  const screenId = SCREEN_ID_OVERRIDES[name] || (name + 'Screen');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(name + 'Screen').classList.add('active');
+  const targetScreen = document.getElementById(screenId);
+  if (!targetScreen) { console.warn('goScreen: no element found for screen "' + name + '" (looked for #' + screenId + ')'); return; }
+  targetScreen.classList.add('active');
   window.scrollTo({top:0,left:0,behavior:'instant'});
   window.scrollTo({top: 0, left: 0, behavior: 'instant'});
-  document.getElementById(name + 'Screen').scrollIntoView({block: 'start', behavior: 'instant'});
+  targetScreen.scrollIntoView({block: 'start', behavior: 'instant'});
   if (name === 'comics') renderComicArchive();
   if (name === 'port') { renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderTemple(); ctPlayMusic('port'); }
   if (name === 'navigate') { renderNavigation(); ctPlayMusic('explore'); }
@@ -7892,8 +7908,17 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     // are confirmed to be active threats again, not just defeated-once.
     // Kept separate from the generic per-port harbor list so they read as
     // named, ongoing threats rather than blending into random mobs.
+    // BUG FIX: this used to keep showing the "⚔️ Challenge" card forever
+    // once Ch.19 was read, with no check for whether the rival had since
+    // been captured — so after Arc VI's capture (see window.captureRival,
+    // window.rivalCaptured), both this hostile card AND the correct
+    // "Community Service" card (added later, same exploreContent
+    // container) rendered side by side. A captured rival isn't a fight
+    // anymore, so this now skips them entirely once rivalCaptured(key) is
+    // true, leaving the community-service card as the only one shown.
     if(!!game.comicProgress4?.[19]){
       ['robin','jeff'].forEach(function(key){
+        if(typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) return;
         const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[key] : null;
         if(!base) return;
         container.insertAdjacentHTML('beforeend',
@@ -7997,11 +8022,17 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // both at once. Hooks doVoyage the same way Arc II's Fair Tide sail-flag
   // already does: check first, and either redirect into combat or hand off
   // to whatever doVoyage already was.
+  // BUG FIX: same missing-capture-check gap as the Explore-tab Challenge
+  // card above — this kept rolling ambushes for a rival already captured
+  // and serving community service at Fair Tide, which doesn't make sense
+  // (he's not roaming the seas if he's cleaning docks). Now excludes
+  // whichever of the two is captured, and skips the whole ambush if both are.
   const RIVAL_AMBUSH_CHANCE = 0.15;
   const oldDoVoyageForArc4 = window.doVoyage;
   window.doVoyage = function(portId, days, dangerLevel){
-    if(!!game.comicProgress4?.[19] && Math.random() < RIVAL_AMBUSH_CHANCE){
-      const rivalKey = Math.random() < 0.5 ? 'robin' : 'jeff';
+    const activeRivals = ['robin','jeff'].filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
+    if(!!game.comicProgress4?.[19] && activeRivals.length && Math.random() < RIVAL_AMBUSH_CHANCE){
+      const rivalKey = activeRivals[Math.floor(Math.random() * activeRivals.length)];
       const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[rivalKey] : null;
       if(base){
         toast('⚔️ '+base.name+' intercepts the ship!');
@@ -10788,6 +10819,49 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
           '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — The Horizon Engine</div>' + section);
+  };
+})();
+</script>
+
+<script id="ct-build-v117-rival-frigate-names">
+(function(){
+  // Random named rivals for the "Rival Pirate Frigate" sea encounter
+  // (SEA_ENEMIES.rival_frigate) — previously every single one of these
+  // fights displayed as the exact same generic "Rival Pirate Frigate",
+  // no matter how many you sank. This gives each encounter a random
+  // captain's name drawn from a Chinese/Malay/Filipino pool (matching the
+  // game's own Southeast Asian setting), purely as display flavor.
+  //
+  // Deliberately NOT a new enemy key: this wraps scaledEnemyForExplore and
+  // only overrides the returned object's .name/.desc when key==='rival_frigate'.
+  // The key itself — what startCombat and checkBountyProgress('kill', key, 1)
+  // actually key off — is untouched, so every one of these randomly-named
+  // frigates still fully counts toward "Rival's Bounty" / "The Shrine's
+  // Toll" / "Hunt: Rival Pirate Frigate" exactly as before. Same pattern
+  // Robin/Jeff already use (named individuals riding on the existing
+  // HARBOR_ENEMIES/SEA_ENEMIES pipeline) — just randomized instead of fixed.
+  const SEA_RIVAL_CAPTAIN_NAMES = [
+    // Chinese
+    "Captain Lim Wei Kang", "Captain Tan Boon Hock", "Captain Ng Ah Kow",
+    "Captain Chen Mei Ling", "Captain Wong Siew Fong", "Captain Ho Chun Kit",
+    // Malay
+    "Nakhoda Rashid", "Nakhoda Aminah binti Salleh", "Nakhoda Zulkifli",
+    "Nakhoda Hassan bin Ismail", "Nakhoda Siti Norhayati", "Nakhoda Ariffin",
+    // Filipino
+    "Kapitan dela Cruz", "Kapitan Bagyo Santos", "Kapitan Reyes",
+    "Kapitan Marisol Aquino", "Kapitan Villanueva", "Kapitan Dimaguiba"
+  ];
+  window.SEA_RIVAL_CAPTAIN_NAMES = SEA_RIVAL_CAPTAIN_NAMES;
+
+  const oldScaledEnemyForExploreForRivals = window.scaledEnemyForExplore;
+  window.scaledEnemyForExplore = function(key, kind){
+    const enemy = oldScaledEnemyForExploreForRivals.apply(this, arguments);
+    if (key === 'rival_frigate' && enemy) {
+      const captain = SEA_RIVAL_CAPTAIN_NAMES[Math.floor(Math.random() * SEA_RIVAL_CAPTAIN_NAMES.length)];
+      enemy.name = captain + "'s Frigate";
+      enemy.desc = 'A black-sailed frigate bearing down, cannons already run out — flying ' + captain + "'s colors.";
+    }
+    return enemy;
   };
 })();
 </script>
