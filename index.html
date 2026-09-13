@@ -3271,7 +3271,7 @@ let game = {
   partyHp: {}, partyMp: {}, shieldTurns: 0, shieldPct: 0,
   hasteTurns: 0, hastePct: 0, timeStopTurns: 0, markedBoss: false,
   enemyVulnerable: 0, enemyVulnerablePct: 0,
-  defending: {}, enemyStatus: null,
+  defending: {}, enemyStatus: null, pendingPostBattle: null,
   inventory: [], consumables: {}, equippedTrophies: {},
   equipmentInventory: [],
   equippedGear: {},
@@ -4166,6 +4166,17 @@ function goScreen(name) {
   if (name === 'tavern') { renderTavern(); ctPlayMusic('tavern'); }
   if (name === 'story') renderStory();
   if (name === 'log') renderLog();
+  if (name === 'combat' && game.combatEnemy) {
+    // BUG FIX (Uncharted Reach getting stuck): see the comment above
+    // game.pendingPostBattle in handleVictory for the full story. Short
+    // version — this branch didn't exist at all before, so navigating
+    // here via anything other than startCombat's own direct DOM writes
+    // (e.g. the "Return to the fight" button, especially after a reload)
+    // showed a stale or blank combat screen with no way to actually
+    // continue or retreat.
+    renderCombat();
+    if (game.combatResolved) renderPendingPostBattle();
+  }
   updateUI();
   try { renderMainGoal(); } catch(e) {}
 }
@@ -5574,6 +5585,7 @@ function startCombat(encounter) {
   if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
   game.inCombat = true;
   game.combatResolved = false;
+  game.pendingPostBattle = null;
   game.combatSessionId = (game.combatSessionId || 0) + 1;
   game.combatEnemy = Object.assign({}, enemy, {kind: encounter.kind, key: encounter.key, portId: encounter.portId});
   game.combatEnemyHp = enemy.hp;
@@ -5620,11 +5632,27 @@ function hidePostBattleAction() {
   if (box) box.style.display = 'none';
 }
 
+// Reconstructs the post-battle message + action buttons from
+// game.pendingPostBattle (set by handleVictory/handleDefeat). Called both
+// right after combat resolves AND from goScreen's 'combat' branch, so
+// navigating back to an unresolved post-battle choice — including after a
+// full page reload, where the DOM these buttons live in no longer exists —
+// shows the correct working buttons instead of a stuck/blank screen.
+function renderPendingPostBattle() {
+  if (!game.pendingPostBattle) return;
+  showPostBattleAction(game.pendingPostBattle.message);
+  const actionsDiv = document.getElementById('combatActions');
+  if (actionsDiv) actionsDiv.innerHTML = game.pendingPostBattle.buttonsHtml;
+  const autoBtn = document.getElementById('autoBattleBtn');
+  if (autoBtn) autoBtn.style.display = 'none';
+}
+
 function exitBattleToPort() {
   // Stop any remaining combat loop/timers if the build exposes them.
   try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
   try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
   game.inCombat = false;
+  game.pendingPostBattle = null;
   hidePostBattleAction();
   goScreen('port');
   if (typeof renderPort === 'function') renderPort();
@@ -6336,21 +6364,35 @@ function handleVictory() {
     if (typeof window.checkUnchartedTierRewards === 'function') window.checkUnchartedTierRewards();
   }
 
+  let postBattleMessage, postBattleButtonsHtml;
   if (enemy.kind === 'uncharted') {
-    showPostBattleAction('Wave ' + (game.uncharted ? game.uncharted.wave : '') + ' cleared!');
-    document.getElementById('combatActions').innerHTML =
+    postBattleMessage = 'Wave ' + (game.uncharted ? game.uncharted.wave : '') + ' cleared!';
+    postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="continueUnchartedReach()">🌊 Continue Into the Reach</button>' +
       '<button class="btn btn-danger" onclick="retreatUnchartedReach()">🏳️ Retreat (keep rewards)</button>';
   } else if (enemy.kind === 'training') {
-    showPostBattleAction('A good bout.');
-    document.getElementById('combatActions').innerHTML =
-      '<button class="btn btn-success" onclick="backToTrainingRoom()">⚔️ Back to the Training Room</button>';
+    postBattleMessage = 'A good bout.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="backToTrainingRoom()">⚔️ Back to the Training Room</button>';
   } else {
-    showPostBattleAction('Victory! Battle complete.');
-    document.getElementById('combatActions').innerHTML =
-      '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+    postBattleMessage = 'Victory! Battle complete.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   }
-  document.getElementById('autoBattleBtn').style.display = 'none';
+  // BUG FIX: this used to write the post-battle message/buttons straight
+  // into the DOM and nowhere else. goScreen('combat') never calls
+  // renderCombat() (it only toggles which screen div is visible), so it
+  // relied entirely on that DOM content still existing. That's fine within
+  // one continuous session, but the instant the page reloads — backgrounding
+  // a mobile PWA for a while is enough — the DOM starts fresh and that
+  // content is just gone. The player would see Fair Tide correctly report
+  // "Currently out at Wave N," tap "Return to the fight," and land on a
+  // blank/stale combat screen with no working Continue or Retreat button:
+  // genuinely stuck, since combatAction() itself no-ops once
+  // combatResolved is true. Persisting the exact same message/buttons here
+  // and reconstructing them via renderPendingPostBattle() (called from
+  // goScreen's 'combat' branch too) means "Return to the fight" works
+  // correctly even after a full reload.
+  game.pendingPostBattle = {message: postBattleMessage, buttonsHtml: postBattleButtonsHtml};
+  renderPendingPostBattle();
   renderCombat();
   if (game.storyModalQueue.length) { const next = game.storyModalQueue.shift(); setTimeout(() => showStoryModal(next), 400); }
 }
@@ -6376,11 +6418,12 @@ function handleDefeat() {
     logEvent('🌊 The Uncharted Reach streak ends at wave ' + game.uncharted.wave + '. Kept: ' + game.uncharted.totalXp + ' XP, ' + game.uncharted.totalGold + 'g.', 'neutral');
     game.uncharted.active = false;
   }
-  showPostBattleAction(isTrainingBout ? 'A close bout — well fought.' : 'Defeat. The crew retreats.');
-  document.getElementById('combatActions').innerHTML = isTrainingBout
+  const defeatMessage = isTrainingBout ? 'A close bout — well fought.' : 'Defeat. The crew retreats.';
+  const defeatButtonsHtml = isTrainingBout
     ? '<button class="btn btn-success" onclick="backToTrainingRoom()">⚔️ Back to the Training Room</button>'
     : '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Retreat to Port</button>';
-  document.getElementById('autoBattleBtn').style.display = 'none';
+  game.pendingPostBattle = {message: defeatMessage, buttonsHtml: defeatButtonsHtml};
+  renderPendingPostBattle();
   renderCombat();
 }
 function fleeCombat() {
@@ -9043,6 +9086,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     logEvent('🌊 Left the Uncharted Reach at wave ' + uc.wave + '. Kills: ' + uc.totalKills + ' · XP: ' + uc.totalXp + ' · Gold: ' + uc.totalGold, 'gold');
     uc.active = false;
     game.inCombat = false;
+    game.pendingPostBattle = null;
     saveGameQuiet();
     if (typeof goScreen === 'function') goScreen('fairtide');
     if (typeof window.switchFairTideTab === 'function') window.switchFairTideTab('uncharted');
@@ -9193,6 +9237,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 
   window.backToTrainingRoom = function(){
+    game.pendingPostBattle = null;
     if (typeof goScreen === 'function') goScreen('fairtide');
     if (typeof window.switchFairTideTab === 'function') window.switchFairTideTab('training');
   };
@@ -9344,13 +9389,42 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether he likes it or not.'};
   }
 
-  function communityServiceState(){ game.communityService = game.communityService || {}; return game.communityService; }
+  function communityServiceState(){
+    game.communityService = game.communityService || {};
+    // Migration: repair saves already hit by the Infinity/JSON bug (see
+    // captureRival's comment) before this fix existed. After the fix,
+    // totalDays == null means "permanent" and such a record should never
+    // be inactive — so any record found with totalDays == null AND
+    // active:false is necessarily a casualty of the old bug (nothing else
+    // in this codebase sets active:false on a permanent record), not a
+    // legitimately-completed finite term. Heal it rather than leave
+    // players stuck with a wrongly "completed" permanent service.
+    Object.keys(game.communityService).forEach(function(k){
+      const cs = game.communityService[k];
+      if (cs && cs.totalDays == null && cs.active === false) {
+        cs.active = true;
+        delete cs.completedDay;
+      }
+    });
+    return game.communityService;
+  }
   window.communityServiceState = communityServiceState;
 
   window.captureRival = function(key, totalDays){
     game.rivalsCaptured = game.rivalsCaptured || {};
     game.rivalsCaptured[key] = true;
-    communityServiceState()[key] = {active:true, startDay: game.day, totalDays: totalDays || 20, lastClaimDay:-1};
+    // BUG FIX: Infinity was stored directly as the "permanent service, no
+    // end date" sentinel, but Infinity doesn't survive JSON — the game's
+    // own save/load round-trip silently turns it into null. That broke two
+    // things: the completion check below treated null as 0 ("0 >= null" is
+    // true in JS), instantly and wrongly completing a permanent term the
+    // first time labor was collected after any reload; and the display's
+    // own `=== Infinity` check stopped matching, producing "Day 0/null".
+    // Storing null here directly (JSON-safe, survives reloads) and having
+    // every consumer below treat totalDays == null as "permanent" fixes
+    // both — no more silent corruption on save.
+    const finalTotalDays = (totalDays === Infinity) ? null : (totalDays || 20);
+    communityServiceState()[key] = {active:true, startDay: game.day, totalDays: finalTotalDays, lastClaimDay:-1};
   };
   // Not hardcoded to Robin/Jeff — reads the display name straight from
   // HARBOR_ENEMIES (already there for anyone with a Challenge card),
@@ -9391,7 +9465,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const framing = serviceFraming(key, name);
     let msg = framing.icon + ' ' + name + "'s labor brings in " + gained + ' ' + pick + '.';
     const served = window.communityServiceDaysServed(key);
-    if (served >= cs.totalDays && cs.active) {
+    if (cs.totalDays != null && served >= cs.totalDays && cs.active) {
       cs.active = false;
       cs.completedDay = game.day;
       resKeys.forEach(r => { const b = game.fairTideResources[r]||0; game.fairTideResources[r] = Math.min(cap, b+15); });
@@ -10488,7 +10562,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const served = window.communityServiceDaysServed(key);
       const cs = communityServiceState()[key] || {totalDays:20, active:false};
       const canClaim = window.canClaimCommunityLabor(key);
-      const dayLabel = (cs.totalDays === Infinity)
+      const dayLabel = (cs.totalDays == null)
         ? 'Day ' + served + ' · Permanent — no end date'
         : 'Day ' + Math.min(served,cs.totalDays) + '/' + cs.totalDays + (cs.active?'':' · Term complete');
       // See serviceFraming() above — Robin's is community service, Jeff's
