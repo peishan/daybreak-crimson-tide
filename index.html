@@ -1542,7 +1542,8 @@ body{
     </div>
 
   <div class="combat-screen">
-    <div class="combat-header">
+    <div class="combat-header" style="position:relative;">
+      <button class="btn btn-small" onclick="leaveCombatScreen()" style="position:absolute; left:0; top:0; padding:6px 10px; font-size:.75rem;">← Leave</button>
       <div class="eyebrow" style="color: var(--sand); font-size: 0.85rem;">ENCOUNTER</div>
       <h2 style="color: var(--gold);">⚔️ Battle Stations!</h2>
     </div>
@@ -5671,6 +5672,24 @@ function exitBattleToPort() {
   if (typeof renderPort === 'function') renderPort();
 }
 
+// Always-visible "← Leave" control in the combat header — a persistent
+// escape hatch, separate from the dynamically-rendered combatActions
+// buttons, so a stuck/broken post-battle screen (like the Uncharted
+// Reach state-sync bug) always has a way out regardless of whether
+// those buttons rendered correctly. If combat has already resolved,
+// this exits straight to port (completely safe — the fight is over
+// either way). If a fight is genuinely still ongoing, it routes through
+// the existing fleeCombat() restrictions and odds instead of bypassing
+// them, so guardian/final/memory/Reach fights still can't be skipped
+// out of early just because this button exists in a new place.
+function leaveCombatScreen() {
+  if (!game.inCombat || game.combatResolved) {
+    exitBattleToPort();
+  } else {
+    fleeCombat();
+  }
+}
+
 
 function crimsonTurnOrderText() {
   const party = getCrimsonCombatParty().filter(m => partyHpOf(m) > 0);
@@ -7002,7 +7021,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V117 · Uncharted Reach Stale State Fix'</script>
+<script>window.__CT_BUILD__='V118 · Always-Visible Combat Leave Button'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
