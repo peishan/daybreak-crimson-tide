@@ -5587,6 +5587,19 @@ function startCombat(encounter) {
   game.combatResolved = false;
   game.pendingPostBattle = null;
   game.combatSessionId = (game.combatSessionId || 0) + 1;
+  // BUG FIX: starting a different fight (Training Room, a harbor
+  // Challenge, a story battle, etc.) while an Uncharted Reach session
+  // was still marked active left game.uncharted.active stuck true with
+  // nothing real behind it anymore. The Fair Tide Hub's "Currently out
+  // at Wave N — Return to the fight" card kept showing, but that button
+  // is just goScreen('combat') — it doesn't start a new fight, it trusts
+  // whatever combat state already exists. So it would land on whatever
+  // fight happened most recently (e.g. an already-finished training
+  // bout) instead of a real Reach encounter. Starting any other kind of
+  // fight now properly ends the stale Reach session.
+  if (encounter.kind !== 'uncharted' && game.uncharted && game.uncharted.active) {
+    game.uncharted.active = false;
+  }
   game.combatEnemy = Object.assign({}, enemy, {kind: encounter.kind, key: encounter.key, portId: encounter.portId});
   game.combatEnemyHp = enemy.hp;
   game.combatTurn = 0;
@@ -6989,7 +7002,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V115 · Uncharted Reach Post-Battle Button Fix'</script>
+<script>window.__CT_BUILD__='V117 · Uncharted Reach Stale State Fix'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong>Build V83</strong> · Party AI + Equipment</footer>
 
 <script id="ct-build-v62-arc1">
@@ -10778,30 +10791,30 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // dragons exist as something combat can reference.
   // -------------------------------------------------------------------
   const ARC8_CHAPTERS = [
-    {id:1,  title:'Something Changed',            focus:"Life at Fair Tide looks normal after Arc VII. But Renn notices the magical readings around the settlement have shifted. Erynn checks the Farseer records — nothing matches. Mimi senses something else: something is looking back.", image:'assets/comics/arc8/ch01-something-changed.png', xp:200},
-    {id:2,  title:'The Second Door',               focus:"Renn finds another strange door — not hidden away this time, but somewhere completely ordinary. Erynn recognizes markings older than Varel's own records.", image:'assets/comics/arc8/ch02-the-second-door.png', xp:200},
-    {id:3,  title:'The Map That Moves',            focus:"Maps of the same region disagree with each other — roads shift, landmarks move. Erynn proposes something worse than bad cartography: the maps may all be correct, just at different times.", image:'assets/comics/arc8/ch03-the-map-that-moves.png', xp:200},
-    {id:4,  title:'The Missing Island',            focus:"Sailors describe an island that only appears sometimes. Nobody agrees where it is. An old Farseer record insists it's real.", image:'assets/comics/arc8/ch04-the-missing-island.png', xp:200},
-    {id:5,  title:'Where the Sea Ends',            focus:"Crimson Tide follows the phenomenon to a region where the horizon itself looks wrong. The crew crosses the boundary — the sea continues beneath them, but the sky doesn't behave.", image:'assets/comics/arc8/ch05-where-the-sea-ends.png', xp:225},
-    {id:6,  title:'The Island That Remembers',     focus:"They find the missing island, apparently abandoned — yet someone was there recently, and the objects scattered across it come from wildly different periods of Veyren's history.", image:'assets/comics/arc8/ch06-the-island-that-remembers.png', xp:225},
-    {id:7,  title:'The Farseer Marker',            focus:"Erynn finds an ancient marker that predates Varel entirely. His family's history with these boundaries may run much further back than he ever knew.", image:'assets/comics/arc8/ch07-the-farseer-marker.png', xp:225},
-    {id:8,  title:'Three Answers',                 focus:"Renn, Erynn, and Mimi each read the island differently — magical phenomenon, ancient boundary, or neither: Mimi wonders if the island isn't the one moving. Maybe Veyren is.", image:'assets/comics/arc8/ch08-three-answers.png', xp:250},
-    {id:9,  title:'The Old Camp',                  focus:"The crew finds a previous expedition's camp — journals, equipment, no people.", image:'assets/comics/arc8/ch09-the-old-camp.png', xp:200},
-    {id:10, title:'The Last Entry',                 focus:"The surviving journal describes the earlier expedition reaching the island's centre — and never coming back. Crimson Tide has to decide whether to go further.", image:'assets/comics/arc8/ch10-the-last-entry.png', xp:225},
-    {id:11, title:"San's Rule",                     focus:"San sets one rule before they continue: nobody gets left behind. The boundary is already proving it can separate people and show different crew members different versions of the same place.", image:'assets/comics/arc8/ch11-sans-rule.png', xp:250},
-    {id:12, title:"Joel's Compass",                 focus:"Separated from San, Joel's compass fails him. Instead of trying to understand the magic, he uses something simpler — the sound of the sea — and finds her anyway.", image:'assets/comics/arc8/ch12-joels-compass.png', xp:250},
-    {id:13, title:'The Place Between Places',       focus:"At the island's centre, no treasure — an enormous ancient structure built around a magical boundary. Erynn recognizes its purpose immediately: it was built to observe.", image:'assets/comics/arc8/ch13-the-place-between-places.png', xp:250},
-    {id:14, title:'What They Were Watching',        focus:"Mimi realizes the structure wasn't watching the island — it was watching the boundaries around Veyren itself. The first glimpse of something that could eventually become their own research.", image:'assets/comics/arc8/ch14-what-they-were-watching.png', xp:250},
-    {id:15, title:'The Broken Observer',            focus:"Some of the structure still works. Renn wants to repair it. Erynn warns they don't know what it was built to observe. Mimi isn't comfortable activating it at all.", image:'assets/comics/arc8/ch15-the-broken-observer.png', xp:250},
-    {id:16, title:"The Thing They Didn't Activate", focus:"The three deliberately choose not to activate it. They document it instead — the philosophy that will define their research going forward: understand first, build later.", image:'assets/comics/arc8/ch16-the-thing-they-didnt-activate.png', xp:275},
-    {id:17, title:'The Island Disappears',          focus:"The boundary starts collapsing. Crimson Tide races to escape as the island fades behind them.", image:'assets/comics/arc8/ch17-the-island-disappears.png', xp:250},
-    {id:18, title:'What Came Back',                 focus:"Something returns with them — not a creature, not an object. A strange magical residue. For the first time, Mimi, Renn, and Erynn independently identify the exact same phenomenon, each in their own way.", image:'assets/comics/arc8/ch18-what-came-back.png', xp:275},
-    {id:19, title:"The Record That Wasn't There",   focus:"Erynn searches the Farseer archives for a record he remembers clearly. The page is blank. Some boundaries, it turns out, may affect records and memory themselves.", image:'assets/comics/arc8/ch19-the-record-that-wasnt-there.png', xp:250},
-    {id:20, title:'The Farseer Question',           focus:"Erynn starts questioning how much of Farseer history has actually survived intact. His family preserved knowledge for generations — but preservation was never the same thing as perfection.", image:'assets/comics/arc8/ch20-the-farseer-question.png', xp:250},
-    {id:21, title:"Renn's Idea",                    focus:"Renn proposes a new direction: instead of chasing every anomaly in person, build an instrument to observe them remotely. Not a weapon. Not a portal. An instrument.", image:'assets/comics/arc8/ch21-renns-idea.png', xp:275},
-    {id:22, title:'Three Pieces',                   focus:"Renn, Erynn, and Mimi identify exactly what the project needs from each of them — and realize none of them can solve it alone. They still have nothing to actually build it with.", image:'assets/comics/arc8/ch22-three-pieces.png', xp:275},
-    {id:23, title:'The Name of the Horizon',        focus:"The three can't agree on a name. San hands the choice to Joel, who finally gives their research one: The Horizon Engine. Still only a research project — nothing built yet.", image:'assets/comics/arc8/ch23-the-name-of-the-horizon.png', xp:350},
-    {id:24, title:'The First Material',             focus:"Renn identifies a material that might interact with the residue they brought home — nobody knows where to find enough of it, until Mimi has a vision. Something enormous, flying. A dragon.", image:'assets/comics/arc8/ch24-the-first-material.png', xp:550}
+    {id:1,  title:'Something Changed',            focus:"Life at Fair Tide looks normal after Arc VII. But Renn notices the magical readings around the settlement have shifted. Erynn checks the Farseer records — nothing matches. Mimi senses something else: something is looking back.", image:'assets/comics/arc8/ch01-something-changed.png', xp:200, action:'🔍 Check the Readings'},
+    {id:2,  title:'The Second Door',               focus:"Renn finds another strange door — not hidden away this time, but somewhere completely ordinary. Erynn recognizes markings older than Varel's own records.", image:'assets/comics/arc8/ch02-the-second-door.png', xp:200, action:'🚪 Investigate the Door'},
+    {id:3,  title:'The Map That Moves',            focus:"Maps of the same region disagree with each other — roads shift, landmarks move. Erynn proposes something worse than bad cartography: the maps may all be correct, just at different times.", image:'assets/comics/arc8/ch03-the-map-that-moves.png', xp:200, action:'🗺️ Compare the Maps'},
+    {id:4,  title:'The Missing Island',            focus:"Sailors describe an island that only appears sometimes. Nobody agrees where it is. An old Farseer record insists it's real.", image:'assets/comics/arc8/ch04-the-missing-island.png', xp:200, action:'⚓ Ask the Sailors'},
+    {id:5,  title:'Where the Sea Ends',            focus:"Crimson Tide follows the phenomenon to a region where the horizon itself looks wrong. The crew crosses the boundary — the sea continues beneath them, but the sky doesn't behave.", image:'assets/comics/arc8/ch05-where-the-sea-ends.png', xp:225, action:'🌊 Cross the Boundary'},
+    {id:6,  title:'The Island That Remembers',     focus:"They find the missing island, apparently abandoned — yet someone was there recently, and the objects scattered across it come from wildly different periods of Veyren's history.", image:'assets/comics/arc8/ch06-the-island-that-remembers.png', xp:225, action:'🏝️ Search the Island'},
+    {id:7,  title:'The Farseer Marker',            focus:"Erynn finds an ancient marker that predates Varel entirely. His family's history with these boundaries may run much further back than he ever knew.", image:'assets/comics/arc8/ch07-the-farseer-marker.png', xp:225, action:'🔎 Examine the Marker'},
+    {id:8,  title:'Three Answers',                 focus:"Renn, Erynn, and Mimi each read the island differently — magical phenomenon, ancient boundary, or neither: Mimi wonders if the island isn't the one moving. Maybe Veyren is.", image:'assets/comics/arc8/ch08-three-answers.png', xp:250, action:'💭 Hear Them Out'},
+    {id:9,  title:'The Old Camp',                  focus:"The crew finds a previous expedition's camp — journals, equipment, no people.", image:'assets/comics/arc8/ch09-the-old-camp.png', xp:200, action:'🏕️ Search the Camp'},
+    {id:10, title:'The Last Entry',                 focus:"The surviving journal describes the earlier expedition reaching the island's centre — and never coming back. Crimson Tide has to decide whether to go further.", image:'assets/comics/arc8/ch10-the-last-entry.png', xp:225, action:'📖 Read the Journal'},
+    {id:11, title:"San's Rule",                     focus:"San sets one rule before they continue: nobody gets left behind. The boundary is already proving it can separate people and show different crew members different versions of the same place.", image:'assets/comics/arc8/ch11-sans-rule.png', xp:250, action:'⚓ Set the Rule'},
+    {id:12, title:"Joel's Compass",                 focus:"Separated from San, Joel's compass fails him. Instead of trying to understand the magic, he uses something simpler — the sound of the sea — and finds her anyway.", image:'assets/comics/arc8/ch12-joels-compass.png', xp:250, action:'🧭 Follow the Sound'},
+    {id:13, title:'The Place Between Places',       focus:"At the island's centre, no treasure — an enormous ancient structure built around a magical boundary. Erynn recognizes its purpose immediately: it was built to observe.", image:'assets/comics/arc8/ch13-the-place-between-places.png', xp:250, action:'🏛️ Enter the Structure'},
+    {id:14, title:'What They Were Watching',        focus:"Mimi realizes the structure wasn't watching the island — it was watching the boundaries around Veyren itself. The first glimpse of something that could eventually become their own research.", image:'assets/comics/arc8/ch14-what-they-were-watching.png', xp:250, action:'👁️ Study the Structure'},
+    {id:15, title:'The Broken Observer',            focus:"Some of the structure still works. Renn wants to repair it. Erynn warns they don't know what it was built to observe. Mimi isn't comfortable activating it at all.", image:'assets/comics/arc8/ch15-the-broken-observer.png', xp:250, action:'⚙️ Weigh the Risk'},
+    {id:16, title:"The Thing They Didn't Activate", focus:"The three deliberately choose not to activate it. They document it instead — the philosophy that will define their research going forward: understand first, build later.", image:'assets/comics/arc8/ch16-the-thing-they-didnt-activate.png', xp:275, action:'📜 Document It Instead'},
+    {id:17, title:'The Island Disappears',          focus:"The boundary starts collapsing. Crimson Tide races to escape as the island fades behind them.", image:'assets/comics/arc8/ch17-the-island-disappears.png', xp:250, action:'🏃 Race to Escape'},
+    {id:18, title:'What Came Back',                 focus:"Something returns with them — not a creature, not an object. A strange magical residue. For the first time, Mimi, Renn, and Erynn independently identify the exact same phenomenon, each in their own way.", image:'assets/comics/arc8/ch18-what-came-back.png', xp:275, action:'🔮 Examine the Residue'},
+    {id:19, title:"The Record That Wasn't There",   focus:"Erynn searches the Farseer archives for a record he remembers clearly. The page is blank. Some boundaries, it turns out, may affect records and memory themselves.", image:'assets/comics/arc8/ch19-the-record-that-wasnt-there.png', xp:250, action:'📚 Search the Archives'},
+    {id:20, title:'The Farseer Question',           focus:"Erynn starts questioning how much of Farseer history has actually survived intact. His family preserved knowledge for generations — but preservation was never the same thing as perfection.", image:'assets/comics/arc8/ch20-the-farseer-question.png', xp:250, action:'❓ Question the Records'},
+    {id:21, title:"Renn's Idea",                    focus:"Renn proposes a new direction: instead of chasing every anomaly in person, build an instrument to observe them remotely. Not a weapon. Not a portal. An instrument.", image:'assets/comics/arc8/ch21-renns-idea.png', xp:275, action:'💡 Hear Renn Out'},
+    {id:22, title:'Three Pieces',                   focus:"Renn, Erynn, and Mimi identify exactly what the project needs from each of them — and realize none of them can solve it alone. They still have nothing to actually build it with.", image:'assets/comics/arc8/ch22-three-pieces.png', xp:275, action:'🧩 Work the Problem'},
+    {id:23, title:'The Name of the Horizon',        focus:"The three can't agree on a name. San hands the choice to Joel, who finally gives their research one: The Horizon Engine. Still only a research project — nothing built yet.", image:'assets/comics/arc8/ch23-the-name-of-the-horizon.png', xp:350, action:'🏮 Name the Project'},
+    {id:24, title:'The First Material',             focus:"Renn identifies a material that might interact with the residue they brought home — nobody knows where to find enough of it, until Mimi has a vision. Something enormous, flying. A dragon.", image:'assets/comics/arc8/ch24-the-first-material.png', xp:550, action:'🐉 See the Vision'}
   ];
   window.ARC8_CHAPTERS = ARC8_CHAPTERS;
 
@@ -10880,7 +10893,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
       if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
-        '<button class="btn btn-small btn-success" onclick="markArc8ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+        '<button class="btn btn-small btn-success" onclick="markArc8ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
