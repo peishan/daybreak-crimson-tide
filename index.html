@@ -1617,15 +1617,6 @@ body{
       </p>
 
       <div id="storyContent"></div>
-
-      <div class="story-act">
-        <div class="story-act-header">
-          <div class="story-act-kicker">Act IV</div>
-          <div class="story-act-title">The Old Crew</div>
-          <div class="story-act-tagline">The tide begins returning familiar faces.</div>
-        </div>
-        <div id="act4Content"></div>
-      </div>
     </div>
   </div>
 </div>
@@ -4930,7 +4921,16 @@ function renderStory() {
   // chapter lists with different unlock conditions on the same screen.
 
   container.innerHTML = html;
-  renderAct4();
+  // BUG FIX: renderAct4() used to always run here, rendering a leftover
+  // "Act IV — The Old Crew" section from an earlier, abandoned narrative
+  // direction (reconnecting with real-world "Daybreak" allies like KW
+  // Liang in Singapore) that predates the current Veyren/Farseer/Horizon
+  // Engine story established from Arc VI onward. That direction was never
+  // continued, so this section has been sitting at the bottom of every
+  // Story tab render ever since, showing content that no longer belongs
+  // to the game. Not calling it anymore — the underlying function and
+  // data are left defined but unused rather than deleted, since
+  // renderComicPanels() may still be relied on elsewhere.
 }
 
 function bountyPool() {
@@ -7136,7 +7136,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V134 · Collapse Completed Story Chapters'</script>
+<script>window.__CT_BUILD__='V138 · Show Rival Capture Chance'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -10961,7 +10961,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
 <div id="arc8SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc8/arc8-cover-the-horizon-engine.png" alt="Arc VIII — The Horizon Engine" style="width:100%;border-radius:8px;display:block;">
+    <img src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.png" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc8Splash()">⚓ Begin Arc VIII</button>
   </div>
 </div>
@@ -11119,8 +11119,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       window.__ctShowArc8Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc8/arc8-cover-the-horizon-engine.png" alt="Arc VIII — The Horizon Engine" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
-      '<div class="story-act-kicker">Arc VIII</div><div class="story-act-title">The Horizon Engine</div>'+
+      '<img src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.png" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc VIII</div><div class="story-act-title">Beyond the Known Sea</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC8_CHAPTERS.length+' of 24. The world is larger than the map.</div></div>';
     if(!arc8Ready){
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc VIII Locked</div><div class="story-chapter-sub">'+
@@ -11159,14 +11159,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       : arc8Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — The Horizon Engine</div>' + section);
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — Beyond the Known Sea</div>' + section);
   };
 })();
 </script>
 
 <div id="arc9SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc9/arc9-cover-the-cat-who-was-always-there.png" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;display:block;">
+    <img src="assets/comics/arc9/arc9-cover-soel.png" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc9Splash()">⚓ Begin Arc IX</button>
   </div>
 </div>
@@ -11375,7 +11375,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       window.__ctShowArc9Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc9/arc9-cover-the-cat-who-was-always-there.png" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc9/arc9-cover-soel.png" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc IX</div><div class="story-act-title">The Cat Who Was Always There</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC9_CHAPTERS.length+' of 26. Some mysteries were beside us all along.</div></div>';
     if(!arc9Ready){
@@ -12198,6 +12198,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(enemy.key)) return; // defensive — shouldn't normally reach here, the ambush pool already excludes captured rivals
     const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(enemy.key) : enemy.key;
     const chance = window.getRivalCaptureChance(enemy.key);
+    const chancePct = Math.round(chance * 100);
     if (Math.random() < chance) {
       if (typeof window.captureRival === 'function') window.captureRival(enemy.key, 20);
       game.inheritedShips = game.inheritedShips || [];
@@ -12206,15 +12207,45 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         const shipInfo = RIVAL_SHIP_INFO[enemy.key] || {name: name + "'s Ship", flag: '⚓'};
         game.inheritedShips.push({id: shipId, name: shipInfo.name, flag: shipInfo.flag, status: 'At dock, Fair Tide'});
       }
-      logEvent('⛓️ ' + name + ' is captured this time — community service begins. Their ship is now at Fair Tide, waiting to be designated.', 'gold');
-      toast('⛓️ ' + name + ' is captured! No more running from this one.', 4200);
+      logEvent('⛓️ ' + name + ' is captured this time (' + chancePct + '% chance) — community service begins. Their ship is now at Fair Tide, waiting to be designated.', 'gold');
+      toast('⛓️ ' + name + ' is captured! (' + chancePct + '% chance) No more running from this one.', 4200);
     } else {
       const ec = rivalEscapeCounts();
       ec[enemy.key] = (ec[enemy.key] || 0) + 1;
-      logEvent('💨 ' + name + ' slips away again.', 'bad');
-      toast('💨 ' + name + ' escapes — but it won\'t be this easy for him next time.', 3600);
+      const nextChancePct = Math.round(window.getRivalCaptureChance(enemy.key) * 100);
+      logEvent('💨 ' + name + ' slips away again (' + chancePct + '% chance this time) — ' + nextChancePct + '% next encounter.', 'bad');
+      toast('💨 ' + name + ' escapes (' + chancePct + '% chance) — ' + nextChancePct + '% chance next time.', 4000);
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  // -------------------------------------------------------------------
+  // "At large" card — shows the current capture chance for any rival
+  // who's escaped a sea ambush at least once but isn't captured yet.
+  // Until now, a rival had NO visible presence anywhere until AFTER a
+  // successful capture (the existing service card only checks
+  // rivalCaptured()) — so there was genuinely nowhere to see the odds
+  // for someone still at large, which is exactly the information a
+  // player would want most.
+  // -------------------------------------------------------------------
+  const oldRenderExploreForRivalOdds = window.renderExplore;
+  window.renderExplore = function(){
+    if (oldRenderExploreForRivalOdds) oldRenderExploreForRivalOdds();
+    const container = document.getElementById('exploreContent');
+    if (!container) return;
+    const rivalKeys = (typeof window.KNOWN_RIVAL_KEYS !== 'undefined') ? window.KNOWN_RIVAL_KEYS : [];
+    const escapes = rivalEscapeCounts();
+    rivalKeys.forEach(function(key){
+      if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) return; // already captured — the existing service card covers them
+      if (!escapes[key]) return; // never even encountered yet — nothing to show
+      const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(key) : key;
+      const chancePct = Math.round(window.getRivalCaptureChance(key) * 100);
+      container.insertAdjacentHTML('beforeend',
+        '<article class="quest-item" style="border-left-color:var(--sand);">'+
+        '<strong>🏴‍☠️ '+name+' — Still at Large</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.8;">Escaped '+escapes[key]+' time'+(escapes[key]>1?'s':'')+' so far. Beat him again at sea for a '+chancePct+'% chance to actually capture him this time.</span>'+
+        '</article>');
+    });
   };
 })();
 </script>
