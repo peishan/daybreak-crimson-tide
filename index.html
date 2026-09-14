@@ -1779,6 +1779,7 @@ body{
 <div class="screen" id="fairTideScreen">
   <div class="game-container">
     <div class="header"><h1>🏮 Fair Tide</h1><div class="subtitle">A port worth keeping</div></div>
+    <div id="fairTidePopulationDisplay" style="font-size:.78rem;opacity:.78;margin:6px 0;text-align:center;">👥 Population: <span id="fairTidePopulationLabel">—</span></div>
     <div class="nav-bar">
       <button class="nav-btn" onclick="goScreen('port')">🏛️ Port</button>
       <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Sail</button>
@@ -7095,7 +7096,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V129 · Research Expedition Mode'</script>
+<script>window.__CT_BUILD__='V132 · Rival Ship Allocation + Fair Tide Population'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8201,10 +8202,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // and serving community service at Fair Tide, which doesn't make sense
   // (he's not roaming the seas if he's cleaning docks). Now excludes
   // whichever of the two is captured, and skips the whole ambush if both are.
+  // Shared list of named rivals eligible for sea ambush + capture —
+  // extend this one array when a future rival is added, rather than
+  // updating multiple hardcoded lists in sync.
+  const KNOWN_RIVAL_KEYS = ['robin', 'jeff'];
+  window.KNOWN_RIVAL_KEYS = KNOWN_RIVAL_KEYS;
+
   const RIVAL_AMBUSH_CHANCE = 0.15;
   const oldDoVoyageForArc4 = window.doVoyage;
   window.doVoyage = function(portId, days, dangerLevel){
-    const activeRivals = ['robin','jeff'].filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
+    const activeRivals = KNOWN_RIVAL_KEYS.filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
     if(!!game.comicProgress4?.[19] && activeRivals.length && Math.random() < RIVAL_AMBUSH_CHANCE){
       const rivalKey = activeRivals[Math.floor(Math.random() * activeRivals.length)];
       const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[rivalKey] : null;
@@ -11790,6 +11797,145 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     el.innerHTML = html;
   }
+})();
+</script>
+
+
+<script id="ct-build-v130-modal-queue-flush-fix">
+(function(){
+  // -------------------------------------------------------------------
+  // BUG FIX: showStoryModal() was only ever called from two places —
+  // chaining after closing an already-open modal, or after winning ANY
+  // combat fight (see handleVictory's own queue check). Nothing ever
+  // triggered it right when a chapter was actually completed. So a
+  // chapter's story modal would sit invisible in the queue until the
+  // player happened to win some LATER, completely unrelated fight —
+  // which is exactly what happened here: Arc VI Ch.9's "The Crew That
+  // Chose Us" scene surfaced in the middle of an ordinary Smuggler Crew
+  // encounter, with zero connection to the actual story beat.
+  //
+  // Every chapter-completion function across every arc already calls
+  // renderStory() as one of its last steps (26+ call sites, confirmed),
+  // so wrapping that one function here flushes the queue essentially
+  // immediately after a chapter completes, instead of leaving it to
+  // chance. Guards against interrupting an already-open modal — if one
+  // is currently showing, this just waits for the NEXT render to try
+  // again rather than fighting over the same overlay.
+  // -------------------------------------------------------------------
+  window.flushStoryModalQueue = function(){
+    if (!game.storyModalQueue || !game.storyModalQueue.length) return;
+    const overlay = document.getElementById('modalOverlay');
+    if (overlay && overlay.classList.contains('active')) return;
+    const next = game.storyModalQueue.shift();
+    if (typeof showStoryModal === 'function') showStoryModal(next);
+  };
+
+  const oldRenderStoryForModalFlush = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForModalFlush) oldRenderStoryForModalFlush();
+    window.flushStoryModalQueue();
+  };
+})();
+</script>
+
+
+<script id="ct-build-v131-sea-rival-capture">
+(function(){
+  // -------------------------------------------------------------------
+  // SEA AMBUSH RIVAL CAPTURE. Until now, winning a sea ambush against
+  // Robin or Jeff (see doVoyage's ambush hook) was just a normal combat
+  // victory — gold/XP/trophy, no capture, no consequence at all. San's
+  // design: winning gives a CHANCE to actually capture them (same
+  // captureRival()/20-day community service already built for the Arc
+  // VI story capture), not a guarantee — 50% the first time you beat
+  // them at sea, rising to 80% on any later encounter after they've
+  // slipped away once. Generalized against window.KNOWN_RIVAL_KEYS
+  // (see doVoyage's own ambush pool) rather than hardcoded to Robin/
+  // Jeff, so a future rival added to that one list gets this for free.
+  //
+  // Doesn't touch the Arc VI story capture at all — if Robin/Jeff get
+  // captured this way before Arc VI is reached, the story fight still
+  // happens exactly as before and its own captureRival() call simply
+  // finalizes their canonical terms when the time comes (Robin's real
+  // 20 days restart clean, Jeff becomes permanent) — this system only
+  // ever offers an EARLY, temporary capture opportunity, never replaces
+  // or blocks the scripted one.
+  // -------------------------------------------------------------------
+  function rivalEscapeCounts(){ game.rivalEscapeCounts = game.rivalEscapeCounts || {}; return game.rivalEscapeCounts; }
+  window.rivalEscapeCounts = rivalEscapeCounts;
+
+  window.getRivalCaptureChance = function(key){
+    const escapes = rivalEscapeCounts()[key] || 0;
+    return escapes === 0 ? 0.5 : 0.8; // first encounter: 50/50. Any later encounter: 80% capture, 20% escape.
+  };
+
+  // Per-rival ship flavor — same id convention as Arc VI's own capture
+  // ('{key}s_ship'), so whichever path captures a rival first, the other
+  // never creates a duplicate entry. Falls back to something reasonable
+  // for any future rival not yet listed here.
+  const RIVAL_SHIP_INFO = {
+    robin: {name: "Robin's Ship", flag: '⛓️'},
+    jeff:  {name: "Jeff's Ship",  flag: '🔨'}
+  };
+
+  const oldHandleVictoryForRivalCapture = window.handleVictory;
+  window.handleVictory = function(){
+    if (oldHandleVictoryForRivalCapture) oldHandleVictoryForRivalCapture();
+    const enemy = game.combatEnemy;
+    if (!enemy || enemy.kind !== 'sea') return; // 'sea' is also used for ordinary random voyage encounters, not just rivals
+    const rivalKeys = (typeof window.KNOWN_RIVAL_KEYS !== 'undefined') ? window.KNOWN_RIVAL_KEYS : [];
+    if (!rivalKeys.includes(enemy.key)) return; // an ordinary sea monster, not a named rival — nothing to do here
+    if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(enemy.key)) return; // defensive — shouldn't normally reach here, the ambush pool already excludes captured rivals
+    const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(enemy.key) : enemy.key;
+    const chance = window.getRivalCaptureChance(enemy.key);
+    if (Math.random() < chance) {
+      if (typeof window.captureRival === 'function') window.captureRival(enemy.key, 20);
+      game.inheritedShips = game.inheritedShips || [];
+      const shipId = enemy.key + 's_ship';
+      if (!game.inheritedShips.some(s=>s.id===shipId)) {
+        const shipInfo = RIVAL_SHIP_INFO[enemy.key] || {name: name + "'s Ship", flag: '⚓'};
+        game.inheritedShips.push({id: shipId, name: shipInfo.name, flag: shipInfo.flag, status: 'At dock, Fair Tide'});
+      }
+      logEvent('⛓️ ' + name + ' is captured this time — community service begins. Their ship is now at Fair Tide, waiting to be designated.', 'gold');
+      toast('⛓️ ' + name + ' is captured! No more running from this one.', 4200);
+    } else {
+      const ec = rivalEscapeCounts();
+      ec[enemy.key] = (ec[enemy.key] || 0) + 1;
+      logEvent('💨 ' + name + ' slips away again.', 'bad');
+      toast('💨 ' + name + ' escapes — but it won\'t be this easy for him next time.', 3600);
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+})();
+</script>
+
+
+<script id="ct-build-v132-fairtide-population">
+(function(){
+  // -------------------------------------------------------------------
+  // FAIR TIDE POPULATION — a simple number for now, per San's request.
+  // Baseline represents Fair Tide's own established residents before
+  // any of this session's story events; grows with game.fairTideRoster,
+  // which already tracks every wave of people who've actually joined —
+  // Arc V's roster (Jovie, Gino, Wahyu, Dudin, Imah, Nurul, Dre, Jorvin),
+  // Arc VI's freed crew (Ch.2), former SK* workers (Ch.3), and
+  // specialists (Ch.6). No new tracking needed — this just counts what's
+  // already there and displays it somewhere visible, so growth is felt
+  // rather than buried in individual roster entries.
+  // -------------------------------------------------------------------
+  const FAIR_TIDE_BASELINE_POPULATION = 40;
+
+  window.getFairTidePopulation = function(){
+    const rosterCount = Object.keys(game.fairTideRoster || {}).length;
+    return FAIR_TIDE_BASELINE_POPULATION + rosterCount;
+  };
+
+  const oldRenderFairTideHubForPopulation = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    if (oldRenderFairTideHubForPopulation) oldRenderFairTideHubForPopulation();
+    const el = document.getElementById('fairTidePopulationLabel');
+    if (el) el.textContent = window.getFairTidePopulation().toLocaleString();
+  };
 })();
 </script>
 
