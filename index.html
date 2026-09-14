@@ -1795,6 +1795,8 @@ body{
       <button class="tab-btn" id="ft-tab-btn-roster" onclick="switchFairTideTab('roster')">👥 Roster</button>
       <button class="tab-btn" id="ft-tab-btn-uncharted" onclick="switchFairTideTab('uncharted')">🌊 Uncharted Reach</button>
       <button class="tab-btn" id="ft-tab-btn-training" onclick="switchFairTideTab('training')">⚔️ Training Room</button>
+      <button class="tab-btn" id="ft-tab-btn-bonds" onclick="switchFairTideTab('bonds')">💞 Bonds</button>
+      <button class="tab-btn" id="ft-tab-btn-quarters" onclick="switchFairTideTab('quarters')">🏠 Captain's Quarters</button>
     </div>
     <div class="panel">
       <div id="ft-tab-buildings" class="tab-content active"></div>
@@ -1804,6 +1806,8 @@ body{
       <div id="ft-tab-roster" class="tab-content"></div>
       <div id="ft-tab-uncharted" class="tab-content"></div>
       <div id="ft-tab-training" class="tab-content"></div>
+      <div id="ft-tab-bonds" class="tab-content"></div>
+      <div id="ft-tab-quarters" class="tab-content"></div>
     </div>
   </div>
 </div>
@@ -5537,7 +5541,9 @@ function getCrimsonCombatParty() {
     // the bond is active. See window.bondedTideActive() (defined in the
     // Arc V script block, guarded with typeof so this never breaks if that
     // block hasn't loaded for some reason).
-    const bondUp = (typeof window.bondedTideActive === 'function' && window.bondedTideActive() && (m.id === 'san' || m.id === 'joel')) ? 1.05 : 1;
+    const bondUp = (typeof window.bondedTideActive === 'function' && window.bondedTideActive() && (m.id === 'san' || m.id === 'joel'))
+      ? 1 + ((typeof window.sanJoelBondValues === 'function' ? window.sanJoelBondValues().hpMpPct : 5) / 100)
+      : 1;
     const bondedMaxHp = Math.round(realMaxHp * bondUp);
     const bondedMaxMp = Math.round(realMaxMp * bondUp);
     return {
@@ -5932,10 +5938,13 @@ function combatAction(action) {
       if (skill.effect === 'taunt') {
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on them.');
         // Bonded by the Tide (Ch.4): when Joel uses Shield Wall with the
-        // bond active, San catches a brief haste windfall off the surge.
+        // bond active, San catches a brief haste windfall off the surge —
+        // now scaled by the current San/Joel bond tier instead of a fixed
+        // 2 turns/10%.
         if (actor.id === 'joel' && typeof window.bondedTideActive === 'function' && window.bondedTideActive()) {
-          game.hasteTurns = Math.max(game.hasteTurns || 0, 2);
-          game.hastePct = Math.max(game.hastePct || 0, 10);
+          const bondVals = (typeof window.sanJoelBondValues === 'function') ? window.sanJoelBondValues() : {hasteTurns:2, hastePct:10};
+          game.hasteTurns = Math.max(game.hasteTurns || 0, bondVals.hasteTurns);
+          game.hastePct = Math.max(game.hastePct || 0, bondVals.hastePct);
           // Small recovery bonus (the art's own "possible small recovery/
           // resistance bonus" line) — a modest HP tick for both of them,
           // piggybacking on the existing heal path rather than a new system.
@@ -6268,8 +6277,10 @@ function enemyCounterAttack() {
   }
   // Bonded by the Tide (Ch.4): small defensive synergy for San/Joel while
   // both are fielded and alive — doesn't stack with an Aegis block above.
+  // Scaled by the current San/Joel bond tier instead of a fixed 8%.
   if (!aegisTriggered && (target.id === 'san' || target.id === 'joel') && typeof window.bondedTideActive === 'function' && window.bondedTideActive()) {
-    dmg = Math.max(1, Math.round(dmg * 0.92));
+    const bondVals = (typeof window.sanJoelBondValues === 'function') ? window.sanJoelBondValues() : {dmgReductionPct:8};
+    dmg = Math.max(1, Math.round(dmg * (1 - bondVals.dmgReductionPct / 100)));
   }
 
   const curHp = game.partyHp[target.id] != null ? game.partyHp[target.id] : target.hp;
@@ -7048,7 +7059,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V121 · Exit-to-Port Reach Cleanup Fix'</script>
+<script>window.__CT_BUILD__='V123 · Captains Quarters'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -11021,6 +11032,300 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     return enemy;
   };
+})();
+</script>
+
+
+<script id="ct-build-v122-bond-affinity">
+(function(){
+  // -------------------------------------------------------------------
+  // BOND / AFFINITY SYSTEM. Three tracks, native to Crimson Tide rather
+  // than ported from Daybreak's per-battle system (which San said scaled
+  // to 6 digits far too fast to feel meaningful). Deliberately a once-
+  // per-day repeatable ACTION per track — same shape as Training Room —
+  // rather than a passive byproduct of combat, so growth stays a real
+  // choice with real pacing instead of an unbounded grind number.
+  //
+  // Bonuses are synergies, not flat always-on stats: each tier's bonus
+  // only applies while the bonded character(s) are actually in the
+  // fielded active party. Bond points keep accumulating either way —
+  // only the BONUS itself is conditional, the progress never is.
+  //
+  // San & Joel folds in the existing "Bonded by the Tide" flag (Arc V
+  // Ch.4 — flat +5% HP/MP, ~8% damage reduction, a haste windfall off
+  // Shield Wall) as tier 1 exactly as it already worked, unlocked by
+  // that chapter rather than points — accumulated points push it
+  // further into tiers 2+ with bigger versions of the same effects.
+  // San & Crew and San & The Later Trio (Mimi/Renn/Erynn) are both
+  // brand new, and route their bonuses through the existing
+  // getReputationBonus() aggregator (see ct-build-v91-reputation-ranks)
+  // rather than new combat hook points, the same way Ch.4's civilian
+  // roles already do — so no new call sites needed in combat math for
+  // either of those two.
+  // -------------------------------------------------------------------
+  const BOND_POINTS_PER_ACTION = 15;
+
+  const SAN_JOEL_TIERS = [
+    {threshold:0,   name:'Not Yet Bonded',       hpMpPct:0,  dmgReductionPct:0,  hasteTurns:0, hastePct:0},
+    {threshold:0,   name:'Bonded by the Tide',   hpMpPct:5,  dmgReductionPct:8,  hasteTurns:2, hastePct:10}, // tier 1 — unlocked by Arc V Ch.4, not points, matches the original mechanic exactly
+    {threshold:100, name:'Steady as the Tide',   hpMpPct:8,  dmgReductionPct:11, hasteTurns:2, hastePct:13},
+    {threshold:250, name:'Anchored Together',    hpMpPct:11, dmgReductionPct:14, hasteTurns:3, hastePct:16},
+    {threshold:500, name:'Two Hearts, One Ship', hpMpPct:15, dmgReductionPct:18, hasteTurns:3, hastePct:20}
+  ];
+  const SAN_CREW_TIERS = [
+    {threshold:0,   name:'Strangers Still',      bonus:0},
+    {threshold:50,  name:'Getting to Know Them', bonus:0.02},
+    {threshold:150, name:'Trusted Hands',        bonus:0.04},
+    {threshold:300, name:'Found Family',         bonus:0.06},
+    {threshold:600, name:'This Is Home',         bonus:0.08}
+  ];
+  const SAN_TRIO_TIERS = [
+    {threshold:0,   name:'Just Colleagues',        bonus:0},
+    {threshold:50,  name:'Comparing Notes',        bonus:0.02},
+    {threshold:150, name:'Three Minds, One Idea',  bonus:0.04},
+    {threshold:300, name:'The Research Circle',    bonus:0.06},
+    {threshold:600, name:'Kindred Curiosity',      bonus:0.08}
+  ];
+
+  const BOND_TRACKS = {
+    san_joel: {label:'San & Joel', icon:'⚓', tiers:SAN_JOEL_TIERS, members:['san','joel'],
+      actionLabel:'Spend a quiet evening with Joel', flavor:'A quiet moment together, away from the crew.'},
+    san_crew: {label:'San & Crew', icon:'👥', tiers:SAN_CREW_TIERS, minCrewCount:3,
+      actionLabel:'Spend time with the crew', flavor:'An evening on deck with whoever\'s around.'},
+    san_trio: {label:'San & The Later Trio', icon:'🔮', tiers:SAN_TRIO_TIERS, members:['mimi','renn','erynn'],
+      actionLabel:'Sit in on their research', flavor:'Mimi, Renn, and Erynn, deep in an argument about something San only half-understands.'}
+  };
+  window.BOND_TRACKS = BOND_TRACKS;
+
+  function bondState(){
+    game.bonds = game.bonds || {};
+    Object.keys(BOND_TRACKS).forEach(k => { game.bonds[k] = game.bonds[k] || {points:0, lastSpentDay:-1}; });
+    return game.bonds;
+  }
+  window.bondState = bondState;
+
+  // Tier index for a track, given its raw points. San & Joel additionally
+  // needs Ch.4 read to unlock tier 1 at all (see bondTier below) — the
+  // other two tracks have no chapter gate, tier 1 is just the first
+  // point threshold like any normal tier ladder.
+  function tierIndexForPoints(tiers, points){
+    let idx = 0;
+    for (let i=0;i<tiers.length;i++){ if (points >= tiers[i].threshold) idx = i; }
+    return idx;
+  }
+
+  window.bondTier = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return 0;
+    if (trackKey === 'san_joel' && !(game.comicProgress5 && game.comicProgress5[4])) return 0;
+    const points = bondState()[trackKey].points;
+    return tierIndexForPoints(track.tiers, points);
+  };
+
+  window.bondTierDef = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return null;
+    return track.tiers[window.bondTier(trackKey)];
+  };
+
+  // Whether the bonded character(s) are actually fielded right now — the
+  // synergy condition. San & Crew uses a headcount instead of named
+  // members (any 3+ non-San crew in the active party); the other two
+  // need their specific named members all present.
+  window.bondSynergyActive = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return false;
+    if (window.bondTier(trackKey) < 1) return false;
+    const party = (typeof getActiveParty === 'function') ? getActiveParty() : [];
+    const activeIds = new Set(party.map(m=>m.id));
+    if (track.minCrewCount) {
+      const crewCount = party.filter(m => m.id !== 'san').length;
+      return crewCount >= track.minCrewCount;
+    }
+    return track.members.every(id => {
+      if (!activeIds.has(id)) return false;
+      const hp = (game.partyHp && game.partyHp[id] != null) ? game.partyHp[id] : 1;
+      return hp > 0;
+    });
+  };
+
+  window.canSpendTimeOnBond = function(trackKey){
+    const bs = bondState()[trackKey];
+    if (!bs) return false;
+    return bs.lastSpentDay !== game.day;
+  };
+
+  window.spendTimeWithBond = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return;
+    if (!window.canSpendTimeOnBond(trackKey)) { toast('Already spent time on this today.'); return; }
+    const bs = bondState()[trackKey];
+    bs.points += BOND_POINTS_PER_ACTION;
+    bs.lastSpentDay = game.day;
+    const newTier = window.bondTier(trackKey);
+    toast('💞 ' + track.flavor, 3200);
+    logEvent('💞 ' + track.label + ': +' + BOND_POINTS_PER_ACTION + ' bond points.', 'good');
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+  };
+
+  // -------------------------------------------------------------------
+  // San & Joel — replaces the old standalone bondedTideActive() with a
+  // tier-aware version. Tier 1's gate (Ch.4 read + both alive+fielded)
+  // is EXACTLY the original condition, so every existing call site that
+  // already checks bondedTideActive() keeps working unchanged. What
+  // changes is that those call sites now pull their actual numbers from
+  // the current tier instead of hardcoded 1.05/0.92/2-turns/10% — so
+  // tiers 2+ scale those same three effects up automatically.
+  // -------------------------------------------------------------------
+  window.bondedTideActive = function(){
+    if (window.bondTier('san_joel') < 1) return false;
+    const activeIds = new Set((typeof getActiveParty==='function' ? getActiveParty() : []).map(m=>m.id));
+    if(!activeIds.has('san') || !activeIds.has('joel')) return false;
+    const sanHp = (game.partyHp && game.partyHp['san'] != null) ? game.partyHp['san'] : 1;
+    const joelHp = (game.partyHp && game.partyHp['joel'] != null) ? game.partyHp['joel'] : 1;
+    return sanHp > 0 && joelHp > 0;
+  };
+  window.sanJoelBondValues = function(){
+    return SAN_JOEL_TIERS[window.bondTier('san_joel')] || SAN_JOEL_TIERS[0];
+  };
+
+  // -------------------------------------------------------------------
+  // San & Crew (gold+xp) and San & Trio (crit) bonuses feed into the
+  // same getReputationBonus() aggregator every other bonus source
+  // already uses (reputation ranks, roster bonuses, civilian roles) —
+  // wrapping it here rather than reaching into ct-build-v91's closure
+  // directly, same cross-block pattern already established for those.
+  // Only active while each track's synergy condition is actually true
+  // right now (bonded members fielded) — unlike the other sources here,
+  // this one can turn on and off turn to turn depending on party comp.
+  // -------------------------------------------------------------------
+  const oldGetReputationBonusForBonds = window.getReputationBonus;
+  window.getReputationBonus = function(statKey){
+    let total = oldGetReputationBonusForBonds ? oldGetReputationBonusForBonds(statKey) : 0;
+    if (window.bondSynergyActive('san_crew')) {
+      const def = SAN_CREW_TIERS[window.bondTier('san_crew')];
+      if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
+    }
+    if (window.bondSynergyActive('san_trio')) {
+      const def = SAN_TRIO_TIERS[window.bondTier('san_trio')];
+      if (def && statKey === 'critBonus') total += def.bonus;
+    }
+    return total;
+  };
+
+  // -------------------------------------------------------------------
+  // Fair Tide Hub tab.
+  // -------------------------------------------------------------------
+  const oldRenderFairTideHubForBonds = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    const tab = game.fairTideActiveTab || 'buildings';
+    const el = document.getElementById('ft-tab-bonds');
+    const btn = document.getElementById('ft-tab-btn-bonds');
+    if (el) el.classList.toggle('active', tab==='bonds');
+    if (btn) btn.classList.toggle('active', tab==='bonds');
+    if (oldRenderFairTideHubForBonds) oldRenderFairTideHubForBonds();
+    if (tab==='bonds') renderBondsTab();
+  };
+
+  function renderBondsTab(){
+    const el = document.getElementById('ft-tab-bonds');
+    if (!el) return;
+    let html = '<div class="panel-title">💞 Bonds</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Once a day per bond. The stronger the bond, the better it is to have them at your side — but only while they actually are.</p>';
+    Object.keys(BOND_TRACKS).forEach(key=>{
+      const track = BOND_TRACKS[key];
+      const tierIdx = window.bondTier(key);
+      const tierDef = track.tiers[tierIdx];
+      const nextTier = track.tiers[tierIdx+1];
+      const points = bondState()[key].points;
+      const synergyActive = window.bondSynergyActive(key);
+      const canSpend = window.canSpendTimeOnBond(key);
+      const gatedOut = key==='san_joel' && !(game.comicProgress5 && game.comicProgress5[4]);
+      let bonusText;
+      if (key === 'san_joel') {
+        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + tierDef.hpMpPct + '% HP/MP · -' + tierDef.dmgReductionPct + '% damage taken · haste on Shield Wall');
+      } else {
+        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus*100) + '% ' + (key==='san_crew' ? 'gold & XP' : 'crit chance'));
+      }
+      html += '<article class="quest-item"><strong>'+track.icon+' '+esc(track.label)+'</strong> — <span style="opacity:.8;">'+esc(tierDef.name)+'</span><br>'+
+        '<span style="font-size:.78rem;opacity:.75;">'+bonusText+'</span><br>'+
+        '<span style="font-size:.76rem;opacity:.7;">'+(synergyActive?'✅ Active right now':'⚪ Not active — bonded members must be fielded')+'</span>'+
+        (nextTier ? '<br><span style="font-size:.74rem;opacity:.6;">'+points+' / '+nextTier.threshold+' to next tier</span>' : '<br><span style="font-size:.74rem;opacity:.6;">Max tier reached</span>')+
+        (gatedOut
+          ? '<br><span style="font-size:.76rem;opacity:.65;">🔒 Continue Arc V to unlock.</span>'
+          : '<div style="margin-top:6px;"><button class="btn btn-small btn-success" '+(canSpend?'':'disabled')+' onclick="spendTimeWithBond(\''+key+'\')">💞 '+esc(track.actionLabel)+'</button></div>')+
+        '</article>';
+    });
+    el.innerHTML = html;
+  }
+})();
+</script>
+
+
+<script id="ct-build-v123-captains-quarters">
+(function(){
+  // -------------------------------------------------------------------
+  // CAPTAIN'S QUARTERS — a rest space at Fair Tide for San, Joel, and
+  // the crew. Shares game.freeRestDay with the generic Seafarer's Rest
+  // (freeRestAtPort, see the bug-fix comment on that function) rather
+  // than having its own separate daily lock — this is a nicer, safer
+  // version of the SAME daily rest, not a second free heal stacked on
+  // top of it. The one real difference: zero encounter risk, since
+  // you're safely home instead of resting out at some other port.
+  // -------------------------------------------------------------------
+  window.restInCaptainsQuarters = function(){
+    if (game.freeRestDay === game.day) {
+      toast('Already rested today.');
+      return;
+    }
+    game.freeRestDay = game.day;
+    game.partyHp = game.partyHp || {};
+    game.partyMp = game.partyMp || {};
+    const permanent = typeof getActiveParty === 'function' ? getActiveParty() : [];
+    permanent.forEach(m => {
+      game.partyHp[m.id] = effectiveMaxHp(m);
+      game.partyMp[m.id] = effectiveMaxMp(m);
+    });
+    (game.temporaryCrew || []).forEach(m => {
+      game.partyHp[m.id] = Number(m.maxHp || m.hp || 1);
+      game.partyMp[m.id] = Number(m.maxMp || m.mp || 0);
+    });
+    if ('health' in game && 'maxHealth' in game) game.health = game.maxHealth;
+    logEvent('🏠 The crew rests in the Captain\'s Quarters. Everyone is fully recovered — no danger here, not tonight.', 'good');
+    toast('🏠 A quiet night at Fair Tide. Everyone is fully recovered.', 3600);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof updateUI === 'function') updateUI();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+  };
+
+  const oldRenderFairTideHubForQuarters = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    const tab = game.fairTideActiveTab || 'buildings';
+    const el = document.getElementById('ft-tab-quarters');
+    const btn = document.getElementById('ft-tab-btn-quarters');
+    if (el) el.classList.toggle('active', tab==='quarters');
+    if (btn) btn.classList.toggle('active', tab==='quarters');
+    if (oldRenderFairTideHubForQuarters) oldRenderFairTideHubForQuarters();
+    if (tab==='quarters') renderQuartersTab();
+  };
+
+  function renderQuartersTab(){
+    const el = document.getElementById('ft-tab-quarters');
+    if (!el) return;
+    const usedToday = game.freeRestDay === game.day;
+    let html = '<div class="panel-title">🏠 Captain\'s Quarters</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">San and Joel\'s quarters — and, whenever the crew needs it, everyone else\'s too. The one place on this whole voyage nobody has to keep one eye on the door.</p>'+
+      '<article class="quest-item"><strong>🛏️ Rest Here</strong><br>'+
+      '<span style="font-size:.8rem;opacity:.8;">FREE · Recover 100% HP/MP · No encounter risk — you\'re home.</span><br>';
+    if (usedToday) {
+      html += '<span style="font-size:.78rem;opacity:.7;margin-top:6px;display:block;">Already rested today. Come back tomorrow.</span>';
+    } else {
+      html += '<button class="btn btn-small btn-success" style="margin-top:6px;" onclick="restInCaptainsQuarters()">🏠 Rest in the Quarters</button>';
+    }
+    html += '</article>';
+    el.innerHTML = html;
+  }
 })();
 </script>
 
