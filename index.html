@@ -1797,6 +1797,7 @@ body{
       <button class="tab-btn" id="ft-tab-btn-training" onclick="switchFairTideTab('training')">⚔️ Training Room</button>
       <button class="tab-btn" id="ft-tab-btn-bonds" onclick="switchFairTideTab('bonds')">💞 Bonds</button>
       <button class="tab-btn" id="ft-tab-btn-quarters" onclick="switchFairTideTab('quarters')">🏠 Captain's Quarters</button>
+      <button class="tab-btn" id="ft-tab-btn-expedition" onclick="switchFairTideTab('expedition')">🔭 Research Expedition</button>
     </div>
     <div class="panel">
       <div id="ft-tab-buildings" class="tab-content active"></div>
@@ -1808,6 +1809,7 @@ body{
       <div id="ft-tab-training" class="tab-content"></div>
       <div id="ft-tab-bonds" class="tab-content"></div>
       <div id="ft-tab-quarters" class="tab-content"></div>
+      <div id="ft-tab-expedition" class="tab-content"></div>
     </div>
   </div>
 </div>
@@ -6462,6 +6464,11 @@ function handleVictory() {
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="continueUnchartedReach()">🌊 Continue Into the Reach</button>' +
       '<button class="btn btn-danger" onclick="retreatUnchartedReach()">🏳️ Retreat (keep rewards)</button>';
+  } else if (enemy.kind === 'expedition') {
+    postBattleMessage = 'Wave ' + (game.expedition ? game.expedition.wave : '') + ' cleared!';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="continueResearchExpedition()">🔭 Continue the Expedition</button>' +
+      '<button class="btn btn-danger" onclick="retreatResearchExpedition()">🏳️ Return to Fair Tide (keep findings)</button>';
   } else if (enemy.kind === 'training') {
     postBattleMessage = 'A good bout.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="backToTrainingRoom()">⚔️ Back to the Training Room</button>';
@@ -7088,7 +7095,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V127 · Story-Required Fielding'</script>
+<script>window.__CT_BUILD__='V129 · Research Expedition Mode'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -11559,6 +11566,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 
   window.toggleFielded = function(id){
     if (id === 'san') { toast('San is always fielded.'); return; }
+    // BUG FIX: Soel's own description says "chose San, and can't be
+    // unchosen" — but only San herself was hard-blocked here, so Soel
+    // could actually be benched despite that. Blocking him the same way.
+    if (id === 'soel') { toast('Soel chose San. He goes wherever she goes.'); return; }
     const required = window.getRequiredFieldedIds();
     if (required.includes(id) && window.isFielded(id)) {
       const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
@@ -11602,6 +11613,182 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // reassignment too.
   if (typeof getCrimsonCombatParty === 'function') {
     getCrimsonCombatParty = window.getCrimsonCombatParty;
+  }
+})();
+</script>
+
+
+<script id="ct-build-v129-research-expedition">
+(function(){
+  // -------------------------------------------------------------------
+  // RESEARCH EXPEDITION — a standalone side-activity for San, Joel,
+  // Soel, and the research trio, unlocked once Arc VIII is complete.
+  // Deliberately not tied to any chapter. Reuses the exact wave/streak
+  // combat structure the Uncharted Reach already proved out (see
+  // ct-build-v92), just with a different enemy pool, no gold/trophy
+  // rewards, and two new banked resources — Knowledge and Residue
+  // (named for the "strange magical residue" from Arc VIII Ch.18 —
+  // this is that same substance, now being actively gathered) — instead
+  // of gold. Neither resource is spendable yet; Arc IX+ will eventually
+  // let San "renovate" the Horizon Engine the same way Fair Tide's
+  // buildings already work, contributing what's been collected here.
+  // The party used is just whatever's currently fielded — no separate
+  // roster override needed, since by the time this unlocks (post-Arc
+  // VIII), Renn/Erynn/Mimi are already story-required and Joel/Soel are
+  // already free-field, so the "Horizon Team" forms naturally on its
+  // own without any extra plumbing here.
+  // -------------------------------------------------------------------
+  const EXPEDITION_ENEMIES = {
+    boundary_wisp:     {name:'Boundary Wisp',     icon:'✨', hp:180, dmg:12, xp:120, knowledge:8,  residue:2,  desc:'A flicker of something that shouldn\'t exist in open air.'},
+    drifting_anomaly:  {name:'Drifting Anomaly',  icon:'🌀', hp:240, dmg:15, xp:150, knowledge:6,  residue:5,  desc:'Space folds slightly wrong around it. Nobody\'s eyes agree on its shape.'},
+    farseer_construct: {name:'Farseer Construct', icon:'🗿', hp:340, dmg:20, xp:220, knowledge:12, residue:4,  desc:'An old guardian, built to watch a boundary that may not exist anymore.'},
+    veyren_echo:       {name:'Veyren Echo',       icon:'👁️', hp:280, dmg:18, xp:190, knowledge:10, residue:6,  desc:'Not alive, exactly. A memory the world itself is still having.'},
+    residue_wraith:    {name:'Residue Wraith',    icon:'🔮', hp:220, dmg:16, xp:170, knowledge:5,  residue:10, desc:'Made of the same substance Mimi, Renn, and Erynn brought back with them.'},
+    marker_guardian:   {name:'Marker Guardian',   icon:'🪨', hp:400, dmg:22, xp:260, knowledge:14, residue:3,  desc:'Older than Varel\'s own records. It has been waiting for someone to ask the right question.'}
+  };
+  window.EXPEDITION_ENEMIES = EXPEDITION_ENEMIES;
+
+  function expState(){ game.expedition = game.expedition || {active:false, wave:0, totalKills:0, totalKnowledge:0, totalResidue:0}; return game.expedition; }
+  window.expeditionState = expState;
+
+  function horizonEngineState(){ game.horizonEngine = game.horizonEngine || {knowledge:0, residue:0}; return game.horizonEngine; }
+  window.horizonEngineState = horizonEngineState;
+
+  // Capped at 99% deliberately — actually completing the Horizon Engine
+  // needs to stay a scripted story beat (Arc IX+), not something a
+  // player can just grind their way past. 20 combined points = 1%.
+  window.getHorizonEngineDevelopmentPct = function(){
+    const h = horizonEngineState();
+    return Math.min(99, Math.floor((h.knowledge + h.residue) / 20));
+  };
+
+  window.isExpeditionUnlocked = function(){
+    return !!game.arc8Complete;
+  };
+
+  function expeditionEnemyPool(){
+    return Object.entries(EXPEDITION_ENEMIES);
+  }
+
+  function generateExpeditionEnemy(wave){
+    const pool = expeditionEnemyPool();
+    const [key, base] = pool[Math.floor(Math.random()*pool.length)];
+    const scaled = (typeof scaleCrimsonEnemy==='function') ? scaleCrimsonEnemy(base, 'harbor') : base;
+    const streakMult = 1 + Math.max(0, wave-1) * 0.05;
+    return {
+      ...scaled,
+      name: base.name,
+      icon: base.icon,
+      desc: base.desc,
+      hp: Math.max(1, Math.round(scaled.hp * streakMult)),
+      dmg: Math.max(1, Math.round((scaled.dmg||10) * streakMult)),
+      xp: Math.max(1, Math.round(base.xp * streakMult)),
+      gold: 0, // deliberately no gold from these — Knowledge/Residue are the point, not loot
+      knowledge: Math.max(1, Math.round(base.knowledge * streakMult)),
+      residue: Math.max(1, Math.round(base.residue * streakMult)),
+      _expeditionKey: key
+    };
+  }
+
+  window.spawnExpeditionWave = function(){
+    const es = expState();
+    es.active = true;
+    es.wave++;
+    const enemy = generateExpeditionEnemy(es.wave);
+    toast('🔭 Research Expedition — Wave ' + es.wave + (es.wave>1 ? ' (+' + Math.round((es.wave-1)*5) + '% tougher)' : ''), 2600);
+    startCombat({kind:'expedition', key: enemy._expeditionKey, enemy});
+  };
+
+  window.enterResearchExpedition = function(){
+    if (!window.isExpeditionUnlocked()) { toast('🔒 Complete Arc VIII first.'); return; }
+    const es = expState();
+    es.active = true;
+    es.wave = 0;
+    es.totalKills = 0;
+    es.totalKnowledge = 0;
+    es.totalResidue = 0;
+    window.spawnExpeditionWave();
+  };
+
+  window.continueResearchExpedition = function(){
+    if (!expState().active) return;
+    window.spawnExpeditionWave();
+  };
+
+  window.retreatResearchExpedition = function(){
+    const es = expState();
+    toast('🏳️ Expedition ends at wave ' + es.wave + '. Everything gathered is kept.', 3600);
+    logEvent('🔭 Research Expedition ended at wave ' + es.wave + '. Knowledge: ' + es.totalKnowledge + ' · Residue: ' + es.totalResidue, 'gold');
+    es.active = false;
+    game.inCombat = false;
+    game.pendingPostBattle = null;
+    if (game.uncharted && game.uncharted.active) game.uncharted.active = false; // same stale-session guard as startCombat's own, belt and suspenders
+    saveGameQuiet();
+    if (typeof goScreen === 'function') goScreen('fairtide');
+    if (typeof window.switchFairTideTab === 'function') window.switchFairTideTab('expedition');
+  };
+
+  // -------------------------------------------------------------------
+  // Victory hook — mirrors the Uncharted Reach's own hook (top-up grant
+  // on top of whatever gainXP already awarded, not reaching back to
+  // modify it) but banks Knowledge/Residue into BOTH this run's totals
+  // and the permanent Horizon Engine bank, instead of gold.
+  // -------------------------------------------------------------------
+  const oldHandleVictoryForExpedition = window.handleVictory;
+  window.handleVictory = function(){
+    if (oldHandleVictoryForExpedition) oldHandleVictoryForExpedition();
+    const enemy = game.combatEnemy;
+    if (!enemy || enemy.kind !== 'expedition') return;
+    const es = expState();
+    const he = horizonEngineState();
+    es.totalKills++;
+    es.totalKnowledge += enemy.knowledge;
+    es.totalResidue += enemy.residue;
+    he.knowledge += enemy.knowledge;
+    he.residue += enemy.residue;
+    logCombat('🔭 +' + enemy.knowledge + ' Knowledge, +' + enemy.residue + ' Residue.');
+  };
+
+  // -------------------------------------------------------------------
+  // Fair Tide Hub tab — a real dedicated screen, not log entries, per
+  // the whole point of building this as something San can actually see.
+  // -------------------------------------------------------------------
+  const oldRenderFairTideHubForExpedition = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    const tab = game.fairTideActiveTab || 'buildings';
+    const el = document.getElementById('ft-tab-expedition');
+    const btn = document.getElementById('ft-tab-btn-expedition');
+    if (el) el.classList.toggle('active', tab==='expedition');
+    if (btn) btn.classList.toggle('active', tab==='expedition');
+    if (oldRenderFairTideHubForExpedition) oldRenderFairTideHubForExpedition();
+    if (tab==='expedition') renderExpeditionTab();
+  };
+
+  function renderExpeditionTab(){
+    const el = document.getElementById('ft-tab-expedition');
+    if (!el) return;
+    if (!window.isExpeditionUnlocked()) {
+      el.innerHTML = '<div class="panel-title">🔭 Research Expedition</div>'+
+        '<div class="story-chip">🔒 Complete Arc VIII to unlock. The Horizon Team isn\'t ready to go looking for trouble on its own yet.</div>';
+      return;
+    }
+    const he = horizonEngineState();
+    const es = expState();
+    const pct = window.getHorizonEngineDevelopmentPct();
+    let html = '<div class="panel-title">🔭 Research Expedition</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">San, Joel, Soel, and the Horizon Team go looking for whatever\'s still out there. Whatever they bring back gets set aside — for later.</p>'+
+      '<div style="margin-bottom:10px;"><strong>Horizon Engine Development</strong>'+
+      '<div class="ship-stat-bar" style="width:100%;margin:4px 0;"><div class="ship-stat-fill" style="width:'+pct+'%;background:#e8c96a;"></div></div>'+
+      '<span style="font-size:.78rem;opacity:.75;">'+pct+'% — still a research project. Nothing\'s been built yet.</span></div>'+
+      '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+'</div>';
+    if (es.active) {
+      html += '<div class="story-chip" style="border-left-color:var(--danger);">Currently out at Wave '+es.wave+'<br>'+
+        'Kills: '+es.totalKills+' · Knowledge this run: '+es.totalKnowledge+' · Residue this run: '+es.totalResidue+'<br>'+
+        '<button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="goScreen(\'combat\')">↩️ Return to the Expedition</button></div>';
+    } else {
+      html += '<button class="btn btn-success" onclick="enterResearchExpedition()">🔭 Set Out</button>';
+    }
+    el.innerHTML = html;
   }
 })();
 </script>
