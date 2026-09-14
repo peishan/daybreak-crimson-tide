@@ -6897,6 +6897,9 @@ function renderPartyScreen() {
       const isSan = m.id === 'san';
       const requiredIds = (typeof window.getRequiredFieldedIds === 'function') ? window.getRequiredFieldedIds() : [];
       const isRequired = requiredIds.includes(m.id);
+      const freeSlotHint = (typeof window.isFreeFieldId === 'function' && window.isFreeFieldId(m.id) && m.id !== 'san')
+        ? `<div style="font-size:.72rem;opacity:.7;margin-top:4px;">${m.id === 'soel' ? '🐾 A familiar' : '💞 Bonded to San'} — never counts against the fielding cap.</div>`
+        : '';
 
       return `<div class="panel" style="${fielded?'':'opacity:.72;'}">
         <div class="panel-title">${m.portrait} ${m.name} ${fielded ? '<span style="font-size:.7rem;color:var(--success);">⚔️ Fielded</span>' : '<span style="font-size:.7rem;opacity:.7;">⚓ At Fair Tide</span>'}</div>
@@ -6914,7 +6917,7 @@ function renderPartyScreen() {
         ${spells.length ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Spells:</strong> ${spells.slice(0, 4).map(s => s.icon + ' ' + s.name).join(', ')}${spells.length > 4 ? '...' : ''}</div>` : ''}
         ${affinity.n ? `<div style="font-size:0.85rem;margin-bottom:8px;color:#e8c96a;"><strong>Affinity:</strong> ${affinity.n}</div>` : ''}
         ${trophy ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Equipped:</strong> ${trophy.icon} ${trophy.name} (${(TRINKET_BONUS[trophy.icon] && TRINKET_BONUS[trophy.icon].label) || ''})</div>` : ''}
-        ${isSan ? '' : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${m.id === 'soel' ? '<div style="font-size:.72rem;opacity:.7;margin-top:4px;">🐾 A familiar — never counts against the fielding cap.</div>' : ''}`}
+        ${isSan ? '' : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' + freeSlotHint : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${freeSlotHint}`}
         </div>`;
     }).join('') + '</div>';
   container.innerHTML = html;
@@ -11455,7 +11458,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // bonded to rather than competing for room in the party roster. Soel can
   // still be voluntarily sent to Fair Tide like anyone else; she just never
   // counts against fieldCap, and fielding her never fails on a full party.
-  const FREE_FIELD_IDS = new Set(['san', 'soel']);
+  // Joel joins this list too — San and Joel are the emotional core of the
+  // story and (from Arc V on, see getRequiredFieldedIds) can't be fielded
+  // without each other anyway, so he shouldn't cost a slot either.
+  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel']);
   window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
 
   // Self-healing rather than hooked into every companion-recruitment call
@@ -11479,9 +11485,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // -------------------------------------------------------------------
   window.getRequiredFieldedIds = function(){
     let required = [];
-    if (typeof window.arc6ObjectiveState === 'function' && window.arc6ObjectiveState() !== null) required = ['renn'];
-    if (typeof window.arc7ObjectiveState === 'function' && window.arc7ObjectiveState() !== null) required = ['renn','erynn'];
-    if (typeof window.arc8ObjectiveState === 'function' && window.arc8ObjectiveState() !== null) required = ['renn','erynn','mimi'];
+    // BUG FIX: this used to be `required = [...]` (reassignment) at each
+    // arc check, so a later arc's list had to remember to re-include every
+    // earlier arc's requirement by hand — fragile, and would have broken
+    // silently the moment Joel's requirement (below) needed to survive
+    // into Arc VI+ without arc6's line explicitly re-listing him. Push
+    // instead, so each condition only ever adds its own id.
+    if (typeof window.arc5ObjectiveState === 'function' && window.arc5ObjectiveState() !== null) required.push('joel');
+    if (typeof window.arc6ObjectiveState === 'function' && window.arc6ObjectiveState() !== null) required.push('renn');
+    if (typeof window.arc7ObjectiveState === 'function' && window.arc7ObjectiveState() !== null) required.push('erynn');
+    if (typeof window.arc8ObjectiveState === 'function' && window.arc8ObjectiveState() !== null) required.push('mimi');
     const unlockedIds = new Set((typeof getActiveParty === 'function' ? getActiveParty() : []).map(m => m.id));
     return required.filter(id => unlockedIds.has(id));
   };
@@ -11517,6 +11530,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const required = window.getRequiredFieldedIds();
     required.forEach(reqId => {
       if (game.fieldedIds.includes(reqId)) return;
+      if (FREE_FIELD_IDS.has(reqId)) { game.fieldedIds.push(reqId); return; }
       const nonExemptCount = game.fieldedIds.filter(id => !FREE_FIELD_IDS.has(id)).length;
       if (nonExemptCount >= cap) {
         for (let i = game.fieldedIds.length - 1; i >= 0; i--) {
