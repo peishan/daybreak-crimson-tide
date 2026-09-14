@@ -1841,7 +1841,7 @@ body{
         </div>
         <div class="panel">
           <div class="panel-title">🛏️ Rest & Recuperate</div>
-          <p style="font-size: 0.85rem; margin-bottom: 12px;">Paid tavern rest gives stronger recovery. A free seafarer's rest is available at port.</p>
+          <p style="font-size: 0.85rem; margin-bottom: 12px;">One rest per day, shared with the free seafarer's site at port — pay 15g here for the same recovery without the risk of an ambush. Fair Tide's Captain's Quarters, once available, rests for free with no daily limit.</p>
           <button class="btn btn-success" onclick="restAtTavern()">🛏️ Tavern Rest (15g)</button>
           <button class="btn" onclick="listenForRumors()">👂 Listen for Rumors (5g)</button>
         </div>
@@ -5294,7 +5294,16 @@ function restoreAllAboardCrew() {
     game.partyMp[m.id] = Number(m.maxMp || m.mp || 0);
   });
 }
+// Shares game.freeRestDay with freeRestAtPort — one rest per day between
+// the two of them, matching "the free site and the paid tavern are both
+// still just resting somewhere out in the world" versus Captain's Quarters
+// (see restInCaptainsQuarters), which is deliberately unlimited since it's
+// the one place meant to always be safe and available.
 function restAtTavern() {
+  if (game.freeRestDay === game.day) {
+    toast('Already rested today. Come back tomorrow — or head home to the Captain\'s Quarters, which is always free.');
+    return;
+  }
   const cost = 15;
   if ((game.gold || 0) < cost) {
     toast('You need 15g for a tavern rest.');
@@ -5302,6 +5311,7 @@ function restAtTavern() {
   }
 
   game.gold -= cost;
+  game.freeRestDay = game.day;
   game.partyHp = game.partyHp || {};
   game.partyMp = game.partyMp || {};
 
@@ -6867,8 +6877,11 @@ function renderPartyScreen() {
   const fieldedIds = (typeof window.getFieldedIds === 'function') ? new Set(window.getFieldedIds()) : null;
   let html = '';
   if (fieldCap) {
+    const nonExemptFielded = (typeof window.isFreeFieldId === 'function')
+      ? [...fieldedIds].filter(id => !window.isFreeFieldId(id)).length
+      : fieldedIds.size;
     html += '<div class="panel" style="margin-bottom:12px;"><div class="panel-title">⚔️ Fielded for the Voyage</div>'+
-      '<p style="font-size:.85rem;opacity:.85;">'+fieldedIds.size+' / '+fieldCap+' fielded. Everyone else is at Fair Tide — send someone home to make room, or bring someone new aboard.</p></div>';
+      '<p style="font-size:.85rem;opacity:.85;">'+nonExemptFielded+' / '+fieldCap+' fielded. Everyone else is at Fair Tide — send someone home to make room, or bring someone new aboard. San and Soel are always with the crew and never count against this.</p></div>';
   }
   html += '<div class="main-grid">' +
     party.map(m => {
@@ -6901,7 +6914,7 @@ function renderPartyScreen() {
         ${spells.length ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Spells:</strong> ${spells.slice(0, 4).map(s => s.icon + ' ' + s.name).join(', ')}${spells.length > 4 ? '...' : ''}</div>` : ''}
         ${affinity.n ? `<div style="font-size:0.85rem;margin-bottom:8px;color:#e8c96a;"><strong>Affinity:</strong> ${affinity.n}</div>` : ''}
         ${trophy ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Equipped:</strong> ${trophy.icon} ${trophy.name} (${(TRINKET_BONUS[trophy.icon] && TRINKET_BONUS[trophy.icon].label) || ''})</div>` : ''}
-        ${isSan ? '' : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>`}
+        ${isSan ? '' : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${m.id === 'soel' ? '<div style="font-size:.72rem;opacity:.7;margin-top:4px;">🐾 A familiar — never counts against the fielding cap.</div>' : ''}`}
         </div>`;
     }).join('') + '</div>';
   container.innerHTML = html;
@@ -11357,19 +11370,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 (function(){
   // -------------------------------------------------------------------
   // CAPTAIN'S QUARTERS — a rest space at Fair Tide for San, Joel, and
-  // the crew. Shares game.freeRestDay with the generic Seafarer's Rest
-  // (freeRestAtPort, see the bug-fix comment on that function) rather
-  // than having its own separate daily lock — this is a nicer, safer
-  // version of the SAME daily rest, not a second free heal stacked on
-  // top of it. The one real difference: zero encounter risk, since
-  // you're safely home instead of resting out at some other port.
+  // the crew. Unlimited, unlike every other rest option (freeRestAtPort
+  // and restAtTavern both share one daily allowance via game.freeRestDay —
+  // see their own comments) — home doesn't run out of nights to offer.
+  // Used to share that same daily lock with freeRestAtPort, which meant
+  // resting here used up your one daily rest everywhere else too; that's
+  // backwards for the one place explicitly meant to always be available.
   // -------------------------------------------------------------------
   window.restInCaptainsQuarters = function(){
-    if (game.freeRestDay === game.day) {
-      toast('Already rested today.');
-      return;
-    }
-    game.freeRestDay = game.day;
     game.partyHp = game.partyHp || {};
     game.partyMp = game.partyMp || {};
     const permanent = typeof getActiveParty === 'function' ? getActiveParty() : [];
@@ -11403,16 +11411,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   function renderQuartersTab(){
     const el = document.getElementById('ft-tab-quarters');
     if (!el) return;
-    const usedToday = game.freeRestDay === game.day;
     let html = '<div class="panel-title">🏠 Captain\'s Quarters</div>'+
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">San and Joel\'s quarters — and, whenever the crew needs it, everyone else\'s too. The one place on this whole voyage nobody has to keep one eye on the door.</p>'+
       '<article class="quest-item"><strong>🛏️ Rest Here</strong><br>'+
-      '<span style="font-size:.8rem;opacity:.8;">FREE · Recover 100% HP/MP · No encounter risk — you\'re home.</span><br>';
-    if (usedToday) {
-      html += '<span style="font-size:.78rem;opacity:.7;margin-top:6px;display:block;">Already rested today. Come back tomorrow.</span>';
-    } else {
-      html += '<button class="btn btn-small btn-success" style="margin-top:6px;" onclick="restInCaptainsQuarters()">🏠 Rest in the Quarters</button>';
-    }
+      '<span style="font-size:.8rem;opacity:.8;">FREE · Unlimited · Recover 100% HP/MP · No encounter risk — you\'re home.</span><br>'+
+      '<button class="btn btn-small btn-success" style="margin-top:6px;" onclick="restInCaptainsQuarters()">🏠 Rest in the Quarters</button>';
     html += '</article>';
     el.innerHTML = html;
   }
@@ -11446,6 +11449,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const vessel = (typeof currentVessel === 'function') ? currentVessel() : null;
     return Number(vessel && vessel.fieldCap) || 4;
   };
+
+  // San (protagonist, always aboard) and Soel (her spirit familiar) don't
+  // consume a fielding slot — a familiar rides along with the person it's
+  // bonded to rather than competing for room in the party roster. Soel can
+  // still be voluntarily sent to Fair Tide like anyone else; she just never
+  // counts against fieldCap, and fielding her never fails on a full party.
+  const FREE_FIELD_IDS = new Set(['san', 'soel']);
+  window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
 
   // Self-healing rather than hooked into every companion-recruitment call
   // site (there are dozens, across every arc) — auto-fills open slots
@@ -11495,7 +11506,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     for (const m of party) {
       if (game.fieldingDecided.includes(m.id)) continue; // already decided, fielded or not — leave the player's choice alone
       game.fieldingDecided.push(m.id);
-      if (game.fieldedIds.length < cap) game.fieldedIds.push(m.id);
+      const nonExemptCount = game.fieldedIds.filter(id => !FREE_FIELD_IDS.has(id)).length;
+      if (FREE_FIELD_IDS.has(m.id) || nonExemptCount < cap) game.fieldedIds.push(m.id);
       // else: newly unlocked with no room — starts at Fair Tide, which is the expected default when the party's already full
     }
     // Force-include story-required companions, taking priority over
@@ -11505,10 +11517,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const required = window.getRequiredFieldedIds();
     required.forEach(reqId => {
       if (game.fieldedIds.includes(reqId)) return;
-      if (game.fieldedIds.length >= cap) {
+      const nonExemptCount = game.fieldedIds.filter(id => !FREE_FIELD_IDS.has(id)).length;
+      if (nonExemptCount >= cap) {
         for (let i = game.fieldedIds.length - 1; i >= 0; i--) {
           const candidateId = game.fieldedIds[i];
-          if (candidateId !== 'san' && !required.includes(candidateId)) {
+          if (!FREE_FIELD_IDS.has(candidateId) && !required.includes(candidateId)) {
             game.fieldedIds.splice(i, 1);
             break;
           }
@@ -11542,13 +11555,17 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     const ids = window.getFieldedIds();
     const cap = window.getShipFieldCap();
+    const exempt = FREE_FIELD_IDS.has(id);
     if (ids.includes(id)) {
       game.fieldedIds = ids.filter(fid => fid !== id);
       toast('⚓ Sent to Fair Tide.', 2200);
     } else {
-      if (ids.length >= cap) { toast('🚫 Fielded party is full (' + cap + '/' + cap + '). Send someone to Fair Tide first.'); return; }
+      if (!exempt) {
+        const nonExemptCount = ids.filter(fid => !FREE_FIELD_IDS.has(fid)).length;
+        if (nonExemptCount >= cap) { toast('🚫 Fielded party is full (' + cap + '/' + cap + '). Send someone to Fair Tide first.'); return; }
+      }
       game.fieldedIds = ids.concat([id]);
-      toast('⚔️ Fielded for the voyage.', 2200);
+      toast(exempt ? '🐾 Fielded — familiars don\'t take a party slot.' : '⚔️ Fielded for the voyage.', 2200);
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof renderPartyScreen === 'function') renderPartyScreen();
