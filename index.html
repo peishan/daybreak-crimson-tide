@@ -285,6 +285,17 @@ tr:hover { background: rgba(196,163,90,0.08); }
 }
 .quest-item.completed { opacity: 0.55; border-left-color: var(--success); }
 .chapter-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.potion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.potion-item {
+  border: 1px solid rgba(232,197,71,.25);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(0,0,0,.15);
+}
+.potion-item strong { font-size: .82rem; display: block; line-height: 1.25; }
+.potion-item .potion-effect { font-size: .68rem; opacity: .75; display: block; margin: 2px 0 4px; }
+.potion-item .potion-tier { font-size: .62rem; opacity: .55; display: block; margin-bottom: 4px; }
+.potion-item button { width: 100%; padding: 4px 6px; font-size: .78rem; }
 @media (min-width: 700px) { .chapter-grid { grid-template-columns: 1fr 1fr; } }
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -1887,6 +1898,21 @@ body{
         <button class="btn btn-small" onclick="document.getElementById('importFile').click()">📥 Import</button>
       </div>
     </div>
+    <div class="panel">
+      <div class="panel-title">☁️ GitHub Gist Backup</div>
+      <p style="font-size:.78rem;opacity:.8;margin-bottom:10px;">Extra offsite copy, just in case. Needs a <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener" style="color:var(--gold);">classic GitHub token</a> with only the <strong>gist</strong> scope checked — nothing else. Stored only on this device, sent only to GitHub's own servers.</p>
+      <input type="password" id="gistTokenInput" placeholder="ghp_... classic token, gist scope only" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(232,197,71,.3);background:rgba(0,0,0,.25);color:var(--parchment);font-size:.8rem;margin-bottom:8px;">
+      <input type="text" id="gistIdInput" placeholder="Gist ID (leave blank to create a new one)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(232,197,71,.3);background:rgba(0,0,0,.25);color:var(--parchment);font-size:.8rem;margin-bottom:8px;">
+      <div style="text-align:center;margin-bottom:8px;">
+        <button class="btn btn-small" onclick="saveGistCredsFromForm()">💾 Save Credentials</button>
+        <button class="btn btn-small" onclick="clearGistCreds()">🗑️ Clear</button>
+      </div>
+      <div style="text-align:center;margin-bottom:8px;">
+        <button class="btn btn-small btn-success" id="gistPushBtn" onclick="pushToGist()">⬆️ Push (back up)</button>
+        <button class="btn btn-small btn-danger" id="gistPullBtn" onclick="pullFromGist()">⬇️ Pull (restore)</button>
+      </div>
+      <div id="gistStatusMsg" style="font-size:.76rem;opacity:.75;text-align:center;min-height:1.2em;"></div>
+    </div>
   </div>
 </div>
 
@@ -3189,12 +3215,12 @@ function questBoardHTML() {
 function potionShopHTML(filterFn) {
   const items = POTION_CATALOG.filter(filterFn);
   if (!items.length) return '<p style="font-size:0.85rem;opacity:0.7;">Nothing in stock right now.</p>';
-  return `<div class="chapter-grid">${items.map(p => {
+  return `<div class="potion-grid">${items.map(p => {
     const label = p.effect === 'heal' ? `Restores ${p.value} HP`
       : p.effect === 'mana' ? `Restores ${p.value} MP`
       : p.effect === 'repair' ? `Repairs ${p.value}% hull`
       : p.effect === 'damage' ? `${p.value} flat damage in battle` : '';
-    return `<article class="quest-item"><strong>${p.icon} ${p.name}</strong><br><span style="font-size:0.8rem;">${label}</span><br><span style="font-size:0.7rem;opacity:0.6;">Tier ${p.tier}</span><br><button class="btn btn-small btn-success" onclick="buyPotion('${p.id}')">${p.price}g</button></article>`;
+    return `<article class="potion-item"><strong>${p.icon} ${p.name}</strong><span class="potion-effect">${label}</span><span class="potion-tier">Tier ${p.tier}</span><button class="btn btn-small btn-success" onclick="buyPotion('${p.id}')">${p.price}g</button></article>`;
   }).join('')}</div>`;
 }
 
@@ -7155,7 +7181,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V141 · 18 Named Pirate Captains'</script>
+<script>window.__CT_BUILD__='V144 · GitHub Gist Backup'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -12542,6 +12568,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // (unaffected — they never carry a captainKey).
   // -------------------------------------------------------------------
   const CAPTAIN_KEYS = ['lim_wei_kang', 'tan_boon_hock', 'ng_ah_kow', 'chen_mei_ling', 'wong_siew_fong', 'ho_chun_kit', 'rashid', 'aminah_binti_salleh', 'zulkifli', 'hassan_bin_ismail', 'siti_norhayati', 'ariffin', 'dela_cruz', 'bagyo_santos', 'reyes', 'marisol_aquino', 'villanueva', 'dimaguiba'];
+  // Shared, appendable list — a future pool-expansion block concats onto
+  // this rather than needing to know about or duplicate CAPTAIN_KEYS
+  // directly, and randomAtLargeCaptainKey (below) reads from it instead
+  // of the private CAPTAIN_KEYS constant, so new additions are actually
+  // selectable, not just capture/bounty-eligible.
+  window.ALL_CAPTAIN_KEYS = (window.ALL_CAPTAIN_KEYS || []).concat(CAPTAIN_KEYS);
 
   const CAPTAIN_TITLES = {
     lim_wei_kang: 'Captain',
@@ -12603,7 +12635,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // hunting a specific one down. Returns null if every captain has
   // already been captured (pool exhausted).
   function randomAtLargeCaptainKey(){
-    const pool = CAPTAIN_KEYS.filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
+    const pool = (window.ALL_CAPTAIN_KEYS || CAPTAIN_KEYS).filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
     if (!pool.length) return null;
     return pool[Math.floor(Math.random() * pool.length)];
   }
@@ -12654,7 +12686,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // rival_frigate fight forced to that specific captain instead.
   const oldHuntDownRivalForCaptains = window.huntDownRival;
   window.huntDownRival = function(key){
-    if (!CAPTAIN_KEYS.includes(key)) { if (oldHuntDownRivalForCaptains) oldHuntDownRivalForCaptains(key); return; }
+    if (!(window.ALL_CAPTAIN_KEYS || CAPTAIN_KEYS).includes(key)) { if (oldHuntDownRivalForCaptains) oldHuntDownRivalForCaptains(key); return; }
     if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) { toast('Already captured.'); return; }
     const enemy = frigateEnemyForCaptain(key);
     if (!enemy) { toast('Could not find him right now — try again later.'); return; }
@@ -12662,6 +12694,237 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     toast('🗡️ Tracked ' + name + ' down.', 2200);
     startCombat({kind:'sea', key:'rival_frigate', enemy: enemy, portId:null});
   };
+})();
+</script>
+
+
+<script id="ct-build-v143-more-pirate-captains">
+(function(){
+  // -------------------------------------------------------------------
+  // POOL EXPANSION — 18 -> 50 named captains, per San's request after
+  // confirming the mechanic works well. Existing 18 (Chinese/Malay/
+  // Filipino) are left completely untouched, preserving any already-
+  // captured state (e.g. Tan Boon Hock). These 32 additions broaden
+  // representation with Thai, Indonesian, Vietnamese, and Myanmar
+  // names, while keeping the original three cultures slightly larger
+  // (+3 Chinese, +3 Malay, +2 Filipino) since San specifically said
+  // those "hit home." Final split: Chinese 9, Malay 9, Filipino 8,
+  // Thai 6, Indonesian 6, Vietnamese 6, Myanmar 6 = 50 total.
+  //
+  // window.ALL_CAPTAIN_KEYS (see ct-build-v141) is a shared, appendable
+  // list that randomAtLargeCaptainKey() reads directly — concatenating
+  // onto it here is enough for these 32 to actually become selectable,
+  // no need to re-wrap the selection function itself.
+  // -------------------------------------------------------------------
+  const NEW_CAPTAIN_KEYS = ['lee_kok_wei', 'goh_poh_choo', 'ong_teck_guan', 'ismail_bin_yusof', 'faridah_binti_omar', 'rosli', 'fernandez', 'lourdes_manalo', 'somchai_suksawat', 'ananda_charoenkul', 'siriporn_wattana', 'narong_phetchburi', 'ratana_boonmee', 'chai_kittikorn', 'bambang_wijaya', 'siti_rahayu', 'agus_setiawan', 'dewi_lestari', 'hendra_gunawan', 'wayan_putra', 'nguyen_van_long', 'tran_thi_mai', 'le_hoang_nam', 'pham_thu_huong', 'hoang_minh_duc', 'vu_thi_lan', 'aung_kyaw', 'thura_zaw', 'hla_myint', 'nandar_win', 'zeya_aung', 'su_su_hlaing'];
+
+  const NEW_CAPTAIN_TITLES = {
+    lee_kok_wei: 'Captain',
+    goh_poh_choo: 'Captain',
+    ong_teck_guan: 'Captain',
+    ismail_bin_yusof: 'Nakhoda',
+    faridah_binti_omar: 'Nakhoda',
+    rosli: 'Nakhoda',
+    fernandez: 'Kapitan',
+    lourdes_manalo: 'Kapitan',
+    somchai_suksawat: 'Kapitan',
+    ananda_charoenkul: 'Kapitan',
+    siriporn_wattana: 'Kapitan',
+    narong_phetchburi: 'Kapitan',
+    ratana_boonmee: 'Kapitan',
+    chai_kittikorn: 'Kapitan',
+    bambang_wijaya: 'Nakhoda',
+    siti_rahayu: 'Nakhoda',
+    agus_setiawan: 'Nakhoda',
+    dewi_lestari: 'Nakhoda',
+    hendra_gunawan: 'Nakhoda',
+    wayan_putra: 'Nakhoda',
+    nguyen_van_long: 'Thuyen Truong',
+    tran_thi_mai: 'Thuyen Truong',
+    le_hoang_nam: 'Thuyen Truong',
+    pham_thu_huong: 'Thuyen Truong',
+    hoang_minh_duc: 'Thuyen Truong',
+    vu_thi_lan: 'Thuyen Truong',
+    aung_kyaw: 'Bo',
+    thura_zaw: 'Bo',
+    hla_myint: 'Bo',
+    nandar_win: 'Bo',
+    zeya_aung: 'Bo',
+    su_su_hlaing: 'Bo'
+  };
+
+  Object.assign(HARBOR_ENEMIES, {
+  lee_kok_wei: { name: "Lee Kok Wei's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Lee Kok Wei, one of many captains still sailing free waters." },
+  goh_poh_choo: { name: "Goh Poh Choo's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Goh Poh Choo, one of many captains still sailing free waters." },
+  ong_teck_guan: { name: "Ong Teck Guan's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Ong Teck Guan, one of many captains still sailing free waters." },
+  ismail_bin_yusof: { name: "Ismail bin Yusof's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Ismail bin Yusof, one of many captains still sailing free waters." },
+  faridah_binti_omar: { name: "Faridah binti Omar's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Faridah binti Omar, one of many captains still sailing free waters." },
+  rosli: { name: "Rosli's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Rosli, one of many captains still sailing free waters." },
+  fernandez: { name: "Fernandez's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Fernandez, one of many captains still sailing free waters." },
+  lourdes_manalo: { name: "Lourdes Manalo's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Lourdes Manalo, one of many captains still sailing free waters." },
+  somchai_suksawat: { name: "Somchai Suksawat's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Somchai Suksawat, one of many captains still sailing free waters." },
+  ananda_charoenkul: { name: "Ananda Charoenkul's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Ananda Charoenkul, one of many captains still sailing free waters." },
+  siriporn_wattana: { name: "Siriporn Wattana's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Siriporn Wattana, one of many captains still sailing free waters." },
+  narong_phetchburi: { name: "Narong Phetchburi's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Narong Phetchburi, one of many captains still sailing free waters." },
+  ratana_boonmee: { name: "Ratana Boonmee's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Ratana Boonmee, one of many captains still sailing free waters." },
+  chai_kittikorn: { name: "Chai Kittikorn's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Chai Kittikorn, one of many captains still sailing free waters." },
+  bambang_wijaya: { name: "Bambang Wijaya's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Bambang Wijaya, one of many captains still sailing free waters." },
+  siti_rahayu: { name: "Siti Rahayu's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Siti Rahayu, one of many captains still sailing free waters." },
+  agus_setiawan: { name: "Agus Setiawan's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Agus Setiawan, one of many captains still sailing free waters." },
+  dewi_lestari: { name: "Dewi Lestari's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Dewi Lestari, one of many captains still sailing free waters." },
+  hendra_gunawan: { name: "Hendra Gunawan's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Hendra Gunawan, one of many captains still sailing free waters." },
+  wayan_putra: { name: "Wayan Putra's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Wayan Putra, one of many captains still sailing free waters." },
+  nguyen_van_long: { name: "Nguyen Van Long's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Nguyen Van Long, one of many captains still sailing free waters." },
+  tran_thi_mai: { name: "Tran Thi Mai's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Tran Thi Mai, one of many captains still sailing free waters." },
+  le_hoang_nam: { name: "Le Hoang Nam's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Le Hoang Nam, one of many captains still sailing free waters." },
+  pham_thu_huong: { name: "Pham Thu Huong's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Pham Thu Huong, one of many captains still sailing free waters." },
+  hoang_minh_duc: { name: "Hoang Minh Duc's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Hoang Minh Duc, one of many captains still sailing free waters." },
+  vu_thi_lan: { name: "Vu Thi Lan's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Thuyen Truong Vu Thi Lan, one of many captains still sailing free waters." },
+  aung_kyaw: { name: "Aung Kyaw's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Aung Kyaw, one of many captains still sailing free waters." },
+  thura_zaw: { name: "Thura Zaw's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Thura Zaw, one of many captains still sailing free waters." },
+  hla_myint: { name: "Hla Myint's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Hla Myint, one of many captains still sailing free waters." },
+  nandar_win: { name: "Nandar Win's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Nandar Win, one of many captains still sailing free waters." },
+  zeya_aung: { name: "Zeya Aung's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Zeya Aung, one of many captains still sailing free waters." },
+  su_su_hlaing: { name: "Su Su Hlaing's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Bo Su Su Hlaing, one of many captains still sailing free waters." }
+  });
+
+  window.KNOWN_RIVAL_KEYS = (window.KNOWN_RIVAL_KEYS || []).concat(NEW_CAPTAIN_KEYS);
+  window.ALL_CAPTAIN_KEYS = (window.ALL_CAPTAIN_KEYS || []).concat(NEW_CAPTAIN_KEYS);
+
+  const oldCaptainTitleForExpansion = window.captainTitle;
+  window.captainTitle = function(key){
+    if (NEW_CAPTAIN_TITLES[key]) return NEW_CAPTAIN_TITLES[key];
+    return oldCaptainTitleForExpansion ? oldCaptainTitleForExpansion(key) : '';
+  };
+})();
+</script>
+
+
+<script id="ct-build-v144-github-gist-backup">
+(function(){
+  // -------------------------------------------------------------------
+  // GITHUB GIST BACKUP — same pattern as Legends: Daybreak Quest's
+  // implementation (classic PAT, gist scope only, stored client-side in
+  // localStorage, push/pull via the Gists REST API), adapted to Crimson
+  // Tide's actual save shape (the `game` object / SAVE_KEY / saveGame()
+  // / loadGame()) rather than Daybreak's `state`/`save()`. Uses its own
+  // localStorage key so the two games' credentials never collide even
+  // though they're separate PATs.
+  // -------------------------------------------------------------------
+  const GIST_CREDS_KEY = 'crimson-tide-gist-creds';
+  const GIST_FILENAME = 'crimson-tide-save.json';
+
+  function loadGistCreds(){
+    try {
+      const raw = localStorage.getItem(GIST_CREDS_KEY);
+      return raw ? JSON.parse(raw) : { token:'', gistId:'', lastSync:null };
+    } catch(e) { return { token:'', gistId:'', lastSync:null }; }
+  }
+  function saveGistCreds(creds){
+    try { localStorage.setItem(GIST_CREDS_KEY, JSON.stringify(creds)); } catch(e) {}
+  }
+  window.loadGistCreds = loadGistCreds;
+  window.saveGistCreds = saveGistCreds;
+
+  function setGistStatus(msg){
+    const el = document.getElementById('gistStatusMsg');
+    if (el) el.textContent = msg;
+  }
+
+  function setGistBusy(busy){
+    const pushBtn = document.getElementById('gistPushBtn');
+    const pullBtn = document.getElementById('gistPullBtn');
+    if (pushBtn) pushBtn.disabled = busy;
+    if (pullBtn) pullBtn.disabled = busy;
+  }
+
+  window.saveGistCredsFromForm = function(){
+    const tokenEl = document.getElementById('gistTokenInput');
+    const idEl = document.getElementById('gistIdInput');
+    const creds = loadGistCreds();
+    if (tokenEl && tokenEl.value.trim()) creds.token = tokenEl.value.trim();
+    if (idEl && idEl.value.trim()) creds.gistId = idEl.value.trim();
+    saveGistCreds(creds);
+    if (tokenEl) tokenEl.value = '';
+    if (idEl) idEl.value = '';
+    setGistStatus('Saved. You can push or pull now.');
+  };
+
+  window.clearGistCreds = function(){
+    saveGistCreds({ token:'', gistId:'', lastSync:null });
+    setGistStatus('GitHub credentials cleared from this device.');
+  };
+
+  window.pushToGist = async function(){
+    const creds = loadGistCreds();
+    if (!creds.token) { setGistStatus('Add your GitHub token first, then Save Credentials.'); return; }
+    setGistBusy(true); setGistStatus('Working…');
+    try {
+      const body = {
+        description: 'Daybreak: Crimson Tide — save backup',
+        public: false,
+        files: { [GIST_FILENAME]: { content: JSON.stringify(game, null, 2) } },
+      };
+      const url = creds.gistId ? `https://api.github.com/gists/${creds.gistId}` : 'https://api.github.com/gists';
+      const method = creds.gistId ? 'PATCH' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Authorization': `token ${creds.token}`, 'Accept': 'application/vnd.github+json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error('GitHub responded ' + res.status);
+      const data = await res.json();
+      creds.gistId = data.id;
+      creds.lastSync = Date.now();
+      saveGistCreds(creds);
+      setGistStatus('Backed up to Gist! (' + new Date().toLocaleTimeString() + ')');
+    } catch(e) {
+      setGistStatus("Push failed — check your token has the 'gist' scope and you're online.");
+    }
+    setGistBusy(false);
+  };
+
+  window.pullFromGist = async function(){
+    const creds = loadGistCreds();
+    if (!creds.token || !creds.gistId) { setGistStatus('Need both a token and a Gist ID saved first.'); return; }
+    if (!confirm('This will overwrite your current save with the one from GitHub. Continue?')) return;
+    setGistBusy(true); setGistStatus('Working…');
+    try {
+      const res = await fetch('https://api.github.com/gists/' + creds.gistId, {
+        headers: { 'Authorization': `token ${creds.token}`, 'Accept': 'application/vnd.github+json' },
+      });
+      if (!res.ok) throw new Error('GitHub responded ' + res.status);
+      const data = await res.json();
+      const file = data.files && data.files[GIST_FILENAME];
+      if (!file) throw new Error('No save file found in that Gist.');
+      const parsed = JSON.parse(file.content);
+      if (!parsed || typeof parsed !== 'object') throw new Error('bad shape');
+      // Mirrors loadGame()'s own restoration path — merge into the
+      // existing game object and re-run the same migration/repair steps
+      // a normal load already goes through, rather than a raw overwrite.
+      game = Object.assign(game, parsed);
+      try { if (typeof migrateEquipmentState === 'function') migrateEquipmentState(); } catch(e) {}
+      try { if (typeof seedCompleteStarterGear === 'function') seedCompleteStarterGear(); } catch(e) {}
+      localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+      creds.lastSync = Date.now();
+      saveGistCreds(creds);
+      setGistStatus('Restored from Gist! (' + new Date().toLocaleTimeString() + ') Reloading…');
+      setTimeout(function(){ location.reload(); }, 1200);
+    } catch(e) {
+      setGistStatus('Pull failed — check your token, Gist ID, and connection.');
+    }
+    setGistBusy(false);
+  };
+
+  // Reflect saved Gist ID as a placeholder on load, so the field shows
+  // what's already stored without the raw token ever being redisplayed.
+  document.addEventListener('DOMContentLoaded', function(){
+    const creds = loadGistCreds();
+    const idEl = document.getElementById('gistIdInput');
+    if (idEl && creds.gistId) idEl.placeholder = 'Gist ID: ' + creds.gistId + ' (leave blank to keep)';
+    const tokenEl = document.getElementById('gistTokenInput');
+    if (tokenEl && creds.token) tokenEl.placeholder = 'Token saved (leave blank to keep it)';
+  });
 })();
 </script>
 
