@@ -3901,6 +3901,12 @@ function loadGame() {
     if (game.uncharted && game.uncharted.active && (!game.inCombat || !game.combatEnemy || game.combatEnemy.kind !== 'uncharted')) {
       game.uncharted.active = false;
     }
+    // Same repair, extended to Research Expedition saves that already
+    // have the stale-active state baked in from before this fix covered
+    // that system too.
+    if (game.expedition && game.expedition.active && (!game.inCombat || !game.combatEnemy || game.combatEnemy.kind !== 'expedition')) {
+      game.expedition.active = false;
+    }
     refreshBounties(); refreshQuests();
     document.getElementById('introScreen').classList.remove('active');
     document.getElementById('portScreen').classList.add('active');
@@ -5643,6 +5649,12 @@ function startCombat(encounter) {
   if (encounter.kind !== 'uncharted' && game.uncharted && game.uncharted.active) {
     game.uncharted.active = false;
   }
+  // Same protection, extended to Research Expedition — this fix predates
+  // Expedition mode (built later, V129) and was never carried over to it,
+  // so it had the exact same stale-session bug the Reach used to have.
+  if (encounter.kind !== 'expedition' && game.expedition && game.expedition.active) {
+    game.expedition.active = false;
+  }
   game.combatEnemy = Object.assign({}, enemy, {kind: encounter.kind, key: encounter.key, portId: encounter.portId});
   game.combatEnemyHp = enemy.hp;
   game.combatTurn = 0;
@@ -5718,6 +5730,13 @@ function exitBattleToPort() {
   // gap from both of those, not a repeat of either.
   if (game.uncharted && game.uncharted.active) {
     game.uncharted.active = false;
+  }
+  // Same fix, extended to Research Expedition — this predates Expedition
+  // mode (V129) and was never carried over, so leaving an expedition
+  // fight via Return to Port or the Leave button left game.expedition.active
+  // stuck true forever, exactly the same symptom as the original Reach bug.
+  if (game.expedition && game.expedition.active) {
+    game.expedition.active = false;
   }
   game.inCombat = false;
   game.pendingPostBattle = null;
@@ -7136,7 +7155,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V138 · Show Rival Capture Chance'</script>
+<script>window.__CT_BUILD__='V139 · Expedition Stale-State Fix + Hunt Down Rivals'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -12243,9 +12262,22 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       container.insertAdjacentHTML('beforeend',
         '<article class="quest-item" style="border-left-color:var(--sand);">'+
         '<strong>🏴‍☠️ '+name+' — Still at Large</strong><br>'+
-        '<span style="font-size:.82rem;opacity:.8;">Escaped '+escapes[key]+' time'+(escapes[key]>1?'s':'')+' so far. Beat him again at sea for a '+chancePct+'% chance to actually capture him this time.</span>'+
+        '<span style="font-size:.82rem;opacity:.8;">Escaped '+escapes[key]+' time'+(escapes[key]>1?'s':'')+' so far. Beat him again at sea for a '+chancePct+'% chance to actually capture him this time.</span><br>'+
+        '<button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="huntDownRival(\''+key+'\')">🗡️ Hunt Him Down</button>'+
         '</article>');
     });
+  };
+
+  // On-demand rival fight — reuses the exact same enemy generation as
+  // the random sea ambush (scaledEnemyForExplore), so a hunted-down
+  // fight is identical in every way except how it was triggered.
+  window.huntDownRival = function(key){
+    if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) { toast('Already captured.'); return; }
+    const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(key, 'sea') : null;
+    if (!enemy) { toast('Could not find him right now — try again later.'); return; }
+    const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(key) : key;
+    toast('🗡️ Tracked ' + name + ' down.', 2200);
+    startCombat({kind:'sea', key:key, enemy: enemy, portId:null});
   };
 })();
 </script>
