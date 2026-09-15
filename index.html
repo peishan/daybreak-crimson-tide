@@ -4942,7 +4942,7 @@ function renderStory() {
 function bountyPool() {
   const pool = [];
   Object.entries(HARBOR_ENEMIES).forEach(([key, e]) => {
-    if(key==='robin' || key==='jeff') return; // named recurring rivals, not generic cullable mob types — excluded from the auto-generated bounty board so their names don't surface before they're properly introduced
+    if((typeof window.KNOWN_RIVAL_KEYS !== 'undefined') && window.KNOWN_RIVAL_KEYS.includes(key)) return; // named recurring rivals, not generic cullable mob types — excluded from the auto-generated bounty board so their names don't surface before they're properly introduced
     pool.push({id:'b_'+key, type:'kill', target:key, need: 2 + Math.floor(Math.random()*2),
       name: e.name + ' Cull', desc: `Defeat ${e.name} where you find them.`, icon: e.icon,
       rw: {xp: e.xp * 2, gold: e.gold * 2}});
@@ -7155,7 +7155,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V139 · Expedition Stale-State Fix + Hunt Down Rivals'</script>
+<script>window.__CT_BUILD__='V141 · 18 Named Pirate Captains'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -12212,29 +12212,45 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (oldHandleVictoryForRivalCapture) oldHandleVictoryForRivalCapture();
     const enemy = game.combatEnemy;
     if (!enemy || enemy.kind !== 'sea') return; // 'sea' is also used for ordinary random voyage encounters, not just rivals
+    // Named pirate captains (ct-build-v141) ride on the shared
+    // rival_frigate enemy.key so bounty tracking keeps working, but
+    // carry their own persistent identity in captainKey — that's the
+    // real rival identity for capture purposes whenever it's present.
+    const rivalKey = enemy.captainKey || enemy.key;
     const rivalKeys = (typeof window.KNOWN_RIVAL_KEYS !== 'undefined') ? window.KNOWN_RIVAL_KEYS : [];
-    if (!rivalKeys.includes(enemy.key)) return; // an ordinary sea monster, not a named rival — nothing to do here
-    if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(enemy.key)) return; // defensive — shouldn't normally reach here, the ambush pool already excludes captured rivals
-    const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(enemy.key) : enemy.key;
-    const chance = window.getRivalCaptureChance(enemy.key);
+    if (!rivalKeys.includes(rivalKey)) return; // an ordinary sea monster, not a named rival — nothing to do here
+    if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(rivalKey)) return; // defensive — shouldn't normally reach here, the ambush pool already excludes captured rivals
+    const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(rivalKey) : rivalKey;
+    const chance = window.getRivalCaptureChance(rivalKey);
     const chancePct = Math.round(chance * 100);
+    let modalTitle, modalBlurb;
     if (Math.random() < chance) {
-      if (typeof window.captureRival === 'function') window.captureRival(enemy.key, 20);
+      if (typeof window.captureRival === 'function') window.captureRival(rivalKey, 20);
       game.inheritedShips = game.inheritedShips || [];
-      const shipId = enemy.key + 's_ship';
+      const shipId = rivalKey + 's_ship';
       if (!game.inheritedShips.some(s=>s.id===shipId)) {
-        const shipInfo = RIVAL_SHIP_INFO[enemy.key] || {name: name + "'s Ship", flag: '⚓'};
+        const shipInfo = RIVAL_SHIP_INFO[rivalKey] || {name: name + "'s Ship", flag: '⚓'};
         game.inheritedShips.push({id: shipId, name: shipInfo.name, flag: shipInfo.flag, status: 'At dock, Fair Tide'});
       }
       logEvent('⛓️ ' + name + ' is captured this time (' + chancePct + '% chance) — community service begins. Their ship is now at Fair Tide, waiting to be designated.', 'gold');
       toast('⛓️ ' + name + ' is captured! (' + chancePct + '% chance) No more running from this one.', 4200);
+      modalTitle = '⛓️ ' + name + ' Captured!';
+      modalBlurb = 'The odds were ' + chancePct + '% this time — and they landed. ' + name + ' is captured. Community service begins, and his ship is now at dock, Fair Tide, waiting to be designated.';
     } else {
       const ec = rivalEscapeCounts();
-      ec[enemy.key] = (ec[enemy.key] || 0) + 1;
-      const nextChancePct = Math.round(window.getRivalCaptureChance(enemy.key) * 100);
+      ec[rivalKey] = (ec[rivalKey] || 0) + 1;
+      const nextChancePct = Math.round(window.getRivalCaptureChance(rivalKey) * 100);
       logEvent('💨 ' + name + ' slips away again (' + chancePct + '% chance this time) — ' + nextChancePct + '% next encounter.', 'bad');
       toast('💨 ' + name + ' escapes (' + chancePct + '% chance) — ' + nextChancePct + '% chance next time.', 4000);
+      modalTitle = '💨 ' + name + ' Slips Away';
+      modalBlurb = 'It was ' + chancePct + '% this time, and the odds didn\'t land. ' + name + ' gets away — but only barely. Next encounter, the odds shift to ' + nextChancePct + '%.';
     }
+    // BUG FIX: this used to only ever show as a toast + log entry — both
+    // easy to miss, especially with the post-battle victory screen also
+    // showing at the same moment. Pushing a proper modal instead, same
+    // mechanism already used for story scenes, so the outcome can't be
+    // missed the way a toast can.
+    setTimeout(function(){ if (typeof showStoryModal === 'function') showStoryModal({title: modalTitle, blurb: modalBlurb}); }, 600);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 
@@ -12494,6 +12510,157 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         if (active) active.scrollIntoView({block: 'center', behavior: 'instant'});
       }, 50);
     }
+  };
+})();
+</script>
+
+
+<script id="ct-build-v141-named-pirate-captains">
+(function(){
+  // -------------------------------------------------------------------
+  // NAMED PIRATE CAPTAINS — extends the Robin/Jeff capture/escape/
+  // service mechanic to San's existing pool of 18 Southeast Asian
+  // captain names (previously ct-build's SEA_RIVAL_CAPTAIN_NAMES, used
+  // purely as ephemeral flavor text on the generic rival_frigate enemy
+  // — a fresh random name every encounter, no memory between them).
+  //
+  // Deliberately skips story introductions per San's direction — these
+  // are meant to feel like "the wider world has more captains than just
+  // Robin and Jeff," not individually arc'd characters. Each becomes its
+  // own persistently-tracked identity: once captured, that specific
+  // captain is excluded from future rolls (the pool of "still at large"
+  // captains shrinks over time), same 50%/80% capture-chance curve,
+  // same generic community-service framing (serviceFraming's existing
+  // fallback already covers this with zero changes needed there).
+  //
+  // Bounty tracking is deliberately preserved exactly as the original
+  // session designed it: enemy.key stays 'rival_frigate' always (so
+  // "Hunt: Rival Pirate Frigate" bounties keep working unchanged), with
+  // a new enemy.captainKey field carrying the actual persistent identity
+  // for capture purposes only. The capture logic below reads
+  // captainKey when present, falling back to enemy.key for Robin/Jeff
+  // (unaffected — they never carry a captainKey).
+  // -------------------------------------------------------------------
+  const CAPTAIN_KEYS = ['lim_wei_kang', 'tan_boon_hock', 'ng_ah_kow', 'chen_mei_ling', 'wong_siew_fong', 'ho_chun_kit', 'rashid', 'aminah_binti_salleh', 'zulkifli', 'hassan_bin_ismail', 'siti_norhayati', 'ariffin', 'dela_cruz', 'bagyo_santos', 'reyes', 'marisol_aquino', 'villanueva', 'dimaguiba'];
+
+  const CAPTAIN_TITLES = {
+    lim_wei_kang: 'Captain',
+    tan_boon_hock: 'Captain',
+    ng_ah_kow: 'Captain',
+    chen_mei_ling: 'Captain',
+    wong_siew_fong: 'Captain',
+    ho_chun_kit: 'Captain',
+    rashid: 'Nakhoda',
+    aminah_binti_salleh: 'Nakhoda',
+    zulkifli: 'Nakhoda',
+    hassan_bin_ismail: 'Nakhoda',
+    siti_norhayati: 'Nakhoda',
+    ariffin: 'Nakhoda',
+    dela_cruz: 'Kapitan',
+    bagyo_santos: 'Kapitan',
+    reyes: 'Kapitan',
+    marisol_aquino: 'Kapitan',
+    villanueva: 'Kapitan',
+    dimaguiba: 'Kapitan'
+  };
+
+  // Minimal HARBOR_ENEMIES entries — these exist so rivalDisplayName()'s
+  // existing lookup (which already reads HARBOR_ENEMIES[key].name) works
+  // automatically, and so bountyPool()'s exclusion (generalized below)
+  // can find them. Never used for direct combat generation — the actual
+  // fight always goes through the rival_frigate-based generator further
+  // down, which carries the real (scaled) stats.
+  Object.assign(HARBOR_ENEMIES, {
+  lim_wei_kang: { name: "Lim Wei Kang's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Lim Wei Kang, one of many captains still sailing free waters." },
+  tan_boon_hock: { name: "Tan Boon Hock's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Tan Boon Hock, one of many captains still sailing free waters." },
+  ng_ah_kow: { name: "Ng Ah Kow's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Ng Ah Kow, one of many captains still sailing free waters." },
+  chen_mei_ling: { name: "Chen Mei Ling's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Chen Mei Ling, one of many captains still sailing free waters." },
+  wong_siew_fong: { name: "Wong Siew Fong's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Wong Siew Fong, one of many captains still sailing free waters." },
+  ho_chun_kit: { name: "Ho Chun Kit's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Captain Ho Chun Kit, one of many captains still sailing free waters." },
+  rashid: { name: "Rashid's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Rashid, one of many captains still sailing free waters." },
+  aminah_binti_salleh: { name: "Aminah binti Salleh's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Aminah binti Salleh, one of many captains still sailing free waters." },
+  zulkifli: { name: "Zulkifli's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Zulkifli, one of many captains still sailing free waters." },
+  hassan_bin_ismail: { name: "Hassan bin Ismail's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Hassan bin Ismail, one of many captains still sailing free waters." },
+  siti_norhayati: { name: "Siti Norhayati's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Siti Norhayati, one of many captains still sailing free waters." },
+  ariffin: { name: "Ariffin's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Nakhoda Ariffin, one of many captains still sailing free waters." },
+  dela_cruz: { name: "Dela Cruz's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Dela Cruz, one of many captains still sailing free waters." },
+  bagyo_santos: { name: "Bagyo Santos's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Bagyo Santos, one of many captains still sailing free waters." },
+  reyes: { name: "Reyes's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Reyes, one of many captains still sailing free waters." },
+  marisol_aquino: { name: "Marisol Aquino's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Marisol Aquino, one of many captains still sailing free waters." },
+  villanueva: { name: "Villanueva's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Villanueva, one of many captains still sailing free waters." },
+  dimaguiba: { name: "Dimaguiba's Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90, desc: "Kapitan Dimaguiba, one of many captains still sailing free waters." }
+  });
+
+  // Generalizing bountyPool's exclusion from a hardcoded 'robin'/'jeff'
+  // check to reading KNOWN_RIVAL_KEYS instead — covers these 18 new
+  // captains automatically, and any future named rival added the same
+  // way, without needing this line touched again.
+  window.KNOWN_RIVAL_KEYS = (window.KNOWN_RIVAL_KEYS || ['robin','jeff']).concat(CAPTAIN_KEYS);
+
+  window.captainTitle = function(key){ return CAPTAIN_TITLES[key] || ''; };
+
+  // Random NOT-YET-CAPTURED captain, for both the ambush flavor-roll and
+  // hunting a specific one down. Returns null if every captain has
+  // already been captured (pool exhausted).
+  function randomAtLargeCaptainKey(){
+    const pool = CAPTAIN_KEYS.filter(k => !(typeof window.rivalCaptured === 'function' && window.rivalCaptured(k)));
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  window.randomAtLargeCaptainKey = randomAtLargeCaptainKey;
+
+  function frigateEnemyForCaptain(captainKey){
+    const base = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore('rival_frigate', 'sea') : null;
+    if (!base) return null;
+    const name = (typeof rivalDisplayName === 'function') ? rivalDisplayName(captainKey) : captainKey;
+    const fullName = (HARBOR_ENEMIES[captainKey] && HARBOR_ENEMIES[captainKey].name) ? HARBOR_ENEMIES[captainKey].name.replace("'s Crew", '') : name;
+    const title = window.captainTitle(captainKey);
+    base.captainKey = captainKey;
+    base.name = (title ? title + ' ' : '') + fullName + "'s Frigate";
+    base.desc = 'A black-sailed frigate bearing down, cannons already run out — flying ' + fullName + "'s colors.";
+    return base;
+  }
+  window.frigateEnemyForCaptain = frigateEnemyForCaptain;
+
+  // Replaces the old ephemeral random-name-every-time flavor with a
+  // persistent captain roll: picks a real, individually-trackable
+  // not-yet-captured captain instead of just any random display string.
+  // Falls back to the original plain (uncapturable) frigate flavor once
+  // every captain has actually been captured.
+  const oldScaledEnemyForExploreForCaptains = window.scaledEnemyForExplore;
+  window.scaledEnemyForExplore = function(key, kind){
+    const enemy = oldScaledEnemyForExploreForCaptains.apply(this, arguments);
+    if (key === 'rival_frigate' && enemy) {
+      const captainKey = randomAtLargeCaptainKey();
+      if (captainKey) {
+        const name = (typeof rivalDisplayName === 'function') ? rivalDisplayName(captainKey) : captainKey;
+        const fullName = (HARBOR_ENEMIES[captainKey] && HARBOR_ENEMIES[captainKey].name) ? HARBOR_ENEMIES[captainKey].name.replace("'s Crew", '') : name;
+        const title = window.captainTitle(captainKey);
+        enemy.captainKey = captainKey;
+        enemy.name = (title ? title + ' ' : '') + fullName + "'s Frigate";
+        enemy.desc = 'A black-sailed frigate bearing down, cannons already run out — flying ' + fullName + "'s colors.";
+      }
+      // else: every captain already captured — leaves the enemy exactly
+      // as the base wrap already generated it (plain, uncapturable).
+    }
+    return enemy;
+  };
+
+  // On-demand hunt for a specific captain — huntDownRival() (see
+  // ct-build-v131) calls scaledEnemyForExplore(key, 'sea') directly for
+  // Robin/Jeff, but that would fail for a captain key (they aren't real
+  // HARBOR_ENEMIES/SEA_ENEMIES combat entries, only rival_frigate is).
+  // Wrapping huntDownRival to special-case captain keys: generate a
+  // rival_frigate fight forced to that specific captain instead.
+  const oldHuntDownRivalForCaptains = window.huntDownRival;
+  window.huntDownRival = function(key){
+    if (!CAPTAIN_KEYS.includes(key)) { if (oldHuntDownRivalForCaptains) oldHuntDownRivalForCaptains(key); return; }
+    if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) { toast('Already captured.'); return; }
+    const enemy = frigateEnemyForCaptain(key);
+    if (!enemy) { toast('Could not find him right now — try again later.'); return; }
+    const name = (typeof rivalDisplayName === 'function') ? rivalDisplayName(key) : key;
+    toast('🗡️ Tracked ' + name + ' down.', 2200);
+    startCombat({kind:'sea', key:'rival_frigate', enemy: enemy, portId:null});
   };
 })();
 </script>
