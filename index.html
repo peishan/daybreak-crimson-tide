@@ -1903,6 +1903,11 @@ body{
       <p style="font-size:.78rem;opacity:.8;margin-bottom:10px;">Extra offsite copy, just in case. Needs a <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener" style="color:var(--gold);">classic GitHub token</a> with only the <strong>gist</strong> scope checked — nothing else. Stored only on this device, sent only to GitHub's own servers.</p>
       <input type="password" id="gistTokenInput" placeholder="ghp_... classic token, gist scope only" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(232,197,71,.3);background:rgba(0,0,0,.25);color:var(--parchment);font-size:.8rem;margin-bottom:8px;">
       <input type="text" id="gistIdInput" placeholder="Gist ID (leave blank to create a new one)" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(232,197,71,.3);background:rgba(0,0,0,.25);color:var(--parchment);font-size:.8rem;margin-bottom:8px;">
+      <div id="gistIdDisplay" style="display:none;align-items:center;gap:8px;margin-bottom:8px;font-size:.78rem;">
+        <span style="opacity:.75;">Current Gist ID:</span>
+        <code id="gistIdDisplayValue" style="user-select:all;background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;flex:1;overflow-wrap:anywhere;"></code>
+        <button class="btn btn-small" onclick="copyGistId()" style="padding:4px 8px;">📋 Copy</button>
+      </div>
       <div style="text-align:center;margin-bottom:8px;">
         <button class="btn btn-small" onclick="saveGistCredsFromForm()">💾 Save Credentials</button>
         <button class="btn btn-small" onclick="clearGistCreds()">🗑️ Clear</button>
@@ -7181,7 +7186,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V144 · GitHub Gist Backup'</script>
+<script>window.__CT_BUILD__='V145 · Copyable Gist ID'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -12814,6 +12819,38 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   const GIST_CREDS_KEY = 'crimson-tide-gist-creds';
   const GIST_FILENAME = 'crimson-tide-save.json';
 
+  // BUG FIX (San's request): the saved Gist ID only ever showed up as
+  // placeholder text, which isn't selectable or copyable — genuinely
+  // retrieving it after the fact wasn't possible. This shows it as real,
+  // copyable text whenever one is saved, hidden otherwise.
+  function refreshGistIdDisplay(){
+    const creds = loadGistCreds();
+    const wrap = document.getElementById('gistIdDisplay');
+    const valueEl = document.getElementById('gistIdDisplayValue');
+    if (!wrap || !valueEl) return;
+    if (creds.gistId) {
+      valueEl.textContent = creds.gistId;
+      wrap.style.display = 'flex';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+  window.refreshGistIdDisplay = refreshGistIdDisplay;
+
+  window.copyGistId = function(){
+    const creds = loadGistCreds();
+    if (!creds.gistId) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(creds.gistId).then(function(){
+        if (typeof toast === 'function') toast('📋 Gist ID copied.');
+      }).catch(function(){
+        if (typeof toast === 'function') toast('Could not copy — long-press the ID to select it manually.');
+      });
+    } else {
+      if (typeof toast === 'function') toast('Could not copy — long-press the ID to select it manually.');
+    }
+  };
+
   function loadGistCreds(){
     try {
       const raw = localStorage.getItem(GIST_CREDS_KEY);
@@ -12848,11 +12885,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (tokenEl) tokenEl.value = '';
     if (idEl) idEl.value = '';
     setGistStatus('Saved. You can push or pull now.');
+    refreshGistIdDisplay();
   };
 
   window.clearGistCreds = function(){
     saveGistCreds({ token:'', gistId:'', lastSync:null });
     setGistStatus('GitHub credentials cleared from this device.');
+    refreshGistIdDisplay();
   };
 
   window.pushToGist = async function(){
@@ -12878,6 +12917,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       creds.lastSync = Date.now();
       saveGistCreds(creds);
       setGistStatus('Backed up to Gist! (' + new Date().toLocaleTimeString() + ')');
+      refreshGistIdDisplay();
     } catch(e) {
       setGistStatus("Push failed — check your token has the 'gist' scope and you're online.");
     }
@@ -12922,6 +12962,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const creds = loadGistCreds();
     const idEl = document.getElementById('gistIdInput');
     if (idEl && creds.gistId) idEl.placeholder = 'Gist ID: ' + creds.gistId + ' (leave blank to keep)';
+    refreshGistIdDisplay();
     const tokenEl = document.getElementById('gistTokenInput');
     if (tokenEl && creds.token) tokenEl.placeholder = 'Token saved (leave blank to keep it)';
   });
