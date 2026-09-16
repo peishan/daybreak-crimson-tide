@@ -1942,6 +1942,19 @@ body{
   </div>
 </div>
 
+<!-- Comic chapter image viewer: an in-app lightbox instead of a real
+     navigation. See openComicImage()'s comment for why — installed
+     standalone PWAs on Android don't have a real "new tab" to open into,
+     so target="_blank" links to same-scope images were being captured as
+     an in-app navigation (replacing the whole app), and the back button
+     then had to reload index.html from scratch to return, losing any
+     unsaved session state. A lightbox never navigates at all, so there's
+     nothing for the back button to break. -->
+<div id="comicImageOverlay" onclick="if(event.target===this) closeComicImage()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(3,9,14,.94);padding:16px;box-sizing:border-box;overflow:auto;text-align:center;">
+  <button onclick="closeComicImage()" style="position:sticky;top:0;float:right;background:var(--gold,#e8c96a);color:#0d1f2d;border:none;border-radius:6px;padding:8px 14px;font-weight:bold;cursor:pointer;">✕ Close</button>
+  <img id="comicImageOverlayImg" src="" alt="Comic chapter" style="max-width:100%;height:auto;border-radius:8px;margin-top:44px;display:block;margin-left:auto;margin-right:auto;">
+</div>
+
 <script>
 
 // ============================================================================
@@ -4151,6 +4164,22 @@ function showModal(title, text, buttons) {
   });
   document.getElementById('modalOverlay').classList.add('active');
 }
+// Comic chapter image lightbox — see the #comicImageOverlay markup comment
+// for why this replaced target="_blank" links. Never navigates, so there's
+// no browser history entry and no back-button/reload interaction at all.
+function openComicImage(url) {
+  const overlay = document.getElementById('comicImageOverlay');
+  const img = document.getElementById('comicImageOverlayImg');
+  if (!overlay || !img) return;
+  img.src = url;
+  overlay.style.display = 'block';
+}
+function closeComicImage() {
+  const overlay = document.getElementById('comicImageOverlay');
+  const img = document.getElementById('comicImageOverlayImg');
+  if (overlay) overlay.style.display = 'none';
+  if (img) img.src = '';
+}
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('active');
   if (game.storyModalQueue && game.storyModalQueue.length) {
@@ -4480,7 +4509,7 @@ function renderComicArchive(){
     if(!chapters.length) return '<div class="comic-archive-card"><div class="comic-archive-sub">No '+label+' chapters read yet.</div></div>';
     return chapters.map(ch =>
       '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-      '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>'
+      '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>'
     ).join('');
   }
 
@@ -4868,7 +4897,7 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? ((ch.id>=1 && ch.id<=4) ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><a class="btn btn-small btn-magic" href="${img}" target="_blank" rel="noopener">📖 Read Chapter in New Tab</a></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? ((ch.id>=1 && ch.id<=4) ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 function completeSelfEscape(companion){
@@ -7653,7 +7682,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const status = done?'✓ COMPLETE':((ready||gateBlocking)?'CURRENT':'🔒 LOCKED');
       let action;
       if(gateBlocking) action = '<div class="story-chip">'+esc(ch.gate.label)+'</div>';
-      else if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      else if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc2ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -7998,7 +8027,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc3_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc3ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -8018,7 +8047,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         return m ? m.name : id;
       }).join(' & ');
       let action;
-      if(done) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a>';
+      if(done) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button>';
       else if(ready) action = '<button class="btn btn-small btn-magic" onclick="startMemoryFight()">⚔️ Walk the Old Streets Together</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -8048,7 +8077,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !allRead.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc III chapters read yet.</div></div>'
       : allRead.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc III — Origins: Steady Hands</div>' + section);
   };
@@ -8464,12 +8493,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       // exactly as they were — this only changes HOW the chapter
       // completes, not what completing it does).
       if (ready && ch.id === 8) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-danger" onclick="startArc4RobinFight()">⚔️ Fight Robin</button>';
       } else if (ready && ch.id === 14) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-danger" onclick="startArc4JeffFight()">⚔️ Fight Jeff</button>';
-      } else if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      } else if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc4ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -8492,7 +8521,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !arc4Read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc IV chapters read yet.</div></div>'
       : arc4Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IV — The Gathering Tide</div>' + section);
   };
@@ -8679,7 +8708,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc5_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc5ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -8702,7 +8731,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !arc5Read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc V chapters read yet.</div></div>'
       : arc5Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc V — The Bond</div>' + section);
   };
@@ -10668,12 +10697,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action, extra = '';
       if (ch.id === 1) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-danger" onclick="startArc6CaptureFight()">⚔️ Intercept the Ships</button>';
         else action = done ? '<div class="story-chip">✓ Robin and Jeff, captured.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 2) {
         if (ready) {
-          action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
             '<button class="btn btn-small btn-success" onclick="freeArc6CapturedCrew()">⚓ Set Them Free</button>';
           const crew = game.arc6CapturedCrew || [];
           if (crew.length) {
@@ -10683,97 +10712,97 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
           }
         } else action = done ? '<div class="story-chip">✓ Freedom given — some stayed, some went home.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 3) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter3()">✊ Confront Jeff</button>';
         else action = done ? '<div class="story-chip">✓ He got his just desserts.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 4) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter4()">🏮 Give Everyone a Choice</button>';
         else action = done ? '<div class="story-chip">✓ Fair Tide\'s civilian roles are open — assign anyone unsorted from the Roster tab.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 5) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter5()">🚢 Sort the Fleet</button>';
         else action = done ? '<div class="story-chip">✓ The fleet is sorted.</div>' : '<div class="story-chip">Designate every ship in the Roster tab first, then follow the current Objective.</div>';
       } else if (ch.id === 6) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter6()">🔧 Hear Them Out</button>';
         else action = done ? '<div class="story-chip">✓ Specialists found their place.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 7) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter7()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ The office stays empty.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 8) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter8()">🌊 Continue</button>';
         else action = done ? '<div class="story-chip">✓ She just stays beside him.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 9) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter9()">⚓ Make It Formal</button>';
         else action = done ? '<div class="story-chip">✓ They chose this.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 10) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter10()">⛵ Continue</button>';
         else action = done ? '<div class="story-chip">✓ Sailors aboard their own chosen future.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 11) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter11()">🔮 Let Renn Look Closer</button>';
         else action = done ? '<div class="story-chip">✓ Not nothing. Just not ready yet.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 12) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter12()">🤝 Negotiate</button>';
         else action = done ? '<div class="story-chip">✓ Negotiated, not fought.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 13) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter13()">👋 Continue</button>';
         else action = done ? '<div class="story-chip">✓ They got to choose.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 14) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter14()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ They believe in what she\'s building.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 15) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter15()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ He\'s finished. Fair Tide keeps going.</div>' : '<div class="story-chip">Waiting on Robin\'s community service to finish — check back later.</div>';
       } else if (ch.id === 16) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter16()">🏮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ Just himself, now.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 17) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter17()">🏮 Let Fair Tide Grow</button>';
         else action = done ? '<div class="story-chip">✓ A home base, not just a port.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 18) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter18()">🔮 Continue</button>';
         else action = done ? '<div class="story-chip">✓ A kind of magic none of them have seen.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 19) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter19()">🗺️ Continue</button>';
         else action = done ? '<div class="story-chip">✓ Not lost. Early.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 20) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter20()">🚪 Continue</button>';
         else action = done ? '<div class="story-chip">✓ Not yet. But someday.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 21) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter21()">⚓ Continue</button>';
         else action = done ? '<div class="story-chip">✓ We\'ll be ready when you are.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 22) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter22()">🌊 Continue</button>';
         else action = done ? '<div class="story-chip">✓ The horizon has changed.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 23) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="completeArc6Chapter23()">🎉 Celebrate</button>';
         else action = done ? '<div class="story-chip">✓ Something much larger.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else if (ch.id === 24) {
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-danger" onclick="completeArc6Chapter24()">🌅 Sail Out</button>';
         else action = done ? '<div class="story-chip">✓ Arc VI complete. It might be another world.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       } else {
         // Fallback for future chapters — standard mark-as-read pattern,
         // same as every other arc, until this one needs its own mechanic.
-        if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="markArc6ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
         else action = done ? '<div class="story-chip">✓ Complete.</div>' : '<div class="story-chip">Follow the current Objective.</div>';
       }
@@ -11013,7 +11042,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc7_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc7ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -11036,7 +11065,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !arc7Read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VII chapters read yet.</div></div>'
       : arc7Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VII — The Farseer</div>' + section);
   };
@@ -11218,7 +11247,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc8_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc8ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -11241,7 +11270,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !arc8Read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VIII chapters read yet.</div></div>'
       : arc8Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — Beyond the Known Sea</div>' + section);
   };
@@ -11474,7 +11503,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc9_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         (ch.id === 12
           ? '<button class="btn btn-small btn-success" onclick="startArc9Ch12Battle()">'+esc(ch.action || '⚔️ Protect the Crew')+'</button>'
           : '<button class="btn btn-small btn-success" onclick="markArc9ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>');
@@ -11499,7 +11528,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !arc9Read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc IX chapters read yet.</div></div>'
       : arc9Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a></div>').join('');
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IX — The Cat Who Was Always There</div>' + section);
   };
@@ -13165,7 +13194,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const ready = !done && so===('complete_arc10_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+      if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc10ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -13392,10 +13421,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const status = done ? '✓ COMPLETE' : (readyNow ? 'CURRENT' : '🔒 LOCKED');
       let action;
       if (readyNow) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
           '<button class="btn btn-small btn-success" onclick="markMemoryArchiveChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       } else if (done) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a> '+
+        action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button> '+
           '<button class="btn btn-small btn-danger" onclick="challengeMemoryFragment('+ch.id+')">⚔️ Challenge Memory Again</button>';
       } else {
         action = '<div class="story-chip">Follow the current Objective.</div>';
@@ -13420,7 +13449,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const section = !read.length
       ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Memory Archive chapters read yet.</div></div>'
       : read.map(ch => '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
-          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a> '+
+          '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button> '+
           '<button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="challengeMemoryFragment('+ch.id+')">⚔️ Challenge Memory Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
       '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Memory Archive — Before the Crimson Tide</div>' + section);
