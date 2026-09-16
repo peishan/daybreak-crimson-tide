@@ -3003,7 +3003,32 @@ const GUARDIANS = {
   iron_brig_warden: { name: 'The Iron Brig Warden', art: '⚓', hp: 1020, dmg: 28, xp: 460, gold: 260, desc: "The prison hulk's own champion. Undefeated, until now." },
   drowned_admiral:  { name: 'The Drowned Admiral', art: '👑', hp: 1400, dmg: 34, xp: 900, gold: 500, desc: 'Holds the last passage alone, and has for longer than anyone can say.' }
 };
-function enemyLookup(key){ return HARBOR_ENEMIES[key] || SEA_ENEMIES[key] || GUARDIANS[key] || null; }
+// Memory Fragments — one per Memory Archive chapter (a standalone side
+// story, not chained to any numbered arc's gating — see its own IIFE
+// near the end of the file), fought via the repeatable "Challenge Memory
+// Again" button once that chapter's been read. Each is themed on that
+// chapter's own emotional core rather than its literal events — an echo
+// of exhaustion, of doubt, of strain — matching how this game already
+// treats memory as something you can face in combat (Arc III's own
+// memory fights use the same idea). Uses the ordinary level-scaling
+// branch of scaleCrimsonEnemy (unlike Arc III's frozen 'memory' kind),
+// so these stay a fair, repeatable fight at any point in the game.
+const MEMORY_FRAGMENTS = {
+  memory_fragment_1:  { name: 'Echo of Exhaustion',      art: '🕯️', hp: 150, dmg: 12, xp: 60, gold: 25, desc: 'The weight San carried long before anyone else could see it.' },
+  memory_fragment_2:  { name: 'Echo of Solitude',        art: '🌑', hp: 155, dmg: 12, xp: 60, gold: 25, desc: "Joel's quiet resignation to getting through it alone." },
+  memory_fragment_3:  { name: 'Flicker of Curiosity',    art: '✨', hp: 140, dmg: 11, xp: 60, gold: 25, desc: 'A small, unexpected spark, easy to almost ignore.' },
+  memory_fragment_4:  { name: 'Echo of First Words',     art: '💬', hp: 160, dmg: 13, xp: 65, gold: 28, desc: 'Every careful question, answered a little more honestly than planned.' },
+  memory_fragment_5:  { name: 'Echo of the First Spark', art: '🎬', hp: 170, dmg: 14, xp: 70, gold: 30, desc: 'Ten hours that refused to feel like enough.' },
+  memory_fragment_6:  { name: 'Quiet Echo',               art: '🌙', hp: 165, dmg: 13, xp: 68, gold: 29, desc: "Something private, kept exactly that — private." },
+  memory_fragment_7:  { name: 'Echo of Routine',          art: '📅', hp: 175, dmg: 14, xp: 72, gold: 31, desc: 'The small, ordinary weight of choosing someone, every single week.' },
+  memory_fragment_8:  { name: 'Echo of Strain',           art: '⚡', hp: 200, dmg: 16, xp: 80, gold: 34, desc: 'Two different jobs, two different pressures, wearing on the same two people.' },
+  memory_fragment_9:  { name: "Fractured Memory: The Accident", art: '🩹', hp: 210, dmg: 17, xp: 85, gold: 36, desc: 'A bad fall, a bandaged head, and someone who got there in twenty minutes.' },
+  memory_fragment_10: { name: "Fractured Memory: The Ending",   art: '📋', hp: 215, dmg: 17, xp: 88, gold: 37, desc: 'Nine years, ending in confusion instead of a clean goodbye.' },
+  memory_fragment_11: { name: 'Echo of Family',           art: '👪', hp: 180, dmg: 14, xp: 75, gold: 32, desc: "The family San carried with her long before Joel — imperfect, and still hers." },
+  memory_fragment_12: { name: 'Echo of Kinship',          art: '🤝', hp: 185, dmg: 15, xp: 76, gold: 33, desc: 'More family, spread across years and distance, still holding on.' },
+  memory_fragment_13: { name: 'Echo of Two Families',     art: '🏠', hp: 230, dmg: 18, xp: 95, gold: 40, desc: 'Two complicated pasts, and two people who chose each other anyway.' }
+};
+function enemyLookup(key){ return HARBOR_ENEMIES[key] || SEA_ENEMIES[key] || GUARDIANS[key] || MEMORY_FRAGMENTS[key] || null; }
 
 // ---------------------------------------------------------------------------
 // VOYAGE EVENTS
@@ -13239,6 +13264,170 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 })();
 </script>
 
+<script id="ct-build-v119-memory-archive">
+(function(){
+  // -------------------------------------------------------------------
+  // THE MEMORY ARCHIVE — a distinct, standalone story arc, not chained to
+  // any numbered arc's gating. Sole prerequisite is Joel having joined
+  // the crew — these are shared memories, so they only make sense once
+  // he's actually part of the story. 13 chapters, each with its own
+  // one-time read (same simple markXChapterRead pattern every arc since
+  // Arc II uses) PLUS a repeatable "Challenge Memory Again" combat option
+  // once read — the actual novel part of this feature, and the reason
+  // these enemies (MEMORY_FRAGMENTS, defined near HARBOR_ENEMIES) use the
+  // ordinary scaleCrimsonEnemy level-scaling branch rather than the
+  // frozen 'memory'/'final' one Arc III's own one-time memory fights use
+  // — those two systems look similar but are deliberately not the same:
+  // Arc III's battles are sequential, unscaled, one-shot story beats;
+  // these are meant to be returned to anytime, at whatever level the
+  // party's actually at.
+  //
+  // Chapter list/filenames wired exactly as given — images aren't
+  // uploaded yet, so these paths will 404 until they are; the "Open
+  // Chapter" link degrades gracefully either way (same pattern every
+  // other arc already uses for this).
+  //
+  // Scene text below is a condensed adaptation, not a verbatim transcript
+  // of what was provided — the emotional throughline and most concrete
+  // detail is kept, but exact figures (salary numbers, dates) are left
+  // out, both because they'd read oddly as in-fiction flavor text next to
+  // this game's usual prose, and because there's no real need for that
+  // level of specificity to live permanently in a client-side save file.
+  // -------------------------------------------------------------------
+  const MEMORY_ARCHIVE_CHAPTERS = [
+    {id:1,  title:'Just a Girl',                 focus:"San holds a demanding job together while carrying weight nobody around her can see. She's tired, and starting to want something that's just hers.", image:'assets/comics/memory-archive/ch01-just-a-girl.png', xp:120},
+    {id:2,  title:'A Person Least Expected',      focus:'Joel works himself past exhaustion, sends for his daughter from a distance, and has quietly stopped expecting anything more than that.', image:'assets/comics/memory-archive/ch02-a-person-least-expected.png', xp:120},
+    {id:3,  title:'A Curious Hello',              focus:"An unfamiliar app, an unlikely match — someone posting in Tagalog, based somewhere neither of them expected.", image:'assets/comics/memory-archive/ch03-a-curious-hello.png', xp:120},
+    {id:4,  title:'The First Call',                focus:'Careful questions become an easy conversation. A video call that was supposed to be quick runs for hours instead.', image:'assets/comics/memory-archive/ch04-the-first-call.png', xp:130},
+    {id:5,  title:'Ten Hours Together',            focus:'A first date that keeps not ending — a film, a first kiss, and the quiet realization that this might actually be something.', image:'assets/comics/memory-archive/ch05-ten-hours-together.png', xp:140},
+    {id:6,  title:'That Night',                    focus:'Something private, unhurried, and never fully explained — only that it felt right in a way neither of them expected.', image:'assets/comics/memory-archive/ch06-that-night.png', xp:130},
+    {id:7,  title:'Every Sunday',                  focus:'A year of shared Sundays — small and ordinary, and exactly what makes choosing someone, again and again, mean something.', image:'assets/comics/memory-archive/ch07-every-sunday.png', xp:140},
+    {id:8,  title:'Different Battles',             focus:'Both San and Joel are quietly worn down at work, each carrying their own version of the same kind of pressure.', image:'assets/comics/memory-archive/ch08-different-battles.png', xp:140},
+    {id:9,  title:'Memory Trigger',                focus:"An accident at Joel's work. San reaches the hospital in twenty minutes flat. When it matters, the person who loves you shows up first.", image:'assets/comics/memory-archive/ch09-memory-trigger.png', xp:150},
+    {id:10, title:'Memory Trigger',                focus:"San's long career comes to an uncertain, complicated end. Joel doesn't offer money — he just quietly makes sure she's alright.", image:'assets/comics/memory-archive/ch10-memory-trigger.png', xp:150},
+    {id:11, title:'Memory Fragment: Family',       focus:'The sisters, nieces, and nephews San carried with her long before Joel — some close, some distant, all still hers.', image:'assets/comics/memory-archive/ch11-memory-fragment-family.png', xp:140},
+    {id:12, title:'Familial Bonds',                focus:'More of the family San has held onto across years and distance — imperfect, complicated, and still family.', image:'assets/comics/memory-archive/ch12-familial-bonds.png', xp:140},
+    {id:13, title:"Joel's Family",                 focus:'Two complicated families, on both sides — and, somehow, two people who chose each other anyway.', image:'assets/comics/memory-archive/ch13-joels-family.png', xp:160}
+  ];
+  window.MEMORY_ARCHIVE_CHAPTERS = MEMORY_ARCHIVE_CHAPTERS;
+
+  const MEMORY_ARCHIVE_SCENES = {
+    1: "San holds a demanding office job together from the outside — capable, dependable, rarely any trouble.<br><br>Underneath that, she's exhausted. The work is unpredictable. So is the person running it.<br><br>Most people around her don't know what she's already been through, or what she's still carrying — a difficult marriage she's still untangling herself from, distance from her own children, and someone from her past who keeps pulling her back in with demands she can barely keep up with.<br><br>She wants to remember what it feels like to just be herself. One day, almost by accident, she finds an app that will end up changing everything.",
+    2: "Before San, Joel is just trying to get through the days. Early mornings, long shifts, heavy work — and even his days off aren't always really his.<br><br>His body is tired. So is his mind. His mother is the one constant he can lean on.<br><br>He has a daughter he rarely gets to see, but never stops providing for. He's made his own mistakes too, and carries the weight of them quietly.<br><br>A past relationship ended during a hard stretch neither of them could really control. Joel reaches a simple conclusion: better alone than in something like that again. He isn't looking to be rescued, and isn't expecting anything extraordinary.<br><br>Then San appears.",
+    3: "San starts to feel boxed in by everything around her — by obligations she never fully chose, by someone from her past who won't stop asking for more than she has to give.<br><br>She opens an app she's never used before, almost on a whim, and picks a country to match with that isn't her own.<br><br>Then a profile catches her eye. The posts are in Tagalog. The location says somewhere unexpected. Curious enough to matter, she sends a message — with no idea yet whose profile it actually is.",
+    4: "They talk as new friends first — careful, curious, asking each other everything.<br><br>Small nerves surface and get answered honestly: an age gap that turns out not to matter, a daughter he's never hidden, children of her own she doesn't get to raise day to day.<br><br>Eventually they move the conversation somewhere else, exchange numbers, and San asks if they can call — she wants to hear his voice.<br><br>The call runs for hours. He's shy when his dorm mates wander past. By the end of it, they've already agreed to meet.",
+    5: "Their first date runs long — a walk through the mall, nerves when hands touch for the first time, a movie neither of them really watches all the way through.<br><br>They take photos together. They share a first kiss. Before the night's over, he tells her he loves her.<br><br>Neither of them meant for it to turn into ten hours. It does anyway — and it's only the beginning.",
+    6: "After their last date, it's clear to both of them that this has already become something more than casual.<br><br>They find time and space to be alone together. San is nervous — it's been a long time, and her past hasn't made intimacy easy for her.<br><br>With Joel, it feels different. Natural, unhurried, and — for both of them — something neither quite expected. The details stay theirs. What matters is that neither of them regrets it.",
+    7: "For the next year, Sundays belong to them. Their one shared day off, spent on small, ordinary things — errands, groceries, time near where he stays.<br><br>San can't always stay the night; her parents need her too. That doesn't make the day matter any less.<br><br>The relationship isn't perfect — there's an unresolved divorce, money pressure, people who try to get too close to San at work, disagreements neither of them enjoys. But every week, they keep choosing to show up for each other anyway.",
+    8: "Both of them are quietly struggling at work, in their own ways.<br><br>At San's office, the pressure keeps building — people are starting to leave. At Joel's warehouse, tension is building around him too, with a boss's family entangled in the day-to-day and little patience for pushback.<br><br>Joel's body starts giving out from the workload. When he asks for rest, he's threatened over it. He starts speaking up anyway — about unfair treatment, about how women on the floor are treated — and it costs him some of the goodwill he used to have.<br><br>Meanwhile, San is heading toward a breaking point of her own.",
+    9: "Joel is hurt in an accident at work — a fall, an unguarded edge, more than he expects on what should have been an ordinary day near the end of his shift.<br><br>San reaches the hospital in twenty minutes. His boss barely reacts to the news. Joel's own supervisor, rattled, at least makes sure he gets to a doctor.<br><br>San already understands the unsafe conditions better than anyone needs to explain to her — that's not what she's thinking about, though. She just needs to see him.<br><br>His head is bandaged. She kisses him anyway. When something happens, the person who loves you is the one who comes first.",
+    10: "San's long career at her office comes to an uncertain, complicated end — years of history, old paperwork, and old decisions finally catching up with her all at once.<br><br>It isn't a clean goodbye. There's confusion about what was actually decided and when, and a slow, tired recognition that the place she'd given so much to isn't the place it used to be.<br><br>At home, things are just as hard — family pressure, her father's health, and a mounting sense that she's stretched too thin to hold it all.<br><br>Joel finds out. He doesn't ask her for anything, and doesn't offer money either — he just quietly borrows what he needs to help from somewhere else, and tells her about it only much later. When she eventually finds a new, lower-paying job through a trusted connection, his only response is that as long as she's happy, the number doesn't matter to him.",
+    11: "San thinks back on the family she carried with her long before Joel ever came into the picture.<br><br>Her eldest sister weathered a difficult first marriage and came out the other side of it. Her sister's two children didn't always get along, growing up — one used to be closer to their father, the other closer to San's own father instead — but time changed that, and they became some of the people San trusts most.<br><br>San and her eldest sister stayed close through all of it, in a way that outlasted every hard year in between.",
+    12: "More of San's family, spread further out across time and distance.<br><br>A niece she was once close with grew up, grew apart, and found her own path — including a harder diagnosis along the way that reshaped how the family understood her.<br><br>Another relative built a hard life for herself after her own divorce, not always approving of San's choices, never quite standing in the way of them either. Some of the closeness faded after San remarried and stopped visiting as often. A father figure, not related by blood, was lost along the way too.<br><br>None of it undid the fact that, whatever the distance, they were still family.",
+    13: "Joel's family carries its own complications. His parents separated while he was still in school. His father passed on after a hard stretch, not long after finally getting back to steady work.<br><br>Joel is the second of four. His older sister survived real hardship and came out of it stronger — he's plainly proud of her. One brother built a stable life further away; the youngest started a family early, before he was really ready to.<br><br>His mother has carried more than her share too, across bad years and harder ones.<br><br>Joel never pushes San about her past — if she wants to talk about it, he listens, and he never needed the full story before he could love her anyway.<br><br>Two people. Two complicated families. Somehow, still, each other.<br><br>\"I'm lucky to have you,\" San tells him.<br><br>\"I'm also lucky to have you,\" he says back."
+  };
+
+  window.memoryArchiveObjectiveState = function(){
+    const joelM = ALL_PARTY.find(m => m.id === 'joel');
+    if (!joelM || !memberUnlocked(joelM)) return null;
+    game.comicProgressMemoryArchive = game.comicProgressMemoryArchive || {};
+    for (const ch of MEMORY_ARCHIVE_CHAPTERS) {
+      if (!game.comicProgressMemoryArchive[ch.id]) return 'complete_memoryarchive_chapter_' + ch.id;
+    }
+    return 'memoryarchive_complete_for_now';
+  };
+
+  window.markMemoryArchiveChapterRead = function(id){
+    id = Number(id);
+    const ch = MEMORY_ARCHIVE_CHAPTERS.find(c => c.id === id);
+    if (!ch) { console.warn('[MemoryArchive] no chapter data for id', id); return; }
+    game.comicProgressMemoryArchive = game.comicProgressMemoryArchive || {};
+    if (game.comicProgressMemoryArchive[id]) { toast('✓ Already marked read.'); return; }
+    if (window.memoryArchiveObjectiveState() !== 'complete_memoryarchive_chapter_' + id) { toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgressMemoryArchive[id] = true;
+    gainXP(ch.xp);
+    game.reputation = (game.reputation || 0) + 1;
+    logEvent('📖 Memory Archive · Chapter ' + id + ' complete: ' + ch.title + ' · +' + ch.xp + ' XP', 'gold');
+    toast('📖 Chapter ' + id + ' complete! +' + ch.xp + ' Story XP');
+    if (MEMORY_ARCHIVE_SCENES[id] && typeof game.storyModalQueue !== 'undefined') {
+      game.storyModalQueue.push({ title: ch.title, blurb: MEMORY_ARCHIVE_SCENES[id] });
+    }
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof renderMainGoal === 'function') renderMainGoal();
+    if (typeof renderStory === 'function') renderStory();
+  };
+
+  // Repeatable "Challenge Memory Again" — the actual novel mechanic here.
+  // Each chapter's Memory Fragment (defined with MEMORY_FRAGMENTS, near
+  // HARBOR_ENEMIES) uses the ordinary level-scaling branch, so these
+  // stay a fair fight at whatever level the party's actually at, no
+  // matter how long ago the chapter itself was first read.
+  window.challengeMemoryFragment = function(id){
+    id = Number(id);
+    if (!game.comicProgressMemoryArchive || !game.comicProgressMemoryArchive[id]) { toast('🔒 Read this chapter first.'); return; }
+    if (game.inCombat) { toast('Already out on something else.'); return; }
+    const key = 'memory_fragment_' + id;
+    if (!MEMORY_FRAGMENTS[key]) { console.warn('[MemoryArchive] no enemy defined for', key); return; }
+    startCombat({ kind: 'memoryArchive', key, enemy: scaledEnemyForExplore(key, 'memoryArchive') });
+  };
+
+  const oldRenderStoryForMemoryArchive = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForMemoryArchive) oldRenderStoryForMemoryArchive();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const ready = typeof window.memoryArchiveObjectiveState === 'function' && window.memoryArchiveObjectiveState() !== null;
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<div class="story-act-kicker">Memory Archive</div><div class="story-act-title">Before the Crimson Tide</div>'+
+      '<div class="story-act-tagline">San and Joel\'s life before the ship — thirteen fragments, love, hardship, and family.</div></div>';
+    if (!ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Memory Archive Locked</div><div class="story-chapter-sub">Recruit Joel first — these are shared memories.</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.memoryArchiveObjectiveState();
+    MEMORY_ARCHIVE_CHAPTERS.forEach(ch => {
+      const done = !!game.comicProgressMemoryArchive?.[ch.id];
+      const readyNow = !done && so === ('complete_memoryarchive_chapter_' + ch.id);
+      const status = done ? '✓ COMPLETE' : (readyNow ? 'CURRENT' : '🔒 LOCKED');
+      let action;
+      if (readyNow) {
+        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+          '<button class="btn btn-small btn-success" onclick="markMemoryArchiveChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
+      } else if (done) {
+        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a> '+
+          '<button class="btn btn-small btn-danger" onclick="challengeMemoryFragment('+ch.id+')">⚔️ Challenge Memory Again</button>';
+      } else {
+        action = '<div class="story-chip">Follow the current Objective.</div>';
+      }
+      html += '<article class="quest-item '+(done?'completed':'')+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so === 'memoryarchive_complete_for_now') {
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All 13 memories read. Each one can still be challenged again anytime, above.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  const oldRenderComicArchiveForMemoryArchive = window.renderComicArchive;
+  window.renderComicArchive = function(){
+    if (oldRenderComicArchiveForMemoryArchive) oldRenderComicArchiveForMemoryArchive();
+    const el = document.getElementById('comicArchive'); if (!el) return;
+    const progress = (typeof game !== 'undefined' && game.comicProgressMemoryArchive) || {};
+    const read = MEMORY_ARCHIVE_CHAPTERS.filter(ch => !!progress[ch.id]);
+    const section = !read.length
+      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Memory Archive chapters read yet.</div></div>'
+      : read.map(ch => '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+          '<a class="btn btn-small" style="text-decoration:none;display:inline-block;margin-top:6px;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Read Again</a> '+
+          '<button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="challengeMemoryFragment('+ch.id+')">⚔️ Challenge Memory Again</button></div>').join('');
+    el.insertAdjacentHTML('beforeend',
+      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Memory Archive — Before the Crimson Tide</div>' + section);
+  };
+})();
+</script>
+
 <script>
 // Register the service worker (see sw.js) for offline play + installability.
 // Registered with a relative path so it works whether the game is served
@@ -13254,3 +13443,4 @@ if ('serviceWorker' in navigator) {
 
 </body>
 </html>
+
