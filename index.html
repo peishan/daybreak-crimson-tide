@@ -6618,6 +6618,9 @@ function handleVictory() {
   } else if (enemy.kind === 'training') {
     postBattleMessage = 'A good bout.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="backToTrainingRoom()">⚔️ Back to the Training Room</button>';
+  } else if (enemy.kind === 'memoryArchive') {
+    postBattleMessage = enemy.name + ' fades. San remembers a little more clearly now.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
@@ -7241,7 +7244,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V148 · Wyverns and Dragon Blood'</script>
+<script>window.__CT_BUILD__='V149 · Memory Fragment Post-Battle Message'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
