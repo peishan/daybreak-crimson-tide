@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v1';
+const CACHE_VERSION = 'crimson-tide-v2';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -47,9 +47,39 @@ self.addEventListener('fetch', event => {
 
   // Page navigations: try the network first (so players always get the
   // latest build while online), fall back to the cached shell if offline.
+  //
+  // BUG FIX: this used to be `fetch(req).catch(() => caches.match(...))`,
+  // which has two failure modes that both look like "tap the icon, nothing
+  // happens" — the exact symptom that was forcing repeated reinstalls:
+  //   1. No timeout on the network attempt. A slow/flaky mobile connection
+  //      at launch doesn't reject quickly, it just hangs — and with no
+  //      race against that, the navigation stalls indefinitely instead of
+  //      falling back to the cached shell.
+  //   2. No guaranteed fallback. caches.match() can resolve to undefined
+  //      (e.g. right after a deploy, before that exact URL's been cached
+  //      under the new version). respondWith(undefined) is invalid — in
+  //      standalone/installed mode Chrome fails the navigation silently
+  //      instead of showing any error page, so tapping the icon does
+  //      nothing at all, with no indication anything went wrong.
+  // Racing a short timeout against the network, and always falling back to
+  // an actual Response (the cached shell, or as a last resort a minimal
+  // inline offline page) fixes both — launch either gets the fresh page,
+  // the cached one, or a real "you're offline" screen, but never nothing.
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() => caches.match('./index.html'))
+      Promise.race([
+        fetch(req),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('nav-timeout')), 3000))
+      ]).catch(() =>
+        caches.match('./index.html').then(cached => cached || caches.match('./')).then(cached =>
+          cached || new Response(
+            '<!doctype html><meta charset="utf-8"><title>Crimson Tide — Offline</title>' +
+            '<body style="background:#0d1f2d;color:#e8c96a;font-family:sans-serif;text-align:center;padding:3em 1em;">' +
+            '<h2>You\'re offline</h2><p>Couldn\'t reach the server and no cached copy was found yet.<br>Reconnect and try again.</p></body>',
+            { headers: { 'Content-Type': 'text/html' } }
+          )
+        )
+      )
     );
     return;
   }
