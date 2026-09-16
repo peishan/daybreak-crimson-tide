@@ -5151,6 +5151,10 @@ function doVoyage(portId, days, dangerLevel) {
         clearInterval(interval);
         setTimeout(() => { startCombat({kind:'sea', key: event.combat, enemy: scaledEnemyForExplore(event.combat, 'sea')}); }, 1000);
         return;
+      } else if (event.illusion) {
+        clearInterval(interval);
+        setTimeout(() => { if (typeof window.triggerIllusionEncounter === 'function') window.triggerIllusionEncounter(true); }, 1000);
+        return;
       } else {
         handleVoyageEvent(event);
       }
@@ -6621,6 +6625,9 @@ function handleVictory() {
   } else if (enemy.kind === 'memoryArchive') {
     postBattleMessage = enemy.name + ' fades. San remembers a little more clearly now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'illusion') {
+    postBattleMessage = 'The memory dissolves. Whatever ' + enemy.name + ' was, it isn\'t here anymore.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
@@ -7244,7 +7251,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V149 · Memory Fragment Post-Battle Message'</script>
+<script>window.__CT_BUILD__='V151 · Illusionary Waters 12 Locations'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -13460,6 +13467,183 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 })();
 </script>
+
+
+<script id="ct-build-v150-illusionary-waters">
+(function(){
+  // -------------------------------------------------------------------
+  // ILLUSIONARY WATERS. Unlocked once all 13 Memory Archive chapters are
+  // read — reachable both as its own dedicated Sail destination and as a
+  // rare event during an ordinary voyage to a real port (San specifically
+  // asked whether the latter was possible; it is, via the same EVENTS
+  // pool doVoyage already rolls against). Each visit is fully random:
+  // which of the 13 places, and whether it's a themed battle or a
+  // memento — no fixed pairing between place and outcome, no combat
+  // effect from mementos, purely a collectible. Revisitable indefinitely.
+  //
+  // Locations combine Arc III's old-world places (Jangsak, Meragang,
+  // Singapore), the two Arc IX dorm-illusion beats (Ch.15, "The First
+  // Home" — the dormitory itself and the spot where Joel fed Soel's
+  // mother, since that's the clearest real distinction in what's
+  // actually written; flagged to San as an assumption since the exact
+  // "two places" wasn't fully specified), and the 8 Memory Archive
+  // locations San listed directly.
+  // -------------------------------------------------------------------
+  const ILLUSION_LOCATIONS = [
+    {key:'jangsak', name:"Jangsak", monsterName:"A Flicker of Old Arguments", monsterIcon:'🗯️', mementoName:"A Faded Family Photo", mementoIcon:'🖼️', desc:"The house where Aisyah, Senedra, and Zaki grew up. Voices San half-remembers, arguing about nothing she can quite place anymore."},
+    {key:'meragang', name:"Meragang", monsterName:"A Restless Echo", monsterIcon:'👤', mementoName:"A Childhood Marble", mementoIcon:'🔮', desc:"Familiar streets that don\'t lead anywhere real anymore, just the shape of somewhere she used to know."},
+    {key:'singapore', name:"Singapore", monsterName:"A Familiar Stranger", monsterIcon:'🌆', mementoName:"An Old Bus Ticket", mementoIcon:'🎫', desc:"A city San stopped visiting. Mez and Eliz are somewhere in it, just out of reach, the way distance does that to people."},
+    {key:'joels_dormitory', name:"Joel's Dormitory (Illusion)", monsterName:"A Wandering Roommate", monsterIcon:'👻', mementoName:"A Worn Work Boot", mementoIcon:'👢', desc:"The shared room, exactly as tired as Joel remembers it. Someone else\'s things are still on the other bunk."},
+    {key:'mall_gadong', name:"The Mall, Gadong", monsterName:"An Overpriced Vendor", monsterIcon:'🛍️', mementoName:"A Photobooth Strip", mementoIcon:'📸', desc:"Where it all actually started. Ten hours that felt like ten minutes, replaying just out of sync."},
+    {key:'the_private_place', name:"The Private Place", monsterName:"A Held Breath", monsterIcon:'💭', mementoName:"A Quiet Warmth", mementoIcon:'🕯️', desc:"Somewhere neither of them ever named out loud. The details stay exactly as private here as they were then."},
+    {key:'joels_philippine_village', name:"Joel's Philippine Village", monsterName:"A Village Watchdog", monsterIcon:'🐕', mementoName:"A Woven Bracelet", mementoIcon:'🧵', desc:"Where Mama is from. San never actually visited, but the memory has her here anyway, the way love borrows places it\'s never been."},
+    {key:'the_airport', name:"The Airport", monsterName:"The Unboarded Echo", monsterIcon:'✈️', mementoName:"A Boarding Pass Stub", mementoIcon:'🎟️', desc:"Where San first met Mama. Arrivals and departures, overlapping, the way airports always seem to hold both at once."},
+    {key:'8tea_sengkurong', name:"8tea, Sengkurong", monsterName:"An Impatient Barista", monsterIcon:'🧋', mementoName:"A Half-Finished Cup", mementoIcon:'🥤', desc:"An ordinary Sunday errand. Nothing remarkable happened here — which is exactly why it\'s remembered at all."},
+    {key:'sipsteria_sengkurong', name:"Sipsteria, Sengkurong", monsterName:"A Restless Regular", monsterIcon:'☕', mementoName:"A Loyalty Stamp Card", mementoIcon:'🎫', desc:"Another quiet stop on another quiet Sunday. The kind of place that only matters in hindsight."},
+    {key:'amalis_cafe', name:"Amali's Cafe", monsterName:"A Muttering Patron", monsterIcon:'☕', mementoName:"A Napkin Doodle", mementoIcon:'📝', desc:"Coffee, conversation, nothing urgent. The kind of afternoon neither of them thought to hold onto at the time."},
+    {key:'madewa_apartment', name:"The Madewa Rental Apartment", monsterName:"A Familiar Silence", monsterIcon:'🌙', mementoName:"A Spare Key", mementoIcon:'🔑', desc:"A rented room that was theirs for a while, in the way borrowed places sometimes are."}
+  ];
+  window.ILLUSION_LOCATIONS = ILLUSION_LOCATIONS;
+
+  Object.assign(HARBOR_ENEMIES, {
+    jangsak_illusion: {name:"A Flicker of Old Arguments", icon:'🗯️', hp:220, dmg:14, xp:150, gold:0, desc:"The house where Aisyah, Senedra, and Zaki grew up. Voices San half-remembers, arguing about nothing she can quite place anymore."},
+    meragang_illusion: {name:"A Restless Echo", icon:'👤', hp:220, dmg:14, xp:150, gold:0, desc:"Familiar streets that don\'t lead anywhere real anymore, just the shape of somewhere she used to know."},
+    singapore_illusion: {name:"A Familiar Stranger", icon:'🌆', hp:220, dmg:14, xp:150, gold:0, desc:"A city San stopped visiting. Mez and Eliz are somewhere in it, just out of reach, the way distance does that to people."},
+    joels_dormitory_illusion: {name:"A Wandering Roommate", icon:'👻', hp:220, dmg:14, xp:150, gold:0, desc:"The shared room, exactly as tired as Joel remembers it. Someone else\'s things are still on the other bunk."},
+    mall_gadong_illusion: {name:"An Overpriced Vendor", icon:'🛍️', hp:220, dmg:14, xp:150, gold:0, desc:"Where it all actually started. Ten hours that felt like ten minutes, replaying just out of sync."},
+    the_private_place_illusion: {name:"A Held Breath", icon:'💭', hp:220, dmg:14, xp:150, gold:0, desc:"Somewhere neither of them ever named out loud. The details stay exactly as private here as they were then."},
+    joels_philippine_village_illusion: {name:"A Village Watchdog", icon:'🐕', hp:220, dmg:14, xp:150, gold:0, desc:"Where Mama is from. San never actually visited, but the memory has her here anyway, the way love borrows places it\'s never been."},
+    the_airport_illusion: {name:"The Unboarded Echo", icon:'✈️', hp:220, dmg:14, xp:150, gold:0, desc:"Where San first met Mama. Arrivals and departures, overlapping, the way airports always seem to hold both at once."},
+    '8tea_sengkurong_illusion': {name:"An Impatient Barista", icon:'🧋', hp:220, dmg:14, xp:150, gold:0, desc:"An ordinary Sunday errand. Nothing remarkable happened here — which is exactly why it\'s remembered at all."},
+    sipsteria_sengkurong_illusion: {name:"A Restless Regular", icon:'☕', hp:220, dmg:14, xp:150, gold:0, desc:"Another quiet stop on another quiet Sunday. The kind of place that only matters in hindsight."},
+    amalis_cafe_illusion: {name:"A Muttering Patron", icon:'☕', hp:220, dmg:14, xp:150, gold:0, desc:"Coffee, conversation, nothing urgent. The kind of afternoon neither of them thought to hold onto at the time."},
+    madewa_apartment_illusion: {name:"A Familiar Silence", icon:'🌙', hp:220, dmg:14, xp:150, gold:0, desc:"A rented room that was theirs for a while, in the way borrowed places sometimes are."}
+  });
+
+  window.illusionsUnlocked = function(){
+    return typeof window.memoryArchiveObjectiveState === 'function' &&
+      window.memoryArchiveObjectiveState() === 'memoryarchive_complete_for_now';
+  };
+
+  function mementoState(){ game.illusionMementos = game.illusionMementos || {}; return game.illusionMementos; }
+  window.illusionMementoState = mementoState;
+
+  // Core resolution — same function whether triggered from the dedicated
+  // Sail option or a random voyage event.
+  window.triggerIllusionEncounter = function(midVoyage){
+    if (!window.illusionsUnlocked()) { toast('🔒 Complete the Memory Archive first.'); return; }
+    const loc = ILLUSION_LOCATIONS[Math.floor(Math.random() * ILLUSION_LOCATIONS.length)];
+    if (Math.random() < 0.5) {
+      // Battle outcome
+      const enemyKey = loc.key + '_illusion';
+      const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(enemyKey, 'harbor') : null;
+      if (!enemy) { toast('The memory slips away before it takes shape.'); return; }
+      toast('🌫️ ' + loc.name + ' — something is here.', 2600);
+      startCombat({kind:'illusion', key: enemyKey, enemy: enemy, portId:null});
+    } else {
+      // Memento outcome — no combat, no stat effect, purely a keepsake.
+      const ms = mementoState();
+      const firstEver = ms[loc.key] === undefined;
+      ms[loc.key] = (ms[loc.key] || 0) + 1;
+      logEvent('🌫️ ' + loc.name + ': found ' + loc.mementoIcon + ' ' + loc.mementoName + '.', 'good');
+      if (firstEver) {
+        setTimeout(function(){
+          if (typeof showStoryModal === 'function') showStoryModal({
+            title: loc.mementoIcon + ' ' + loc.mementoName,
+            blurb: loc.desc + '<br><br>Whatever this place really was, something of it is real enough to hold onto now.'
+          });
+        }, 500);
+      } else {
+        toast('🌫️ ' + loc.name + ': found another ' + loc.mementoIcon + ' ' + loc.mementoName + '.', 3200);
+      }
+      // BUG FIX: a memento outcome never navigated anywhere — fine from
+      // the dedicated Illusionary Waters screen (staying there to step
+      // in again is the point), but a mid-voyage trigger would strand
+      // the player on a now-frozen voyage screen with nothing to do,
+      // unlike the battle outcome, which already returns to port via
+      // combat's own exit flow.
+      if (midVoyage && typeof goScreen === 'function') {
+        goScreen('port');
+      }
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+      if (typeof renderIllusionsScreen === 'function') renderIllusionsScreen();
+    }
+  };
+
+  // Sync the illusion voyage-event's presence in the shared EVENTS pool —
+  // added only once unlocked, removed otherwise, checked fresh every
+  // time a voyage actually starts (doVoyage wrap below), so this can
+  // never be stale regardless of when the Memory Archive was completed.
+  function syncIllusionVoyageEvent(){
+    if (typeof EVENTS === 'undefined') return;
+    const existingIdx = EVENTS.findIndex(e => e.type === 'illusion');
+    if (window.illusionsUnlocked()) {
+      if (existingIdx === -1) EVENTS.push({type:'illusion', text:'The air shimmers. For a moment, you\'re somewhere else entirely.', danger:1, illusion:true});
+    } else {
+      if (existingIdx !== -1) EVENTS.splice(existingIdx, 1);
+    }
+  }
+
+  const oldDoVoyageForIllusions = window.doVoyage;
+  window.doVoyage = function(portId, days, dangerLevel){
+    syncIllusionVoyageEvent();
+    return oldDoVoyageForIllusions ? oldDoVoyageForIllusions(portId, days, dangerLevel) : undefined;
+  };
+
+  // -------------------------------------------------------------------
+  // Reachable from the Sail screen, once unlocked — a light hub, not a
+  // Fair-Tide-scale multi-tab structure per San's own direction.
+  // -------------------------------------------------------------------
+  const oldRenderNavigationForIllusions = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForIllusions) oldRenderNavigationForIllusions();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.illusionsUnlocked()) return;
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(150,120,255,.5);" onclick="goScreen(\'illusions\')">'+
+      '<div style="font-size:1.6rem;">🌫️</div><div style="font-weight:600;">Illusionary Waters</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">A place that isn\'t really a place.</div></div>');
+  };
+
+  window.renderIllusionsScreen = function(){
+    const container = document.getElementById('illusionsContent');
+    if (!container) return;
+    const ms = mementoState();
+    const found = Object.keys(ms).length;
+    let html = '<div class="panel"><div class="panel-title">🌫️ Illusionary Waters</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:12px;">Somewhere between memory and sea. Nothing here is quite real, and nothing here is quite gone, either.</p>'+
+      '<button class="btn btn-success" onclick="triggerIllusionEncounter()">🚪 Step Into a Memory</button></div>'+
+      '<div class="panel"><div class="panel-title">🛒 Market</div>'+
+      '<p style="font-size:.82rem;opacity:.55;">There\'s nothing to buy in an echo. This stays closed here.</p></div>'+
+      '<div class="panel"><div class="panel-title">📦 Mementos — '+found+'/'+ILLUSION_LOCATIONS.length+'</div>';
+    ILLUSION_LOCATIONS.forEach(function(loc){
+      const count = ms[loc.key] || 0;
+      html += '<div style="font-size:.8rem;padding:4px 0;'+(count?'':'opacity:.4;')+'">'+
+        (count ? loc.mementoIcon : '❔') + ' ' + (count ? loc.mementoName : '???') +
+        (count > 1 ? ' ×'+count : '') + '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  };
+
+  const oldGoScreenForIllusions = window.goScreen;
+  window.goScreen = function(name){
+    if (oldGoScreenForIllusions) oldGoScreenForIllusions(name);
+    if (name === 'illusions' && typeof window.renderIllusionsScreen === 'function') window.renderIllusionsScreen();
+  };
+})();
+</script>
+
+<div class="screen" id="illusionsScreen">
+  <div class="game-container">
+    <div class="header"><h1>🌫️ Illusionary Waters</h1><div class="subtitle">Somewhere between memory and sea</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Back to Sail</button>
+      <button class="nav-btn" onclick="goScreen('port')">🏛️ Port</button>
+    </div>
+    <div id="illusionsContent"></div>
+  </div>
+</div>
 
 <script>
 // Register the service worker (see sw.js) for offline play + installability.
