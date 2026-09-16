@@ -610,6 +610,7 @@ tr:hover { background: rgba(196,163,90,0.08); }
   border-color: rgba(39,174,96,.38);
 }
 #storyContent.hide-completed .story-chapter.complete,
+#storyContent.hide-completed .quest-item.completed,
 #storyContent.hide-completed .arc1-comic-card.complete {
   display: none;
 }
@@ -7186,7 +7187,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V145 · Copyable Gist ID'</script>
+<script>window.__CT_BUILD__='V148 · Wyverns and Dragon Blood'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8766,6 +8767,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (s9 !== null && s9 !== 'arc9_part1_complete_for_now') return s9;
       if (s9 === 'arc9_part1_complete_for_now') lastTerminal = s9;
     }
+    if (typeof window.arc10ObjectiveState === 'function') {
+      const s10 = window.arc10ObjectiveState();
+      if (s10 !== null && s10 !== 'arc10_part1_complete_for_now') return s10;
+      if (s10 === 'arc10_part1_complete_for_now') lastTerminal = s10;
+    }
     return lastTerminal || base;
   };
 
@@ -8792,7 +8798,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (state === 'arc7_part1_complete_for_now') return ['Arc VII — All Caught Up', 'Every available Arc VII chapter is read. More is on the way.'];
     if ((m = /^complete_arc8_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VIII', m[1], window.ARC8_CHAPTERS);
     if ((m = /^complete_arc9_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc IX', m[1], window.ARC9_CHAPTERS);
+    if ((m = /^complete_arc10_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc X', m[1], window.ARC10_CHAPTERS);
     if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
+    if (state === 'arc9_part1_complete_for_now') return ['Arc IX — All Caught Up', 'Every available Arc IX chapter is read. More is on the way.'];
+    if (state === 'arc10_part1_complete_for_now') return ['Arc X — All Caught Up', 'Every available Arc X chapter is read. More is on the way.'];
     return null;
   }
 
@@ -12018,7 +12027,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   function expState(){ game.expedition = game.expedition || {active:false, wave:0, totalKills:0, totalKnowledge:0, totalResidue:0}; return game.expedition; }
   window.expeditionState = expState;
 
-  function horizonEngineState(){ game.horizonEngine = game.horizonEngine || {knowledge:0, residue:0}; return game.horizonEngine; }
+  function horizonEngineState(){
+    game.horizonEngine = game.horizonEngine || {knowledge:0, residue:0};
+    if (game.horizonEngine.dragonBlood === undefined) game.horizonEngine.dragonBlood = 0; // added once Dragon Blood exists as a real material (Arc X Ch.8) — see ct-build-v148
+    return game.horizonEngine;
+  }
   window.horizonEngineState = horizonEngineState;
 
   // Capped at 99% deliberately — actually completing the Horizon Engine
@@ -12147,7 +12160,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       '<div style="margin-bottom:10px;"><strong>Horizon Engine Development</strong>'+
       '<div class="ship-stat-bar" style="width:100%;margin:4px 0;"><div class="ship-stat-fill" style="width:'+pct+'%;background:#e8c96a;"></div></div>'+
       '<span style="font-size:.78rem;opacity:.75;">'+pct+'% — still a research project. Nothing\'s been built yet.</span></div>'+
-      '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+'</div>';
+      '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+(he.dragonBlood ? ' · 🩸 Dragon Blood: '+he.dragonBlood : '')+'</div>';
     if (es.active) {
       html += '<div class="story-chip" style="border-left-color:var(--danger);">Currently out at Wave '+es.wave+'<br>'+
         'Kills: '+es.totalKills+' · Knowledge this run: '+es.totalKnowledge+' · Residue this run: '+es.totalResidue+'<br>'+
@@ -12537,7 +12550,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (oldGoScreenForStoryScroll) oldGoScreenForStoryScroll(name);
     if (name === 'story') {
       setTimeout(function(){
-        const active = document.querySelector('#storyContent .story-chapter.active, #storyContent .arc1-comic-card.active');
+        const active = document.querySelector('#storyContent .story-chapter.active, #storyContent .quest-item.active, #storyContent .arc1-comic-card.active');
         if (active) active.scrollIntoView({block: 'center', behavior: 'instant'});
       }, 50);
     }
@@ -12966,6 +12979,263 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const tokenEl = document.getElementById('gistTokenInput');
     if (tokenEl && creds.token) tokenEl.placeholder = 'Token saved (leave blank to keep it)';
   });
+})();
+</script>
+
+
+<div id="arc10SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc10/arc10-cover-the-first-horizon.png" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc10Splash()">⚓ Begin Arc X</button>
+  </div>
+</div>
+
+<script id="ct-build-v146-arc10">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC X — THE FIRST HORIZON. 24 chapters, continuing the +15-per-arc
+  // level pace (Arc VI 90 / VII 105 / VIII 120 / IX 135 / X 150). Gated
+  // behind game.arc9Complete, matching every prior arc's pattern.
+  //
+  // Cover: 'arc10-cover-the-first-horizon.png', title "The First Horizon"
+  // — confirmed by San directly, not a guess.
+  //
+  // Card structure matches the CONFIRMED actual pattern used by Arc VI-IX
+  // (quest-item / completed — not story-chapter / complete, which turned
+  // out to be a wrong assumption baked into the V134 collapse-completed
+  // CSS fix; corrected there too). Also adds a genuine "active" class on
+  // the current chapter, which no prior arc's cards actually carried —
+  // meaning the V134 auto-scroll-to-current feature had nothing to
+  // target for any earlier arc either. Flagging this as worth applying
+  // to Arc VI-IX too in a follow-up, rather than expanding scope here.
+  // -------------------------------------------------------------------
+  const ARC10_CHAPTERS = [
+    {id:1, title:'The Voyage Beyond the Charts', focus:"The Expedition system is already part of the crew's routine. But Renn notices something: several recovered materials share the same magical signature. Erynn recognizes it as boundary-related. Mimi senses something not yet visible, connected to all of it.", image:'assets/comics/arc10/ch01-the-voyage-beyond-the-charts.png', xp:220, action:'🔭 Review the Findings'},
+    {id:2, title:'What the Expeditions Have Found', focus:"The crew sorts through what's been collected: ordinary resources, rare magical materials, and a handful of objects that might be boundary-related. Renn wants to dive in immediately. San insists they organize and record everything first.", image:'assets/comics/arc10/ch02-what-the-expeditions-have-found.png', xp:220, action:'📋 Organize the Findings'},
+    {id:3, title:'The Research Expedition', focus:"Renn, Erynn, and Mimi formally request to go on an expedition together — not separately anymore, together. They know their roles by now. San approves, on one condition: \"You come back with answers. And preferably all in one piece.\"", image:'assets/comics/arc10/ch03-the-research-expedition.png', xp:230, action:'🤝 Approve the Team'},
+    {id:4, title:'The Place That Should Not Be There', focus:"The expedition reaches a location on no ordinary map — not another world, just geography that refuses to hold still. Renn wants to measure it. Erynn recognizes an old warning. Mimi feels it noticing them back. They withdraw before it destabilizes further.", image:'assets/comics/arc10/ch04-the-place-that-should-not-be-there.png', xp:240, action:'🗺️ Investigate the Site'},
+    {id:5, title:'The Vision of Fire', focus:"Mimi is hit with a powerful vision: a mountain range, a dragon moving through smoke, blood glowing like molten amber, a structure surrounded by unstable light — and something on the other side of it, trying to look through. The vision ends before she understands what the structure is.", image:'assets/comics/arc10/ch05-the-vision-of-fire.png', xp:250, action:'🔥 Witness the Vision'},
+    {id:6, title:'The Dragon in the Vision', focus:"Mimi tells Renn and Erynn what she saw. Renn fixates on the glowing blood and the structure. Erynn studies the landscape and the symbols around it. Neither can fully explain it. Mimi is certain of one thing: the dragon didn't feel like an enemy. It felt like it was guarding something.", image:'assets/comics/arc10/ch06-the-dragon-in-the-vision.png', xp:250, action:'🐉 Interpret the Vision'},
+    {id:7, title:'Following the Vision', focus:"The crew launches an expedition chasing Mimi's vision and finds real evidence of a dragon: scorched stone, tracks too large to be anything else, molten residue, ancient markings, a damaged shrine. No dragon yet. They have to decide whether to keep following the trail or turn back with what they've already found.", image:'assets/comics/arc10/ch07-following-the-vision.png', xp:260, action:'🐾 Follow the Trail'},
+    {id:8, title:'Dragon Blood', focus:"They reach a site where Dragon Blood has been preserved, and it reacts immediately to the boundary residue already in their cargo. \"This is what I saw,\" Mimi says. The blood isn't just powerful — it seems to help unstable magical energy hold its shape and direction. Renn is fascinated. Erynn is cautious. Mimi warns that her vision showed this same material being used to look beyond ordinary space.", image:'assets/comics/arc10/ch08-dragon-blood.png', xp:280, action:'🩸 Recover the Blood'},
+    {id:9, title:'What the Dragon Guards', focus:"The dragon wasn't just living here — it was guarding something. An old boundary marker, a sealed chamber, a fragment of some ancient observation structure, a deposit of Dragon Blood, a record from an expedition long before theirs. They don't need to fight it. A shed scale and a preserved deposit are enough.", image:'assets/comics/arc10/ch09-what-the-dragon-guards.png', xp:270, action:'🛡️ Uncover the Truth'},
+    {id:10, title:'The Price of the Material', focus:"Dragon Blood destabilizes ordinary containers and reacts badly with some of their other cargo. Renn wants to start experimenting immediately. Erynn insists on proper containment first. Mimi warns that mishandling it might draw the attention of whatever was looking through in her vision. They sail home with only a small amount.", image:'assets/comics/arc10/ch10-the-price-of-the-material.png', xp:250, action:'📦 Secure the Cargo'},
+    {id:11, title:'The Material That Answers', focus:"Renn finally tests the Dragon Blood against the boundary residue. The reaction produces a brief, stable image of somewhere far away — only a few seconds, uncontrolled, incomplete. But it's real. It's the first actual proof the Horizon Engine could work.", image:'assets/comics/arc10/ch11-the-material-that-answers.png', xp:280, action:'🔬 Test the Reaction'},
+    {id:12, title:'Not Enough', focus:"Dragon Blood alone isn't enough. They still need something to direct the energy, stabilize the image, interpret what's actually being shown, tell a real place apart from a memory or a possibility, and keep the whole thing from ever touching an unstable boundary directly. The project just got a lot bigger than Renn expected.", image:'assets/comics/arc10/ch12-not-enough.png', xp:260, action:'🧩 Assess the Gap'},
+    {id:13, title:'The First Construction Plan', focus:"Renn, Erynn, and Mimi go back to the blueprint from Arc VIII and actually divide it this time: Observation. Stabilization. Interpretation. Energy Regulation. Boundary Alignment. Still theoretical — but for the first time, it's a real, workable structure instead of an idea.", image:'assets/comics/arc10/ch13-the-first-construction-plan.png', xp:300, action:'📐 Draft the Blueprint'},
+    {id:14, title:'Fair Tide\'s Workshop', focus:"The project has outgrown the Crimson Tide's own hold. Fair Tide offers a room to convert into a dedicated workshop, and the whole community pitches in — construction, storage, tools, reinforcement, material handling, safety procedures. The Horizon Engine stops being Renn's private project and becomes Fair Tide's.", image:'assets/comics/arc10/ch14-fair-tides-workshop.png', xp:320, action:'🏗️ Build the Workshop'},
+    {id:15, title:'The First Frame', focus:"The first physical framework goes up — big, unfinished, nowhere near as impressive as the idea in anyone's head. The Dragon Blood stays locked away until the main structure is actually ready. San reminds everyone this can't eat every resource Fair Tide has. It's a long-term project, not a sprint.", image:'assets/comics/arc10/ch15-the-first-frame.png', xp:300, action:'🔨 Raise the Frame'},
+    {id:16, title:'The Parts That Disagree', focus:"The first attempt to assemble the components fails badly. The observation crystal rejects the stabilization frame. The boundary marker interferes with the energy regulator. The Dragon Blood starts reacting before anyone's even activated anything. They evacuate the workshop. Nobody's hurt, but the danger is very real now.", image:'assets/comics/arc10/ch16-the-parts-that-disagree.png', xp:300, action:'⚠️ Contain the Failure'},
+    {id:17, title:'The Missing Component', focus:"Erynn finds a reference in the Farseer records to a component that might be exactly what they need — used, once, in an ancient boundary-observation structure. It isn't at Fair Tide. It isn't at any port they know. Another expedition, then.", image:'assets/comics/arc10/ch17-the-missing-component.png', xp:280, action:'📜 Search the Records'},
+    {id:18, title:'A Choice of Routes', focus:"Three ways to reach it: a safer route with fewer resources, a dangerous route with better odds of actually finding it, or a longer route past other Farseer sites along the way. Whichever they choose changes what the expedition risks and what it might turn up.", image:'assets/comics/arc10/ch18-a-choice-of-routes.png', xp:280, action:'🧭 Choose the Route'},
+    {id:19, title:'The Ruin Under the Mountain', focus:"The expedition reaches a ruin tied to Mimi's original vision — and finds proof that someone tried this exact thing before them, using Dragon Blood for boundary observation. It didn't go well. What's left behind is mostly warnings, not instructions. Erynn realizes the Farseers may have only ever had fragments of this knowledge, never the whole picture.", image:'assets/comics/arc10/ch19-the-ruin-under-the-mountain.png', xp:300, action:'⛰️ Explore the Ruin'},
+    {id:20, title:'The Missing Piece', focus:"They recover the component, but it's damaged. Renn wants to just fix it himself. Erynn explains its function depends on a very specific boundary alignment — not something you can just weld back together. Mimi reads out what's left of its magical pattern, and between the three of them, they restore enough of it for a real, controlled test.", image:'assets/comics/arc10/ch20-the-missing-piece.png', xp:320, action:'🔧 Restore the Component'},
+    {id:21, title:'The Engine\'s Heart', focus:"The Dragon Blood goes into the finished prototype. The Horizon Engine turns on. The workshop fills with light, and for a few seconds, all three of them see the same fragmented image of a distant coastline, clearly, together. It works. Just not for very long.", image:'assets/comics/arc10/ch21-the-engines-heart.png', xp:380, action:'⚡ Activate the Engine'},
+    {id:22, title:'The Horizon Moves', focus:"The image starts shifting on its own. The room distorts. Things look very slightly out of place. This isn't observing a boundary anymore — it's touching one. Erynn calls the shutdown. Renn obeys, reluctantly. Mimi says something was looking back through it.", image:'assets/comics/arc10/ch22-the-horizon-moves.png', xp:360, action:'🛑 Shut It Down'},
+    {id:23, title:'What We Must Not Force', focus:"Renn wants to keep going — the failure alone told them things they didn't know before. Erynn isn't so sure — the ruin already showed them exactly what happens when observation turns into intrusion. Mimi says the machine has to learn to tell the difference between a place, a memory, a possibility, a living presence, and a boundary that should stay shut. San makes the call: no more activations until there are real safeguards.", image:'assets/comics/arc10/ch23-what-we-must-not-force.png', xp:340, action:'⚖️ Weigh the Risk'},
+    {id:24, title:'The First Stable Horizon', focus:"One final, careful, controlled test. This time the image holds — stable, for several minutes, an unknown place beyond any route they've ever sailed. No passage opens. Nobody goes through. Joel asks anyway: \"So... we're not going through?\" San: \"Not today.\" The Engine powers down safely. They haven't reached another world. But now they know how to start looking for one.", image:'assets/comics/arc10/ch24-the-first-stable-horizon.png', xp:600, action:'🌅 Witness the Horizon'}
+  ];
+  window.ARC10_CHAPTERS = ARC10_CHAPTERS;
+
+  window.arc10ObjectiveState = function(){
+    if (!game.arc9Complete) return null;
+    if (level() < 150) return null;
+    game.comicProgress10 = game.comicProgress10 || {};
+    for (const ch of ARC10_CHAPTERS) {
+      if (!game.comicProgress10[ch.id]) return 'complete_arc10_chapter_' + ch.id;
+    }
+    return 'arc10_part1_complete_for_now';
+  };
+
+  const ARC10_CHAPTER_SCENES = {
+    1: "The Expedition system has become a normal part of the crew's life — San, Joel, Soel, and the research trio, going out, bringing things back.<br><br>But Renn notices something odd this time: several of the materials they've recovered share the exact same magical signature.<br><br>Erynn recognizes the pattern immediately. It's the same kind of thing the Farseers have documented for generations — boundary phenomena.<br><br>Mimi says the materials are connected to something else. Something not yet visible.",
+    2: "The crew lays out everything the expeditions have found so far. Three piles: ordinary resources, rare magical materials, and a small, uneasy stack of objects that might be tied to the boundaries somehow.<br><br>Renn wants to start examining all of it immediately.<br><br>San stops him. \"Organize it first. Write down where each one came from.\" It isn't caution for its own sake — it's the beginning of treating this like an actual research project, not just a pile of loot.",
+    3: "Renn, Erynn, and Mimi come to San together, formally, asking to go on an expedition as a team — not each contributing separately anymore, but actually together.<br><br>They already know their roles from Arc VIII: Renn handles the engineering and experimentation, Erynn interprets the Farseer knowledge and boundary theory, Mimi reads the patterns neither of the other two can detect on their own.<br><br>San approves it, on one condition.<br><br>\"You come back with answers,\" she says. \"And preferably all in one piece.\"",
+    4: "The expedition reaches somewhere that doesn't appear on any ordinary map — not another world, just geography that won't hold still. Several possible routes seem to briefly overlap in the same place.<br><br>Renn wants to measure the phenomenon properly.<br><br>Erynn recognizes an old Farseer warning about places exactly like this.<br><br>Mimi says the location is reacting to them being there.<br><br>They withdraw before the boundary gets any less stable.",
+    5: "Back at Fair Tide, Mimi is hit with a vision unlike anything she's had before.<br><br>A vast mountain range. A dragon, moving through smoke and cloud. Blood, glowing like molten amber. A strange structure, wrapped in unstable light. And something — on the other side of that structure — trying to look through.<br><br>The vision ends before she can understand what the structure even is. She isn't sure if she saw the past, the future, or just somewhere that exists right now.",
+    6: "Mimi describes the vision to Renn and Erynn in as much detail as she can.<br><br>Renn fixates on the glowing blood and the structure. Erynn studies the landscape and the symbols that appeared around it. Neither of them can fully make sense of it.<br><br>What Mimi is sure of: the dragon didn't feel like a threat. It felt like it was guarding something important.<br><br>The three of them agree — this isn't just a vision. It's pointing somewhere real.",
+    7: "The Crimson Tide sets out, chasing Mimi's vision to wherever it actually leads.<br><br>They find real evidence, eventually: scorched stone, tracks too large to belong to anything else, patches of molten residue, markings older than anything in their own records, and what might once have been a shrine or an observation post, long since abandoned.<br><br>No dragon yet. Just the evidence that one was here — and maybe still is.<br><br>They have to decide: keep following the trail, or turn back with what they've already got.",
+    8: "They find it — a site where Dragon Blood has actually been preserved, and the moment it's near the boundary residue already in their cargo, the two react to each other immediately.<br><br>\"This is what I saw,\" Mimi says, quietly.<br><br>The Dragon Blood isn't just a powerful fuel source. It seems to help unstable magical energy hold its shape and direction — exactly the kind of thing that could make boundary observation actually possible.<br><br>Renn is fascinated. Erynn is cautious. Mimi has the least comfortable read on it of all three: her vision showed this same material being used to look at something beyond ordinary space. Whatever they build with this, it's not going to be simple.",
+    9: "It turns out the dragon wasn't just living in that region. It was guarding something.<br><br>An old boundary marker. A sealed chamber. A fragment of some long-abandoned observation structure. A deposit of Dragon Blood. A record left behind by an expedition that came through long before theirs.<br><br>What the dragon's role actually is stays unclear. What's certain: they don't have to fight it to get what they need. A shed scale, a naturally preserved deposit — that's enough, for now, and it leaves the door open for whatever comes next with dragons, without turning every single one into just another resource node.",
+    10: "Dragon Blood does not want to be transported. It destabilizes ordinary containers, and it reacts badly with some of the other materials already in their hold.<br><br>Renn wants to start experimenting with it the moment they're back aboard.<br><br>Erynn insists they need real containment first, not enthusiasm.<br><br>Mimi's warning is the one that actually stops them from rushing: mishandling this might draw the attention of whatever was looking through, in her vision.<br><br>They sail home with only a small, carefully contained amount.",
+    11: "Back in the workshop, Renn finally runs the test he's been waiting to run — Dragon Blood against the boundary residue they've been collecting all along.<br><br>The reaction produces an image. Brief. A few seconds, no more. A distant location, glimpsed and gone.<br><br>It's incomplete. It's uncontrolled. But it's real — the first actual proof that this could genuinely become the Horizon Engine, not just a theory about one.",
+    12: "The excitement doesn't last long. Dragon Blood alone isn't enough, and now they know exactly why.<br><br>They need something to direct the energy. Something to stabilize the image once it appears. Something to actually interpret what's being shown. Something that can tell a real place apart from a memory, or a mere possibility. And something to make absolutely sure the whole apparatus never touches an unstable boundary directly.<br><br>Renn had pictured this being smaller than it's turning out to be.",
+    13: "Renn, Erynn, and Mimi go back to the blueprint they first sketched out in Arc VIII and actually divide it this time, properly: Observation. Stabilization. Interpretation. Energy Regulation. Boundary Alignment.<br><br>It's still entirely theoretical. But for the first time, it isn't just an idea anymore — it's a real, workable structure, with actual pieces that could actually be built.",
+    14: "The project has completely outgrown what the Crimson Tide's own hold can support. Fair Tide offers up a room to convert into a dedicated workshop.<br><br>The whole community pitches in — construction, storage, tools, reinforcement, material handling, safety procedures, all of it.<br><br>Somewhere in the middle of all that help, the Horizon Engine stops being Renn's private obsession and becomes something Fair Tide is actually building together.",
+    15: "The first physical framework goes up. It's large. It's unfinished. It looks nothing like the grand idea everyone's been picturing in their heads.<br><br>The Dragon Blood stays locked away until the main structure is genuinely ready for it.<br><br>San reminds everyone, gently but firmly, that this project cannot be allowed to consume every resource Fair Tide has. Everyone agrees: this is a long-term project. Not a sprint.",
+    16: "The first attempt to actually assemble the components goes badly.<br><br>The observation crystal rejects the stabilization frame outright. The boundary marker starts interfering with the energy regulator. The Dragon Blood begins reacting before anyone's even switched anything on.<br><br>They evacuate the workshop. Nobody is seriously hurt — but the danger here just stopped being theoretical.",
+    17: "Erynn finds a reference, buried in the Farseer records, to a component that might solve exactly the problem they've hit — something once used in an ancient boundary-observation structure, generations ago.<br><br>It isn't at Fair Tide. It isn't at any port they already know.<br><br>Which means another expedition.",
+    18: "Three ways to reach it, and the crew has to actually pick one: a safer route with fewer resources along the way, a dangerous route with better odds of actually finding the component, or a longer route that passes several other Farseer sites worth exploring on the way.<br><br>Whichever they choose changes exactly what this expedition risks — and what else it might turn up.",
+    19: "The expedition reaches a ruin directly tied to Mimi's original vision — and finds something nobody expected: proof that someone else already tried this. Dragon Blood, boundary observation, the exact same idea, generations before them.<br><br>It didn't go well. What's left behind is mostly warnings, not instructions.<br><br>Erynn realizes, with some discomfort, that the Farseers may have only ever inherited fragments of this knowledge — never the whole picture. Maybe nobody ever had the whole picture.",
+    20: "They recover the component. It's damaged.<br><br>Renn wants to just repair it outright.<br><br>Erynn explains that its original function depends on a very specific boundary alignment — this isn't the kind of thing you can just weld back into shape.<br><br>Mimi reads out what's left of its magical pattern, piece by piece, and between the three of them — engineering, theory, perception — they manage to restore enough of it for a real, controlled test.",
+    21: "The Dragon Blood goes into the completed prototype.<br><br>The Horizon Engine activates.<br><br>The workshop fills with light, and for the first time, all three of them see the exact same fragmented image — a distant coastline, clear, undeniable — at the exact same moment.<br><br>It works.<br><br>Just not for very long.",
+    22: "The image starts moving on its own.<br><br>The room distorts, faintly. Objects look very slightly out of place, like the space itself has shifted a fraction of an inch.<br><br>This isn't just observing a boundary anymore. It's touching one.<br><br>Erynn gives the order to shut it down. Renn obeys — reluctantly, but he obeys. Mimi says, quietly, that something was looking back through it.",
+    23: "The crew argues over whether the Horizon Engine is safe to keep using at all.<br><br>Renn thinks the failure gave them valuable data, and wants to keep pushing.<br><br>Erynn isn't convinced — the ruin already showed them exactly what happens when observation turns into intrusion.<br><br>Mimi says the machine has to learn to tell a place apart from a memory, a possibility, a living presence, and a boundary that should stay shut — five very different things it currently can't distinguish at all.<br><br>San makes the call: no more activations until there are real safeguards in place.",
+    24: "One last, careful, fully controlled test.<br><br>This time, the image holds. Stable. For several minutes — an unknown place, somewhere beyond any route they've ever sailed. No passage opens. Nobody crosses through.<br><br>Joel, standing beside San as the image flickers, asks anyway: \"So... we're not going through?\"<br><br>\"Not today,\" San says.<br><br>The Engine powers down safely. They haven't reached another world.<br><br>But now, for the first time, they actually know how to start looking for one."
+  };
+  window.ARC10_CHAPTER_SCENES = ARC10_CHAPTER_SCENES;
+
+  window.markArc10ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC10_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc10] no chapter data for id', id); return; }
+    game.comicProgress10 = game.comicProgress10||{};
+    if(game.comicProgress10[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc10ObjectiveState() !== 'complete_arc10_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress10[id] = true;
+    if (id === 8) game.dragonBloodDiscovered = true; // Dragon Blood exists as a real, named material now
+    if (id === 13) game.horizonEngineBlueprintFinalized = true; // 5-subsystem plan: Observation/Stabilization/Interpretation/Energy Regulation/Boundary Alignment
+    if (id === 14) game.horizonEngineWorkshopBuilt = true; // Fair Tide's dedicated workshop exists
+    if (id === 21) game.horizonEngineFirstActivation = true; // first (brief) successful activation
+    if (id === 23) game.horizonEngineSafeguardsRequired = true; // San's ruling — no more activation without real safeguards
+    if (id === 24) {
+      game.arc10Complete = true;
+      game.horizonEnginePrototype = true; // "Arc 10 unlock: Horizon Engine — Prototype" per the outline's stated outcome
+    }
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
+    logEvent('📖 Arc X Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if (ARC10_CHAPTER_SCENES[id]) {
+      game.storyModalQueue = game.storyModalQueue || [];
+      game.storyModalQueue.push({ title: ch.title, blurb: ARC10_CHAPTER_SCENES[id] });
+    }
+    if (typeof renderMainGoal === 'function') try { renderMainGoal(); } catch(e) {}
+    if (typeof renderStory === 'function') try { renderStory(); } catch(e) {}
+  };
+
+  window.__ctShowArc10Splash = function(){
+    const overlay = document.getElementById('arc10SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc10Splash = function(){
+    const overlay = document.getElementById('arc10SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc10SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  const oldRenderStoryForArc10 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc10) oldRenderStoryForArc10();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const arc10Ready = window.arc10ObjectiveState() !== null;
+    if (arc10Ready && !game.arc10SplashSeen && typeof window.__ctShowArc10Splash === 'function') {
+      window.__ctShowArc10Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc10/arc10-cover-the-first-horizon.png" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc X</div><div class="story-act-title">The First Horizon</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC10_CHAPTERS.length+' of 24. Some horizons must be built before they can be crossed.</div></div>';
+    if (!arc10Ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc X Locked</div><div class="story-chapter-sub">'+
+        (!game.arc9Complete ? 'Finish Arc IX first.' : 'Reach Level 150 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc10ObjectiveState();
+    ARC10_CHAPTERS.forEach(function(ch){
+      const done = !!(game.comicProgress10 && game.comicProgress10[ch.id]);
+      const ready = !done && so===('complete_arc10_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc10ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so==='arc10_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc X chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+
+<script id="ct-build-v148-wyverns-dragon-blood">
+(function(){
+  // -------------------------------------------------------------------
+  // WYVERNS + DRAGON BLOOD — extends the Research Expedition with a
+  // rarer encounter type, unlocked once Arc X's Ch.8 establishes Dragon
+  // Blood as real (game.dragonBloodDiscovered). Wyverns drop the same
+  // Knowledge/Residue as everything else, plus a chance at actual
+  // Dragon Blood — the material the whole back half of Arc X is about —
+  // and a themed accessory drop via the existing trophy system, rather
+  // than the generic fallback trinket every expedition enemy currently
+  // gets (none of the existing 6 names match any LOOT_THEMES keyword).
+  //
+  // EXPEDITION_ENEMIES/expeditionEnemyPool/generateExpeditionEnemy are
+  // all private to ct-build-v129's closure, so wyverns can't be filtered
+  // out of the random pool from here directly. Instead they're kept OUT
+  // of the shared EXPEDITION_ENEMIES object entirely until unlocked, and
+  // synced in/out on every renderFairTideHub call — which the player
+  // always hits before reaching the Expedition tab, so this can't ever
+  // be stale by the time a fight could actually start.
+  // -------------------------------------------------------------------
+  const WYVERN_ENEMIES = {
+    young_wyvern: {name:'Young Wyvern', icon:'🐲', hp:300, dmg:16, xp:200, knowledge:6, residue:8, dragonBloodChance:0.12, desc:'Smaller than the one from Mimi\'s vision. Still not something to take lightly.'},
+    storm_wyvern: {name:'Storm Wyvern', icon:'🐉', hp:420, dmg:24, xp:280, knowledge:8, residue:12, dragonBloodChance:0.20, desc:'Old enough to have its own territory, and it defends it exactly like you\'d expect.'}
+  };
+  const WYVERN_KEYS = Object.keys(WYVERN_ENEMIES);
+  window.WYVERN_ENEMIES = WYVERN_ENEMIES;
+
+  function syncWyvernPoolGating(){
+    if (typeof window.EXPEDITION_ENEMIES === 'undefined') return;
+    const unlocked = !!game.dragonBloodDiscovered;
+    WYVERN_KEYS.forEach(function(key){
+      if (unlocked) {
+        window.EXPEDITION_ENEMIES[key] = WYVERN_ENEMIES[key];
+      } else {
+        delete window.EXPEDITION_ENEMIES[key];
+      }
+    });
+  }
+  window.syncWyvernPoolGating = syncWyvernPoolGating;
+
+  const oldRenderFairTideHubForWyverns = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    syncWyvernPoolGating();
+    if (oldRenderFairTideHubForWyverns) oldRenderFairTideHubForWyverns();
+  };
+
+  const oldHandleVictoryForWyverns = window.handleVictory;
+  window.handleVictory = function(){
+    if (oldHandleVictoryForWyverns) oldHandleVictoryForWyverns();
+    const enemy = game.combatEnemy;
+    if (!enemy || enemy.kind !== 'expedition') return;
+    if (!enemy.dragonBloodChance) return; // not a wyvern — nothing further to do here
+    if (Math.random() >= enemy.dragonBloodChance) return; // rolled, no Dragon Blood this time
+    const he = window.horizonEngineState();
+    const firstEver = he.dragonBlood === 0;
+    he.dragonBlood += 1;
+    logEvent('🩸 Dragon Blood recovered from ' + enemy.name + '. Handled carefully — this stuff doesn\'t like ordinary containers.', 'gold');
+    if (firstEver) {
+      setTimeout(function(){
+        if (typeof showStoryModal === 'function') showStoryModal({
+          title: '🩸 Dragon Blood, Recovered',
+          blurb: 'The wyvern goes down, and this time something actually comes back with it — a small amount of real Dragon Blood, carefully sealed the moment it\'s recovered.<br><br>It won\'t be the last. But every bit of it from here on has to be earned the same way: found, not farmed freely.'
+        });
+      }, 600);
+    } else {
+      toast('🩸 Dragon Blood recovered! (' + he.dragonBlood + ' total)', 3600);
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  // Themed accessory drop — a real dragon-kin trinket instead of the
+  // generic ⚔️ fallback every expedition enemy currently gets, since
+  // none of the other 6 names match any existing LOOT_THEMES keyword.
+  if (typeof LOOT_THEMES !== 'undefined') {
+    LOOT_THEMES.unshift([['wyvern'], '🐉', 'Wyvern Scale']);
+  }
+  if (typeof TRINKET_BONUS !== 'undefined') {
+    TRINKET_BONUS['🐉'] = {dmgPct:0.12, spellPct:0.08, label:'+12% damage, +8% spell damage'};
+  }
 })();
 </script>
 
