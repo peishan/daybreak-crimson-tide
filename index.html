@@ -7251,7 +7251,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V151 · Illusionary Waters 12 Locations'</script>
+<script>window.__CT_BUILD__='V156 · Extended Crew Path Confirmed'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8836,6 +8836,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (s10 !== null && s10 !== 'arc10_part1_complete_for_now') return s10;
       if (s10 === 'arc10_part1_complete_for_now') lastTerminal = s10;
     }
+    if (typeof window.arc11ObjectiveState === 'function') {
+      const s11 = window.arc11ObjectiveState();
+      if (s11 !== null && s11 !== 'arc11_part1_complete_for_now') return s11;
+      if (s11 === 'arc11_part1_complete_for_now') lastTerminal = s11;
+    }
     return lastTerminal || base;
   };
 
@@ -8863,6 +8868,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if ((m = /^complete_arc8_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VIII', m[1], window.ARC8_CHAPTERS);
     if ((m = /^complete_arc9_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc IX', m[1], window.ARC9_CHAPTERS);
     if ((m = /^complete_arc10_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc X', m[1], window.ARC10_CHAPTERS);
+    if ((m = /^complete_arc11_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XI', m[1], window.ARC11_CHAPTERS);
     if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
     if (state === 'arc9_part1_complete_for_now') return ['Arc IX — All Caught Up', 'Every available Arc IX chapter is read. More is on the way.'];
     if (state === 'arc10_part1_complete_for_now') return ['Arc X — All Caught Up', 'Every available Arc X chapter is read. More is on the way.'];
@@ -13054,6 +13060,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   </div>
 </div>
 
+<div id="arc11SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.png" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc11Splash()">⚓ Begin Arc XI</button>
+  </div>
+</div>
+
 <script id="ct-build-v146-arc10">
 (function(){
   // -------------------------------------------------------------------
@@ -13220,6 +13233,166 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 })();
 </script>
 
+
+<script id="ct-build-v149-arc11">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC XI — THE WORLD BEYOND THE WINDOW. Fully wired, all 24 chapters
+  // (confirmed against the source doc's own numbering) — grew from an
+  // initial partial build (Ch.1-6, then 7-15) as chapters were generated
+  // in batches; this pass added the remaining 16-24, including the
+  // finale. game.arc11Complete is now set on Ch.24, matching every prior
+  // arc's convention, so Arc XII can gate on it.
+  //
+  // Continues the established +15-per-arc level pace (VI 90 / VII 105 /
+  // VIII 120 / IX 135 / X 150 / XI 165). Gated behind game.arc10Complete.
+  // -------------------------------------------------------------------
+  const ARC11_CHAPTERS = [
+    {id:1, title:'The Image That Remained',        focus:"The first stable horizon doesn't fade when the experiment ends. It's the same real place, test after test — and something in the distance is moving.", image:'assets/comics/arc11/ch01-the-image-that-remained.png', xp:220, action:'🔭 Confirm the Sighting'},
+    {id:2, title:'Not Veyren',                      focus:"Erynn checks the vision against everything known about Veyren. The shapes are familiar. The magic underneath is not. This isn't a hidden region of their own world.", image:'assets/comics/arc11/ch02-not-veyren.png', xp:220, action:'🗺️ Compare the Records'},
+    {id:3, title:'A Window, Not a Door',            focus:"Renn draws the line between seeing and reaching — the Engine can watch, but can't yet send anyone through or guarantee a way back. San sets the rule: nobody crosses until they know how to come home.", image:'assets/comics/arc11/ch03-a-window-not-a-door.png', xp:230, action:'📏 Define the Limits'},
+    {id:4, title:'The First Watch',                 focus:"The crew starts standing real shifts over the window — weather, unfamiliar birds, distant lights, a structure that only appears sometimes.", image:'assets/comics/arc11/ch04-the-first-watch.png', xp:220, action:'👁️ Stand the Watch'},
+    {id:5, title:'The Smallest Possible Experiment', focus:"Renn sends the smallest, safest pulse of magic he can manage through the window. Nothing happens — until, minutes later, something on the other side visibly moves.", image:'assets/comics/arc11/ch05-the-smallest-possible-experiment.png', xp:240, action:'⚡ Send the Pulse'},
+    {id:6, title:'Something Answered',              focus:"The distant lights form a real pattern, repeating at measured intervals. Mimi senses intention behind it — she just can't tell whose.", image:'assets/comics/arc11/ch06-something-answered.png', xp:240, action:'📡 Study the Pattern'},
+    {id:7, title:'The Rule of Distance',             focus:"The farther the team tries to focus beyond the original point, the more unstable the image gets. The Horizon Engine isn't showing a whole world — it's locked onto one specific place.", image:'assets/comics/arc11/ch07-the-rule-of-distance.png', xp:240, action:'📐 Test the Range'},
+    {id:8, title:'The Object Test',                  focus:"A tiny object passes into the window and vanishes, destabilizing the Engine. When it returns, it's changed — cold, warped, faintly touched by something.", image:'assets/comics/arc11/ch08-the-object-test.png', xp:260, action:'🧪 Send Something Through'},
+    {id:9, title:'What Came Back',                   focus:"The object wasn't damaged in any ordinary way — the boundary itself altered it. Erynn warns a living body would fare far worse. San bans further object tests until they understand why.", image:'assets/comics/arc11/ch09-what-came-back.png', xp:260, action:'🔬 Examine What Returned'},
+    {id:10, title:'The Cost of Looking',             focus:"Repeated use of the Horizon Engine starts affecting Fair Tide itself — flickering lights, shifting temperatures, sounds from nowhere. The Engine is drawing more power than anyone accounted for.", image:'assets/comics/arc11/ch10-the-cost-of-looking.png', xp:270, action:'⚠️ Investigate the Disturbances'},
+    {id:11, title:'A Shape in the Distance',         focus:"During a routine watch, Mimi spots a figure near the distant structure, looking straight back at the window. The image clears for only a few seconds — not long enough to tell if it's even human.", image:'assets/comics/arc11/ch11-a-shape-in-the-distance.png', xp:270, action:'👁️ Watch the Figure'},
+    {id:12, title:'The Question of Contact',         focus:"The crew argues over whether to attempt contact at all, and how. San settles it: if someone's looking back, they should be given a reason not to fear the Crimson Tide.", image:'assets/comics/arc11/ch12-the-question-of-contact.png', xp:280, action:'🕊️ Debate First Contact'},
+    {id:13, title:"Mimi's Unclear Answer",           focus:"Mimi tries a focused divination on the distant world and gets fragments that don't add up cleanly — a shoreline, a closed gate, someone waiting, a feeling of caution.", image:'assets/comics/arc11/ch13-mimis-unclear-answer.png', xp:280, action:'🔮 Attempt the Divination'},
+    {id:14, title:'The Signal',                      focus:"The crew sends three pulses of light, then waits. After a long silence, the other side answers with the same pattern — and adds a fourth pulse of its own.", image:'assets/comics/arc11/ch14-the-signal.png', xp:300, action:'💡 Send the Signal'},
+    {id:15, title:'The Fourth Light',                focus:"Every time the crew repeats the signal, the same fourth pulse comes back. Mimi doesn't read it as a greeting. More like a warning, or an instruction nobody can translate yet.", image:'assets/comics/arc11/ch15-the-fourth-light.png', xp:300, action:'🕯️ Repeat the Signal'},
+    {id:16, title:'The Door That Opened',             focus:"The distant structure activates on its own. For a moment the Engine reveals a chamber beyond the doorway, marked with boundary diagrams that aren't Farseer symbols — then the image collapses before anyone can study it.", image:'assets/comics/arc11/ch16-the-door-that-opened.png', xp:320, action:'🚪 Watch the Door'},
+    {id:17, title:'A Return Route',                  focus:"Renn, Erynn, and Mimi start designing a return-anchor system — a stable point in Veyren, a matching anchor at the destination, a continuous power supply, a way to recognize the original route. Miss any of the four, and a traveller has no way home.", image:'assets/comics/arc11/ch17-a-return-route.png', xp:300, action:'📐 Design the Anchor'},
+    {id:18, title:'The Anchor Problem',               focus:"There's no way to build a reliable destination anchor from Veyren alone. Something has to be placed or activated on the other side first — which may mean sending an object through before any person can follow.", image:'assets/comics/arc11/ch18-the-anchor-problem.png', xp:300, action:'🧩 Face the Problem'},
+    {id:19, title:'A Message in Matter',              focus:"A simple symbol gets embedded into a small metal plate and sent through the window. Unlike the earlier test object, it doesn't come straight back — and the Horizon Engine stays stable the whole time it's gone.", image:'assets/comics/arc11/ch19-a-message-in-matter.png', xp:320, action:'🔩 Send the Plate'},
+    {id:20, title:'The Empty Return',                 focus:"The plate eventually comes back — the original symbol intact, but a second mark now beside it that neither Renn nor Erynn recognizes. Mimi reads one clear feeling underneath it: wait.", image:'assets/comics/arc11/ch20-the-empty-return.png', xp:340, action:'🔍 Read the Symbol'},
+    {id:21, title:'The First Crossing Plan',          focus:"The Horizon Team drafts a formal plan for a controlled crossing — a small team, limited supplies, a fixed time window, a destination anchor, and a guaranteed emergency return. San insists the mission stay exploratory, not acquisitive.", image:'assets/comics/arc11/ch21-the-first-crossing-plan.png', xp:350, action:'📋 Draft the Plan'},
+    {id:22, title:'Who Goes First',                   focus:"Renn, Erynn, and Mimi are locked in as the research team. Everything else — combat ability, medical support, navigation, who can stay calm somewhere with no map at all — is San and Joel's call to make.", image:'assets/comics/arc11/ch22-who-goes-first.png', xp:350, action:'🧭 Choose the Team'},
+    {id:23, title:'The Window Closes',                focus:"The Horizon Engine starts losing stability. The fourth light appears one last time, followed by a brief image of the destination anchor location — then the window closes on its own, and nobody can say why.", image:'assets/comics/arc11/ch23-the-window-closes.png', xp:380, action:'🌑 Watch It Fade'},
+    {id:24, title:'The World Beyond the Window',      focus:"The crew shuts the Engine down and takes stock of what they're leaving with: proof of another world, evidence of deliberate contact, a working method for sending small objects, an unreadable symbol, and a real plan for crossing. \"We know where the road begins,\" San says. \"Then we find out how to come home,\" Joel answers.", image:'assets/comics/arc11/ch24-the-world-beyond-the-window.png', xp:600, action:"🌅 Look Toward What's Next"}
+  ];
+  window.ARC11_CHAPTERS = ARC11_CHAPTERS;
+
+  window.arc11ObjectiveState = function(){
+    if (!game.arc10Complete) return null;
+    // Continues the +15-per-arc pace from Arc VIII (120) / IX (135) / X (150).
+    if (level() < 165) return null;
+    game.comicProgress11 = game.comicProgress11 || {};
+    for (const ch of ARC11_CHAPTERS) {
+      if (!game.comicProgress11[ch.id]) return 'complete_arc11_chapter_' + ch.id;
+    }
+    return 'arc11_part1_complete_for_now';
+  };
+
+  // Scene text is a condensed adaptation of the outline provided, not a
+  // verbatim transcript — the outline's own scaffolding ("Purpose: ...")
+  // is folded into the narrative rather than left as a visible label.
+  const ARC11_CHAPTER_SCENES = {
+    1: "The first stable horizon the Engine ever produced doesn't fade when the experiment ends.<br><br>It holds. Test after test, the same landscape appears — not identical, exactly: the light shifts, the weather changes on its own, the way real weather does.<br><br>Somewhere in the distance, something moves.<br><br>Mimi is the one who says out loud what everyone's starting to suspect. This doesn't feel like one of her usual visions. It feels like watching something that's actually there.",
+    2: "The research team lays what they've observed against everything Veyren's own records say about the world.<br><br>The shapes are familiar enough — sky, water, land, something that could pass for a horizon back home. But the magic underneath doesn't behave the way Veyren's does. Nothing about it matches.<br><br>Erynn is the one who says it plainly, because someone has to.<br><br>\"It is somewhere else.\"",
+    3: "Renn lays out, as carefully as he can, exactly what the Horizon Engine is actually capable of right now.<br><br>It can see. It can hold an image steady. It might even be able to pick up movement, or magical activity, somewhere on the other side.<br><br>What it can't do yet: move a single person through, carry a message across, or promise anyone a way back if they tried.<br><br>San doesn't need long to make the rule official. Nobody crosses until they know how to come home again.",
+    4: "The crew starts standing proper watches over the window, same as any other duty roster.<br><br>Everyone notices something different. Shifting weather. Birds nobody recognizes. Distant lights that come and go. Tides that don't move the way tides should. A structure that only seems to appear at certain times, then isn't there at all.<br><br>Joel treats it exactly like lookout duty, because to him, that's precisely what it is.<br><br>Soel just sits by the Engine for long stretches, watching the image without blinking, the way only a cat can.",
+    5: "Renn wants to know something specific: can the Horizon Engine actually reach the other side, even a little, without opening a real passage?<br><br>They send through the smallest, safest pulse of magical energy they can manage.<br><br>Nothing happens.<br><br>Then, several long minutes later, a cluster of distant lights shifts position — just slightly, just enough that nobody in the room can convince themselves they imagined it.<br><br>Whatever's on the other side of that window, it noticed.",
+    6: "The lights aren't random after all — they form an actual pattern.<br><br>Renn's first instinct is to write it off as some natural phenomenon. Erynn isn't so sure; she notices the pattern repeats at measured, deliberate intervals — nothing about that reads as natural to her.<br><br>Mimi is the one who says what the other two are dancing around. She can feel intention behind it. She just can't tell yet whether it's coming from a person, a creature, or something built.",
+    7: "Renn wants to know exactly how far the Horizon Engine can actually reach, so the team starts testing.<br><br>The results are consistent: the farther they try to focus beyond the original point of contact, the more unstable the image gets — flickering, warping, threatening to collapse entirely.<br><br>The conclusion is unavoidable. The Horizon Engine was never showing them an entire world. It's locked onto one specific place, and only that place. Wherever they go next, they'll need their own anchor to get there.",
+    8: "Renn wants to try something more direct: pass a small, harmless, non-living object straight through the boundary.<br><br>It works, in the sense that the object actually vanishes into the window. It also immediately destabilizes the whole Engine — lights flickering, the image straining to hold itself together.<br><br>When the object finally comes back, it isn't quite the same. It's cold to the touch. Its shape has warped, just slightly. And it carries a faint trace of magical residue that wasn't there before.<br><br>Matter can cross. That much is proven. Whether it's safe to is a very different question.",
+    9: "The team studies the returned object carefully, and the damage doesn't look like anything ordinary.<br><br>Its structure has been altered by the boundary itself — not broken, exactly, just changed by whatever it passed through.<br><br>Erynn doesn't hedge about what that means. If a small object comes back like this, a living body could react far worse.<br><br>San doesn't need to be told twice. No more object tests, not until they actually understand what the boundary does to the things that cross it.",
+    10: "It isn't just the Horizon Engine that's changing. Fair Tide itself is starting to feel it.<br><br>The workshop swings through sudden temperature changes for no reason anyone can explain. Lights flicker on their own. Sounds seem to come from the wrong direction, or from nowhere at all. More than once, something sits very slightly out of place from where anyone remembers leaving it.<br><br>The Engine is drawing more energy than anyone accounted for. Looking through the window, it turns out, was never going to be free.",
+    11: "It happens during an ordinary watch — the kind that's mostly just staring at a landscape that never changes.<br><br>Then Mimi sees it: a shape near the distant structure, and it's facing the window. Facing them.<br><br>The image sharpens, just for a few seconds — long enough to know something's there, not long enough to know what. Nobody on watch can say for certain whether it's even humanoid. But whatever it is, it wasn't just standing there. It was looking back.",
+    12: "The debate that follows takes longer than anyone expects. Light signals. Sound. A pulse of magic. Written symbols. Or just waiting, and letting the other side make the first move.<br><br>San is the one who cuts through all of it, and settles what actually matters before any method gets chosen.<br><br>\"If someone is looking back, we should give them a reason not to fear us.\"<br><br>That becomes the rule everything else has to fit inside.",
+    13: "Mimi tries a controlled divination, focused as tightly on the distant world as she can manage.<br><br>What comes back doesn't resolve into one clear picture. A shoreline. A closed gate. Someone waiting. A feeling of caution that colors all of it.<br><br>She can't tell the crew whether any of this is happening right now, might happen, or is just a warning dressed up as an image. It's the most honest answer she has — and it isn't a comfortable one.",
+    14: "The crew settles on something simple: three pulses of light, then a pause, then nothing.<br><br>The silence afterward stretches long enough that people start to give up on it.<br><br>Then the distant world answers. Three pulses. The same pattern, sent back.<br><br>And then a fourth.<br><br>Renn wants to believe that's deliberate — an actual reply, not an echo. Erynn isn't ready to agree with him yet.",
+    15: "The fourth pulse isn't a one-time thing. Every time the crew repeats the original signal, the same extra light comes back with it, exactly where it was before.<br><br>Mimi doesn't think it reads like a greeting. Something about it feels heavier than that — closer to a warning, or an instruction, except nobody aboard has any way to actually translate it yet.",
+    16: "For the first time, the distant structure does something on its own.<br><br>For just a moment, the Horizon Engine pushes past the doorway itself and shows the team a chamber beyond it — walls marked with diagrams that look unmistakably like boundary theory, laid out in symbols none of them, not even Erynn, has ever seen in a single Farseer record.<br><br>The image collapses before anyone can study it properly.<br><br>But the implication doesn't collapse with it: whoever built that structure may understand boundaries just as well as the Farseers ever did.",
+    17: "The three of them sit down to solve a problem none of their research has actually touched yet: how does anyone get back?<br><br>A return-anchor system, they decide, needs four things working together — a stable point here in Veyren, a matching anchor wherever someone ends up, a power supply that doesn't quit partway through, and some reliable way to recognize the original route rather than guessing at it.<br><br>Miss any one of those, and a traveller could step through just fine and have absolutely no way home.",
+    18: "The plan runs into its first real wall almost immediately: there's no way to build a reliable anchor at the destination from here. Not with anything they have in Veyren.<br><br>Something has to be placed, or activated, on the other side itself.<br><br>Which means, before any person ever crosses that boundary, something else is probably going to have to go first.",
+    19: "They go back to the returned test object for a new idea — not sending something blind this time, but sending something with intent.<br><br>Renn embeds a simple symbol into a small metal plate and pushes it through the window.<br><br>This time, it doesn't bounce straight back.<br><br>The Horizon Engine holds steady the entire time it's gone — the first sign that maybe, carefully, something can actually be left on the other side and survive there.",
+    20: "Eventually, the plate comes back through.<br><br>The original symbol is still there, untouched. But it isn't alone anymore — a second mark sits right beside it, and neither Renn nor Erynn can place it in anything they know.<br><br>Mimi doesn't need to identify the symbol to read what's underneath it. One feeling, clear and simple.<br><br>Wait.<br><br>Somebody, or something, answered on purpose.",
+    21: "For the first time, \"crossing over\" stops being a hypothetical and becomes an actual plan on paper.<br><br>A small team. Limited supplies. A fixed window of time. A destination anchor that actually exists by the time anyone steps through. A guaranteed way back, no exceptions.<br><br>San is firm about one more thing before she'll sign off on any of it: whoever goes through is there to learn, not to take. Exploratory, not acquisitive. That's the whole mission, and nothing else gets added to it.",
+    22: "The research seats are already spoken for — Renn, Erynn, and Mimi were never really a question.<br><br>Everything else is harder. Combat ability, in case it's needed. Medical support, in case someone's hurt somewhere with no way to call for help. Navigation. Communication. Magical expertise beyond what the three researchers already bring. And the harder thing to measure — who can actually stay calm somewhere with no map, no history, no idea what's normal.<br><br>San and Joel are the ones who have to make that call, and neither of them takes it lightly.",
+    23: "Without warning, the Engine starts slipping.<br><br>The distant world grows harder to make out by the minute, the image thinning at the edges the way it did right before the very first shutdown.<br><br>The fourth light appears one more time.<br><br>This time it's followed by something new — a brief, clear image of exactly where the destination anchor needs to go.<br><br>Then the window closes.<br><br>Nobody can say for certain whether the Engine failed on its own, or whether whatever's on the other side chose to end the connection itself.",
+    24: "The workshop goes quiet once the Engine is fully shut down.<br><br>The first crossing isn't happening today — the Engine needs repairs, more materials, and a destination anchor that doesn't exist yet. That part hasn't changed.<br><br>What has changed is everything they're leaving this arc with: proof that another world is real, evidence that someone over there is responding on purpose, a working method for sending something small and simple across, one unexplained symbol nobody can read yet, and an actual plan for how the first crossing might go.<br><br>San looks at the inactive Engine for a long moment.<br><br>\"We know where the road begins.\"<br><br>Joel steps up beside her.<br><br>\"Then we find out how to come home.\""
+  };
+
+  window.markArc11ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC11_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc11] no chapter data for id', id); return; }
+    game.comicProgress11 = game.comicProgress11||{};
+    if(game.comicProgress11[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc11ObjectiveState() !== 'complete_arc11_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress11[id] = true;
+    if (id === 3) game.sansReturnRuleRestated = true; // "nobody crosses until they know how to come back"
+    if (id === 16) game.otherCivilizationSuspected = true; // boundary diagrams that aren't Farseer symbols
+    if (id === 18) game.destinationAnchorRequired = true; // can't build the anchor from Veyren's side alone
+    if (id === 19) game.firstOneWayTransferSuccess = true; // the metal plate — first thing sent through that didn't just bounce back
+    if (id === 20) game.otherSideRespondedDeliberately = true; // the second symbol, and Mimi's "wait"
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
+    if (id === 24) game.arc11Complete = true; // "Arc 11 unlock" — ready for Arc 12: The First Crossing
+    logEvent('📖 Arc XI Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if (ARC11_CHAPTER_SCENES[id]) {
+      game.storyModalQueue = game.storyModalQueue || [];
+      game.storyModalQueue.push({ title: ch.title, blurb: ARC11_CHAPTER_SCENES[id] });
+    }
+    if (typeof renderMainGoal === 'function') try { renderMainGoal(); } catch(e) {}
+    if (typeof renderStory === 'function') try { renderStory(); } catch(e) {}
+  };
+
+  window.__ctShowArc11Splash = function(){
+    const overlay = document.getElementById('arc11SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc11Splash = function(){
+    const overlay = document.getElementById('arc11SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc11SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  const oldRenderStoryForArc11 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc11) oldRenderStoryForArc11();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const arc11Ready = window.arc11ObjectiveState() !== null;
+    if (arc11Ready && !game.arc11SplashSeen && typeof window.__ctShowArc11Splash === 'function') {
+      window.__ctShowArc11Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.png" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc XI</div><div class="story-act-title">The World Beyond the Window</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC11_CHAPTERS.length+' of 24. Seeing another world is not the same as reaching it.</div></div>';
+    if (!arc11Ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XI Locked</div><div class="story-chapter-sub">'+
+        (!game.arc10Complete ? 'Finish Arc X first.' : 'Reach Level 165 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc11ObjectiveState();
+    ARC11_CHAPTERS.forEach(function(ch){
+      const done = !!(game.comicProgress11 && game.comicProgress11[ch.id]);
+      const ready = !done && so===('complete_arc11_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
+        '<button class="btn btn-small btn-success" onclick="markArc11ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so==='arc11_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ Arc XI complete — all 24 chapters read. Preparing for Arc XII: The First Crossing.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
 
 <script id="ct-build-v148-wyverns-dragon-blood">
 (function(){
@@ -13644,6 +13817,102 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     <div id="illusionsContent"></div>
   </div>
 </div>
+
+
+<script id="ct-build-v153-spectacles">
+(function(){
+  // -------------------------------------------------------------------
+  // THE WATCHMAN'S ARCANE SPECTACLES (Joel) & THE 'AT LEAST MINE MATCH'
+  // SPECTACLES (Erynn) — two named, one-time accessory grants, available
+  // once Arc X is complete. Built as ordinary entries in the existing
+  // trophy/trinket system (equippedTrophies/TRINKET_BONUS) rather than a
+  // new head-slot mechanic — same equip flow players already know, no
+  // new UI needed. Joel's ties into Arc XI's own "treats the watch like
+  // lookout duty" characterization; Erynn's is exactly the joke San
+  // asked for, nothing more serious than that.
+  //
+  // Granted automatically, once, the moment Arc X's completion is first
+  // detected — checked here via a renderMainGoal wrap, since every
+  // chapter-completion function across every arc already calls that,
+  // including Arc X's own finale. Also correctly catches anyone who
+  // completed Arc X in an earlier session, the first time they load in.
+  // -------------------------------------------------------------------
+  Object.assign(TRINKET_BONUS, {
+    '🥽': {hpBonus: 30, critPct: 0.08, magicBonus: 5, label: '+30 max HP, +8% crit chance, +5 MAG'},
+    '🕶️': {spellPct: 0.08, goldPct: 0.05, label: '+8% spell damage, +5% gold'}
+  });
+
+  function grantSpectaclesIfDue(){
+    if (!game.arc10Complete) return;
+    if (game.watchmansSpectaclesGranted && game.atLeastMineMatchGranted) return; // already done, nothing to check further
+    game.inventory = game.inventory || [];
+    if (!game.watchmansSpectaclesGranted) {
+      game.inventory.push({id:'watchmans_arcane_spectacles', name:"The Watchman's Arcane Spectacles", icon:'🥽', desc:"Joel's, for the watch. Somewhere between Erynn's research and Renn's tinkering, they figured out how to let him actually see some of what he's been staring at."});
+      game.watchmansSpectaclesGranted = true;
+      logEvent('🥽 Joel receives The Watchman\'s Arcane Spectacles — made for the long watches over the Horizon Engine.', 'gold');
+    }
+    if (!game.atLeastMineMatchGranted) {
+      game.inventory.push({id:'at_least_mine_match_spectacles', name:"The 'At Least Mine Match' Spectacles", icon:'🕶️', desc:"Erynn's. Nobody asked for a rivalry with Renn's eyewear. Erynn started one anyway, and is not sorry about it."});
+      game.atLeastMineMatchGranted = true;
+      logEvent('🕶️ Erynn receives The \'At Least Mine Match\' Spectacles — deeply, unnecessarily pleased about it.', 'gold');
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  }
+  window.grantSpectaclesIfDue = grantSpectaclesIfDue;
+
+  // Extends gearBonuses() to also fold in a trinket-based MAG stat — the
+  // existing trinket system had no field feeding the magic stat at all,
+  // only gear did. Every damage calculation that reads gb.magic (4
+  // separate combat sites — hex skills, general skills, spells) already
+  // reads its value from this one function, so extending it here covers
+  // all of them without needing to touch any of those sites directly.
+  const oldGearBonusesForSpectacles = window.gearBonuses;
+  window.gearBonuses = function(memberId){
+    const out = oldGearBonusesForSpectacles(memberId);
+    const tb = (typeof trinketBonus === 'function') ? trinketBonus(memberId) : null;
+    if (tb && tb.magicBonus) out.magic += tb.magicBonus;
+    return out;
+  };
+  if (typeof gearBonuses === 'function') gearBonuses = window.gearBonuses;
+
+  const oldRenderMainGoalForSpectacles = window.renderMainGoal;
+  window.renderMainGoal = function(){
+    if (oldRenderMainGoalForSpectacles) oldRenderMainGoalForSpectacles();
+    grantSpectaclesIfDue();
+  };
+})();
+</script>
+
+
+<script id="ct-build-v155-extended-crew">
+(function(){
+  // -------------------------------------------------------------------
+  // EXTENDED CREW — the full-cast reference sheet, wired into the Crew
+  // screen just below the main fielding roster. Positioned there
+  // specifically because it overlaps with the Research Expedition's own
+  // "Horizon Team" (Renn/Erynn/Mimi) — a quick visual reference for the
+  // whole cast, not a functional/interactive panel like the roster above
+  // it. Tap to open full-size, same lightbox openComicImage() already
+  // uses for chapter art.
+  //
+  // Path confirmed by San: assets/crew/crew-expedition-reference-sheet.png
+  // -------------------------------------------------------------------
+  const oldRenderPartyScreenForExtendedCrew = window.renderPartyScreen;
+  window.renderPartyScreen = function(){
+    if (oldRenderPartyScreenForExtendedCrew) oldRenderPartyScreenForExtendedCrew();
+    const container = document.getElementById('partyDetail');
+    if (!container) return;
+    container.insertAdjacentHTML('beforeend',
+      '<div class="panel" style="margin-top:12px;">'+
+      '<div class="panel-title">🖼️ Extended Crew</div>'+
+      '<p style="font-size:.8rem;opacity:.8;margin-bottom:10px;">Different people. Different paths. A shared horizon. The whole cast, from San and Joel to the Horizon Team, in one place.</p>'+
+      '<img src="assets/crew/crew-expedition-reference-sheet.png" alt="Crimson Tide — full crew reference" '+
+      'style="width:100%;border-radius:8px;cursor:pointer;display:block;" '+
+      'onclick="openComicImage(\'assets/crew/crew-expedition-reference-sheet.png\')">'+
+      '</div>');
+  };
+})();
+</script>
 
 <script>
 // Register the service worker (see sw.js) for offline play + installability.
