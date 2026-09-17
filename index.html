@@ -1806,6 +1806,7 @@ body{
       <button class="tab-btn" id="ft-tab-btn-bonds" onclick="switchFairTideTab('bonds')">💞 Bonds</button>
       <button class="tab-btn" id="ft-tab-btn-quarters" onclick="switchFairTideTab('quarters')">🏠 Captain's Quarters</button>
       <button class="tab-btn" id="ft-tab-btn-expedition" onclick="switchFairTideTab('expedition')">🔭 Research Expedition</button>
+      <button class="tab-btn" id="ft-tab-btn-requests" onclick="switchFairTideTab('requests')">📋 Requests</button>
     </div>
     <div class="panel">
       <div id="ft-tab-buildings" class="tab-content active"></div>
@@ -1818,6 +1819,7 @@ body{
       <div id="ft-tab-bonds" class="tab-content"></div>
       <div id="ft-tab-quarters" class="tab-content"></div>
       <div id="ft-tab-expedition" class="tab-content"></div>
+      <div id="ft-tab-requests" class="tab-content"></div>
     </div>
   </div>
 </div>
@@ -7251,7 +7253,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V156 · Extended Crew Path Confirmed'</script>
+<script>window.__CT_BUILD__='V157 · Fair Tide Requests System'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -13911,6 +13913,256 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       'onclick="openComicImage(\'assets/crew/crew-expedition-reference-sheet.png\')">'+
       '</div>');
   };
+})();
+</script>
+
+
+<script id="ct-build-v157-fair-tide-requests">
+(function(){
+  // -------------------------------------------------------------------
+  // FAIR TIDE REQUESTS. Confirmed gating: game.arc6Complete (Fair Tide
+  // exists at all) + window.fairTideRenovationDone() (the port is
+  // actually open). Reuses the proven Dispatch timer/claim pattern
+  // (game.fairTideDispatch's startedAt/Date.now() shape) but for
+  // multiple concurrent board slots instead of one. Reuses each
+  // companion's existing .role field directly for the "San's
+  // Assessment -> Solution" matching (Aisyah "Quartermaster", Senedra
+  // "Lookout", etc.) — no new categorization invented, these already
+  // match San's own example quotes exactly.
+  //
+  // Player picks WHICH board request to start (same click-to-begin
+  // action as Dispatch today); San auto-decides HOW it's solved — who
+  // gets assigned, based on role match against whoever's currently
+  // fielded. Board size scales with Port HQ level: base 3, +1 at level
+  // 3, +1 at level 5, capping at 5.
+  //
+  // Deliberately NOT built yet: the "story surprise" hook (an arrival
+  // claiming to have come through the Storm) — that ties into the
+  // multi-crossing-point mystery and deserves real narrative content
+  // from San rather than an invented placeholder. Noted for later.
+  // -------------------------------------------------------------------
+  const FAIR_TIDE_REQUESTS = [
+  {id:"missing_boats", category:"Maritime", icon:"🌊", requesterType:"A fisherman", title:"Missing Boats", desc:"Three of our boats haven't returned. We don't know if they've been caught in the storm.", assessment:"They should have returned before the tide changed. This isn't normal.", preferredRoles:["Lookout", "Storm Caller"], tier:"standard", rewards:{"gold": 60, "reputation": 3, "resources": {"food": 8}}},
+  {id:"damaged_hull", category:"Maritime", icon:"🌊", requesterType:"A trader captain", title:"A Damaged Hull", desc:"We took on water past the reef. If we sail again like this, we won't make it back out.", assessment:"That's not a patch job. Someone who actually knows hulls needs to look at it.", preferredRoles:["Boarding Fighter", "Quartermaster"], tier:"quick", rewards:{"gold": 35, "reputation": 2, "resources": {"timber": 6}}},
+  {id:"strange_currents", category:"Maritime", icon:"🌊", requesterType:"A worried sailor", title:"Strange Currents", desc:"The water past the point isn't moving the way it should. My crew won't sail it anymore.", assessment:"Water doesn't just decide to behave differently. Something's causing it.", preferredRoles:["Storm Caller", "Diviner"], tier:"standard", rewards:{"gold": 55, "reputation": 3, "resources": {}}},
+  {id:"navigation_lesson", category:"Maritime", icon:"🌊", requesterType:"A worried mother", title:"A Navigation Lesson", desc:"My son wants to learn navigation. Could someone teach him?", assessment:"That's not a rescue. That's just — someone should say yes to that.", preferredRoles:["Lookout", "Farseer Descendant"], tier:"quick", rewards:{"gold": 15, "reputation": 2, "resources": {}}},
+  {id:"broken_well", category:"Fair Tide", icon:"🏘️", requesterType:"A resident", title:"The Broken Well", desc:"Our well's stopped working. Half the street's been hauling water from the docks.", assessment:"That's not a want. That's a need. Fix it today.", preferredRoles:["Quartermaster", "Boarding Fighter"], tier:"quick", rewards:{"gold": 25, "reputation": 3, "resources": {"stone": 5}}},
+  {id:"food_shortage", category:"Fair Tide", icon:"🏘️", requesterType:"A cook", title:"A Food Shortage", desc:"The last shipment came in half of what we ordered. I don't know what I'm feeding people this week.", assessment:"Somebody's numbers don't add up somewhere. Find out where.", preferredRoles:["Quartermaster"], tier:"standard", rewards:{"gold": 40, "reputation": 3, "resources": {"food": 10}}},
+  {id:"building_repair", category:"Fair Tide", icon:"🏘️", requesterType:"A builder", title:"A Building in Need of Repair", desc:"The storm took half the roof off the warehouse. It'll fall the rest of the way if it rains again.", assessment:"That won't wait for a quiet week. Get someone on it.", preferredRoles:["Boarding Fighter", "Quartermaster"], tier:"standard", rewards:{"gold": 45, "reputation": 3, "resources": {"timber": 8, "stone": 4}}},
+  {id:"resident_dispute", category:"Fair Tide", icon:"🏘️", requesterType:"Two neighbors", title:"A Dispute Between Residents", desc:"They're both convinced the other one's lying about whose fence that actually is.", assessment:"Nobody's bleeding. Nobody's stealing. This just needs someone patient.", preferredRoles:["Ship Healer", "Farseer Descendant"], tier:"quick", rewards:{"gold": 20, "reputation": 2, "resources": {}}},
+  {id:"stolen_cargo", category:"Trade", icon:"💰", requesterType:"A merchant", title:"Stolen Cargo", desc:"My cargo arrived, but half of it is missing. Someone along the route helped themselves.", assessment:"Somebody along that route got greedy. Find out who.", preferredRoles:["Quartermaster", "Lookout"], tier:"standard", rewards:{"gold": 70, "reputation": 3, "resources": {"trade": 6}}},
+  {id:"unreliable_merchant", category:"Trade", icon:"💰", requesterType:"A regular buyer", title:"An Unreliable Merchant", desc:"He's promised the same delivery three times now. I'm done being patient.", assessment:"Either he's overcommitted or he's lying. Either way, someone needs to have that conversation.", preferredRoles:["Quartermaster"], tier:"quick", rewards:{"gold": 30, "reputation": 2, "resources": {}}},
+  {id:"blocked_trade_route", category:"Trade", icon:"💰", requesterType:"A route captain", title:"A Blocked Trade Route", desc:"Something's sitting in the channel and nobody's willing to sail past it to find out what.", assessment:"If it's blocking trade, it's costing everyone. That needs eyes on it.", preferredRoles:["Boarding Fighter", "Storm Caller"], tier:"major", rewards:{"gold": 100, "reputation": 4, "resources": {"trade": 10}}},
+  {id:"unusual_demand", category:"Trade", icon:"💰", requesterType:"A trader", title:"Unusual Demand", desc:"Everyone's suddenly asking for the same rare goods. I don't know why, and it's making prices ugly.", assessment:"Sudden demand like that usually means somebody knows something the rest of us don't.", preferredRoles:["Arcane Trickster", "Farseer Descendant"], tier:"standard", rewards:{"gold": 65, "reputation": 3, "resources": {"trade": 8}}},
+  {id:"recurring_dream", category:"Strange", icon:"🔮", requesterType:"A restless woman", title:"The Same Dream, Again", desc:"I keep dreaming the same thing, every night, for two weeks now. I don't know why it won't stop.", assessment:"Dreams don't usually repeat themselves exactly. That's worth taking seriously.", preferredRoles:["Diviner", "Farseer Descendant"], tier:"standard", rewards:{"gold": 50, "reputation": 4, "resources": {}}},
+  {id:"offshore_light", category:"Strange", icon:"🔮", requesterType:"A night watchman", title:"A Light Offshore", desc:"There's a light out past the reef most nights now. It wasn't there a month ago.", assessment:"Lights don't just appear. Something's putting it there.", preferredRoles:["Lookout", "Arcane Trickster"], tier:"standard", rewards:{"gold": 55, "reputation": 4, "resources": {}}},
+  {id:"impossible_object", category:"Strange", icon:"🔮", requesterType:"A dockworker", title:"An Object That Shouldn't Exist", desc:"We pulled this up in the nets. Nobody here's ever seen anything like it.", assessment:"That's not driftwood, and it's not ordinary cargo either. Renn's going to want to see this.", preferredRoles:["Arcane Trickster", "Diviner"], tier:"major", rewards:{"gold": 90, "reputation": 5, "resources": {}}},
+  {id:"magical_illness_crops", category:"Strange", icon:"🔮", requesterType:"A farmer", title:"Something Wrong With the Crops", desc:"Half the field's gone grey overnight. It's not rot. I've seen rot.", assessment:"That's not a farming problem. That's a boundary problem wearing a farming problem's clothes.", preferredRoles:["Farseer Descendant", "Diviner"], tier:"major", rewards:{"gold": 85, "reputation": 4, "resources": {"food": 5}}},
+  {id:"bandits_on_road", category:"Threat", icon:"⚔️", requesterType:"A caravan driver", title:"Bandits on the Coast Road", desc:"They've hit two caravans already this month. Nobody wants to run the route anymore.", assessment:"If they're hitting the same road twice, they'll hit it a third time. Get ahead of it.", preferredRoles:["Boarding Fighter", "Lookout"], tier:"major", rewards:{"gold": 95, "reputation": 4, "resources": {}}},
+  {id:"pirates_sighted", category:"Threat", icon:"⚔️", requesterType:"A returning sailor", title:"Pirates Sighted", desc:"Saw a ship flying no colors, running fast, near the shoals. Didn't like the look of it.", assessment:"No colors and running fast usually means trouble looking for somewhere to happen.", preferredRoles:["Boarding Fighter", "Storm Caller"], tier:"major", rewards:{"gold": 100, "reputation": 4, "resources": {}}},
+  {id:"exploited_workers", category:"Threat", icon:"⚔️", requesterType:"A frightened worker", title:"Workers Being Exploited", desc:"The new foreman's been taking more than his share and threatening anyone who complains.", assessment:"That's exactly the kind of thing Fair Tide isn't supposed to look away from.", preferredRoles:["Quartermaster", "Boarding Fighter"], tier:"standard", rewards:{"gold": 60, "reputation": 5, "resources": {}}},
+  {id:"looking_for_work", category:"Community", icon:"👨‍👩‍👧", requesterType:"A newcomer", title:"Looking for Work", desc:"I've got two working hands and nowhere to put them to use yet.", assessment:"Fair Tide can always use two more working hands. See what fits.", preferredRoles:["Quartermaster"], tier:"quick", rewards:{"gold": 15, "reputation": 3, "resources": {}}},
+  {id:"apprenticeship_needed", category:"Community", icon:"👨‍👩‍👧", requesterType:"A hopeful parent", title:"A Child Needing an Apprenticeship", desc:"My daughter's got a good eye and no one willing to teach her yet.", assessment:"Somebody around here's got the patience for that. Find them.", preferredRoles:["Ship Healer", "Lookout"], tier:"quick", rewards:{"gold": 15, "reputation": 3, "resources": {}}},
+  {id:"family_needs_shelter", category:"Community", icon:"👨‍👩‍👧", requesterType:"A tired traveler", title:"A Family Needing Somewhere to Stay", desc:"We've got nowhere left to go. We heard this port doesn't turn people away.", assessment:"Then it's not going to start now.", preferredRoles:["Quartermaster", "Ship Healer"], tier:"standard", rewards:{"gold": 30, "reputation": 5, "resources": {"food": 4}}},
+  {id:"newcomer_integration", category:"Community", icon:"👨‍👩‍👧", requesterType:"A recent arrival", title:"Help Settling In", desc:"Everyone here already knows each other. I don't know anyone yet.", assessment:"That's the easiest kind of problem Fair Tide has. Just introduce them around.", preferredRoles:["Ship Healer", "Farseer Descendant"], tier:"quick", rewards:{"gold": 15, "reputation": 2, "resources": {}}}
+  ];
+  window.FAIR_TIDE_REQUESTS = FAIR_TIDE_REQUESTS;
+
+  const REQUESTER_NAMES = [
+    'Wei Ling','Boon Kiat','Farah','Hafiz','Reyes','Bagyo','Somchai','Ratana',
+    'Dewi','Agus','Minh','Lan','Zeya','Hla','Poh Choo','Rashid','Marisol','Zulkifli'
+  ];
+
+  const TIER_DURATIONS_MS = { quick: 20*60*1000, standard: 2*60*60*1000, major: 8*60*60*1000 };
+  const TIER_LABELS = { quick: 'Quick (~20 min)', standard: 'Standard (~2 hrs)', major: 'Major (~8 hrs)' };
+
+  function requestBoard(){ game.fairTideRequestBoard = game.fairTideRequestBoard || []; return game.fairTideRequestBoard; }
+  window.fairTideRequestBoard = requestBoard;
+
+  function requesterState(){ game.fairTideRequesters = game.fairTideRequesters || {}; return game.fairTideRequesters; }
+  window.fairTideRequesterState = requesterState;
+
+  window.fairTideRequestsUnlocked = function(){
+    return !!game.arc6Complete && typeof window.fairTideRenovationDone === 'function' && window.fairTideRenovationDone();
+  };
+
+  window.getRequestBoardSize = function(){
+    const lvl = (game.fairTideBuildings && game.fairTideBuildings.port_hq) || 0;
+    let size = 3;
+    if (lvl >= 3) size += 1;
+    if (lvl >= 5) size += 1;
+    return Math.min(5, size);
+  };
+
+  function randomRequesterName(){
+    return REQUESTER_NAMES[Math.floor(Math.random() * REQUESTER_NAMES.length)];
+  }
+
+  // Fills any open board slots with a fresh, randomly-picked request —
+  // called on every render of the tab and after claiming, so the board
+  // never sits visibly empty for long.
+  function refillBoard(){
+    if (!window.fairTideRequestsUnlocked()) return;
+    const board = requestBoard();
+    const size = window.getRequestBoardSize();
+    while (board.length < size) {
+      const template = FAIR_TIDE_REQUESTS[Math.floor(Math.random() * FAIR_TIDE_REQUESTS.length)];
+      board.push({
+        slotId: 'slot_' + Date.now() + '_' + Math.floor(Math.random()*10000),
+        requestId: template.id,
+        npcName: randomRequesterName(),
+        status: 'available'
+      });
+    }
+  }
+  window.refillFairTideBoard = refillBoard;
+
+  function requestTemplate(requestId){ return FAIR_TIDE_REQUESTS.find(r => r.id === requestId); }
+
+  // San's Assessment -> Solution: scores currently-fielded companions
+  // against the request's preferred roles, picks the best 1-2 matches.
+  // Falls back to "San handles it personally" if nobody fielded matches
+  // at all — never blocks the request, just changes the flavor of who
+  // solves it.
+  function assignSolution(template){
+    const party = (typeof getActiveParty === 'function' ? getActiveParty() : []).filter(m => {
+      return typeof window.isFielded !== 'function' || window.isFielded(m.id);
+    });
+    const scored = party
+      .filter(m => m.id !== 'san')
+      .map(m => {
+        const match = (m.role && template.preferredRoles.some(r => m.role.includes(r) || r.includes(m.role)));
+        return { id: m.id, name: m.name, role: m.role, score: match ? 1 : 0 };
+      })
+      .sort((a,b) => b.score - a.score);
+    const picked = scored.filter(s => s.score > 0).slice(0, 2);
+    if (!picked.length) return {names: ['San'], flavor: 'San handles this one personally.'};
+    return {names: picked.map(p=>p.name), flavor: picked.map(p=>p.name).join(' and ') + ' take this one.'};
+  }
+
+  window.startFairTideRequest = function(slotId){
+    const board = requestBoard();
+    const slot = board.find(s => s.slotId === slotId);
+    if (!slot || slot.status !== 'available') return;
+    const template = requestTemplate(slot.requestId);
+    if (!template) return;
+    const solution = assignSolution(template);
+    slot.status = 'active';
+    slot.startedAt = Date.now();
+    slot.durationMs = TIER_DURATIONS_MS[template.tier];
+    slot.assignedNames = solution.names;
+    toast('📋 ' + solution.flavor, 3200);
+    logEvent('📋 Request accepted: ' + template.title + ' — ' + solution.flavor, 'gold');
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderFairTideHub === 'function') renderFairTideHub();
+  };
+
+  window.claimFairTideRequest = function(slotId){
+    const board = requestBoard();
+    const idx = board.findIndex(s => s.slotId === slotId);
+    if (idx === -1) return;
+    const slot = board[idx];
+    if (slot.status !== 'active') return;
+    if (Date.now() - slot.startedAt < slot.durationMs) { toast('⏳ Not back yet.'); return; }
+    const template = requestTemplate(slot.requestId);
+    if (!template) return;
+
+    game.gold = (game.gold||0) + (template.rewards.gold||0);
+    game.reputation = (game.reputation||0) + (template.rewards.reputation||0);
+    if (template.rewards.resources) {
+      game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0};
+      const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999;
+      Object.entries(template.rewards.resources).forEach(([k,v]) => {
+        game.fairTideResources[k] = Math.min(cap, (game.fairTideResources[k]||0) + v);
+      });
+    }
+
+    const rs = requesterState();
+    const key = slot.npcName;
+    rs[key] = rs[key] || {visits: 0};
+    rs[key].visits += 1;
+
+    logEvent('✅ Request resolved: ' + template.title + ' (' + slot.npcName + ') — ' + slot.assignedNames.join(' and ') + '.', 'gold');
+    toast('✅ ' + template.title + ' resolved! ' + slot.npcName + ' remembers Crimson Tide.', 4200);
+
+    board.splice(idx, 1);
+    refillBoard();
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderFairTideHub === 'function') renderFairTideHub();
+  };
+
+  // -------------------------------------------------------------------
+  // AFK integration — processAFKRewards() is a flat wholeMinutes*rate
+  // calculation with no awareness of anything else. Wrapping it to also
+  // resolve any board requests whose timer completed during the away
+  // period, surfacing a real summary instead of just a bigger number.
+  // Requests move to 'ready' here, not auto-claimed — claiming (and its
+  // rewards) still needs a deliberate tap, same as Dispatch already works.
+  // -------------------------------------------------------------------
+  const oldProcessAFKRewardsForRequests = window.processAFKRewards;
+  window.processAFKRewards = function(){
+    const result = oldProcessAFKRewardsForRequests ? oldProcessAFKRewardsForRequests() : false;
+    if (!window.fairTideRequestsUnlocked()) return result;
+    const board = requestBoard();
+    const nowReady = [];
+    board.forEach(slot => {
+      if (slot.status === 'active' && Date.now() - slot.startedAt >= slot.durationMs) {
+        slot.status = 'ready';
+        const t = requestTemplate(slot.requestId);
+        if (t) nowReady.push(t.title);
+      }
+    });
+    if (nowReady.length) {
+      logEvent('📋 While you were away, ' + nowReady.length + ' request' + (nowReady.length>1?'s':'') + ' finished: ' + nowReady.join(', ') + '.', 'gold');
+    }
+    return result;
+  };
+
+  // -------------------------------------------------------------------
+  // Fair Tide Hub tab.
+  // -------------------------------------------------------------------
+  const oldRenderFairTideHubForRequests = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    if (window.fairTideRequestsUnlocked()) refillBoard();
+    const tab = game.fairTideActiveTab || 'buildings';
+    const el = document.getElementById('ft-tab-requests');
+    const btn = document.getElementById('ft-tab-btn-requests');
+    if (el) el.classList.toggle('active', tab==='requests');
+    if (btn) btn.classList.toggle('active', tab==='requests');
+    if (oldRenderFairTideHubForRequests) oldRenderFairTideHubForRequests();
+    if (tab==='requests') renderRequestsTab();
+  };
+
+  function renderRequestsTab(){
+    const el = document.getElementById('ft-tab-requests');
+    if (!el) return;
+    if (!window.fairTideRequestsUnlocked()) {
+      el.innerHTML = '<div class="panel-title">📋 Requests</div>'+
+        '<div class="story-chip">🔒 Opens once Fair Tide is fully renovated.</div>';
+      return;
+    }
+    const board = requestBoard();
+    let html = '<div class="panel-title">📋 Fair Tide Requests</div>'+
+      '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">People bring their problems to the dock. San decides who goes.</p>';
+    board.forEach(function(slot){
+      const t = requestTemplate(slot.requestId);
+      if (!t) return;
+      html += '<article class="quest-item"><strong>'+t.icon+' '+t.title+'</strong><br>'+
+        '<span style="font-size:.8rem;opacity:.8;">'+slot.npcName+': "'+t.desc+'"</span><br>'+
+        '<span style="font-size:.76rem;opacity:.65;">'+t.category+' · '+TIER_LABELS[t.tier]+'</span>';
+      if (slot.status === 'available') {
+        html += '<div class="story-actions"><button class="btn btn-small btn-success" onclick="startFairTideRequest(\''+slot.slotId+'\')">🤝 Accept</button></div>';
+      } else if (slot.status === 'active') {
+        const remaining = Math.max(0, slot.durationMs - (Date.now() - slot.startedAt));
+        const mins = Math.ceil(remaining / 60000);
+        html += '<div style="font-size:.78rem;margin-top:6px;">📋 '+slot.assignedNames.join(' and ')+' — '+(mins>0?mins+' min left':'almost done')+'</div>';
+      } else if (slot.status === 'ready') {
+        html += '<div class="story-actions"><button class="btn btn-small btn-success" onclick="claimFairTideRequest(\''+slot.slotId+'\')">✅ Claim Resolution</button></div>';
+      }
+      html += '</article>';
+    });
+    el.innerHTML = html;
+  }
 })();
 </script>
 
