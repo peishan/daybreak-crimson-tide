@@ -1787,6 +1787,7 @@ body{
   <div class="game-container">
     <div class="header"><h1>🏮 Fair Tide</h1><div class="subtitle">A port worth keeping</div></div>
     <div id="fairTidePopulationDisplay" style="font-size:.78rem;opacity:.78;margin:6px 0;text-align:center;">👥 Population: <span id="fairTidePopulationLabel">—</span></div>
+    <div id="fairTideSpiritDisplay" style="font-size:.8rem;margin:4px 0 10px;text-align:center;"></div>
     <div class="nav-bar">
       <button class="nav-btn" onclick="goScreen('port')">🏛️ Port</button>
       <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Sail</button>
@@ -7253,7 +7254,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V157 · Fair Tide Requests System'</script>
+<script>window.__CT_BUILD__='V159 · Watchtower and Fair Tide Spirit'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8922,13 +8923,15 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     galley:       {name:'Galley',        icon:'🍲', desc:'More Food from every gathering run, and better Trade rates on Food.', rosterKey:'gino',   companionName:'Gino',   cost:{food:30,timber:15},
       tierNames:['A Cookfire','A Real Kitchen','The Galley','Food Enough for Everyone','Gino\'s Galley']},
     workshop:     {name:'Workshop',      icon:'🔧', desc:'Cheaper Shipyard hull upgrades.', rosterKey:'jorvin', companionName:'Jorvin', cost:{stone:30,trade:15},
-      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']}
+      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']},
+    watchtower:   {name:'Watchtower',    icon:'🔭', desc:'Imah keeps watch over the water. Periodically spots something worth investigating — a lead the Research Expedition team can follow up on.', rosterKey:'imah', companionName:'Imah', cost:{timber:25,stone:35},
+      tierNames:["A Lookout Post","A Proper Watch","The Watchtower","Eyes on Every Horizon","Imah's Watch"]}
   };
   const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
   const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
 
   function ftResources(){ game.fairTideResources = game.fairTideResources || {timber:0,stone:0,food:0,trade:0}; return game.fairTideResources; }
-  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0}; return game.fairTideBuildings; }
+  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0,watchtower:0}; return game.fairTideBuildings; }
   function fmtClockFT(sec){ const m = Math.floor(sec/60), s = sec%60; return m+':'+String(s).padStart(2,'0'); }
 
   window.fairTideResourceCap = function(){
@@ -10875,27 +10878,41 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     // rivalDisplayName() falls back gracefully even if that rival has no
     // HARBOR_ENEMIES entry (e.g. captured through a pure story beat with
     // no prior repeatable Challenge fight).
-    Object.keys(game.rivalsCaptured || {}).forEach(function(key){
-      if (!window.rivalCaptured(key)) return;
+    //
+    // BUG FIX (San's request): with up to 50+ possible named captains
+    // plus Robin/Jeff all potentially captured over time, this section
+    // was rendering one full card per rival directly into the page —
+    // "getting very long" as more get captured. Now built into a single
+    // string first and wrapped in a native <details> element, collapsed
+    // by default, with a count in the summary instead of always-open.
+    const capturedKeys = Object.keys(game.rivalsCaptured || {}).filter(function(key){ return window.rivalCaptured(key); });
+    if (capturedKeys.length) {
       const container = document.getElementById('exploreContent');
-      if (!container) return;
-      const name = rivalDisplayName(key);
-      const served = window.communityServiceDaysServed(key);
-      const cs = communityServiceState()[key] || {totalDays:20, active:false};
-      const canClaim = window.canClaimCommunityLabor(key);
-      const dayLabel = (cs.totalDays == null)
-        ? 'Day ' + served + ' · Permanent — no end date'
-        : 'Day ' + Math.min(served,cs.totalDays) + '/' + cs.totalDays + (cs.active?'':' · Term complete');
-      // See serviceFraming() above — Robin's is community service, Jeff's
-      // is a mirror of what he used to order at SK*, not the same thing.
-      const framing = serviceFraming(key, name);
-      container.insertAdjacentHTML('beforeend',
-        '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">'+framing.icon+' '+name+"'s "+framing.label+'</h3>'+
-        '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;">'+framing.flavor+'</div>'+
-        '<div style="font-size:.8rem;margin-top:6px;">'+dayLabel+'</div>'+
-        (cs.active ? '<button class="btn btn-small btn-success" style="margin-top:6px;" '+(canClaim?'':'disabled')+' onclick="claimCommunityLabor(\''+key+'\')">'+framing.icon+' Collect Today\'s Labor</button>' : '')+
-        '</article>');
-    });
+      if (container) {
+        let cardsHtml = '';
+        capturedKeys.forEach(function(key){
+          const name = rivalDisplayName(key);
+          const served = window.communityServiceDaysServed(key);
+          const cs = communityServiceState()[key] || {totalDays:20, active:false};
+          const canClaim = window.canClaimCommunityLabor(key);
+          const dayLabel = (cs.totalDays == null)
+            ? 'Day ' + served + ' · Permanent — no end date'
+            : 'Day ' + Math.min(served,cs.totalDays) + '/' + cs.totalDays + (cs.active?'':' · Term complete');
+          const framing = serviceFraming(key, name);
+          cardsHtml +=
+            '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">'+framing.icon+' '+name+"'s "+framing.label+'</h3>'+
+            '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;">'+framing.flavor+'</div>'+
+            '<div style="font-size:.8rem;margin-top:6px;">'+dayLabel+'</div>'+
+            (cs.active ? '<button class="btn btn-small btn-success" style="margin-top:6px;" '+(canClaim?'':'disabled')+' onclick="claimCommunityLabor(\''+key+'\')">'+framing.icon+' Collect Today\'s Labor</button>' : '')+
+            '</article>';
+        });
+        const activeCount = capturedKeys.filter(function(key){ const cs = communityServiceState()[key]; return cs && cs.active; }).length;
+        container.insertAdjacentHTML('beforeend',
+          '<details style="margin-top:14px;"><summary style="cursor:pointer;font-family:Cinzel;color:var(--gold);font-size:.95rem;padding:6px 0;">'+
+          '⛓️ Community Service ('+capturedKeys.length+(activeCount?', '+activeCount+' active':'')+')</summary>'+
+          cardsHtml+'</details>');
+      }
+    }
   };
 })();
 </script>
@@ -13069,6 +13086,13 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   </div>
 </div>
 
+<div id="arc12SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc12/arc12-cover-the-first-crossing.png" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc12Splash()">⚓ Begin Arc XII</button>
+  </div>
+</div>
+
 <script id="ct-build-v146-arc10">
 (function(){
   // -------------------------------------------------------------------
@@ -13389,6 +13413,157 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     });
     if (so==='arc11_part1_complete_for_now'){
       html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ Arc XI complete — all 24 chapters read. Preparing for Arc XII: The First Crossing.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+<script id="ct-build-v158-arc12">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC XII — THE FIRST CROSSING. Fully wired, all 24 chapters — built
+  // in 5 batches (1-5, 6-10, 11-15, 16-20, 21-24) as the outline was
+  // provided. game.arc12Complete is now set on Ch.24, matching every
+  // prior arc's convention, so Arc XIII can gate on it.
+  //
+  // Gated behind game.arc11Complete (set on Arc XI's own Ch.24) + level
+  // 180, continuing the established +15-per-arc pace (IX 135 / X 150 /
+  // XI 165 / XII 180).
+  // -------------------------------------------------------------------
+  const ARC12_CHAPTERS = [
+    {id:1, title:'Beyond the Horizon',         focus:"The Horizon Engine is finally ready for a controlled crossing. The question isn't whether they can see another world anymore — it's whether they can go there. Nobody is forced to cross.", image:'assets/comics/arc12/ch01-beyond-the-horizon.png', xp:280, action:'🚪 Gather at the Engine'},
+    {id:2, title:'The First Crossing Protocol', focus:"Renn, Erynn, and Mimi lay out the first real rules for a crossing — navigation, observation, medical, supplies, boundary monitoring, return coordination. San adds the one that matters most.", image:'assets/comics/arc12/ch02-the-first-crossing-protocol.png', xp:280, action:'📋 Assign the Roles'},
+    {id:3, title:'What We Take With Us',       focus:"A deliberately limited kit — food, water, medical supplies, navigation gear, sample containers, nothing extra. Joel checks it twice. San realizes they're finally treating this like an expedition, not a treasure hunt.", image:'assets/comics/arc12/ch03-what-we-take-with-us.png', xp:260, action:'🎒 Pack the Expedition'},
+    {id:4, title:'The Door Opens',              focus:"For the first time, the image isn't just a projection — the space itself opens. A real coastline. Wind coming through. A sea the wrong color. Nobody says a word.", image:'assets/comics/arc12/ch04-the-door-opens.png', xp:300, action:'🌅 Activate the Engine'},
+    {id:5, title:'One Step',                    focus:"San steps through first. Joel right behind her. For a few long seconds, nothing happens — then San looks back and finds Veyren still visible behind them. They're really here.", image:'assets/comics/arc12/ch05-one-step.png', xp:320, action:'👣 Cross the Threshold'},
+    {id:6, title:'A Different Sea',             focus:"The sea doesn't behave like Veyren's — waves move wrong, the compass won't settle, instruments give conflicting readings. Renn is fascinated. Joel is not.", image:'assets/comics/arc12/ch06-a-different-sea.png', xp:280, action:'🌊 Study the Water'},
+    {id:7, title:'The Empty Settlement',        focus:"They reach an abandoned coastal settlement — homes, a harbour, old fishing gear, a small marketplace. Not destroyed, just left behind. No people. No immediate threat either.", image:'assets/comics/arc12/ch07-the-empty-settlement.png', xp:290, action:'🏘️ Enter the Settlement'},
+    {id:8, title:'Someone Lived Here',          focus:"Cooking tools, children's toys, fishing gear, old records, a sign in a language nobody recognizes. The world stops feeling like a dungeon and starts feeling like somebody's home.", image:'assets/comics/arc12/ch08-someone-lived-here.png', xp:290, action:'🔍 Search the Homes'},
+    {id:9, title:'The First Language Problem',  focus:"The local writing won't resolve into anything readable — even symbols that look familiar don't mean what they seem to. A familiar shape doesn't mean a familiar meaning.", image:'assets/comics/arc12/ch09-the-first-language-problem.png', xp:310, action:'📜 Study the Writing'},
+    {id:10, title:'Water',                      focus:"The local water looks clean, tastes clean — but its magical composition is wrong. They leave it alone and use their own supplies. A small issue. Not the last one.", image:'assets/comics/arc12/ch10-water.png', xp:280, action:'💧 Test the Water'},
+    {id:11, title:'The Food Problem',           focus:"Some plants are safe, some aren't, and some that look identical to Veyren's react completely differently to magic. New rule: nothing from this world touches the food supply until it's tested.", image:'assets/comics/arc12/ch11-the-food-problem.png', xp:300, action:'🍽️ Test the Local Plants'},
+    {id:12, title:'Time Moves Differently',      focus:"Their clocks stop agreeing with each other. It isn't the equipment — it's the world itself. The variation is small, but they've been away longer than they thought.", image:'assets/comics/arc12/ch12-time-moves-differently.png', xp:300, action:'⏱️ Check the Clocks'},
+    {id:13, title:"The Tide Doesn't Match",      focus:"The tide starts moving wrong — not backwards, just differently. Joel catches it first, from the harbour. Their arrival point is slowly becoming unsafe.", image:'assets/comics/arc12/ch13-the-tide-doesnt-match.png', xp:310, action:'🌊 Watch the Harbour'},
+    {id:14, title:'The Boundary Is Moving',      focus:"Erynn realizes the crossing point isn't fixed. The Horizon Engine can open the doorway again — just maybe not in the same place. That changes everything.", image:'assets/comics/arc12/ch14-the-boundary-is-moving.png', xp:320, action:'📡 Recheck the Crossing Point'},
+    {id:15, title:"San's Rule",                  focus:"The crew wants to push further out. San says no. They don't know how to get home yet, so they stay inside the safe zone. Exploration can wait.", image:'assets/comics/arc12/ch15-sans-rule.png', xp:300, action:'🛑 Hold the Line'},
+    {id:16, title:'The Thing Beneath the Harbour', focus:"Renn finds something built beneath the old harbour — not a weapon, not a machine, something built to measure the sea itself. Erynn suspects the people who lived here understood inter-world phenomena long before the crew did.", image:'assets/comics/arc12/ch16-the-thing-beneath-the-harbour.png', xp:320, action:'🔎 Uncover the Structure'},
+    {id:17, title:'Return Coordinates',          focus:"The crew tries to establish a return point, but the original crossing location has shifted and the Engine's readings won't line up. For the first time, the expedition feels genuinely stranded.", image:'assets/comics/arc12/ch17-return-coordinates.png', xp:340, action:'📍 Attempt the Return'},
+    {id:18, title:"Don't Panic",                  focus:"Joel keeps everyone focused while San checks that the whole crew is accounted for and unhurt. They have food, water, and time. Uncomfortable — not hopeless.", image:'assets/comics/arc12/ch18-dont-panic.png', xp:300, action:'🧭 Steady the Crew'},
+    {id:19, title:'The Harbour Marker',          focus:"The structure beneath the harbour matches their Horizon readings exactly. It wasn't built to open worlds — it was built to find the boundary itself. Erynn finally understands what she's looking at.", image:'assets/comics/arc12/ch19-the-harbour-marker.png', xp:330, action:'🗿 Study the Marker'},
+    {id:20, title:'The Path Back',               focus:"Using the harbour marker's information, Erynn and Renn recalibrate the Horizon Engine. Mimi recognizes a pattern from her own earlier visions. The return point stabilizes.", image:'assets/comics/arc12/ch20-the-path-back.png', xp:350, action:'🧮 Recalibrate the Engine'},
+    {id:21, title:'One World to Another',        focus:"The doorway opens again — but this time it shows Fair Tide, not just Veyren. Home. San waits until everyone else has crossed first; she and Joel go through last.", image:'assets/comics/arc12/ch21-one-world-to-another.png', xp:340, action:'🚪 Cross Back Home'},
+    {id:22, title:'Back in Veyren',              focus:"Only a few hours passed back home, though the expedition felt far longer. The crew unloads what they collected. Nobody celebrates yet — everyone's still processing what just happened.", image:'assets/comics/arc12/ch22-back-in-veyren.png', xp:320, action:'📦 Unload the Samples'},
+    {id:23, title:'The First Report',            focus:"Renn, Erynn, and Mimi document everything and draft the first real Inter-World Expedition Protocol — supplies, testing, translation, timekeeping, return markers, boundary monitoring, emergency extraction. The Horizon Engine just became a real travel system.", image:'assets/comics/arc12/ch23-the-first-report.png', xp:340, action:'📋 Write the Protocol'},
+    {id:24, title:'The First Crossing',          focus:"San and Joel stand together at the harbour. They crossed into another world — and, just as importantly, learned how to come home.", image:'assets/comics/arc12/ch24-the-first-crossing.png', xp:420, action:'🌅 Look to the Horizon'}
+  ];
+  window.ARC12_CHAPTERS = ARC12_CHAPTERS;
+
+  window.arc12ObjectiveState = function(){
+    if (!game.arc11Complete) return null;
+    // Continues the +15-per-arc pace from Arc IX (135) / X (150) / XI (165).
+    if (level() < 180) return null;
+    game.comicProgress12 = game.comicProgress12 || {};
+    for (const ch of ARC12_CHAPTERS) {
+      if (!game.comicProgress12[ch.id]) return 'complete_arc12_chapter_' + ch.id;
+    }
+    return 'arc12_part1_complete_for_now';
+  };
+
+  const ARC12_CHAPTER_SCENES = {
+    1: "The Horizon Engine is finally ready — not just to show them somewhere else, but to actually open onto it.<br><br>The crew gathers around it in a way that feels different this time. Nobody's asking whether they can see another world anymore. That question got answered chapters ago.<br><br>The question now is simpler, and heavier: can they go there?<br><br>San makes sure everyone understands one thing before anything else happens. Nobody is being made to cross. Whoever goes, goes because they chose to.",
+    2: "Renn, Erynn, and Mimi spend the better part of a day hammering out the actual rules for a crossing — real roles, not improvisation. Navigation. Observation. Medical. Supplies. Someone watching the boundary itself. Someone responsible for getting everyone back.<br><br>San adds the rule that ends up mattering more than any of the others.<br><br>\"We go together. We come back together.\"",
+    3: "What they pack says as much as anything they've said out loud. Food. Water. Medical supplies. Navigation equipment. Sample containers. Communication gear. Nothing that isn't earning its place.<br><br>Joel goes through the whole kit twice, the way he checks the ship before any voyage that actually matters.<br><br>Watching him do it, San realizes what's different about this. They're not preparing like people hunting treasure. They're preparing like an expedition.",
+    4: "The Horizon Engine activates, and for the first time, nothing about it is just an image anymore.<br><br>The space in front of them actually opens. A real coastline waits on the other side. Wind comes through the opening, carrying a smell that isn't Veyren's. The sea beyond it is a color none of them have a name for.<br><br>Nobody says anything for a long moment. There isn't really anything to say yet.",
+    5: "San steps through first. Joel is right behind her, close enough that there's no real gap between them at all. The rest of the expedition follows in careful order.<br><br>For a few seconds, nothing happens. No one speaks. No one's entirely sure what they're supposed to feel.<br><br>Then San looks back — and Veyren is still there, visible through the opening behind them, exactly where they left it.<br><br>\"We're really here.\"",
+    6: "The sea on the other side doesn't move the way Veyren's does. The waves come in at the wrong rhythm, rising and falling in patterns nobody aboard has ever charted.<br><br>Their instruments can't agree with each other. The compass won't settle on anything.<br><br>Renn is delighted by all of it — pulls out every measuring tool he owns within the first hour. Joel watches the water a while longer before saying anything, and when he does, it isn't excitement in his voice.",
+    7: "They find the settlement not long after making landfall — a small coastal town, homes still standing, a harbour still intact, old fishing equipment left where it was last used. A modest marketplace, stalls still up.<br><br>It isn't destroyed. It's just empty, in a way that feels deliberate rather than sudden.<br><br>No people. No sign of danger either. Just quiet.",
+    8: "The crew moves through the settlement carefully, and what they find is almost disappointingly ordinary. Cooking utensils, still set where someone left them. A child's toy, half-buried in dust. Fishing tools. Old records nobody can read yet.<br><br>Then a sign, faded, lettered in something none of them recognize.<br><br>Somewhere in the middle of cataloguing all of it, the place stops feeling like a ruin to explore and starts feeling like somewhere people actually lived.",
+    9: "The writing everywhere in the settlement refuses to resolve into anything readable. Some of the symbols even look familiar — close enough to something from home that it's tempting to guess at meaning.<br><br>Mimi tries anyway, reading for context where she can't read for language.<br><br>Erynn is the one who stops everyone from getting too confident about it. A shape that looks familiar doesn't mean it means the same thing. That becomes the expedition's first real rule about this place, and it won't be the last time it matters.",
+    10: "The local water looks clean. It tastes clean, when Erynn tests it carefully enough to be sure it's safe to even sample that much.<br><br>But its magical composition isn't right — different enough from anything back home that she won't sign off on it.<br><br>So they don't drink it. They stick to their own supplies instead, and make a note of it.<br><br>It feels like a small thing to work around. It won't be the last small thing that turns out to matter.",
+    11: "Not every plant on this shore is safe, and some of the most dangerous ones don't even look dangerous — a few pass for something familiar from Veyren right up until they touch actual magic, and react nothing like they should.<br><br>Nobody needs to be convinced twice. The crew sets the rule on the spot: nothing from this world enters the food supply until someone's actually tested it.<br><br>It's an easy rule to agree to. It's a harder one to remember to keep, the longer they stay.",
+    12: "Somewhere along the way, the clocks stop agreeing with each other.<br><br>The first guess is equipment failure — something jostled loose in the crossing, maybe. But the numbers don't add up to a malfunction. They add up to something else.<br><br>Time here isn't wildly different. It's just different enough to matter. By the time anyone does the math properly, they realize they've already been away longer than they meant to be.",
+    13: "Joel is the one who notices, because he's the one actually watching the harbour the way he'd watch any harbour that mattered.<br><br>The tide isn't running backwards. It's just running wrong — a rhythm that doesn't match anything they clocked when they first arrived.<br><br>It takes a moment for the rest of the crew to understand what he's actually telling them. Their arrival point isn't as stable as they assumed. It's quietly becoming unsafe.",
+    14: "Erynn is the one who finds the real problem, buried under everything else they've been tracking.<br><br>The crossing point itself isn't fixed. The Horizon Engine can open the doorway back to Veyren again — but there's no guarantee it opens in exactly the same place twice.<br><br>That single fact reframes everything about how careful they actually need to be.",
+    15: "The debate over whether to push further inland doesn't last long, not once San actually weighs in.<br><br>She says no, flatly, and doesn't dress it up as anything other than what it is.<br><br>\"We don't know how to come home yet.\"<br><br>So they hold where they are. Whatever else this world has to show them, it can wait until they've actually solved the problem that matters more.",
+    16: "Renn's the one who finds it, half-buried under what's left of the old harbour — a structure that doesn't look like anything the crew has categories for yet.<br><br>It isn't a weapon. It isn't a machine, not in any sense they recognize. Whatever it was built to do, it was built to do something to the sea itself — or with it.<br><br>Erynn crouches beside it a long time before she says what she's thinking. Whoever lived here might have understood inter-world phenomena long before the Crimson Tide ever built an Engine of their own.",
+    17: "Establishing a return point should be routine by now. It isn't.<br><br>The crossing location they arrived through has shifted, just enough that the Horizon Engine's readings won't line up the way they're supposed to.<br><br>Nobody says the word out loud right away, but everyone's thinking it at the same time. For the first time since they stepped through, this expedition feels genuinely stranded.",
+    18: "Joel doesn't let the moment spiral. He starts giving people something to actually do, the same way he'd steady a crew mid-storm.<br><br>San does her own version of the same thing — a full headcount, checking that everyone's accounted for and unhurt.<br><br>They have food. They have water. They have time. It isn't comfortable, not even close. But it isn't hopeless either, and that distinction is the only thing keeping the crew from panicking outright.",
+    19: "It's Erynn who puts it together. The strange structure beneath the harbour lines up, almost exactly, with their own Horizon readings.<br><br>It was never meant to open a way between worlds. It was built to find where the boundary actually sits.<br><br>\"They had a way to know where the boundary was.\"<br><br>Whoever built it understood something the crew is only now starting to learn.",
+    20: "Erynn and Renn work through the night, using everything the harbour structure recorded to recalibrate the Horizon Engine from scratch.<br><br>Partway through, Mimi stops them — she recognizes a shape in the data, something that matches a pattern from one of her own earlier visions, back before any of this started.<br><br>It's enough. The return point steadies, and holds.",
+    21: "The doorway opens one more time, and for a moment nobody moves, because what's on the other side isn't quite what they expected.<br><br>It isn't just Veyren this time. It's Fair Tide itself, visible straight through the opening. Home, not just the way back to it.<br><br>San holds her place at the threshold and waits, making sure every single member of the expedition crosses before she does. Joel doesn't leave her side for a second of it.<br><br>They're the last two through.",
+    22: "Coming back is almost disorienting in its own way. Barely any time has passed in Veyren — a few hours, nothing more — but the expedition itself felt like it stretched on far longer than that.<br><br>The crew unloads everything they carefully gathered: samples, notes, the small evidence of an entire world they'd only just started to understand.<br><br>Nobody celebrates right away. There's too much to sit with first.",
+    23: "Renn, Erynn, and Mimi spend the next stretch doing the unglamorous part — writing everything down while it's still fresh, turning a wild first attempt into something repeatable.<br><br>What comes out of it is the first real Inter-World Expedition Protocol: compatible supplies, environmental testing, translation resources, proper timekeeping, fixed return markers, boundary monitoring, and a real plan for emergency extraction if it's ever needed again.<br><br>It isn't just a report. It's the moment the Horizon Engine stops being an experiment and starts being an actual way to travel.",
+    24: "San and Joel end up at the harbour together once everything else has settled — the Crimson Tide resting behind them in Fair Tide, Veyren stretching out ahead, and somewhere beyond even that, the world they just came back from.<br><br>\"We thought we were crossing into another world,\" San says.<br><br>Joel looks toward the horizon a while before he answers.<br><br>\"We were.\"<br><br>A pause.<br><br>\"But we also learned how to come home.\"<br><br>The first crossing was never really about discovering another world. It was about proving they could leave one — and still find their way back."
+  };
+
+  window.markArc12ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC12_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc12] no chapter data for id', id); return; }
+    game.comicProgress12 = game.comicProgress12||{};
+    if(game.comicProgress12[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc12ObjectiveState() !== 'complete_arc12_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress12[id] = true;
+    if (id === 24) game.arc12Complete = true; // "Arc 12 unlock" — ready for Arc XIII
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('📖 Arc XII Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if (ARC12_CHAPTER_SCENES[id]) {
+      game.storyModalQueue = game.storyModalQueue || [];
+      game.storyModalQueue.push({ title: ch.title, blurb: ARC12_CHAPTER_SCENES[id] });
+    }
+    if (typeof renderMainGoal === 'function') try { renderMainGoal(); } catch(e) {}
+    if (typeof renderStory === 'function') try { renderStory(); } catch(e) {}
+  };
+
+  window.__ctShowArc12Splash = function(){
+    const overlay = document.getElementById('arc12SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc12Splash = function(){
+    const overlay = document.getElementById('arc12SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc12SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  const oldRenderStoryForArc12 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc12) oldRenderStoryForArc12();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const arc12Ready = window.arc12ObjectiveState() !== null;
+    if (arc12Ready && !game.arc12SplashSeen && typeof window.__ctShowArc12Splash === 'function') {
+      window.__ctShowArc12Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc12/arc12-cover-the-first-crossing.png" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc XII</div><div class="story-act-title">The First Crossing</div>'+
+      '<div class="story-act-tagline">Chapters 1-'+ARC12_CHAPTERS.length+' of 24. Every new world begins with someone taking the first step.</div></div>';
+    if (!arc12Ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XII Locked</div><div class="story-chapter-sub">'+
+        (!game.arc11Complete ? 'Finish Arc XI first.' : 'Reach Level 180 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc12ObjectiveState();
+    ARC12_CHAPTERS.forEach(function(ch){
+      const done = !!(game.comicProgress12 && game.comicProgress12[ch.id]);
+      const ready = !done && so===('complete_arc12_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if (ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
+        '<button class="btn btn-small btn-success" onclick="markArc12ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so==='arc12_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ Arc XII complete — all 24 chapters read. Preparing for Arc XIII.</div></div>';
     }
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
@@ -14163,6 +14338,182 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     });
     el.innerHTML = html;
   }
+})();
+</script>
+
+
+<script id="ct-build-v159-watchtower-spirit">
+(function(){
+  // -------------------------------------------------------------------
+  // WATCHTOWER — a new Fair Tide building tied to Imah (one of San's
+  // named-but-unassigned residents). Once built, periodically generates
+  // an Alert — themed around Sea Intelligence / Expedition Leads per
+  // San's own comparison doc — that can be "investigated" for a bonus
+  // Knowledge/Residue grant straight into the existing Horizon Engine
+  // resource pool. Deliberately does NOT duplicate the Fair Tide
+  // Requests system's Maritime/Strange categories (missing boats,
+  // strange currents, offshore lights already live there) — this is
+  // specifically the bridge into the Research Expedition system, not a
+  // second request board.
+  //
+  // Alert timing scales with Watchtower level: base 6 hours between
+  // alerts, -1 hour per level above 1, floor of 2 hours at max level.
+  // -------------------------------------------------------------------
+  const WATCHTOWER_ALERTS = [
+    {id:'unidentified_ruins', icon:'🏛️', title:'Unidentified Ruins', flavor: 'Imah spots something through the glass that shouldn\'t be there — stonework, on an island that\'s supposed to be empty.', knowledge:15, residue:20},
+    {id:'farseer_marker', icon:'🧭', title:'A Farseer Marker', flavor: 'A carved symbol, half-submerged near the reef, catches the light wrong. Erynn would want to see this.', knowledge:12, residue:18},
+    {id:'strange_signature', icon:'✨', title:'A Strange Magical Signature', flavor: 'Something out past the shoals is giving off a reading Imah\'s never seen the water do before.', knowledge:14, residue:22},
+    {id:'possible_crossing', icon:'🌫️', title:'A Possible Storm Crossing', flavor: 'The air shimmers out near the horizon, the same way it did right before the Horizon Engine\'s first activation.', knowledge:18, residue:25},
+    {id:'new_island', icon:'🏝️', title:'A New Island', flavor: 'Nothing on any chart shows land where Imah\'s now certain she\'s seeing land.', knowledge:10, residue:15},
+    {id:'pirate_activity', icon:'🏴‍☠️', title:'Pirate Activity', flavor: 'Ships moving in a pattern that doesn\'t look like ordinary trade routes.', knowledge:10, residue:12},
+    {id:'storm_warning', icon:'⛈️', title:'A Storm Warning', flavor: 'The clouds are building wrong — too fast, too dark, too early in the season.', knowledge:8, residue:14},
+    {id:'unusual_currents', icon:'🌊', title:'Unusual Currents', flavor: 'The water\'s pulling somewhere it shouldn\'t be able to pull, and it\'s been doing it for three days straight.', knowledge:12, residue:16},
+    {id:'wreckage_sighted', icon:'🪵', title:'Wreckage Sighted', flavor: 'Debris, drifting in from somewhere none of the usual routes would explain.', knowledge:10, residue:14}
+  ];
+  window.WATCHTOWER_ALERTS = WATCHTOWER_ALERTS;
+
+  function watchtowerLevel(){ return (game.fairTideBuildings && game.fairTideBuildings.watchtower) || 0; }
+  window.watchtowerLevel = watchtowerLevel;
+
+  function alertIntervalMs(){
+    const lvl = Math.max(1, watchtowerLevel());
+    const hours = Math.max(2, 6 - (lvl - 1));
+    return hours * 60 * 60 * 1000;
+  }
+
+  window.watchtowerStatus = function(){
+    if (watchtowerLevel() < 1) return {state:'not_built'};
+    if (game.watchtowerAlert) return {state:'ready', alert: game.watchtowerAlert};
+    const nextAt = game.watchtowerNextAlertAt || 0;
+    const now = Date.now();
+    if (now >= nextAt) return {state:'due'}; // will be filled on next check
+    return {state:'waiting', msLeft: nextAt - now};
+  };
+
+  // Called on every Hub render — cheap check, no timers/intervals needed.
+  function checkWatchtowerAlert(){
+    if (watchtowerLevel() < 1) return;
+    if (game.watchtowerAlert) return; // already have one pending
+    if (!game.watchtowerNextAlertAt) { game.watchtowerNextAlertAt = Date.now() + alertIntervalMs(); return; }
+    if (Date.now() < game.watchtowerNextAlertAt) return;
+    const alert = WATCHTOWER_ALERTS[Math.floor(Math.random() * WATCHTOWER_ALERTS.length)];
+    game.watchtowerAlert = alert.id;
+    logEvent('🔭 Watchtower Alert: ' + alert.title + ' — Imah thinks it\'s worth a look.', 'gold');
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  }
+  window.checkWatchtowerAlert = checkWatchtowerAlert;
+
+  window.investigateWatchtowerAlert = function(){
+    if (!game.watchtowerAlert) return;
+    const alert = WATCHTOWER_ALERTS.find(a => a.id === game.watchtowerAlert);
+    if (!alert) { game.watchtowerAlert = null; return; }
+    const he = (typeof window.horizonEngineState === 'function') ? window.horizonEngineState() : null;
+    if (he) {
+      he.knowledge += alert.knowledge;
+      he.residue += alert.residue;
+    }
+    logEvent('🔭 ' + alert.title + ' investigated. +' + alert.knowledge + ' Knowledge, +' + alert.residue + ' Residue.', 'gold');
+    toast('🔭 San has decided to investigate. +' + alert.knowledge + ' Knowledge, +' + alert.residue + ' Residue.', 3600);
+    game.watchtowerAlert = null;
+    game.watchtowerNextAlertAt = Date.now() + alertIntervalMs();
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderFairTideHub === 'function') renderFairTideHub();
+  };
+
+  // -------------------------------------------------------------------
+  // FAIR TIDE SPIRIT — replaces the flat true/false fairTideThriving()
+  // question with a real four-state read (Thriving/Content/Strained/
+  // Troubled) computed from actual game state, with a short explanation
+  // — not a hidden 0-100 number. fairTideThriving() itself is left
+  // untouched (only one call site, no need to risk it) — this is a new,
+  // separate function.
+  // -------------------------------------------------------------------
+  window.fairTideSpiritState = function(){
+    if (!window.fairTideRenovationDone || !window.fairTideRenovationDone()) {
+      return {state:'Unsettled', reasons:['Fair Tide is still being rebuilt.']};
+    }
+    let score = 50;
+    const reasons = [];
+    const res = game.fairTideResources || {};
+    const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 200;
+    const foodPct = cap ? (res.food||0) / cap : 0;
+    if (foodPct >= 0.5) { score += 15; reasons.push('Food stores are healthy.'); }
+    else if (foodPct < 0.15) { score -= 15; reasons.push('Food supplies are falling.'); }
+
+    const board = (typeof window.fairTideRequestBoard === 'function') ? window.fairTideRequestBoard() : [];
+    const readyUnclaimed = board.filter(s => s.status === 'ready').length;
+    if (readyUnclaimed >= 2) { score -= 10; reasons.push(readyUnclaimed + ' resolved requests are still waiting to be collected.'); }
+    const resolvedCount = game.fairTideRequestsResolvedTotal || 0;
+    if (resolvedCount > 0 && resolvedCount % 5 === 0) { score += 5; } // small nudge for steady throughput, not spammy
+
+    const rep = game.reputation || 0;
+    if (rep >= 30) { score += 15; reasons.push('Fair Tide\'s reputation is strong up and down the coast.'); }
+    else if (rep < 5) { score -= 5; }
+
+    const anyBuildingLow = Object.values(game.fairTideBuildings || {}).some(l => l === 0);
+    if (!anyBuildingLow) { score += 10; reasons.push('Every part of the port has someone looking after it.'); }
+
+    score = Math.max(0, Math.min(100, score));
+    let state;
+    if (score >= 75) state = 'Thriving';
+    else if (score >= 45) state = 'Content';
+    else if (score >= 20) state = 'Strained';
+    else state = 'Troubled';
+
+    if (!reasons.length) reasons.push('Fair Tide is getting by, day to day.');
+    return {state, reasons, score};
+  };
+
+  // Track resolved-request throughput for the Spirit signal above,
+  // without touching the V157 Requests block directly — wraps its own
+  // claim function instead.
+  const oldClaimFairTideRequestForSpirit = window.claimFairTideRequest;
+  if (typeof oldClaimFairTideRequestForSpirit === 'function') {
+    window.claimFairTideRequest = function(slotId){
+      const board = (typeof window.fairTideRequestBoard === 'function') ? window.fairTideRequestBoard() : [];
+      const wasActive = board.some(s => s.slotId === slotId && s.status === 'active');
+      oldClaimFairTideRequestForSpirit(slotId);
+      if (wasActive) {
+        // slot only disappears from the board on a genuine resolution
+        const stillThere = (typeof window.fairTideRequestBoard === 'function') ? window.fairTideRequestBoard().some(s => s.slotId === slotId) : true;
+        if (!stillThere) game.fairTideRequestsResolvedTotal = (game.fairTideRequestsResolvedTotal || 0) + 1;
+      }
+    };
+  }
+
+  const SPIRIT_ICON = {Thriving:'🌤️', Content:'⛅', Strained:'🌥️', Troubled:'⛈️', Unsettled:'🔧'};
+
+  function renderSpiritDisplay(){
+    const el = document.getElementById('fairTideSpiritDisplay');
+    if (!el) return;
+    const spirit = window.fairTideSpiritState();
+    el.innerHTML = '<strong>'+(SPIRIT_ICON[spirit.state]||'')+' Fair Tide is '+spirit.state.toLowerCase()+'.</strong> '+
+      '<span style="opacity:.75;">'+spirit.reasons.join(' ')+'</span>';
+  }
+
+  const oldRenderFairTideHubForWatchtower = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    checkWatchtowerAlert();
+    renderSpiritDisplay();
+    if (oldRenderFairTideHubForWatchtower) oldRenderFairTideHubForWatchtower();
+    const container = document.getElementById('ft-tab-expedition');
+    if (!container) return;
+    const status = window.watchtowerStatus();
+    if (status.state === 'not_built') return;
+    let html = '<div class="panel" style="margin-top:12px;"><div class="panel-title">🔭 Watchtower</div>';
+    if (status.state === 'ready') {
+      const alert = WATCHTOWER_ALERTS.find(a => a.id === status.alert);
+      html += '<article class="quest-item"><strong>'+(alert?alert.icon+' '+alert.title:'Something')+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.85;">'+(alert?alert.flavor:'')+'</span>'+
+        '<div class="story-actions"><button class="btn btn-small btn-success" onclick="investigateWatchtowerAlert()">🔭 Investigate</button></div></article>';
+    } else {
+      const msLeft = status.msLeft || 0;
+      const hrs = Math.max(0, Math.ceil(msLeft / 3600000));
+      html += '<p style="font-size:.8rem;opacity:.7;">Imah is keeping watch. Next alert in roughly '+hrs+' hour'+(hrs===1?'':'s')+'.</p>';
+    }
+    html += '</div>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
 })();
 </script>
 
