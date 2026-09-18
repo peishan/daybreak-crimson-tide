@@ -7254,7 +7254,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V160 · Captains Decisions and Storm Rescue'</script>
+<script>window.__CT_BUILD__='V161 · NPC Memory Layer'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -14173,6 +14173,30 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     return REQUESTER_NAMES[Math.floor(Math.random() * REQUESTER_NAMES.length)];
   }
 
+  // NPC MEMORY LAYER: previously every board slot got a genuinely random
+  // name with zero memory — nobody who asked for help today was
+  // trackable tomorrow. This is the fix. 40% chance of bringing back
+  // someone already known (if anyone below 'resident' status exists —
+  // once someone's fully settled at Fair Tide they stop showing up with
+  // new requests of their own), otherwise prefers introducing a
+  // genuinely new name from the pool before ever repeating one blind.
+  function pickRequesterForBoard(){
+    const rs = requesterState();
+    const known = Object.keys(rs).filter(name => rs[name].status !== 'resident');
+    if (known.length && Math.random() < 0.4) {
+      return known[Math.floor(Math.random() * known.length)];
+    }
+    const unmet = REQUESTER_NAMES.filter(name => !rs[name]);
+    if (unmet.length) return unmet[Math.floor(Math.random() * unmet.length)];
+    return known.length ? known[Math.floor(Math.random() * known.length)] : randomRequesterName();
+  }
+
+  function ensureRequesterRegistered(name){
+    const rs = requesterState();
+    if (!rs[name]) rs[name] = {visits: 0, trust: 0, status: 'visitor', firstMetDay: game.day || 0, requestHistory: []};
+    return rs[name];
+  }
+
   // Fills any open board slots with a fresh, randomly-picked request —
   // called on every render of the tab and after claiming, so the board
   // never sits visibly empty for long.
@@ -14182,10 +14206,12 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const size = window.getRequestBoardSize();
     while (board.length < size) {
       const template = FAIR_TIDE_REQUESTS[Math.floor(Math.random() * FAIR_TIDE_REQUESTS.length)];
+      const npcName = pickRequesterForBoard();
+      ensureRequesterRegistered(npcName);
       board.push({
         slotId: 'slot_' + Date.now() + '_' + Math.floor(Math.random()*10000),
         requestId: template.id,
-        npcName: randomRequesterName(),
+        npcName: npcName,
         status: 'available'
       });
     }
@@ -14734,6 +14760,84 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     html += '</div>';
     container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+
+<script id="ct-build-v161-npc-memory-layer">
+(function(){
+  // -------------------------------------------------------------------
+  // NPC MEMORY LAYER — the persistent-identity piece the Requests system
+  // was missing. pickRequesterForBoard()/ensureRequesterRegistered() (see
+  // the edited ct-build-v157 code above) handle WHO shows up on the
+  // board; this handles what happens when their request actually
+  // resolves: trust builds, status escalates, and at the top tier they
+  // become a genuine Fair Tide resident — joining the existing roster
+  // system rather than a separate parallel one, per San's own
+  // "Wahyu has decided to make Fair Tide his permanent home" framing.
+  //
+  // Status tiers: visitor (0-24 trust) -> familiar_face (25-59) ->
+  // trusted (60-99) -> resident (100+, one-time graduation).
+  // -------------------------------------------------------------------
+  const TRUST_BY_TIER = {quick: 8, standard: 15, major: 25};
+  const STATUS_LABELS = {visitor: 'Visitor', familiar_face: 'A Familiar Face', trusted: 'Trusted', resident: 'Fair Tide Resident'};
+
+  function statusForTrust(trust){
+    if (trust >= 100) return 'resident';
+    if (trust >= 60) return 'trusted';
+    if (trust >= 25) return 'familiar_face';
+    return 'visitor';
+  }
+  window.fairTideResidentStatusLabel = function(status){ return STATUS_LABELS[status] || 'Visitor'; };
+
+  const oldClaimForMemory = window.claimFairTideRequest;
+  window.claimFairTideRequest = function(slotId){
+    // Capture what's needed BEFORE the original runs — it removes the
+    // slot from the board on success, so this has to happen first.
+    const board = (typeof window.fairTideRequestBoard === 'function') ? window.fairTideRequestBoard() : [];
+    const slot = board.find(s => s.slotId === slotId);
+    const npcName = slot ? slot.npcName : null;
+    const requestId = slot ? slot.requestId : null;
+    const wasReady = slot && slot.status === 'active' &&
+      (typeof slot.startedAt === 'number') && (typeof slot.durationMs === 'number') &&
+      (Date.now() - slot.startedAt >= slot.durationMs);
+
+    oldClaimForMemory(slotId);
+
+    if (!npcName || !wasReady) return; // nothing resolved, nothing to record
+    const rs = (typeof window.fairTideRequesterState === 'function') ? window.fairTideRequesterState() : null;
+    if (!rs || !rs[npcName]) return;
+    const entry = rs[npcName];
+    const template = (typeof window.FAIR_TIDE_REQUESTS !== 'undefined') ? window.FAIR_TIDE_REQUESTS.find(r => r.id === requestId) : null;
+    const gain = TRUST_BY_TIER[template ? template.tier : 'standard'] || 10;
+    const wasStatus = entry.status || 'visitor';
+    entry.trust = (entry.trust||0) + gain;
+    entry.requestHistory = entry.requestHistory || [];
+    entry.requestHistory.push({requestId, day: game.day||0});
+    entry.status = statusForTrust(entry.trust);
+
+    if (entry.status !== wasStatus) {
+      logEvent('🤝 ' + npcName + ' — ' + STATUS_LABELS[entry.status] + ' now.', 'gold');
+      if (entry.status === 'resident') {
+        game.fairTideRoster = game.fairTideRoster || {};
+        if (!game.fairTideRoster[npcName]) {
+          game.fairTideRoster[npcName] = {name: npcName, role: 'Fair Tide Resident', icon: '🏘️', desc: npcName + ' asked Fair Tide for help once. Fair Tide kept showing up. Eventually, staying just made sense.'};
+        }
+        toast('🏘️ ' + npcName + ' has decided to make Fair Tide home.', 4800);
+        if (typeof showStoryModal === 'function') {
+          setTimeout(function(){
+            showStoryModal({
+              title: '🏘️ ' + npcName + ' Stays',
+              blurb: npcName + ' has asked Crimson Tide for help more than once now — and every time, someone showed up.<br><br>"I think I\'d like to stay, if that\'s alright," they say. It is.'
+            });
+          }, 500);
+        }
+      } else {
+        toast('🤝 ' + npcName + ' now trusts Crimson Tide more — ' + STATUS_LABELS[entry.status] + '.', 3600);
+      }
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 })();
 </script>
