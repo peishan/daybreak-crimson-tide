@@ -7254,7 +7254,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V159 · Watchtower and Fair Tide Spirit'</script>
+<script>window.__CT_BUILD__='V160 · Captains Decisions and Storm Rescue'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -14510,6 +14510,227 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       const msLeft = status.msLeft || 0;
       const hrs = Math.max(0, Math.ceil(msLeft / 3600000));
       html += '<p style="font-size:.8rem;opacity:.7;">Imah is keeping watch. Next alert in roughly '+hrs+' hour'+(hrs===1?'':'s')+'.</p>';
+    }
+    html += '</div>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+
+<script id="ct-build-v160-captains-decisions-storm-rescue">
+(function(){
+  // -------------------------------------------------------------------
+  // CAPTAIN'S DECISIONS — San's own version of Whiteout's Chief Orders.
+  // One decision active at a time (matches "San decides what's needed
+  // right now", not a stack of permanent buffs), each temporary, with a
+  // cooldown afterward before another can be issued. All six from San's
+  // own list, each tied to a real, already-existing system rather than
+  // an invented flat multiplier: building costs, Spirit, Request Board
+  // size, gathering yields, Research Expedition access, voyage danger.
+  // -------------------------------------------------------------------
+  const CAPTAINS_DECISIONS = [
+    {id:'all_hands', name:'All Hands on Deck', icon:'🔨', desc:'Everyone prioritizes an urgent construction project.', durationMs: 8*3600*1000, cooldownMs: 4*3600*1000},
+    {id:'prepare_storm', name:'Prepare for Storm', icon:'⛈️', desc:'Fair Tide spends resources preparing shelters and ships.', durationMs: 12*3600*1000, cooldownMs: 6*3600*1000, cost:{timber:15,stone:15}},
+    {id:'open_harbour', name:'Open the Harbour', icon:'⚓', desc:'Prioritize incoming refugees and travelers.', durationMs: 8*3600*1000, cooldownMs: 4*3600*1000},
+    {id:'quiet_waters', name:'Quiet Waters', icon:'🌊', desc:'Reduce outward expeditions temporarily and focus on Fair Tide.', durationMs: 8*3600*1000, cooldownMs: 4*3600*1000},
+    {id:'full_stores', name:'Full Stores', icon:'🌾', desc:'Prioritize food and provisions.', durationMs: 8*3600*1000, cooldownMs: 4*3600*1000},
+    {id:'emergency_repairs', name:'Emergency Repairs', icon:'🔧', desc:'Shipbuilding and repair gets priority.', durationMs: 8*3600*1000, cooldownMs: 4*3600*1000}
+  ];
+  window.CAPTAINS_DECISIONS = CAPTAINS_DECISIONS;
+
+  window.captainsDecisionStatus = function(){
+    const d = game.captainsDecision;
+    if (d && d.startedAt) {
+      const elapsed = Date.now() - d.startedAt;
+      if (elapsed < d.durationMs) return {state:'active', id:d.id, msLeft: d.durationMs - elapsed};
+      return {state:'expired', id:d.id}; // caller should clear it
+    }
+    const cd = game.captainsDecisionCooldownEnd || 0;
+    if (Date.now() < cd) return {state:'cooldown', msLeft: cd - Date.now()};
+    return {state:'idle'};
+  };
+
+  // Clears an expired decision and starts its cooldown — called lazily
+  // on every Hub render, same pattern as Watchtower's own check.
+  function settleExpiredDecision(){
+    const status = window.captainsDecisionStatus();
+    if (status.state !== 'expired') return;
+    const def = CAPTAINS_DECISIONS.find(d => d.id === status.id);
+    game.captainsDecisionCooldownEnd = Date.now() + (def ? def.cooldownMs : 4*3600*1000);
+    game.captainsDecision = null;
+    logEvent('⚓ ' + (def?def.name:'The decision') + ' has run its course.', 'gold');
+  }
+
+  window.activeCaptainsDecision = function(){
+    settleExpiredDecision();
+    const status = window.captainsDecisionStatus();
+    if (status.state !== 'active') return null;
+    return CAPTAINS_DECISIONS.find(d => d.id === status.id) || null;
+  };
+
+  window.issueCaptainsDecision = function(id){
+    settleExpiredDecision();
+    const status = window.captainsDecisionStatus();
+    if (status.state !== 'idle') { toast(status.state === 'active' ? '⚓ A decision is already in effect.' : '⏳ Not ready yet.'); return; }
+    const def = CAPTAINS_DECISIONS.find(d => d.id === id);
+    if (!def) return;
+    if (def.cost) {
+      const res = (typeof game.fairTideResources === 'object') ? game.fairTideResources : (game.fairTideResources = {});
+      const canAfford = Object.entries(def.cost).every(([r,amt]) => (res[r]||0) >= amt);
+      if (!canAfford) { toast('Not enough resources for that decision.'); return; }
+      Object.entries(def.cost).forEach(([r,amt]) => { res[r] -= amt; });
+    }
+    game.captainsDecision = {id: def.id, startedAt: Date.now(), durationMs: def.durationMs};
+    logEvent('⚓ San issues the order: ' + def.name + '.', 'gold');
+    toast('⚓ ' + def.name + ' — in effect.', 3600);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderFairTideHub === 'function') renderFairTideHub();
+  };
+
+  // --- Hooks into existing systems, each reading activeCaptainsDecision() ---
+
+  const oldBuildingCostForDecisions = window.fairTideBuildingCost;
+  window.fairTideBuildingCost = function(key){
+    const cost = oldBuildingCostForDecisions(key);
+    const active = window.activeCaptainsDecision();
+    if (active && active.id === 'all_hands') {
+      const reduced = {};
+      Object.entries(cost).forEach(([r,amt]) => { reduced[r] = Math.max(0, Math.round(amt * 0.75)); });
+      return reduced;
+    }
+    return cost;
+  };
+
+  const oldSpiritStateForDecisions = window.fairTideSpiritState;
+  window.fairTideSpiritState = function(){
+    const result = oldSpiritStateForDecisions();
+    const active = window.activeCaptainsDecision();
+    if (active && active.id === 'prepare_storm' && result.score !== undefined) {
+      result.score = Math.max(0, Math.min(100, result.score + 15));
+      result.reasons = result.reasons.concat(["Fair Tide's already prepared for whatever's coming."]);
+      if (result.score >= 75) result.state = 'Thriving';
+      else if (result.score >= 45) result.state = 'Content';
+      else if (result.score >= 20) result.state = 'Strained';
+      else result.state = 'Troubled';
+    }
+    return result;
+  };
+
+  const oldBoardSizeForDecisions = window.getRequestBoardSize;
+  window.getRequestBoardSize = function(){
+    let size = oldBoardSizeForDecisions();
+    const active = window.activeCaptainsDecision();
+    if (active && active.id === 'open_harbour') size = Math.min(6, size + 1);
+    return size;
+  };
+
+  const oldDispatchYieldForDecisions = window.fairTideDispatchYield;
+  window.fairTideDispatchYield = function(){
+    const yields = oldDispatchYieldForDecisions();
+    const active = window.activeCaptainsDecision();
+    if (active && active.id === 'quiet_waters') {
+      Object.keys(yields).forEach(k => { yields[k] = Math.round(yields[k] * 1.3); });
+    } else if (active && active.id === 'full_stores' && yields.food !== undefined) {
+      yields.food = Math.round(yields.food * 1.5);
+    }
+    return yields;
+  };
+
+  const oldEnterExpeditionForDecisions = window.enterResearchExpedition;
+  window.enterResearchExpedition = function(){
+    const active = window.activeCaptainsDecision();
+    if (active && active.id === 'quiet_waters') {
+      toast('🌊 Quiet Waters is in effect — the crew is focused on Fair Tide right now.');
+      return;
+    }
+    return oldEnterExpeditionForDecisions();
+  };
+
+  const oldDoVoyageForDecisions = window.doVoyage;
+  window.doVoyage = function(portId, days, dangerLevel){
+    const active = window.activeCaptainsDecision();
+    const effectiveDanger = (active && active.id === 'emergency_repairs') ? Math.max(0, dangerLevel * 0.8) : dangerLevel;
+    return oldDoVoyageForDecisions(portId, days, effectiveDanger);
+  };
+
+  // -------------------------------------------------------------------
+  // STORM RESCUE — extends the existing Watchtower alert pool with a
+  // rescue-type alert, per San's own "WATCHTOWER ALERT — a vessel has
+  // been spotted adrift" framing. Rescued people don't auto-join the
+  // crew or even the full Fair Tide Roster — tracked in their own
+  // lighter registry first (game.fairTideRescued), matching San's own
+  // "might become resident -> worker -> specialist" progression as
+  // something to build toward, not skip straight to.
+  // -------------------------------------------------------------------
+  const RESCUE_ORIGINS = [
+    'a Veyren native, blown off course',
+    'a survivor from a region none of the crew recognize',
+    'someone displaced when the storm tore through their own settlement',
+    'someone who says they came through an unexpected crossing, and won\'t say more than that',
+    'someone who claims to remember the old world, before all of this'
+  ];
+  const RESCUE_NAMES = ['Sari','Budi','Thuan','Cahaya','Yusof','Niran','Mai Lin','Osman','Thida','Rosa'];
+
+  if (typeof window.WATCHTOWER_ALERTS !== 'undefined') {
+    window.WATCHTOWER_ALERTS.push(
+      {id:'storm_rescue_vessel', icon:'⛵', title:'A Vessel Adrift', flavor:'Something\'s floating out past the point — low in the water, barely moving. There\'s someone aboard.', type:'rescue', knowledge:0, residue:0},
+      {id:'storm_rescue_shore', icon:'🏖️', title:'Someone on the Shoreline', flavor:'A figure, alone on the tideline, too far from any village to have walked there.', type:'rescue', knowledge:0, residue:0}
+    );
+  }
+
+  function rescueRegistry(){ game.fairTideRescued = game.fairTideRescued || {}; return game.fairTideRescued; }
+  window.fairTideRescueRegistry = rescueRegistry;
+
+  const oldInvestigateForRescue = window.investigateWatchtowerAlert;
+  window.investigateWatchtowerAlert = function(){
+    if (!game.watchtowerAlert) return;
+    const alert = (typeof window.WATCHTOWER_ALERTS !== 'undefined') ? window.WATCHTOWER_ALERTS.find(a => a.id === game.watchtowerAlert) : null;
+    if (alert && alert.type === 'rescue') {
+      const name = RESCUE_NAMES[Math.floor(Math.random() * RESCUE_NAMES.length)];
+      const origin = RESCUE_ORIGINS[Math.floor(Math.random() * RESCUE_ORIGINS.length)];
+      const reg = rescueRegistry();
+      reg[name + '_' + Date.now()] = {name, origin, rescuedDay: game.day || 0};
+      game.reputation = (game.reputation||0) + 4;
+      logEvent('⛵ ' + alert.title + ': San sends a crew. They find ' + name + ' — ' + origin + '.', 'gold');
+      toast('⛵ ' + name + ' has been brought back to Fair Tide.', 4200);
+      game.watchtowerAlert = null;
+      game.watchtowerNextAlertAt = Date.now() + (typeof alertIntervalMs === 'function' ? alertIntervalMs() : 6*3600*1000);
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+      if (typeof renderFairTideHub === 'function') renderFairTideHub();
+      return;
+    }
+    return oldInvestigateForRescue();
+  };
+
+  // -------------------------------------------------------------------
+  // UI — Captain's Decisions panel, added to the Buildings tab (where
+  // Fair Tide's other priority-setting lives).
+  // -------------------------------------------------------------------
+  const oldRenderFairTideHubForDecisions = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    settleExpiredDecision();
+    if (oldRenderFairTideHubForDecisions) oldRenderFairTideHubForDecisions();
+    const container = document.getElementById('ft-tab-buildings');
+    if (!container) return;
+    const status = window.captainsDecisionStatus();
+    let html = '<div class="panel" style="margin-top:12px;"><div class="panel-title">⚓ Captain\'s Decisions</div>';
+    if (status.state === 'active') {
+      const def = CAPTAINS_DECISIONS.find(d => d.id === status.id);
+      const hrs = Math.max(0, Math.ceil(status.msLeft / 3600000));
+      html += '<article class="quest-item"><strong>'+(def?def.icon+' '+def.name:'')+'</strong><br>'+
+        '<span style="font-size:.8rem;opacity:.8;">In effect — '+hrs+' hour'+(hrs===1?'':'s')+' left.</span></article>';
+    } else if (status.state === 'cooldown') {
+      const hrs = Math.max(0, Math.ceil(status.msLeft / 3600000));
+      html += '<p style="font-size:.8rem;opacity:.65;">San needs time before the next order — ready in about '+hrs+' hour'+(hrs===1?'':'s')+'.</p>';
+    } else {
+      html += '<p style="font-size:.8rem;opacity:.8;margin-bottom:8px;">San can set a temporary priority for what Fair Tide needs right now.</p>';
+      CAPTAINS_DECISIONS.forEach(function(d){
+        html += '<article class="quest-item" style="margin-bottom:6px;"><strong>'+d.icon+' '+d.name+'</strong><br>'+
+          '<span style="font-size:.78rem;opacity:.75;">'+d.desc+'</span>'+
+          (d.cost ? '<div style="font-size:.72rem;opacity:.6;">Costs: '+Object.entries(d.cost).map(([r,a])=>a+' '+r).join(', ')+'</div>' : '')+
+          '<div class="story-actions"><button class="btn btn-small btn-success" onclick="issueCaptainsDecision(\''+d.id+'\')">Issue</button></div></article>';
+      });
     }
     html += '</div>';
     container.insertAdjacentHTML('beforeend', html);
