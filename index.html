@@ -6631,6 +6631,9 @@ function handleVictory() {
   } else if (enemy.kind === 'illusion') {
     postBattleMessage = 'The memory dissolves. Whatever ' + enemy.name + ' was, it isn\'t here anymore.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'interworld') {
+    postBattleMessage = 'The crew makes it back through. Whatever ' + enemy.name + ' was, it\'s staying on that side of the door.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
@@ -7254,7 +7257,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V161 · NPC Memory Layer'</script>
+<script>window.__CT_BUILD__='V163 · Arc XIII and The Harbour'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8844,6 +8847,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (s11 !== null && s11 !== 'arc11_part1_complete_for_now') return s11;
       if (s11 === 'arc11_part1_complete_for_now') lastTerminal = s11;
     }
+    if (typeof window.arc12ObjectiveState === 'function') {
+      const s12 = window.arc12ObjectiveState();
+      if (s12 !== null && s12 !== 'arc12_part1_complete_for_now') return s12;
+      if (s12 === 'arc12_part1_complete_for_now') lastTerminal = s12;
+    }
+    if (typeof window.arc13ObjectiveState === 'function') {
+      const s13 = window.arc13ObjectiveState();
+      if (s13 !== null && s13 !== 'arc13_part1_complete_for_now') return s13;
+      if (s13 === 'arc13_part1_complete_for_now') lastTerminal = s13;
+    }
     return lastTerminal || base;
   };
 
@@ -8872,9 +8885,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if ((m = /^complete_arc9_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc IX', m[1], window.ARC9_CHAPTERS);
     if ((m = /^complete_arc10_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc X', m[1], window.ARC10_CHAPTERS);
     if ((m = /^complete_arc11_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XI', m[1], window.ARC11_CHAPTERS);
+    if ((m = /^complete_arc12_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XII', m[1], window.ARC12_CHAPTERS);
+    if ((m = /^complete_arc13_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XIII', m[1], window.ARC13_CHAPTERS);
     if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
     if (state === 'arc9_part1_complete_for_now') return ['Arc IX — All Caught Up', 'Every available Arc IX chapter is read. More is on the way.'];
     if (state === 'arc10_part1_complete_for_now') return ['Arc X — All Caught Up', 'Every available Arc X chapter is read. More is on the way.'];
+    if (state === 'arc11_part1_complete_for_now') return ['Arc XI — All Caught Up', 'Every available Arc XI chapter is read. More is on the way.'];
+    if (state === 'arc12_part1_complete_for_now') return ['Arc XII — All Caught Up', 'Every available Arc XII chapter is read. More is on the way.'];
+    if (state === 'arc13_part1_complete_for_now') return ['Arc XIII — All Caught Up', 'Every available Arc XIII chapter is read. More is on the way.'];
     return null;
   }
 
@@ -14838,6 +14856,405 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       }
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+})();
+</script>
+
+
+<div class="screen" id="interworldScreen">
+  <div class="game-container">
+    <div class="header"><h1>🌌 Inter-World Expeditions</h1><div class="subtitle">The Horizon Engine is a doorway now</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Back to Sail</button>
+      <button class="nav-btn" onclick="goScreen('port')">🏛️ Port</button>
+    </div>
+    <div id="interworldContent"></div>
+  </div>
+</div>
+
+<script id="ct-build-v162-interworld-expeditions">
+(function(){
+  // -------------------------------------------------------------------
+  // INTER-WORLD EXPEDITIONS. Gated behind game.arc12Complete — matching
+  // the exact naming convention every other arc uses (arc6Complete,
+  // arc9Complete, arc10Complete, etc.). This file doesn't yet have Arc
+  // XII's actual content wired in (that happened in a different session
+  // and hasn't landed here as an uploadable file yet), so this is built
+  // against San's own stated gameplay-unlock outline rather than the
+  // arc's exact chapter text. Flagged clearly: "Beyond the Horizon" as
+  // the first world's name is the one piece of real, confirmed Arc XII
+  // content (its actual Ch.1 title, verified earlier); everything else
+  // about this destination's specific flavor is my own reasonable
+  // placeholder pending the real file, not verified story content.
+  //
+  // Built genuinely data-driven from the start, per "future worlds can
+  // be added as discoveries" — INTERWORLD_DESTINATIONS is an array, not
+  // a single hardcoded destination, so adding a second world later is
+  // just a new entry, not new plumbing.
+  // -------------------------------------------------------------------
+  const INTERWORLD_DESTINATIONS = [
+    {
+      id: 'beyond_the_horizon',
+      name: 'Beyond the Horizon',
+      tagline: 'The first world the Horizon Engine ever found. The settlement was empty when the crew arrived — but stocked, as if someone meant to come back.',
+      supplyCost: {gold: 80, food: 15},
+      enemies: [
+        {name: 'Something in the Empty Settlement', icon: '🏚️', hp: 260, dmg: 18, xp: 240},
+        {name: 'A Shape That Moved Wrong', icon: '👁️', hp: 300, dmg: 20, xp: 260}
+      ],
+      discoveries: [
+        {name: 'A Marking Nobody Recognizes', icon: '🗿', flavor: 'Not Farseer. Not anything Erynn\'s ever catalogued. It means something to somebody, just not to anyone here yet.'},
+        {name: 'Preserved Rations', icon: '🫙', flavor: 'Whoever stocked this settlement expected to be gone a while. They never came back for it.'},
+        {name: 'A Child\'s Toy', icon: '🧸', flavor: 'Small, worn soft at the edges. Someone loved this enough to leave it behind reluctantly, not carelessly.'}
+      ]
+    }
+  ];
+  window.INTERWORLD_DESTINATIONS = INTERWORLD_DESTINATIONS;
+
+  window.interWorldTravelUnlocked = function(){
+    return !!game.arc12Complete;
+  };
+
+  function interworldState(){ game.interworldDiscoveries = game.interworldDiscoveries || {}; return game.interworldDiscoveries; }
+  window.interworldDiscoveryState = interworldState;
+
+  window.canAffordInterworldTrip = function(destId){
+    const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
+    if (!dest) return false;
+    if ((game.gold||0) < (dest.supplyCost.gold||0)) return false;
+    const res = game.fairTideResources || {};
+    return Object.entries(dest.supplyCost).every(([k,v]) => k === 'gold' || (res[k]||0) >= v);
+  };
+
+  window.launchInterworldExpedition = function(destId){
+    if (!window.interWorldTravelUnlocked()) { toast('🔒 Not yet — the way isn\'t open.'); return; }
+    const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
+    if (!dest) return;
+    if (!window.canAffordInterworldTrip(destId)) { toast('Not enough supplies for the crossing.'); return; }
+    game.gold -= (dest.supplyCost.gold||0);
+    game.fairTideResources = game.fairTideResources || {};
+    Object.entries(dest.supplyCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
+
+    if (Math.random() < 0.5) {
+      const enemyBase = dest.enemies[Math.floor(Math.random() * dest.enemies.length)];
+      const enemy = (typeof scaleCrimsonEnemy === 'function') ? scaleCrimsonEnemy(enemyBase, 'harbor') : Object.assign({}, enemyBase);
+      toast('🌌 Something\'s waiting on the other side.', 2600);
+      startCombat({kind:'interworld', key: dest.id, enemy: enemy, portId:null});
+    } else {
+      const disc = dest.discoveries[Math.floor(Math.random() * dest.discoveries.length)];
+      const state = interworldState();
+      const firstEver = state[disc.name] === undefined;
+      state[disc.name] = (state[disc.name]||0) + 1;
+      logEvent('🌌 ' + dest.name + ': the crew brings back ' + disc.icon + ' ' + disc.name + '.', 'gold');
+      if (firstEver) {
+        setTimeout(function(){
+          if (typeof showStoryModal === 'function') showStoryModal({title: disc.icon + ' ' + disc.name, blurb: disc.flavor});
+        }, 500);
+      } else {
+        toast('🌌 The crew brings back another ' + disc.icon + ' ' + disc.name + '.', 3600);
+      }
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderInterworldScreen === 'function') renderInterworldScreen();
+  };
+
+  window.renderInterworldScreen = function(){
+    const container = document.getElementById('interworldContent');
+    if (!container) return;
+    if (!window.interWorldTravelUnlocked()) {
+      container.innerHTML = '<div class="panel"><div class="panel-title">🌌 Inter-World Expeditions</div>'+
+        '<div class="story-chip">🔒 Opens once the first crossing is complete.</div></div>';
+      return;
+    }
+    let html = '<div class="panel"><div class="panel-title">🌌 Known Worlds</div>'+
+      '<p style="font-size:.82rem;opacity:.8;margin-bottom:10px;">Limited travel, each trip its own preparation. Every crossing still has to be earned.</p></div>';
+    INTERWORLD_DESTINATIONS.forEach(function(dest){
+      const afford = window.canAffordInterworldTrip(dest.id);
+      html += '<div class="panel"><div class="panel-title">'+dest.name+'</div>'+
+        '<p style="font-size:.82rem;opacity:.85;">'+dest.tagline+'</p>'+
+        '<div style="font-size:.78rem;opacity:.7;margin:6px 0;">Supplies needed: '+
+        Object.entries(dest.supplyCost).map(([k,v]) => v+' '+k).join(', ')+'</div>'+
+        '<button class="btn btn-small '+(afford?'btn-success':'')+'" '+(afford?'':'disabled')+' onclick="launchInterworldExpedition(\''+dest.id+'\')">🌌 Prepare Expedition</button>'+
+        '</div>';
+    });
+    const state = interworldState();
+    const found = Object.keys(state).length;
+    html += '<div class="panel"><div class="panel-title">📦 Discoveries — '+found+'</div>';
+    if (!found) html += '<p style="font-size:.8rem;opacity:.6;">Nothing brought back yet.</p>';
+    Object.entries(state).forEach(function([name, count]){
+      html += '<div style="font-size:.8rem;padding:3px 0;">'+name+(count>1?' ×'+count:'')+'</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  };
+
+  const oldRenderNavigationForInterworld = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForInterworld) oldRenderNavigationForInterworld();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.interWorldTravelUnlocked()) return;
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(255,180,80,.5);" onclick="goScreen(\'interworld\')">'+
+      '<div style="font-size:1.6rem;">🌌</div><div style="font-weight:600;">Inter-World Expeditions</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">Beyond the Horizon Engine\'s door.</div></div>');
+  };
+
+  const oldGoScreenForInterworld = window.goScreen;
+  window.goScreen = function(name){
+    if (oldGoScreenForInterworld) oldGoScreenForInterworld(name);
+    if (name === 'interworld' && typeof window.renderInterworldScreen === 'function') window.renderInterworldScreen();
+  };
+})();
+</script>
+
+
+<div id="arc13SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc13/arc13-cover-a-world-with-its-own-rules.png" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc13Splash()">⚓ Begin Arc XIII</button>
+  </div>
+</div>
+
+<script id="ct-build-v163-arc13-harbour">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC XIII — A WORLD WITH ITS OWN RULES. Only Chapter 1's text has
+  // been provided so far, so ARC13_CHAPTERS starts with just one entry —
+  // genuinely extensible, not a stub sized for 24. Gated behind the
+  // CONFIRMED real game.arc12Complete flag (verified directly in this
+  // file, not assumed) + level 195, continuing the +15/arc pace exactly
+  // (XI=165, XII=180, XIII=195).
+  //
+  // Cover image path is a placeholder guess following the established
+  // convention — flagged for confirmation like every arc cover before
+  // this. Same for Ch.1's own chapter image (San provided only the
+  // splash, not a per-chapter image this time).
+  // -------------------------------------------------------------------
+  const ARC13_CHAPTERS = [
+    {id:1, title:'A Harbour Full of People', focus:"The Crimson Tide arrives at a developed coastal harbour — unlike the first world, there's no silence here. Ships everywhere, fishermen working the docks, merchants unloading cargo, children running through the marketplace. San just watches. \"There are people here.\" For the first time, another world doesn't feel like a mystery site. It feels alive.", image:'assets/comics/arc13/ch01-a-harbour-full-of-people.png', xp:260, action:'⚓ Arrive at the Harbour'}
+  ];
+  window.ARC13_CHAPTERS = ARC13_CHAPTERS;
+
+  window.arc13ObjectiveState = function(){
+    if (!game.arc12Complete) return null;
+    if (level() < 195) return null;
+    game.comicProgress13 = game.comicProgress13 || {};
+    for (const ch of ARC13_CHAPTERS) {
+      if (!game.comicProgress13[ch.id]) return 'complete_arc13_chapter_' + ch.id;
+    }
+    return 'arc13_part1_complete_for_now';
+  };
+
+  const ARC13_CHAPTER_SCENES = {
+    1: "The Crimson Tide arrives at a developed coastal harbour.<br><br>Unlike their first world, there is no silence.<br><br>Ships are everywhere. Fishermen work the docks. Merchants unload cargo. Children run through the marketplace.<br><br>San simply watches.<br><br>\"There are people here.\"<br><br>For the first time, another world doesn't feel like a mystery site.<br><br>It feels alive."
+  };
+  window.ARC13_CHAPTER_SCENES = ARC13_CHAPTER_SCENES;
+
+  window.markArc13ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC13_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc13] no chapter data for id', id); return; }
+    game.comicProgress13 = game.comicProgress13||{};
+    if(game.comicProgress13[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc13ObjectiveState() !== 'complete_arc13_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress13[id] = true;
+    if (id === 1) game.harbourDiscovered = true; // unlocks the Harbour location itself
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('📖 Arc XIII Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if (ARC13_CHAPTER_SCENES[id]) {
+      game.storyModalQueue = game.storyModalQueue || [];
+      game.storyModalQueue.push({ title: ch.title, blurb: ARC13_CHAPTER_SCENES[id] });
+    }
+    if (typeof renderMainGoal === 'function') try { renderMainGoal(); } catch(e) {}
+    if (typeof renderStory === 'function') try { renderStory(); } catch(e) {}
+  };
+
+  window.__ctShowArc13Splash = function(){
+    const overlay = document.getElementById('arc13SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc13Splash = function(){
+    const overlay = document.getElementById('arc13SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc13SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  const oldRenderStoryForArc13 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc13) oldRenderStoryForArc13();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const arc13Ready = window.arc13ObjectiveState() !== null;
+    if (arc13Ready && !game.arc13SplashSeen && typeof window.__ctShowArc13Splash === 'function') {
+      window.__ctShowArc13Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc13/arc13-cover-a-world-with-its-own-rules.png" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<div class="story-act-kicker">Arc XIII</div><div class="story-act-title">A World With Its Own Rules</div>'+
+      '<div class="story-act-tagline">A world is not a backdrop. It is someone\'s home.</div></div>';
+    if (!arc13Ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XIII Locked</div><div class="story-chapter-sub">'+
+        (!game.arc12Complete ? 'Finish Arc XII first.' : 'Reach Level 195 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc13ObjectiveState();
+    ARC13_CHAPTERS.forEach(function(ch){
+      const done = !!(game.comicProgress13 && game.comicProgress13[ch.id]);
+      const ready = !done && so===('complete_arc13_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc13ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so==='arc13_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc XIII chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+
+<div class="screen" id="harbourScreen">
+  <div class="game-container">
+    <div class="header"><h1 id="harbourHeaderTitle">⚓ UNKNOWN HARBOUR</h1><div class="subtitle" id="harbourHeaderSubtitle">Location not yet identified</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Back to Sail</button>
+    </div>
+    <div id="harbourContent"></div>
+  </div>
+</div>
+
+<script id="ct-build-v163b-harbour-system">
+(function(){
+  // -------------------------------------------------------------------
+  // THE HARBOUR — a genuinely separate location type from the existing
+  // Port system, per San's own framing: not "another port," but an
+  // unidentified place the player has to learn how to use, section by
+  // section, as the story reveals it. Built as its own screen with its
+  // own header state (UNKNOWN HARBOUR -> real name once learned), not
+  // reusing any Port UI. Unlocked by Arc XIII Ch.1 (harbourDiscovered).
+  //
+  // Only Dock and Local Information are open from Ch.1, matching San's
+  // own proposed default state exactly, including the specific locked-
+  // section flavor text San wrote for Market/Trade/Requests/Guesthouse.
+  // Provisions and Shipwright weren't given specific locked text, so
+  // I've written reasonable matching lines for those two.
+  //
+  // Deliberately NOT wiring any unlock triggers for the locked sections
+  // yet — that depends on story chapters San hasn't provided. This
+  // exposes window.unlockHarbourSection(key) as the hook for whenever
+  // those chapters land, rather than inventing fake unlock conditions.
+  // -------------------------------------------------------------------
+  const HARBOUR_SECTIONS = [
+    {key:'dock', name:'Dock', icon:'⚓', lockedText: null},
+    {key:'local_info', name:'Local Information', icon:'📜', lockedText: null},
+    {key:'market', name:'Market', icon:'🏪', lockedText: '🔒 Not yet established'},
+    {key:'trade', name:'Trade', icon:'💰', lockedText: '🔒 No trading relationship'},
+    {key:'requests', name:'Requests', icon:'📋', lockedText: '🔒 No local requests available'},
+    {key:'guesthouse', name:'Guesthouse', icon:'🏨', lockedText: '🔒 No accommodation arranged'},
+    {key:'provisions', name:'Provisions', icon:'🌾', lockedText: '🔒 No supply arrangement yet'},
+    {key:'shipwright', name:'Shipwright', icon:'🔨', lockedText: '🔒 No one here works on Crimson Tide ships yet'}
+  ];
+  window.HARBOUR_SECTIONS = HARBOUR_SECTIONS;
+
+  function harbourState(){
+    game.harbourState = game.harbourState || {
+      nameKnown: false, name: null,
+      sections: {dock:true, local_info:true, market:false, trade:false, requests:false, guesthouse:false, provisions:false, shipwright:false}
+    };
+    return game.harbourState;
+  }
+  window.harbourState = harbourState;
+
+  window.harbourUnlocked = function(){
+    return !!game.harbourDiscovered;
+  };
+
+  // Hook for future story content — not called from anywhere yet.
+  window.unlockHarbourSection = function(key){
+    const hs = harbourState();
+    if (hs.sections[key] !== undefined) hs.sections[key] = true;
+  };
+  window.setHarbourName = function(name){
+    const hs = harbourState();
+    hs.name = name;
+    hs.nameKnown = true;
+  };
+
+  let harbourActiveSection = 'dock';
+  window.switchHarbourSection = function(key){
+    const hs = harbourState();
+    if (!hs.sections[key]) { toast('That part of the harbour isn\'t open to them yet.'); return; }
+    harbourActiveSection = key;
+    window.renderHarbourScreen();
+  };
+
+  window.renderHarbourScreen = function(){
+    const titleEl = document.getElementById('harbourHeaderTitle');
+    const subEl = document.getElementById('harbourHeaderSubtitle');
+    const container = document.getElementById('harbourContent');
+    if (!container) return;
+    const hs = harbourState();
+    if (titleEl) titleEl.textContent = hs.nameKnown ? ('⚓ ' + hs.name) : '⚓ UNKNOWN HARBOUR';
+    if (subEl) subEl.textContent = hs.nameKnown ? 'A place the crew is starting to know' : 'Location not yet identified';
+
+    let html = '<div class="tabs" style="flex-wrap:wrap;">';
+    HARBOUR_SECTIONS.forEach(function(sec){
+      const unlocked = hs.sections[sec.key];
+      html += '<button class="tab-btn'+(harbourActiveSection===sec.key?' active':'')+'" '+
+        (unlocked ? 'onclick="switchHarbourSection(\''+sec.key+'\')"' : 'disabled style="opacity:.45;cursor:not-allowed;"') +
+        '>'+sec.icon+' '+sec.name+'</button>';
+    });
+    html += '</div><div class="panel" style="margin-top:10px;">';
+
+    const activeDef = HARBOUR_SECTIONS.find(s => s.key === harbourActiveSection);
+    if (!hs.sections[harbourActiveSection]) {
+      html += '<div class="story-chip">'+(activeDef?activeDef.lockedText:'🔒 Not available yet')+'</div>';
+    } else if (harbourActiveSection === 'dock') {
+      html += '<div class="panel-title">⚓ The Dock</div>'+
+        '<p style="font-size:.85rem;opacity:.85;">Ships everywhere. Fishermen working the lines, merchants unloading cargo, children weaving between the crates like this is just an ordinary afternoon — because for them, it is.</p>';
+    } else if (harbourActiveSection === 'local_info') {
+      html += '<div class="panel-title">📜 Local Information</div>'+
+        '<div style="font-size:.85rem;line-height:1.8;">'+
+        'World: <strong>Unknown</strong><br>'+
+        'Settlement: <strong>'+(hs.nameKnown ? hs.name : 'Unknown')+'</strong><br>'+
+        'Local Customs: <strong>Unknown</strong><br>'+
+        'Trade Status: <strong>None</strong>'+
+        '</div>';
+    } else {
+      html += '<div class="panel-title">'+(activeDef?activeDef.icon+' '+activeDef.name:'')+'</div>'+
+        '<p style="font-size:.85rem;opacity:.7;">Nothing here yet.</p>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  };
+
+  const oldRenderNavigationForHarbour = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForHarbour) oldRenderNavigationForHarbour();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.harbourUnlocked()) return;
+    const hs = harbourState();
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(120,200,255,.5);border-style:dashed;" onclick="goScreen(\'harbour\')">'+
+      '<div style="font-size:1.6rem;">⚓</div><div style="font-weight:600;">'+(hs.nameKnown?hs.name:'Unknown Harbour')+'</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">Not one of the known ports.</div></div>');
+  };
+
+  const oldGoScreenForHarbour = window.goScreen;
+  window.goScreen = function(name){
+    if (oldGoScreenForHarbour) oldGoScreenForHarbour(name);
+    if (name === 'harbour' && typeof window.renderHarbourScreen === 'function') window.renderHarbourScreen();
   };
 })();
 </script>
