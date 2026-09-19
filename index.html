@@ -1890,6 +1890,7 @@ body{
       <button class="nav-btn" onclick="goScreen('shipyard')">⚓ Shipyard</button>
       <button class="nav-btn" onclick="goScreen('tavern')">🍺 Tavern</button>
       <button class="nav-btn active" onclick="goScreen('log')">📜 Log</button>
+      <button class="nav-btn" onclick="goScreen('achievements')">🏆 Achievements</button>
     </div>
     <div class="panel">
       <div class="panel-title">📜 Journey Log</div>
@@ -7257,7 +7258,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V168 · Expedition Post-Arc12 and Remote Access Re-gated'</script>
+<script>window.__CT_BUILD__='V172 · Tide Network Sections Wired to Arc XIV'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -15379,7 +15380,26 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     {id:2, title:'Beneath the Surface', focus:"The crew spots structures below the water — not ruins, homes. Lights move beneath the surface, and something appears to be watching the ship. This may be another civilization entirely.", image:'assets/comics/arc14/ch02-beneath-the-surface.png', xp:280, action:'👁️ Look Below'},
     {id:3, title:'The Ones Beneath', focus:"The first aquatic people approach — intelligent, organized, cautious, and not hostile. They just want to know one thing: why is the Crimson Tide traveling through their waters?", image:'assets/comics/arc14/ch03-the-ones-beneath.png', xp:300, action:'🤝 Answer Their Question'},
     {id:4, title:'A Different Kind of Harbour', focus:"An underwater settlement, connected to the surface by designated meeting areas — markets, docks, homes, gathering places. Joel is fascinated by how the whole place is designed around water movement.", image:'assets/comics/arc14/ch04-a-different-kind-of-harbour.png', xp:290, action:'🏙️ Tour the Settlement'},
-    {id:5, title:'Learning to Enter', focus:"Visiting isn't as simple as breathing underwater — there are rules, equipment, currents, designated routes. San realizes even entering someone's home has rules.", image:'assets/comics/arc14/ch05-learning-to-enter.png', xp:290, action:'🤿 Learn the Way In'}
+    {id:5, title:'Learning to Enter', focus:"Visiting isn't as simple as breathing underwater — there are rules, equipment, currents, designated routes. San realizes even entering someone's home has rules.", image:'assets/comics/arc14/ch05-learning-to-enter.png', xp:290, action:'🤿 Learn the Way In'},
+    {id:6, title:'Their Way of Life',        focus:"The crew spends time just watching ordinary life — families, children, fishing, crafts, food, trade, education. Nobody here is mysterious. They're just people, living somewhere the crew has never lived before.", image:'assets/comics/arc14/ch06-their-way-of-life.png', xp:280, action:'🐟 Observe Their Life'},
+    {id:7, title:'The Current Keepers',      focus:"The crew meets those responsible for monitoring the sea currents — knowledge part scientific, part magical. Renn is fascinated. Erynn recognizes their understanding of the sea is extremely old.", image:'assets/comics/arc14/ch07-the-current-keepers.png', xp:300, action:'🌊 Meet the Current Keepers'},
+    {id:8, title:'Soel Sees Something Else', focus:"Soel starts reacting to certain currents the way he used to react to boundaries — still, watching something nobody else can see. Mimi senses the currents carry more than physical movement.", image:'assets/comics/arc14/ch08-soel-sees-something-else.png', xp:300, action:'👁️ Watch Soel Watching'},
+    {id:9, title:'The Spirit Current',       focus:"The aquatic people explain that some currents carry memory, emotion, and spiritual residue — not magic to them, just part of how the sea works. It gives Soel's abilities a context nobody's offered him before.", image:'assets/comics/arc14/ch09-the-spirit-current.png', xp:320, action:'💫 Learn of the Spirit Current'},
+    {id:10, title:'What the Sea Remembers',  focus:"Soel follows a spirit current, and San briefly sees an impression beneath the water — not a monster, not a weapon, but a memory of people who once traveled these waters.", image:'assets/comics/arc14/ch10-what-the-sea-remembers.png', xp:350, action:'🌊 Follow the Current'},
+    {id:11, title:'A Disturbed Current',     focus:"One section of the settlement is fighting unusual currents — boats pushed off course, fishing grounds harder to reach. The locals ask the Crimson Tide for help.", image:'assets/comics/arc14/ch11-a-disturbed-current.png', xp:300, action:'🌀 Investigate the Currents'},
+    {id:12, title:'The Wrong Question',      focus:"Renn assumes an underwater obstruction. The locals correct him — this isn't a simple physical problem. Several communities depend on the same current, and it's more complicated than a blockage.", image:'assets/comics/arc14/ch12-the-wrong-question.png', xp:300, action:'❓ Ask Again'},
+    {id:13, title:'Many Communities, One Sea', focus:"Different communities share the same waterways for fishing, travel, gathering, trade, and spiritual practice. What looked like one current to San is actually a network of overlapping responsibilities.", image:'assets/comics/arc14/ch13-many-communities-one-sea.png', xp:310, action:'🗺️ Map the Network'},
+    {id:14, title:'The Old Route',           focus:"Erynn finds an ancient, long-unused navigation route beneath the settlement. Its existence may explain why the currents have started behaving differently.", image:'assets/comics/arc14/ch14-the-old-route.png', xp:310, action:'🧭 Trace the Old Route'},
+    {id:15, title:'What Changed?',           focus:"Nothing was destroyed. A reef shifted. An old passage narrowed. A current diverted. Small, gradual changes, accumulated over generations, until the sea itself worked differently.", image:'assets/comics/arc14/ch15-what-changed.png', xp:320, action:'🔍 Piece It Together'},
+    {id:16, title:"Soel's Path",             focus:"Soel follows the spiritual current deeper than anyone else safely can, and finds where the spiritual and physical currents actually intersect. The two problems were never separate.", image:'assets/comics/arc14/ch16-soels-path.png', xp:340, action:'🐾 Follow Soel Down'},
+    {id:17, title:"We Can't Move the Sea", focus:"San considers whether magic could solve this outright. The locals explain why they don't simply alter the current — changing one current would affect several other communities downstream. San recognizes the shape of it immediately: the same lesson from Arc XIII, wearing different water. A solution that works for one group can harm another.", image:'assets/comics/arc14/ch17-we-cant-move-the-sea.png', xp:300, action:'🌊 Weigh the Cost'},
+    {id:18, title:'What They Already Know', focus:"The crew stops trying to invent a solution and asks the locals what they've already tried. Old records surface — forgotten methods for navigating waters exactly like these, worked out by people who lived with this problem long before Crimson Tide arrived.", image:'assets/comics/arc14/ch18-what-they-already-know.png', xp:290, action:'📜 Read the Old Records'},
+    {id:19, title:'The Path Everyone Can Use', focus:"Joel works directly with the local boat crews. Not changing the sea — building a safer shared route through it: timing, navigation markers, designated passage windows, shared information between communities. A very Joel solution.", image:'assets/comics/arc14/ch19-the-path-everyone-can-use.png', xp:300, action:'🧭 Chart the Route'},
+    {id:20, title:'The Sea Belongs to Everyone', focus:"The different communities discuss the proposed arrangement. Some agree immediately. Others have real concerns. The crew facilitates, but doesn't decide — the locals make the final call. Arc XIII's lesson, continuing in a new environment.", image:'assets/comics/arc14/ch20-the-sea-belongs-to-everyone.png', xp:300, action:'🗣️ Hear Every Voice'},
+    {id:21, title:'A Shared Current', focus:'The communities reach a new agreement. The current isn\'t controlled — it\'s understood and shared. The aquatic people thank Crimson Tide, but San is clear about where the credit belongs: "You solved it. We just helped you find the pieces."', image:'assets/comics/arc14/ch21-a-shared-current.png', xp:320, action:'🤝 Confirm the Agreement'},
+    {id:22, title:'What Soel Found', focus:"The aquatic people describe what Soel actually is to them — not one of their own people, not quite an ordinary surface animal either. They don't know exactly what he is. But they understand, clearly, that he can perceive spiritual currents. Another small piece of a mystery that's still nowhere near solved.", image:'assets/comics/arc14/ch22-what-soel-found.png', xp:320, action:'🐾 Listen to What They Say'},
+    {id:23, title:'Beneath the Same Sky', focus:"One final day with the aquatic civilization — food, storytelling, trading, real cultural exchange. San notices that despite living beneath the sea, these people worry about the same things anyone does: family, work, community, home.", image:'assets/comics/arc14/ch23-beneath-the-same-sky.png', xp:300, action:'🍽️ Share the Day'},
+    {id:24, title:'People Beneath the Tide', focus:'The crew prepares to leave. Soel looks back toward the water. San watches the underwater lights fade beneath the waves. "We thought the sea separated worlds," she says. "It doesn\'t. It connects them. Some people simply live on the other side of the surface." The Crimson Tide sails onward.', image:'assets/comics/arc14/ch24-people-beneath-the-tide.png', xp:540, action:'⚓ Sail Onward'}
   ];
   window.ARC14_CHAPTERS = ARC14_CHAPTERS;
 
@@ -15398,7 +15418,26 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     2: "The structures are unmistakable once anyone actually looks properly. Not ruins, not wreckage — homes, built to last, sitting where nobody expected anything to be built at all.<br><br>Lights move beneath the surface in patterns too deliberate to be current or fish. Something down there is watching the ship, and everyone on deck can feel it.<br><br>Nobody says the word out loud right away, but the thought is unavoidable. They may have just found another civilization — one that's been below them the entire time.",
     3: "The first ones surface without warning, and without hostility either.<br><br>They move with an organization that makes it obvious immediately — this isn't a chance encounter with wildlife. These are people, cautious but not afraid, sizing the ship up with the same care the crew is using to size them up.<br><br>They don't demand anything. They ask one question, plainly, and wait for an answer.<br><br>\"Why are you travelling through our waters?\"",
     4: "What waits beneath the surface isn't a ruin or a curiosity — it's a working settlement, markets and docks and homes, gathering places built exactly where they need to be.<br><br>The whole design follows the water instead of fighting it. Joel can't stop studying how naturally the place moves with the current instead of against it, the same instinct he respects in a well-built hull.<br><br>Every part of it says the same thing: people have been living here, comfortably, for a very long time.",
-    5: "Getting in isn't as simple as holding your breath and diving down.<br><br>There's proper equipment. Marked routes. Currents that have to be respected rather than fought through. A whole procedure the crew has to actually learn before anyone will let them near the settlement itself.<br><br>San takes it in without complaint, turning the lesson over once out loud.<br><br>\"Even entering someone's home has rules.\""
+    5: "Getting in isn't as simple as holding your breath and diving down.<br><br>There's proper equipment. Marked routes. Currents that have to be respected rather than fought through. A whole procedure the crew has to actually learn before anyone will let them near the settlement itself.<br><br>San takes it in without complaint, turning the lesson over once out loud.<br><br>\"Even entering someone's home has rules.\"",
+    6: "The crew spends time just watching ordinary life happen.<br><br>Families going about their day. Children playing somewhere between the currents. People crafting, fishing, trading, teaching their own the way any community teaches its own.<br><br>Nobody here is mysterious. Nobody's a creature to be studied from a careful distance. They're just people, living somewhere the crew has never lived before.",
+    7: "The crew meets the people responsible for watching the sea's currents — reading them, understanding them, knowing what each shift and pull actually means.<br><br>Their knowledge is part science, part something closer to magic, though they don't always draw a hard line between the two.<br><br>Renn is fascinated almost immediately. Erynn recognizes something else entirely: whatever this understanding is, it's old. Far older than anything the Farseers ever wrote down.",
+    8: "Soel starts reacting to certain currents the way he used to react to boundaries — ears back, entirely still, watching something nobody else in the room can see.<br><br>Mimi picks up on it fast. Whatever's moving through those currents, it isn't just water.",
+    9: "The aquatic people have an explanation ready, offered without any drama attached to it: some currents carry more than water. Memory. Emotion. Spiritual residue, left behind by whoever or whatever passed through.<br><br>They don't necessarily call it magic. To them, it's simply part of how the sea works — the same way weather is part of how the sky works.<br><br>For Soel, it's the first real context anyone's ever given his abilities that didn't come from a Farseer record or a guess.",
+    10: "Soel follows one of the spirit currents on his own, and for just a moment, San sees it too — an impression, faint and old, of something beneath the water.<br><br>Not a monster. Not a weapon.<br><br>A memory. People who once traveled these waters, long enough ago that even the current keepers only half-remember them.<br><br>It fades before San can hold onto it. It doesn't fade from Soel.",
+    11: "One corner of the settlement has been struggling for a while now. Boats keep getting pushed off their line. Fishing grounds that used to be a short pull away now take twice the effort to reach.<br><br>It isn't an emergency, not yet. It's the kind of problem that just keeps quietly getting worse, the kind people eventually stop being able to work around on their own.<br><br>So they ask the Crimson Tide for help — not as a test, just because the crew is here, and capable, and willing.",
+    12: "Renn's first guess is the obvious one: something's blocking the current, physically, somewhere upstream. A straightforward problem with a straightforward fix.<br><br>The locals are patient correcting him. It isn't that simple. This current doesn't belong to just one community — whatever's wrong with it is wrong for everyone who depends on it, in different ways, for different reasons.<br><br>Renn's right question turns out to be a different question entirely.",
+    13: "It takes a while for the shape of it to become clear. The same stretch of water that looks like a single current to San is actually carrying a dozen different responsibilities at once — fishing here, travel there, gathering somewhere else, trade routes, even spiritual practice woven through parts of it.<br><br>Nobody owns the current outright. Everyone just has their own claim on a piece of it, and all those claims depend on the whole thing working the way it always has.",
+    14: "Erynn is the one who finds it — a navigation route beneath the settlement, old enough that nobody currently living remembers using it.<br><br>It isn't in use anymore. That much is obvious. What's less obvious, and far more interesting, is that its existence might explain exactly why the current everyone depends on has started behaving so differently.<br><br>Old things left alone don't always stay harmless.",
+    15: "Nothing here was destroyed. That's almost the hardest part to explain to the people asking for help — there's no single villain, no single event to point to.<br><br>A reef shifted, slowly, over years nobody was counting. An old passage narrowed a little more each season. A current found a slightly different path and never found its way back.<br><br>None of it happened all at once. All of it added up anyway, generation by generation, until the sea itself was quietly working differently than everyone still assumed it did.",
+    16: "Soel goes further down than anyone else can safely manage, following the spiritual current past the point where the rest of the crew has to stop and wait.<br><br>What he finds down there settles the question everyone's been circling. The spiritual current and the physical one don't just run near each other — they actually intersect, right at the same place the old route and the shifted reef both lead back to.<br><br>Two problems. One place. Never actually separate at all.",
+    17: "San considers whether magic could just solve this outright.<br><br>The locals explain, patiently, why they don't do that. Changing one current doesn't stay contained to one current — it moves, and it reaches communities nobody in this conversation even represents.<br><br>San recognizes the shape of the lesson immediately. She's heard it before, in a different harbour, in a different world.<br><br>A solution that works for one group can genuinely harm another. That hasn't stopped being true just because the water's different this time.",
+    18: "The crew stops trying to invent something clever.<br><br>Instead, they ask the obvious question they'd somehow skipped: what have you already tried?<br><br>Old records surface — methods worked out generations ago, by people who lived with exactly this problem long before Crimson Tide ever sailed into these waters. Forgotten, not because they failed, but because nobody had asked about them in a long time.",
+    19: "Joel doesn't try to change the sea. He works with the people who already know it.<br><br>Alongside the local boat crews, a shared route starts taking shape — not a fix, just a way through: timing, navigation markers, designated passage windows, information passed openly between communities instead of guarded.<br><br>Nothing magical about it. Just logistics, patience, and people who actually know their own water being asked what would help.",
+    20: "The different communities sit down together to discuss what's being proposed.<br><br>Some agree almost immediately. Others have real, unresolved concerns — old friction that a shared route alone won't erase.<br><br>Crimson Tide facilitates the conversation. It doesn't decide the outcome. That part belongs to the people who'll actually live with it — the same lesson from the harbour, still holding true out here.",
+    21: "The communities reach an agreement of their own.<br><br>The current isn't controlled. It's understood, and it's shared — which turns out to be the part that actually mattered.<br><br>The aquatic people thank Crimson Tide for their part in it. San doesn't let the credit land where it doesn't belong.<br><br>\"You solved it,\" she says. \"We just helped you find the pieces.\"",
+    22: "The aquatic people try to explain what they saw in Soel, and end up circling the same uncertainty the crew already lives with.<br><br>Not one of their own people. Not quite an ordinary surface animal either.<br><br>They don't know exactly what he is. Nobody does. But they're certain about the one thing that actually matters here — he can perceive spiritual currents the way none of them can, surface-dweller or not.<br><br>One more small piece, set down next to all the others that still don't add up to an answer.",
+    23: "One last day with the aquatic civilization, and nobody rushes it.<br><br>Food gets shared. Stories get traded, half-translated and laughed over anyway. Small trades happen without anyone calling them trades.<br><br>San watches all of it and notices something simple: for people who live beneath an entire sea, the things they actually worry about aren't so different. Family. Work. Community. Home.",
+    24: "The crew prepares to leave.<br><br>Soel looks back toward the water, one long moment before he turns away from it.<br><br>San watches the underwater lights fade beneath the waves, already growing harder to see.<br><br>\"We thought the sea separated worlds,\" she says.<br><br>\"It doesn't.\"<br><br>\"It connects them.\"<br><br>\"Some people simply live on the other side of the surface.\"<br><br>The Crimson Tide sails onward."
   };
   window.ARC14_CHAPTER_SCENES = ARC14_CHAPTER_SCENES;
 
@@ -15410,6 +15449,15 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if(game.comicProgress14[id]){ toast('✓ Already marked read.'); return; }
     if(window.arc14ObjectiveState() !== 'complete_arc14_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress14[id] = true;
+    if (id === 1) game.tideNetworkDiscovered = true; // unlocks the Tide Network location itself
+    if (id === 4 && typeof window.unlockTideNetworkSection === 'function') window.unlockTideNetworkSection('underwater_market'); // "A Different Kind of Harbour" — scene text: "markets and docks and homes"
+    if (id === 6 && typeof window.unlockTideNetworkSection === 'function') window.unlockTideNetworkSection('community'); // "Their Way of Life" — scene text: "Families... community... teaching their own"
+    if (id === 11 && typeof window.unlockTideNetworkSection === 'function') window.unlockTideNetworkSection('fishing_grounds'); // "A Disturbed Current" — scene text explicitly says "Fishing grounds"
+    if (id === 13 && typeof window.unlockTideNetworkSection === 'function') window.unlockTideNetworkSection('requests'); // "Many Communities, One Sea" — multiple communities' overlapping needs becoming visible
+    if (id === 19 && typeof window.unlockTideNetworkSection === 'function') window.unlockTideNetworkSection('tide_routes'); // "The Path Everyone Can Use" — scene text: "shared route... timing, navigation markers, designated passage windows"
+    if (id === 9) game.soelSpiritCurrentContext = true; // new framing for Soel's abilities, from outside the Farseer records entirely
+    if (id === 22) game.soelRecognizedAsUnusual = true; // the aquatic people's own read on him — not one of theirs, not an ordinary surface animal, origin still unknown
+    if (id === 24) game.arc14Complete = true;
     gainXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XIV Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
@@ -15548,6 +15596,362 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       '<div class="port-card" style="cursor:pointer;border-color:rgba(120,180,255,.5);" onclick="enterFairTideRemotely()">'+
       '<div style="font-size:1.6rem;">📡</div><div style="font-weight:600;">Remote Access</div>'+
       '<div style="font-size:.72rem;opacity:.7;">Check in on Fair Tide from here.</div></div>');
+  };
+})();
+</script>
+
+
+<div class="screen" id="achievementsScreen">
+  <div class="game-container">
+    <div class="header"><h1>🏆 Achievements</h1><div class="subtitle">Milestones worth remembering</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('log')">📜 Back to Log</button>
+    </div>
+    <div id="achievementsContent"></div>
+  </div>
+</div>
+
+<script id="ct-build-v170-achievements">
+(function(){
+  // -------------------------------------------------------------------
+  // ACHIEVEMENTS. Pure recognition, no mechanical reward — matching
+  // standard genre convention. Each check function reads existing,
+  // already-verified game state rather than introducing new tracking:
+  // rival capture (V131/132), companion recruitment (game.foundCompanions,
+  // the same flag memberUnlocked() itself reads), and the Bond system's
+  // own San/Joel unlock beat (Arc V Ch.4, "Bonded by the Tide").
+  //
+  // "The Crew Assembles" is scoped to the core canonical cast per San's
+  // own earlier reference sheet — San, Joel, Aisyah, Mez, Eliz, Senedra,
+  // Zaki, Renn, Erynn, Mimi, Soel — not the additional side-recruits
+  // (Iris, KW Liang, Dr. AA, Brada Shah, Ser Aldric, Sister Wren).
+  // Flagged as an assumption, easy to widen if San meant everyone.
+  //
+  // "Romance path unlocked" uses the story beat itself (Arc V Ch.4
+  // complete) rather than window.bondTier('san_joel') >= 1 — the latter
+  // also requires having actually spent bond points at least once,
+  // which felt like an unnecessary extra gate for what's fundamentally
+  // a story-milestone achievement, not a mechanical one.
+  // -------------------------------------------------------------------
+  const CORE_CREW_IDS = ['joel','aisyah','mezstorm','eliz','senedra','zaki','renn','erynn','mimi','soel'];
+
+  function crewAssembled(){
+    return CORE_CREW_IDS.every(function(id){
+      if (id === 'soel') return (typeof level === 'function' ? level() : 0) >= 10;
+      return !!(game.foundCompanions && game.foundCompanions[id]);
+    });
+  }
+
+  const ACHIEVEMENTS = [
+    {id:'old_scores_settled', name:'Old Scores Settled', icon:'🏴‍☠️', desc:"Robin's community service finally started.",
+      check: function(){ return !!(game.rivalsCaptured && game.rivalsCaptured.robin); }},
+    {id:'no_more_excuses', name:'No More Excuses', icon:'🏴‍☠️', desc:'Jeff ran out of ways to avoid it.',
+      check: function(){ return !!(game.rivalsCaptured && game.rivalsCaptured.jeff); }},
+    {id:'first_mate', name:'First Mate', icon:'⚔️', desc:'Joel joined the crew.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.joel); }},
+    {id:'crew_assembled', name:'The Crew Assembles', icon:'⚓', desc:'The core crew is complete.',
+      check: crewAssembled},
+    {id:'bonded_by_the_tide', name:'Bonded by the Tide', icon:'💞', desc:"San and Joel's bond became something real.",
+      check: function(){ return !!(game.comicProgress5 && game.comicProgress5[4]); }}
+  ];
+  window.ACHIEVEMENTS = ACHIEVEMENTS;
+
+  function achievementRegistry(){ game.achievementsUnlocked = game.achievementsUnlocked || {}; return game.achievementsUnlocked; }
+  window.achievementRegistry = achievementRegistry;
+
+  window.checkAchievements = function(){
+    const reg = achievementRegistry();
+    ACHIEVEMENTS.forEach(function(a){
+      if (reg[a.id]) return; // already earned, nothing to do
+      if (!a.check()) return;
+      reg[a.id] = { day: game.day || 0 };
+      toast('🏆 Achievement unlocked: ' + a.name, 4200);
+      logEvent('🏆 Achievement unlocked: ' + a.icon + ' ' + a.name + ' — ' + a.desc, 'gold');
+      if (typeof showStoryModal === 'function') {
+        setTimeout(function(){
+          showStoryModal({ title: '🏆 ' + a.name, blurb: a.desc });
+        }, 400);
+      }
+    });
+  };
+
+  const oldRenderMainGoalForAchievements = window.renderMainGoal;
+  window.renderMainGoal = function(){
+    if (oldRenderMainGoalForAchievements) oldRenderMainGoalForAchievements();
+    window.checkAchievements();
+  };
+
+  window.renderAchievementsScreen = function(){
+    const container = document.getElementById('achievementsContent');
+    if (!container) return;
+    const reg = achievementRegistry();
+    const earnedCount = ACHIEVEMENTS.filter(a => reg[a.id]).length;
+    let html = '<div class="panel"><div class="panel-title">🏆 '+earnedCount+' / '+ACHIEVEMENTS.length+' Earned</div></div>';
+    ACHIEVEMENTS.forEach(function(a){
+      const earned = !!reg[a.id];
+      html += '<article class="quest-item'+(earned?' completed':'')+'" style="'+(earned?'':'opacity:.5;')+'">'+
+        '<strong>'+(earned?a.icon:'❔')+' '+(earned?a.name:'???')+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+(earned?a.desc:'Not yet earned.')+'</span>'+
+        (earned && reg[a.id].day ? '<br><span style="font-size:.72rem;opacity:.6;">Day '+reg[a.id].day+'</span>' : '')+
+        '</article>';
+    });
+    container.innerHTML = html;
+  };
+
+  const oldGoScreenForAchievements = window.goScreen;
+  window.goScreen = function(name){
+    if (oldGoScreenForAchievements) oldGoScreenForAchievements(name);
+    if (name === 'achievements' && typeof window.renderAchievementsScreen === 'function') window.renderAchievementsScreen();
+  };
+})();
+</script>
+
+
+<div class="screen" id="tideNetworkScreen">
+  <div class="game-container">
+    <div class="header"><h1 id="tideNetworkHeaderTitle">🌊 UNKNOWN TIDE SETTLEMENT</h1><div class="subtitle" id="tideNetworkHeaderSubtitle">Location not yet identified</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Back to Sail</button>
+    </div>
+    <div id="tideNetworkContent"></div>
+  </div>
+</div>
+
+<script id="ct-build-v171-tide-network">
+(function(){
+  // -------------------------------------------------------------------
+  // THE TIDE NETWORK — Arc XIV's environmental/aquatic parallel to Arc
+  // XIII's Harbour, per San's own design doc. Same overall shape (an
+  // "Unknown X" header that becomes a real name, sections that unlock
+  // progressively) but the core new piece is Current Mapping instead of
+  // cultural discovery: a pool of current nodes, gradually charted,
+  // rather than streets and districts.
+  //
+  // Soel gets his own, genuinely separate mechanic here — the Spiritual
+  // Current — pulling from a distinct node pool only he can reach,
+  // matching San's own examples (an old memory, a forgotten route, an
+  // unusual current, a spiritually significant place, evidence of an
+  // older civilization). Deliberately not treasure, and deliberately
+  // not an auto-solve button — same cooldown-gated rhythm as mapping the
+  // physical currents, just a separate, rarer pool.
+  //
+  // No grindy resource layer, per San's explicit direction — nodes are
+  // discoveries with flavor text, not currency to grind.
+  //
+  // Unlocked by Arc XIV Ch.1 (tideNetworkDiscovered, added alongside
+  // this build). Section list and initial unlock state match San's
+  // spec exactly: Enter the Settlement / Map Currents / Observe open
+  // from the start; Underwater Market / Community / Fishing Grounds /
+  // Tide Routes / Requests all locked.
+  // -------------------------------------------------------------------
+  const TIDE_NETWORK_SECTIONS = [
+    {key:'enter_settlement', name:'Enter the Settlement', icon:'🌊', lockedText: null},
+    {key:'map_currents', name:'Map Currents', icon:'🧭', lockedText: null},
+    {key:'observe', name:'Observe', icon:'👁️', lockedText: null},
+    {key:'underwater_market', name:'Underwater Market', icon:'🐚', lockedText: '🔒 Not yet established'},
+    {key:'community', name:'Community', icon:'🏘️', lockedText: '🔒 No relationship yet'},
+    {key:'fishing_grounds', name:'Fishing Grounds', icon:'🐟', lockedText: '🔒 Not yet shared'},
+    {key:'tide_routes', name:'Tide Routes', icon:'🌊', lockedText: '🔒 No safe passage known'},
+    {key:'requests', name:'Requests', icon:'💬', lockedText: '🔒 No local requests available'}
+  ];
+  window.TIDE_NETWORK_SECTIONS = TIDE_NETWORK_SECTIONS;
+
+  const CURRENT_NODES = [
+    {id:'fishing_grounds_node', name:'Fishing Grounds', icon:'🐟', flavor:'Where the settlement actually feeds itself — carefully worked, not overfished. Whoever manages this knows exactly what the water can give.'},
+    {id:'reef_passage', name:'Reef Passage', icon:'🪸', flavor:'A narrow way through coral old enough to have its own name among the locals, even if the crew doesn\'t know it yet.'},
+    {id:'trade_current', name:'Trade Current', icon:'💱', flavor:'A route that moves goods, not just water — the underwater equivalent of a trade road, worn smooth by regular use.'},
+    {id:'deep_trench', name:'Deep Trench', icon:'🕳️', flavor:'Colder than everything around it, and the current here runs differently than it should. Nobody\'s explained why yet.'},
+    {id:'coral_maze', name:'Coral Maze', icon:'🌀', flavor:'Looks the same in every direction unless you already know the way through — which the settlement clearly does, and the crew clearly doesn\'t, yet.'},
+    {id:'settlement_approach', name:'Settlement Approach', icon:'⚓', flavor:'The designated route in — not the fastest way, but the one that doesn\'t alarm anyone watching from below.'}
+  ];
+  window.CURRENT_NODES = CURRENT_NODES;
+
+  const SPIRITUAL_NODES = [
+    {id:'old_memory', name:'An Old Memory', icon:'💭', flavor:'Not Soel\'s own. Something that happened here once, still caught in the current the way a scent lingers in a closed room.'},
+    {id:'forgotten_route', name:'A Forgotten Route', icon:'🗺️', flavor:'A path nobody living uses anymore, but the water still remembers the shape of it.'},
+    {id:'unusual_current', name:'An Unusual Current', icon:'🌊', flavor:'Moving against everything around it, deliberately, like it\'s still doing a job somebody assigned it a very long time ago.'},
+    {id:'significant_place', name:'A Place of Spiritual Significance', icon:'✨', flavor:'Soel won\'t go any closer than this. Not fear, exactly. Something more like respect.'},
+    {id:'older_civilization', name:'Evidence of an Older Civilization', icon:'🏺', flavor:'Older than the settlement above it, and not built by the same people at all. Erynn is going to want a very long time with this.'}
+  ];
+  window.SPIRITUAL_NODES = SPIRITUAL_NODES;
+
+  function tideNetworkState(){
+    game.tideNetworkState = game.tideNetworkState || {
+      nameKnown: false, name: null, relationship: 'New Visitors',
+      sections: {enter_settlement:true, map_currents:true, observe:true, underwater_market:false, community:false, fishing_grounds:false, tide_routes:false, requests:false},
+      mappedNodes: {}, spiritualNodes: {}
+    };
+    const ts = game.tideNetworkState;
+    if (ts.relationship === undefined) ts.relationship = 'New Visitors';
+    if (ts.mappedNodes === undefined) ts.mappedNodes = {};
+    if (ts.spiritualNodes === undefined) ts.spiritualNodes = {};
+    return ts;
+  }
+  window.tideNetworkState = tideNetworkState;
+
+  window.tideNetworkUnlocked = function(){
+    return !!game.tideNetworkDiscovered;
+  };
+
+  window.unlockTideNetworkSection = function(key){
+    const ts = tideNetworkState();
+    if (ts.sections[key] !== undefined) ts.sections[key] = true;
+  };
+  window.setTideNetworkName = function(name){
+    const ts = tideNetworkState();
+    ts.name = name;
+    ts.nameKnown = true;
+  };
+
+  const MAP_COOLDOWN_MS = 4 * 3600 * 1000; // 4 hours between mapping attempts
+  const SPIRITUAL_COOLDOWN_MS = 10 * 3600 * 1000; // rarer — Soel's own rhythm, not on-demand
+
+  window.mapCurrentsStatus = function(){
+    const ts = tideNetworkState();
+    const nextAt = ts.nextMapAt || 0;
+    if (Date.now() < nextAt) return {state:'cooldown', msLeft: nextAt - Date.now()};
+    return {state:'ready'};
+  };
+  window.spiritualCurrentStatus = function(){
+    const ts = tideNetworkState();
+    const nextAt = ts.nextSpiritualAt || 0;
+    if (Date.now() < nextAt) return {state:'cooldown', msLeft: nextAt - Date.now()};
+    return {state:'ready'};
+  };
+
+  window.mapCurrents = function(){
+    if (!window.tideNetworkUnlocked()) return;
+    const status = window.mapCurrentsStatus();
+    if (status.state !== 'ready') { toast('⏳ Not ready yet.'); return; }
+    const ts = tideNetworkState();
+    const unmapped = CURRENT_NODES.filter(n => !ts.mappedNodes[n.id]);
+    ts.nextMapAt = Date.now() + MAP_COOLDOWN_MS;
+    if (!unmapped.length) { toast('🧭 The known currents are all charted for now.'); if (typeof saveGameQuiet === 'function') saveGameQuiet(); return; }
+    const node = unmapped[Math.floor(Math.random() * unmapped.length)];
+    ts.mappedNodes[node.id] = true;
+    logEvent('🧭 Current mapped: ' + node.icon + ' ' + node.name + '.', 'gold');
+    toast('🧭 New current mapped: ' + node.icon + ' ' + node.name, 3600);
+    if (typeof showStoryModal === 'function') {
+      setTimeout(function(){ showStoryModal({ title: node.icon + ' ' + node.name, blurb: node.flavor }); }, 400);
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderTideNetworkScreen === 'function') renderTideNetworkScreen();
+  };
+
+  window.checkSpiritualCurrent = function(){
+    if (!window.tideNetworkUnlocked()) return;
+    const status = window.spiritualCurrentStatus();
+    if (status.state !== 'ready') { toast('⏳ Soel isn\'t sensing anything new yet.'); return; }
+    const ts = tideNetworkState();
+    const unmapped = SPIRITUAL_NODES.filter(n => !ts.spiritualNodes[n.id]);
+    ts.nextSpiritualAt = Date.now() + SPIRITUAL_COOLDOWN_MS;
+    if (!unmapped.length) { toast('🐾 Soel watches the water, but nothing new stirs.'); if (typeof saveGameQuiet === 'function') saveGameQuiet(); return; }
+    const node = unmapped[Math.floor(Math.random() * unmapped.length)];
+    ts.spiritualNodes[node.id] = true;
+    logEvent('🐾 Soel senses something beneath the current: ' + node.icon + ' ' + node.name + '.', 'gold');
+    toast('🐾 Soel senses something beneath the current.', 3600);
+    if (typeof showStoryModal === 'function') {
+      setTimeout(function(){ showStoryModal({ title: '🐾 ' + node.icon + ' ' + node.name, blurb: node.flavor }); }, 400);
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderTideNetworkScreen === 'function') renderTideNetworkScreen();
+  };
+
+  let tideNetworkActiveSection = 'enter_settlement';
+  window.switchTideNetworkSection = function(key){
+    const ts = tideNetworkState();
+    if (!ts.sections[key]) { toast('Not open to them yet.'); return; }
+    tideNetworkActiveSection = key;
+    window.renderTideNetworkScreen();
+  };
+
+  window.renderTideNetworkScreen = function(){
+    const titleEl = document.getElementById('tideNetworkHeaderTitle');
+    const subEl = document.getElementById('tideNetworkHeaderSubtitle');
+    const container = document.getElementById('tideNetworkContent');
+    if (!container) return;
+    const ts = tideNetworkState();
+    if (titleEl) titleEl.textContent = ts.nameKnown ? ('🌊 ' + ts.name) : '🌊 UNKNOWN TIDE SETTLEMENT';
+    if (subEl) subEl.textContent = ts.nameKnown ? 'A place the crew is starting to know' : 'Location not yet identified';
+
+    let html = '<div class="tabs" style="flex-wrap:wrap;">';
+    TIDE_NETWORK_SECTIONS.forEach(function(sec){
+      const unlocked = ts.sections[sec.key];
+      html += '<button class="tab-btn'+(tideNetworkActiveSection===sec.key?' active':'')+'" '+
+        (unlocked ? 'onclick="switchTideNetworkSection(\''+sec.key+'\')"' : 'disabled style="opacity:.45;cursor:not-allowed;"') +
+        '>'+sec.icon+' '+sec.name+'</button>';
+    });
+    html += '</div><div class="panel" style="margin-top:10px;">';
+
+    const activeDef = TIDE_NETWORK_SECTIONS.find(s => s.key === tideNetworkActiveSection);
+    if (!ts.sections[tideNetworkActiveSection]) {
+      html += '<div class="story-chip">'+(activeDef?activeDef.lockedText:'🔒 Not available yet')+'</div>';
+    } else if (tideNetworkActiveSection === 'enter_settlement') {
+      html += '<div class="panel-title">🌊 Enter the Settlement</div>'+
+        '<p style="font-size:.85rem;opacity:.85;">Homes, docks, gathering places — all of it built around how the water actually moves, not fought against.</p>';
+    } else if (tideNetworkActiveSection === 'observe') {
+      const relCount = Object.keys(ts.mappedNodes).length;
+      html += '<div class="panel-title">👁️ Observe</div>'+
+        '<div style="font-size:.85rem;line-height:1.8;">'+
+        'World: <strong>Unknown</strong><br>'+
+        'Settlement: <strong>'+(ts.nameKnown ? ts.name : 'Unknown')+'</strong><br>'+
+        'Current: <strong>'+(relCount ? 'Partially Mapped ('+relCount+'/'+CURRENT_NODES.length+')' : 'Unmapped')+'</strong><br>'+
+        'Relationship: <strong>'+ts.relationship+'</strong>'+
+        '</div>';
+    } else if (tideNetworkActiveSection === 'map_currents') {
+      const status = window.mapCurrentsStatus();
+      const mappedCount = Object.keys(ts.mappedNodes).length;
+      html += '<div class="panel-title">🧭 Map Currents</div>'+
+        '<p style="font-size:.82rem;opacity:.8;margin-bottom:8px;">Renn maps, Erynn interprets, Mimi reads the patterns. Charted so far: '+mappedCount+'/'+CURRENT_NODES.length+'.</p>';
+      if (status.state === 'ready') {
+        html += '<button class="btn btn-small btn-success" onclick="mapCurrents()">🧭 Chart the Current</button>';
+      } else {
+        const hrs = Math.max(0, Math.ceil(status.msLeft / 3600000));
+        html += '<p style="font-size:.78rem;opacity:.6;">Ready again in about '+hrs+' hour'+(hrs===1?'':'s')+'.</p>';
+      }
+      Object.keys(ts.mappedNodes).forEach(function(nodeId){
+        const node = CURRENT_NODES.find(n => n.id === nodeId);
+        if (node) html += '<div style="font-size:.8rem;padding:4px 0;">'+node.icon+' '+node.name+'</div>';
+      });
+      html += '<div style="margin-top:14px;border-top:1px solid rgba(232,197,71,.2);padding-top:10px;">'+
+        '<div class="panel-title" style="font-size:.85rem;">🐾 Spiritual Current</div>'+
+        '<p style="font-size:.78rem;opacity:.75;margin-bottom:8px;">Occasionally, Soel senses something beneath the current — not treasure, just something worth knowing.</p>';
+      const sStatus = window.spiritualCurrentStatus();
+      if (sStatus.state === 'ready') {
+        html += '<button class="btn btn-small btn-success" onclick="checkSpiritualCurrent()">🐾 Let Soel Look</button>';
+      } else {
+        const shrs = Math.max(0, Math.ceil(sStatus.msLeft / 3600000));
+        html += '<p style="font-size:.76rem;opacity:.55;">Nothing new to sense for about '+shrs+' hour'+(shrs===1?'':'s')+'.</p>';
+      }
+      Object.keys(ts.spiritualNodes).forEach(function(nodeId){
+        const node = SPIRITUAL_NODES.find(n => n.id === nodeId);
+        if (node) html += '<div style="font-size:.8rem;padding:4px 0;opacity:.9;">'+node.icon+' '+node.name+'</div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="panel-title">'+(activeDef?activeDef.icon+' '+activeDef.name:'')+'</div>'+
+        '<p style="font-size:.85rem;opacity:.7;">Nothing here yet.</p>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  };
+
+  const oldRenderNavigationForTideNetwork = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForTideNetwork) oldRenderNavigationForTideNetwork();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.tideNetworkUnlocked()) return;
+    const ts = tideNetworkState();
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(100,220,220,.5);border-style:dashed;" onclick="goScreen(\'tidenetwork\')">'+
+      '<div style="font-size:1.6rem;">🌊</div><div style="font-weight:600;">'+(ts.nameKnown?ts.name:'Unknown Tide Settlement')+'</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">Something beneath the water.</div></div>');
+  };
+
+  const oldGoScreenForTideNetwork = window.goScreen;
+  window.goScreen = function(name){
+    if (oldGoScreenForTideNetwork) oldGoScreenForTideNetwork(name);
+    if (name === 'tidenetwork' && typeof window.renderTideNetworkScreen === 'function') window.renderTideNetworkScreen();
   };
 })();
 </script>
