@@ -7257,7 +7257,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V166 · Harbour Refined and Arc XIV Ch1'</script>
+<script>window.__CT_BUILD__='V168 · Expedition Post-Arc12 and Remote Access Re-gated'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -12234,13 +12234,21 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     const enemy = game.combatEnemy;
     if (!enemy || enemy.kind !== 'expedition') return;
     const es = expState();
-    const he = horizonEngineState();
     es.totalKills++;
-    es.totalKnowledge += enemy.knowledge;
-    es.totalResidue += enemy.residue;
-    he.knowledge += enemy.knowledge;
-    he.residue += enemy.residue;
-    logCombat('🔭 +' + enemy.knowledge + ' Knowledge, +' + enemy.residue + ' Residue.');
+    // Knowledge/Residue existed to build the Horizon Engine — once Arc
+    // XII's first crossing actually happens, that purpose is fulfilled.
+    // Research Expedition keeps running afterward (XP, gold, Dragon
+    // Blood, trinkets all still granted via the base victory handler and
+    // the separate wyvern wrap below), just without the now-pointless
+    // research currencies.
+    if (!game.arc12Complete) {
+      const he = horizonEngineState();
+      es.totalKnowledge += enemy.knowledge;
+      es.totalResidue += enemy.residue;
+      he.knowledge += enemy.knowledge;
+      he.residue += enemy.residue;
+      logCombat('🔭 +' + enemy.knowledge + ' Knowledge, +' + enemy.residue + ' Residue.');
+    }
   };
 
   // -------------------------------------------------------------------
@@ -12274,7 +12282,8 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       '<div style="margin-bottom:10px;"><strong>Horizon Engine Development</strong>'+
       '<div class="ship-stat-bar" style="width:100%;margin:4px 0;"><div class="ship-stat-fill" style="width:'+pct+'%;background:#e8c96a;"></div></div>'+
       '<span style="font-size:.78rem;opacity:.75;">'+pct+'% — still a research project. Nothing\'s been built yet.</span></div>'+
-      '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+(he.dragonBlood ? ' · 🩸 Dragon Blood: '+he.dragonBlood : '')+'</div>';
+      '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+(he.dragonBlood ? ' · 🩸 Dragon Blood: '+he.dragonBlood : '')+'</div>'+
+      (game.arc12Complete ? '<div style="font-size:.78rem;opacity:.75;background:rgba(120,200,255,.1);border:1px solid rgba(120,200,255,.3);border-radius:6px;padding:6px 10px;margin-bottom:10px;">✓ Research Complete — the Horizon Engine\'s purpose here is fulfilled. Expeditions continue for experience and raw materials.</div>' : '');
     if (es.active) {
       html += '<div class="story-chip" style="border-left-color:var(--danger);">Currently out at Wave '+es.wave+'<br>'+
         'Kills: '+es.totalKills+' · Knowledge this run: '+es.totalKnowledge+' · Residue this run: '+es.totalResidue+'<br>'+
@@ -15452,6 +15461,85 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     }
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
+  };
+})();
+</script>
+
+
+<script id="ct-build-v167-remote-access">
+(function(){
+  // -------------------------------------------------------------------
+  // REMOTE ACCESS TO FAIR TIDE. Confirmed the Hub was previously only
+  // reachable via its Explore tab while physically docked there — no
+  // location-independent entry existed at all. This adds one, framed as
+  // San checking in and issuing instructions from wherever Crimson Tide
+  // actually is.
+  //
+  // Split per San's own "assign and check" framing: Dispatch, Requests,
+  // Buildings, Roster, and Trade are administrative and stay open
+  // remotely. Clinic (healing), Training Room (sparring), Captain's
+  // Quarters (resting), Uncharted Reach (combat — the party has to be
+  // there fighting), Bonds (quality time), and Research Expedition (San/
+  // Joel/Soel physically leave on it) all require being at Fair Tide in
+  // person — flagged as a judgment call, easy to adjust if San wants a
+  // different split.
+  //
+  // Uses a one-shot "intent" flag consumed by renderFairTideHub() rather
+  // than touching any of the existing goScreen('fairtide') call sites —
+  // renderFairTideHub() already runs on every visit regardless of how
+  // the screen was reached, so this needs no changes to how the Hub is
+  // normally entered.
+  // -------------------------------------------------------------------
+  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'uncharted', 'bonds', 'expedition'];
+
+  window.remoteAccessUnlocked = function(){
+    return typeof window.arc13ObjectiveState === 'function' && window.arc13ObjectiveState() !== null;
+  };
+
+  window.enterFairTideRemotely = function(){
+    if (!window.remoteAccessUnlocked()) { toast('🔒 Not yet available.'); return; }
+    game.fairTideEnteringRemotely = true;
+    goScreen('fairtide');
+  };
+
+  const oldRenderFairTideHubForRemote = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    if (game.fairTideEnteringRemotely) {
+      game.fairTideRemoteAccessMode = true;
+      game.fairTideEnteringRemotely = false;
+    } else {
+      game.fairTideRemoteAccessMode = false;
+    }
+    if (oldRenderFairTideHubForRemote) oldRenderFairTideHubForRemote();
+    const header = document.getElementById('fairTideSpiritDisplay');
+    if (header && game.fairTideRemoteAccessMode) {
+      header.insertAdjacentHTML('afterend',
+        '<div id="remoteAccessBanner" style="text-align:center;font-size:.78rem;opacity:.85;background:rgba(120,180,255,.12);border:1px solid rgba(120,180,255,.35);border-radius:8px;padding:6px 10px;margin:6px 0 10px;">'+
+        '📡 Remote Access — checking in from wherever Crimson Tide currently is.</div>');
+    } else {
+      const stale = document.getElementById('remoteAccessBanner');
+      if (stale) stale.remove();
+    }
+  };
+
+  const oldSwitchFairTideTabForRemote = window.switchFairTideTab;
+  window.switchFairTideTab = function(tab){
+    if (game.fairTideRemoteAccessMode && REMOTE_RESTRICTED_TABS.includes(tab)) {
+      toast('🔒 Requires being at Fair Tide in person.');
+      return;
+    }
+    return oldSwitchFairTideTabForRemote(tab);
+  };
+
+  const oldRenderNavigationForRemote = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForRemote) oldRenderNavigationForRemote();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.remoteAccessUnlocked()) return;
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(120,180,255,.5);" onclick="enterFairTideRemotely()">'+
+      '<div style="font-size:1.6rem;">📡</div><div style="font-weight:600;">Remote Access</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">Check in on Fair Tide from here.</div></div>');
   };
 })();
 </script>
