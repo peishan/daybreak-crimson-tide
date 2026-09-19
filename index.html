@@ -15366,16 +15366,20 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 <script id="ct-build-v166-arc14-ch1">
 (function(){
   // -------------------------------------------------------------------
-  // ARC XIV — PEOPLE BENEATH THE TIDE. Only Chapter 1 wired per San's
-  // own "no rush to wire them in, but gate chapter 1 as usual" — the
-  // Tide Network mechanic itself (current mapping, Spiritual Current,
-  // the whole aquatic parallel to the Harbour system) is deliberately
-  // NOT built yet either; that's real, separate work for later. This is
-  // narrative-only, matching the standard arc-wiring pattern exactly.
+  // ARC XIV — PEOPLE BENEATH THE TIDE. Chapters 1-5 wired (Part I,
+  // "Something Beneath the Water," complete) — the Tide Network mechanic
+  // itself (current mapping, Spiritual Current, the whole aquatic
+  // parallel to the Harbour system) is deliberately NOT built yet
+  // either; that's real, separate work for later. This is narrative-only
+  // so far, matching the standard arc-wiring pattern exactly.
   // Gated behind arc13Complete + level 210, continuing the +15/arc pace.
   // -------------------------------------------------------------------
   const ARC14_CHAPTERS = [
-    {id:1, title:'The Water Moves', focus:"The Crimson Tide encounters an unusual current — it doesn't behave like an ordinary ocean current at all. Renn's instruments pick up movement beneath the ship. Soel notices before anyone else does.", image:'assets/comics/arc14/ch01-the-water-moves.png', xp:280, action:'🌊 Investigate the Current'}
+    {id:1, title:'The Water Moves', focus:"The Crimson Tide encounters an unusual current — it doesn't behave like an ordinary ocean current at all. Renn's instruments pick up movement beneath the ship. Soel notices before anyone else does.", image:'assets/comics/arc14/ch01-the-water-moves.png', xp:280, action:'🌊 Investigate the Current'},
+    {id:2, title:'Beneath the Surface', focus:"The crew spots structures below the water — not ruins, homes. Lights move beneath the surface, and something appears to be watching the ship. This may be another civilization entirely.", image:'assets/comics/arc14/ch02-beneath-the-surface.png', xp:280, action:'👁️ Look Below'},
+    {id:3, title:'The Ones Beneath', focus:"The first aquatic people approach — intelligent, organized, cautious, and not hostile. They just want to know one thing: why is the Crimson Tide traveling through their waters?", image:'assets/comics/arc14/ch03-the-ones-beneath.png', xp:300, action:'🤝 Answer Their Question'},
+    {id:4, title:'A Different Kind of Harbour', focus:"An underwater settlement, connected to the surface by designated meeting areas — markets, docks, homes, gathering places. Joel is fascinated by how the whole place is designed around water movement.", image:'assets/comics/arc14/ch04-a-different-kind-of-harbour.png', xp:290, action:'🏙️ Tour the Settlement'},
+    {id:5, title:'Learning to Enter', focus:"Visiting isn't as simple as breathing underwater — there are rules, equipment, currents, designated routes. San realizes even entering someone's home has rules.", image:'assets/comics/arc14/ch05-learning-to-enter.png', xp:290, action:'🤿 Learn the Way In'}
   ];
   window.ARC14_CHAPTERS = ARC14_CHAPTERS;
 
@@ -15390,7 +15394,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 
   const ARC14_CHAPTER_SCENES = {
-    1: "The Crimson Tide encounters an unusual current.<br><br>It doesn't behave like an ordinary ocean current.<br><br>Renn's instruments detect movement beneath the ship.<br><br>Soel notices it before anyone else."
+    1: "The Crimson Tide encounters an unusual current.<br><br>It doesn't behave like an ordinary ocean current.<br><br>Renn's instruments detect movement beneath the ship.<br><br>Soel notices it before anyone else.",
+    2: "The structures are unmistakable once anyone actually looks properly. Not ruins, not wreckage — homes, built to last, sitting where nobody expected anything to be built at all.<br><br>Lights move beneath the surface in patterns too deliberate to be current or fish. Something down there is watching the ship, and everyone on deck can feel it.<br><br>Nobody says the word out loud right away, but the thought is unavoidable. They may have just found another civilization — one that's been below them the entire time.",
+    3: "The first ones surface without warning, and without hostility either.<br><br>They move with an organization that makes it obvious immediately — this isn't a chance encounter with wildlife. These are people, cautious but not afraid, sizing the ship up with the same care the crew is using to size them up.<br><br>They don't demand anything. They ask one question, plainly, and wait for an answer.<br><br>\"Why are you travelling through our waters?\"",
+    4: "What waits beneath the surface isn't a ruin or a curiosity — it's a working settlement, markets and docks and homes, gathering places built exactly where they need to be.<br><br>The whole design follows the water instead of fighting it. Joel can't stop studying how naturally the place moves with the current instead of against it, the same instinct he respects in a well-built hull.<br><br>Every part of it says the same thing: people have been living here, comfortably, for a very long time.",
+    5: "Getting in isn't as simple as holding your breath and diving down.<br><br>There's proper equipment. Marked routes. Currents that have to be respected rather than fought through. A whole procedure the crew has to actually learn before anyone will let them near the settlement itself.<br><br>San takes it in without complaint, turning the lesson over once out loud.<br><br>\"Even entering someone's home has rules.\""
   };
   window.ARC14_CHAPTER_SCENES = ARC14_CHAPTER_SCENES;
 
