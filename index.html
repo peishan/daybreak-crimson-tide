@@ -7287,7 +7287,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V176 · Arc XV Chapter 1'</script>
+<script>window.__CT_BUILD__='V177 · Continuous Gold Guard'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -16112,11 +16112,10 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
 <script id="ct-build-v176-arc15-ch1">
 (function(){
   // -------------------------------------------------------------------
-  // ARC XV — SHAPE OF A PEOPLE. Only Chapter 1's text has been provided
-  // so far, so ARC15_CHAPTERS starts with just one entry, same pattern
-  // as Arc XIII/XIV's own Ch.1-only starts. Gated behind arc14Complete +
-  // level 225, continuing the +15/arc pace exactly (XIII=195, XIV=210,
-  // XV=225).
+  // ARC XV — SHAPE OF A PEOPLE. Chapters 1-5 wired (Part I underway) —
+  // building in batches as the outline arrives, same pattern as every
+  // arc since XI. Gated behind arc14Complete + level 225, continuing the
+  // +15/arc pace exactly (XIII=195, XIV=210, XV=225).
   //
   // The Clan Settlement/Wilderness mechanic San described (Settlement/
   // Market/Wilderness/Crafts/Community/Requests/Explore tabs, regional
@@ -16126,7 +16125,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // Noted and ready for whenever that's next.
   // -------------------------------------------------------------------
   const ARC15_CHAPTERS = [
-    {id:1, title:'The Shape in the Forest', focus:"The Crimson Tide reaches a new world and finds enormous tracks near the shore. At first it looks like a large animal — until the tracks lead directly into a settled community.", image:'assets/comics/arc15/ch01-the-shape-in-the-forest.png', xp:280, action:'👣 Follow the Tracks'}
+    {id:1, title:'The Shape in the Forest', focus:"The Crimson Tide reaches a new world and finds enormous tracks near the shore. At first it looks like a large animal — until the tracks lead directly into a settled community.", image:'assets/comics/arc15/ch01-the-shape-in-the-forest.png', xp:280, action:'👣 Follow the Tracks'},
+    {id:2, title:'Someone Is Watching',      focus:"The crew notices people watching from the forest — some clearly human, others clearly not. Nobody attacks. The locals just seem uncertain about these strange visitors.", image:'assets/comics/arc15/ch02-someone-is-watching.png', xp:280, action:'👀 Watch Back'},
+    {id:3, title:'The Ones Who Change',      focus:"The crew finally meets the shapeshifting people. Transformation is completely natural to them — one person casually changes form mid-conversation, leaving San's group momentarily stunned. The locals find the reaction more amusing than anything.", image:'assets/comics/arc15/ch03-the-ones-who-change.png', xp:290, action:'😮 Meet the Shapeshifters'},
+    {id:4, title:'Not a Curse',              focus:"San carefully asks whether transformation is something they suffer from. The locals are just confused. \"Why would we call it a curse?\" San realizes the crew already brought an assumption with them that never belonged here.", image:'assets/comics/arc15/ch04-not-a-curse.png', xp:300, action:'❓ Ask the Question'},
+    {id:5, title:'Two Forms, One Person',    focus:"Transformation doesn't create a different personality — the same person stays the same person, names and relationships and responsibilities intact either way. Renn is fascinated by the biological and magical implications.", image:'assets/comics/arc15/ch05-two-forms-one-person.png', xp:290, action:'🔬 Ask Renn to Explain'},
+    {id:6, title:'Life in Two Shapes',       focus:"The crew watches ordinary life — families, children, markets, crafts, homes, work. Some stay in one form most of the day, others shift back and forth constantly. Nobody treats either as unusual.", image:'assets/comics/arc15/ch06-life-in-two-shapes.png', xp:280, action:'🏘️ Watch the Village Live'},
+    {id:7, title:'The Homes They Built',     focus:"The architecture makes sense once the crew understands the culture — doorways, furniture, clothing, and public spaces all built around flexibility. Joel: \"They didn't adapt themselves to the buildings. They built the buildings for themselves.\"", image:'assets/comics/arc15/ch07-the-homes-they-built.png', xp:290, action:'🏠 See How They Built'},
+    {id:8, title:'Growing Into Yourself',    focus:"The crew meets children learning to control their transformations — some confident, some struggling, some preferring one form, others loving the change itself. Their families treat it as part of growing up, not something to fix.", image:'assets/comics/arc15/ch08-growing-into-yourself.png', xp:300, action:'🌱 Meet the Children'},
+    {id:9, title:'The Names We Keep',        focus:"San discovers some people use different names or titles per form, others keep exactly the same name — no single cultural rule behind it. Erynn: identity here is more complicated than appearance.", image:'assets/comics/arc15/ch09-the-names-we-keep.png', xp:300, action:'📛 Learn Their Names'},
+    {id:10, title:'The Festival of Forms',   focus:"A local festival celebrating the community's different forms looks ceremonial from a distance and turns out to be wonderfully ordinary up close — food, music, family, games, storytelling. Soel loves the chaos of it.", image:'assets/comics/arc15/ch10-the-festival-of-forms.png', xp:320, action:'🎉 Join the Festival'}
   ];
   window.ARC15_CHAPTERS = ARC15_CHAPTERS;
 
@@ -16141,7 +16149,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   };
 
   const ARC15_CHAPTER_SCENES = {
-    1: "The Crimson Tide reaches a new world.<br><br>Enormous tracks near the shore are the first thing anyone notices.<br><br>At first, the crew assumes they're dealing with a large animal — something to watch for, maybe avoid.<br><br>Then the tracks don't stop at the tree line.<br><br>They lead directly into a settled community."
+    1: "The Crimson Tide reaches a new world.<br><br>Enormous tracks near the shore are the first thing anyone notices.<br><br>At first, the crew assumes they're dealing with a large animal — something to watch for, maybe avoid.<br><br>Then the tracks don't stop at the tree line.<br><br>They lead directly into a settled community.",
+    2: "It doesn't take long to notice they're being watched.<br><br>Figures at the tree line, some unmistakably human, others clearly something else entirely. Nobody raises a weapon. Nobody moves to attack.<br><br>What comes across instead is uncertainty — the same careful distance the crew themselves would probably keep, meeting something unfamiliar for the first time. Whatever's out there watching them isn't hostile. It just hasn't decided what they are yet.",
+    3: "The meeting happens almost casually, which somehow makes it stranger.<br><br>Mid-conversation, without any warning or ceremony, one of the locals simply changes shape — and keeps talking through it like nothing happened, because to them, nothing did.<br><br>San's group goes completely still. The locals notice, and find it funny more than anything — not offended, just amused at how big a reaction something so ordinary to them manages to get.",
+    4: "San tries to ask carefully, the way she'd ask about anything that might be a sensitive subject. Is the transformation something they suffer from? Something they'd want lifted, if it could be?<br><br>The question just confuses the person she asks.<br><br>\"Why would we call it a curse?\"<br><br>San doesn't have a good answer. She realizes, a beat too late, that the assumption was never theirs to begin with — it walked in with the crew, and it never actually belonged here.",
+    5: "The more they learn, the clearer it gets: changing shape doesn't change who someone is.<br><br>Names stay the same. Relationships stay the same. Whatever someone's responsible for, whatever work they do, none of it resets just because their body looks different for a while. It's not a second self. It's the same person, in another form.<br><br>Renn can barely sit still through the explanation, already circling questions about how the magic and the biology of it actually fit together — the kind of question that's going to keep him up half the night.",
+    6: "The crew spends time just watching people live.<br><br>Families. Children running between market stalls. Craftspeople at work. Homes, quiet in the afternoon.<br><br>Some people stay in one shape for most of the day. Others shift back and forth without a second thought. Nobody here treats either choice as strange — it's simply how different people live.",
+    7: "The architecture starts making sense once the crew actually understands the culture behind it.<br><br>Doorways sized for more than one shape. Furniture built to work either way. Clothing, public spaces, everything quietly designed around flexibility rather than one fixed idea of a body.<br><br>Joel puts it plainly, watching a doorway that's clearly meant for exactly this.<br><br>\"They didn't adapt themselves to the buildings.\"<br><br>\"They built the buildings for themselves.\"",
+    8: "The crew meets children still learning to control their own transformations.<br><br>Some of them are confident about it already, shifting easily, almost showing off. Others are still struggling, working through something that clearly doesn't come naturally yet. Some prefer to stay in one form most of the time. Others clearly love the change itself.<br><br>Their families don't treat any of it as a problem needing a solution. It's just part of growing up here — no different from learning to walk, or read, or swim.",
+    9: "San notices something that doesn't quite fit a single pattern: some people go by different names, even different titles, depending on which form they're in. Others use exactly the same name no matter what shape they're wearing.<br><br>There's no single rule behind it. It's personal, apparently, the same way a nickname is personal.<br><br>Erynn's the one who puts words to what San's already sensing. Identity here is a lot more complicated than what a person happens to look like at any given moment.",
+    10: "The crew ends up at a local festival built entirely around celebrating the community's different forms.<br><br>It looks ceremonial from a distance — formal, maybe even solemn. Up close, it's nothing like that at all. Food everywhere. Music. Families gathered in loose clusters, telling stories, playing games that seem to change their own rules depending on who's playing.<br><br>Soel throws himself straight into the middle of it, thoroughly delighted by the chaos of the whole thing."
   };
   window.ARC15_CHAPTER_SCENES = ARC15_CHAPTER_SCENES;
 
@@ -16214,6 +16231,60 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
   };
+})();
+</script>
+
+
+<script id="ct-build-v177-gold-guard-continuous">
+(function(){
+  // -------------------------------------------------------------------
+  // GOLD GUARD, CONTINUOUS. The existing V79 fix (ct-build-v79-gold-nan-
+  // fix) only guards two of the 39 places in this file that touch
+  // game.gold (buyGood/sellGood), and its repair only runs once, at
+  // loadGame(). If gold gets corrupted by any of the other 37 sites, or
+  // gets corrupted again mid-session after that one-time repair already
+  // ran, the player is stuck seeing "NaN g" until the next full reload.
+  // San's screenshot showed exactly that — Day 1338, Level 199, already
+  // NaN in an active session.
+  //
+  // Rather than auditing all 39 sites individually to find which one
+  // caused this specific instance (which may have happened long ago,
+  // from a bug that no longer exists, leaving only the corrupted value
+  // behind), this guards continuously at the two places that actually
+  // matter: right before the number is ever shown, and right before it's
+  // ever saved. Whatever corrupts it, this catches it within one UI
+  // update and never lets it reach localStorage.
+  // -------------------------------------------------------------------
+  function repairGoldNow(){
+    if (typeof game === 'undefined') return;
+    if (!Number.isFinite(Number(game.gold))) {
+      console.warn('[GoldGuard] game.gold was non-finite ('+game.gold+') — resetting to 0.');
+      game.gold = 0;
+    }
+  }
+  window.__ctRepairGoldNow = repairGoldNow;
+
+  const oldUpdateUIForGoldGuard = window.updateUI;
+  window.updateUI = function(){
+    repairGoldNow();
+    return oldUpdateUIForGoldGuard.apply(this, arguments);
+  };
+
+  const oldSaveGameForGoldGuard = window.saveGame;
+  window.saveGame = function(){
+    repairGoldNow();
+    return oldSaveGameForGoldGuard.apply(this, arguments);
+  };
+
+  const oldSaveGameQuietForGoldGuard = window.saveGameQuiet;
+  window.saveGameQuiet = function(){
+    repairGoldNow();
+    return oldSaveGameQuietForGoldGuard.apply(this, arguments);
+  };
+
+  // Catches the case where `game` is already populated and corrupted by
+  // the time this script runs (an in-progress session, not a fresh load).
+  repairGoldNow();
 })();
 </script>
 
