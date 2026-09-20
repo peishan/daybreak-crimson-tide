@@ -3017,7 +3017,17 @@ const HARBOR_ENEMIES = {
   territorial_pufferkin: { name: 'Territorial Puffer-Kin', icon: '🐡', hp: 320, dmg: 19, xp: 280, gold: 85, desc: 'Not hostile by nature. Very hostile about being approached.' },
   deepwater_opportunist: { name: 'A Deep-Water Opportunist', icon: '🦈', hp: 350, dmg: 21, xp: 300, gold: 95, desc: "Drawn in by the disturbance, hunting whatever else it's confused." },
   tidewrecked_scavenger: { name: 'A Tide-Wrecked Scavenger', icon: '🐙', hp: 340, dmg: 20, xp: 290, gold: 90, desc: 'Living in the wreckage of a route nobody uses safely anymore.' },
-  unmoored_current_spirit: { name: 'An Unmoored Current-Spirit', icon: '🌊', hp: 400, dmg: 23, xp: 330, gold: 120, desc: "Displaced by whatever's wrong with the water, and furious about it." }
+  unmoored_current_spirit: { name: 'An Unmoored Current-Spirit', icon: '🌊', hp: 400, dmg: 23, xp: 330, gold: 120, desc: "Displaced by whatever's wrong with the water, and furious about it." },
+  // Arc XV — Clan Settlement Wilderness encounters. Native wildlife, not
+  // generic fantasy monsters — themed to a shapeshifter world specifically.
+  moonfang_wolves: { name: 'Moonfang Wolves', icon: '🐺', hp: 380, dmg: 22, xp: 300, gold: 100, desc: "Large magical wolves, hunting in coordinated packs. Nothing personal about it — just how they eat." },
+  thornback_boar: { name: 'Thornback Boar', icon: '🐗', hp: 460, dmg: 24, xp: 320, gold: 100, desc: 'A forest boar built like a battering ram, covered in growths hardened past anything natural.' },
+  gloom_stalker: { name: 'Gloom Stalker', icon: '🐾', hp: 400, dmg: 26, xp: 310, gold: 95, desc: "You don't see it until it's already decided you have." },
+  moonclaw: { name: 'Moonclaw', icon: '🌙', hp: 480, dmg: 27, xp: 380, gold: 150, desc: "Its strength rises and falls with the moon. Right now, it's not in the mood to be reasonable." },
+  wildshape_beast_forest: { name: 'A Wildshape Beast (Forest Form)', icon: '🐻', hp: 440, dmg: 25, xp: 350, gold: 130, desc: "Wolf-shaped here. It won't stay that way if it decides to move." },
+  wildshape_beast_cave: { name: 'A Wildshape Beast (Cave Form)', icon: '🦎', hp: 440, dmg: 25, xp: 350, gold: 130, desc: 'Something low, wide, and built for the dark. The forest never sees this side of it.' },
+  mossback: { name: 'Mossback', icon: '🌳', hp: 500, dmg: 20, xp: 300, gold: 80, desc: 'Mostly moss, mostly plant, mostly minding its own business. Emphasis on mostly.' },
+  the_old_moon_beast: { name: 'The Old Moon Beast', icon: '🌕', hp: 900, dmg: 32, xp: 600, gold: 300, desc: 'Ancient, territorial, and — the locals will tell you, if you ask — not actually anyone\'s enemy.' }
 };
 const SEA_ENEMIES = {
   giant_octopus: { name: 'Giant Octopus', art: '🐙', hp: 340, dmg: 16, xp: 110, gold: 60,  desc: 'Ink clouds the water an instant before the tentacles do.' },
@@ -3032,7 +3042,9 @@ const SEA_ENEMIES = {
   territorial_sea_guardian: { name: 'Territorial Sea Guardian', art: '🐉', hp: 400, dmg: 20, xp: 200, gold: 100, desc: "Something large surfaces nearby. Not aggressive, exactly. Clearly not friendly, either." },
   suspicious_patrol_boat: { name: 'Suspicious Patrol Boat', art: '⚓', hp: 360, dmg: 18, xp: 180, gold: 80, desc: 'An unmarked local vessel demands you identify yourselves, badly translated and tense.' },
   unknown_deep_dweller: { name: 'Unknown Deep-Dweller', art: '🐙', hp: 420, dmg: 21, xp: 210, gold: 100, desc: 'Something large moves beneath the ship, unfamiliar and untested.' },
-  disturbed_current_entity: { name: 'A Disturbed Current', art: '🌊', hp: 400, dmg: 20, xp: 200, gold: 90, desc: "The current turns hostile without warning, echoing the same problem the whole arc is built around." }
+  disturbed_current_entity: { name: 'A Disturbed Current', art: '🌊', hp: 400, dmg: 20, xp: 200, gold: 90, desc: "The current turns hostile without warning, echoing the same problem the whole arc is built around." },
+  shore_pack_scout: { name: 'A Shore Pack Scout', art: '🐺', hp: 380, dmg: 20, xp: 190, gold: 85, desc: "Something's been pacing the ship along the coastline, keeping just out of clear sight." },
+  something_on_the_ridge: { name: 'Something on the Ridge', art: '🏔️', hp: 400, dmg: 22, xp: 200, gold: 90, desc: 'A shape breaks the tree line above the shore and starts moving fast, downhill, directly toward the landing point.' }
 };
 const GUARDIANS = {
   wreck_warden:     { name: 'The Wreck Warden', art: '💀', hp: 620,  dmg: 20, xp: 260, gold: 150, desc: 'Wears the shape of every captain who ever drowned on this reef.' },
@@ -6664,6 +6676,9 @@ function handleVictory() {
   } else if (enemy.kind === 'tidenetwork_voyage') {
     postBattleMessage = 'The current settles. ' + enemy.name + ' is behind you now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'tidenetwork\')">🌊 Continue to the Settlement</button>';
+  } else if (enemy.kind === 'clansettlement_voyage') {
+    postBattleMessage = 'The shore is quiet again. ' + enemy.name + " won't be following the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'clansettlement\')">🌕 Continue to the Settlement</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
@@ -7287,7 +7302,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V178 · Beyond the Horizon Voyage and Voyage Lock'</script>
+<script>window.__CT_BUILD__='V179 · Clan Settlement'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -16380,6 +16395,316 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   }
   window.__ctResolveInterworldOutcome = resolveInterworldOutcome;
+})();
+</script>
+
+
+<div class="screen" id="clanSettlementScreen">
+  <div class="game-container">
+    <div class="header"><h1 id="clanSettlementHeaderTitle">🌕 UNKNOWN SETTLEMENT</h1><div class="subtitle" id="clanSettlementHeaderSubtitle">Location not yet identified</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('navigate')">🗺️ Back to Sail</button>
+    </div>
+    <div id="clanSettlementContent"></div>
+  </div>
+</div>
+
+<script id="ct-build-v179-clan-settlement">
+(function(){
+  // -------------------------------------------------------------------
+  // THE CLAN SETTLEMENT — Arc XV's land-based parallel to the Harbour
+  // (Arc XIII) and Tide Network (Arc XIV). Same overall shape (Unknown
+  // -> real name, sections unlocking progressively, narrative
+  // relationship status) but built around Wilderness zone exploration
+  // instead of cultural discovery or current mapping — San's own "major
+  // new exploration mechanic" for this arc.
+  //
+  // 7 sections per San's spec: Settlement, Market, Wilderness, Crafts,
+  // Community, Requests, Explore. Settlement + Explore + Wilderness
+  // unlocked from Ch.1 (Wilderness is the headline mechanic San
+  // specifically called out, no reason to gate it behind later story);
+  // Market/Crafts/Community/Requests locked initially, matching the
+  // Harbour's own progressive-unlock philosophy. Section unlock hooks
+  // exposed the same way as Harbour/Tide Network — not wired to any
+  // specific Arc XV chapter yet, since only chapters 1-10 exist so far.
+  //
+  // Wilderness zones: Forest Path unlocked from the start (matches Ch.1
+  // "The Shape in the Forest"); Highland Trail, Moonstone Caves,
+  // Deepwood, and Unknown Territory are scouted in that order via a
+  // cooldown-gated action, same rhythm as Tide Network's Map Currents.
+  // Mossback is built as a genuine choice, not an automatic fight, per
+  // San's explicit "environmental encounter rather than automatic
+  // combat" — leave it be for a small discovery, or provoke it into a
+  // real fight. The Old Moon Beast works the same way at a much higher
+  // stakes level, once Unknown Territory is scouted — the "not every
+  // dangerous thing needs to be defeated" choice is the actual point of
+  // including it, not a boss fight to grind.
+  // -------------------------------------------------------------------
+  const CLAN_SETTLEMENT_SECTIONS = [
+    {key:'settlement', name:'Settlement', icon:'🏘️', lockedText: null},
+    {key:'explore', name:'Explore', icon:'🧭', lockedText: null},
+    {key:'wilderness', name:'Wilderness', icon:'🌲', lockedText: null},
+    {key:'market', name:'Market', icon:'🛍️', lockedText: '🔒 Not yet established'},
+    {key:'crafts', name:'Crafts', icon:'🛠️', lockedText: '🔒 No one here works with outsiders yet'},
+    {key:'community', name:'Community', icon:'🤝', lockedText: '🔒 No relationship yet'},
+    {key:'requests', name:'Requests', icon:'💬', lockedText: '🔒 No local requests available'}
+  ];
+  window.CLAN_SETTLEMENT_SECTIONS = CLAN_SETTLEMENT_SECTIONS;
+
+  const CLAN_RELATIONSHIP_TIERS = ['New Visitors', 'Recognised Guests', 'Trusted Visitors', 'Friends / Trade Partners'];
+  window.CLAN_RELATIONSHIP_TIERS = CLAN_RELATIONSHIP_TIERS;
+  window.advanceClanRelationship = function(){
+    const cs = clanSettlementState();
+    const idx = CLAN_RELATIONSHIP_TIERS.indexOf(cs.relationship);
+    if (idx >= 0 && idx < CLAN_RELATIONSHIP_TIERS.length - 1) cs.relationship = CLAN_RELATIONSHIP_TIERS[idx + 1];
+  };
+
+  const WILDERNESS_ZONES = [
+    {key:'forest_path', name:'Forest Path', icon:'🌳', enemies:['moonfang_wolves','gloom_stalker']},
+    {key:'highland_trail', name:'Highland Trail', icon:'⛰️', enemies:['thornback_boar','moonclaw']},
+    {key:'moonstone_caves', name:'Moonstone Caves', icon:'🪨', enemies:['wildshape_beast_cave','gloom_stalker']},
+    {key:'deepwood', name:'Deepwood', icon:'🌿', enemies:['wildshape_beast_forest'], special:'mossback'},
+    {key:'unknown_territory', name:'Unknown Territory', icon:'❓', enemies:[], special:'old_moon_beast'}
+  ];
+  window.WILDERNESS_ZONES = WILDERNESS_ZONES;
+
+  function clanSettlementState(){
+    game.clanSettlementState = game.clanSettlementState || {
+      nameKnown: false, name: null, worldName: null, relationship: 'New Visitors',
+      sections: {settlement:true, explore:true, wilderness:true, market:false, crafts:false, community:false, requests:false},
+      zonesScouted: {forest_path:true}, nextScoutAt: 0
+    };
+    const cs = game.clanSettlementState;
+    if (cs.relationship === undefined) cs.relationship = 'New Visitors';
+    if (cs.zonesScouted === undefined) cs.zonesScouted = {forest_path:true};
+    if (cs.zonesScouted.forest_path === undefined) cs.zonesScouted.forest_path = true;
+    if (cs.nextScoutAt === undefined) cs.nextScoutAt = 0;
+    return cs;
+  }
+  window.clanSettlementState = clanSettlementState;
+
+  window.clanSettlementUnlocked = function(){ return !!game.clanSettlementDiscovered; };
+  window.unlockClanSection = function(key){
+    const cs = clanSettlementState();
+    if (cs.sections[key] !== undefined) cs.sections[key] = true;
+  };
+  window.setClanSettlementName = function(name){
+    const cs = clanSettlementState();
+    cs.name = name;
+    cs.nameKnown = true;
+  };
+
+  const SCOUT_COOLDOWN_MS = 5 * 3600 * 1000;
+  window.scoutWildernessStatus = function(){
+    const cs = clanSettlementState();
+    if (Date.now() < cs.nextScoutAt) return {state:'cooldown', msLeft: cs.nextScoutAt - Date.now()};
+    return {state:'ready'};
+  };
+  window.scoutWilderness = function(){
+    const status = window.scoutWildernessStatus();
+    if (status.state !== 'ready') { toast('⏳ Not ready yet.'); return; }
+    const cs = clanSettlementState();
+    cs.nextScoutAt = Date.now() + SCOUT_COOLDOWN_MS;
+    const nextZone = WILDERNESS_ZONES.find(z => !cs.zonesScouted[z.key]);
+    if (!nextZone) { toast('🌲 Every known zone is already scouted.'); if (typeof saveGameQuiet === 'function') saveGameQuiet(); return; }
+    cs.zonesScouted[nextZone.key] = true;
+    logEvent('🌲 New territory scouted: ' + nextZone.icon + ' ' + nextZone.name + '.', 'gold');
+    toast('🌲 ' + nextZone.icon + ' ' + nextZone.name + ' has been mapped.', 3600);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderClanSettlementScreen === 'function') renderClanSettlementScreen();
+  };
+
+  window.encounterMossback = function(choice){
+    const enemy = scaledEnemyForExplore('mossback', 'harbor');
+    if (choice === 'leave') {
+      logEvent('🌳 The crew leaves the Mossback undisturbed. It barely seems to notice.', 'good');
+      toast('🌳 Left in peace, it settles back into the undergrowth.', 3600);
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    } else {
+      startCombat({kind:'harbor', key:'mossback', enemy: enemy, portId:null});
+    }
+  };
+
+  window.encounterOldMoonBeast = function(choice){
+    const cs = clanSettlementState();
+    if (!cs.zonesScouted.unknown_territory) { toast('🔒 That territory hasn\'t been scouted yet.'); return; }
+    if (choice === 'withdraw') {
+      game.oldMoonBeastWithdrawn = true;
+      logEvent('🌕 The crew withdraws. Whatever the Old Moon Beast is guarding, it isn\'t theirs to take.', 'good');
+      toast('🌕 "Not every dangerous thing needs to be defeated," San says.', 4800);
+      if (typeof showStoryModal === 'function') {
+        setTimeout(function(){
+          showStoryModal({title: '🌕 The Old Moon Beast', blurb: 'It watches them go. Ancient, territorial, and — the locals were right — never actually the enemy here.'});
+        }, 400);
+      }
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    } else {
+      const enemy = scaledEnemyForExplore('the_old_moon_beast', 'harbor');
+      startCombat({kind:'harbor', key:'the_old_moon_beast', enemy: enemy, portId:null});
+    }
+  };
+
+  let clanActiveSection = 'settlement';
+  window.switchClanSection = function(key){
+    const cs = clanSettlementState();
+    if (!cs.sections[key]) { toast('Not open to them yet.'); return; }
+    clanActiveSection = key;
+    window.renderClanSettlementScreen();
+  };
+
+  window.renderClanSettlementScreen = function(){
+    const titleEl = document.getElementById('clanSettlementHeaderTitle');
+    const subEl = document.getElementById('clanSettlementHeaderSubtitle');
+    const container = document.getElementById('clanSettlementContent');
+    if (!container) return;
+    const cs = clanSettlementState();
+    if (titleEl) titleEl.textContent = cs.nameKnown ? ('🌕 ' + cs.name) : '🌕 UNKNOWN SETTLEMENT';
+    if (subEl) subEl.textContent = cs.nameKnown ? 'A place the crew is starting to know' : 'Location not yet identified';
+
+    let html = '<div class="tabs" style="flex-wrap:wrap;">';
+    CLAN_SETTLEMENT_SECTIONS.forEach(function(sec){
+      const unlocked = cs.sections[sec.key];
+      html += '<button class="tab-btn'+(clanActiveSection===sec.key?' active':'')+'" '+
+        (unlocked ? 'onclick="switchClanSection(\''+sec.key+'\')"' : 'disabled style="opacity:.45;cursor:not-allowed;"') +
+        '>'+sec.icon+' '+sec.name+'</button>';
+    });
+    html += '</div><div class="panel" style="margin-top:10px;">';
+
+    const activeDef = CLAN_SETTLEMENT_SECTIONS.find(s => s.key === clanActiveSection);
+    if (!cs.sections[clanActiveSection]) {
+      html += '<div class="story-chip">'+(activeDef?activeDef.lockedText:'🔒 Not available yet')+'</div>';
+    } else if (clanActiveSection === 'settlement') {
+      const scoutedCount = Object.keys(cs.zonesScouted).length;
+      html += '<div class="panel-title">🏘️ Settlement</div>'+
+        '<div style="font-size:.85rem;line-height:1.8;">'+
+        'World: <strong>'+(cs.worldName || 'Unknown')+'</strong><br>'+
+        'Region: <strong>Unknown</strong><br>'+
+        'Settlement: <strong>'+(cs.nameKnown ? cs.name : 'Unknown')+'</strong><br>'+
+        'Local Customs: <strong>'+(cs.relationship === CLAN_RELATIONSHIP_TIERS[CLAN_RELATIONSHIP_TIERS.length-1] ? 'Learned' : 'Unknown')+'</strong><br>'+
+        'Trade Status: <strong>'+(cs.sections.market ? 'Established' : 'None')+'</strong><br>'+
+        'Relationship: <strong>'+cs.relationship+'</strong>'+
+        '</div><p style="font-size:.8rem;opacity:.7;margin-top:8px;">Territory scouted: '+scoutedCount+'/'+WILDERNESS_ZONES.length+'</p>';
+    } else if (clanActiveSection === 'explore') {
+      html += '<div class="panel-title">🧭 Explore</div>'+
+        '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">The settlement itself, up close — homes, workshops, the ordinary business of people who happen to change shape.</p>';
+      ['moonfang_wolves','gloom_stalker'].forEach(function(key){
+        const e = scaledEnemyForExplore(key, 'harbor');
+        html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
+          '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
+          '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+      });
+    } else if (clanActiveSection === 'wilderness') {
+      const status = window.scoutWildernessStatus();
+      html += '<div class="panel-title">🌲 Wilderness</div>'+
+        '<p style="font-size:.82rem;opacity:.8;margin-bottom:8px;">Regional zones surrounding the settlement, scouted one at a time.</p>';
+      if (status.state === 'ready') {
+        html += '<button class="btn btn-small btn-success" onclick="scoutWilderness()" style="margin-bottom:10px;">🧭 Scout Further</button>';
+      } else {
+        const hrs = Math.max(0, Math.ceil(status.msLeft / 3600000));
+        html += '<p style="font-size:.76rem;opacity:.6;margin-bottom:10px;">Ready to scout again in about '+hrs+' hour'+(hrs===1?'':'s')+'.</p>';
+      }
+      WILDERNESS_ZONES.forEach(function(zone){
+        const scouted = cs.zonesScouted[zone.key];
+        html += '<div style="margin-bottom:10px;padding:8px 0;border-top:1px solid rgba(232,197,71,.15);">';
+        if (!scouted) {
+          html += '<strong style="opacity:.5;">'+zone.icon+' ??? </strong><span style="font-size:.76rem;opacity:.5;"> — not yet scouted</span>';
+        } else {
+          html += '<strong>'+zone.icon+' '+zone.name+'</strong><br>';
+          zone.enemies.forEach(function(key){
+            const e = scaledEnemyForExplore(key, 'harbor');
+            html += '<div style="font-size:.78rem;margin:4px 0;">'+e.icon+' '+e.name+' ('+e.hp+' HP) '+
+              '<button class="btn btn-small btn-combat" style="margin-left:6px;padding:2px 8px;" onclick="startHarborFight(\''+key+'\')">Fight</button></div>';
+          });
+          if (zone.special === 'mossback') {
+            html += '<div style="font-size:.78rem;margin:6px 0;background:rgba(120,200,120,.1);border-radius:6px;padding:6px;">'+
+              '🌳 A Mossback rests nearby. Usually peaceful — dangerous if threatened.<br>'+
+              '<button class="btn btn-small" style="margin-top:4px;" onclick="encounterMossback(\'leave\')">Leave it be</button> '+
+              '<button class="btn btn-small btn-combat" style="margin-top:4px;" onclick="encounterMossback(\'provoke\')">Provoke it</button></div>';
+          }
+          if (zone.special === 'old_moon_beast') {
+            html += '<div style="font-size:.78rem;margin:6px 0;background:rgba(200,180,100,.1);border-radius:6px;padding:6px;">'+
+              '🌕 The Old Moon Beast watches from a distance. Ancient. Territorial. The locals say it isn\'t evil.<br>'+
+              '<button class="btn btn-small" style="margin-top:4px;" onclick="encounterOldMoonBeast(\'withdraw\')">Withdraw</button> '+
+              '<button class="btn btn-small btn-combat" style="margin-top:4px;" onclick="encounterOldMoonBeast(\'fight\')">Fight it</button></div>';
+          }
+        }
+        html += '</div>';
+      });
+    } else {
+      html += '<div class="panel-title">'+(activeDef?activeDef.icon+' '+activeDef.name:'')+'</div>'+
+        '<p style="font-size:.85rem;opacity:.7;">Nothing here yet.</p>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  };
+
+  const oldRenderNavigationForClan = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForClan) oldRenderNavigationForClan();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid || !window.clanSettlementUnlocked()) return;
+    const cs = clanSettlementState();
+    grid.insertAdjacentHTML('beforeend',
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(200,180,100,.5);border-style:dashed;" onclick="sailToClanSettlement()">'+
+      '<div style="font-size:1.6rem;">🌕</div><div style="font-weight:600;">'+(cs.nameKnown?cs.name:'Unknown Settlement')+'</div>'+
+      '<div style="font-size:.72rem;opacity:.7;">Tracks leading somewhere new.</div></div>');
+  };
+
+  const oldGoScreenForClan = window.goScreen;
+  window.goScreen = function(name){
+    if (name === 'clansettlement') { game.voyageInProgress = false; }
+    if (oldGoScreenForClan) oldGoScreenForClan(name);
+    if (name === 'clansettlement' && typeof window.renderClanSettlementScreen === 'function') window.renderClanSettlementScreen();
+  };
+
+  // Voyage transition, matching Harbour/Tide Network's pattern and the
+  // general voyageInProgress lock (V178) — blocked from starting while
+  // any other voyage-style transition is already active.
+  const CLAN_VOYAGE_EVENTS = [
+    { type: 'combat', text: 'Something large moves through the treeline, pacing the ship along the shore.', combat: 'shore_pack_scout' },
+    { type: 'combat', text: 'A shape breaks from the ridge line and closes fast, faster than anything should move on four legs.', combat: 'something_on_the_ridge' },
+    { type: 'flavor', text: 'Distant howls answer each other across the hills, back and forth, unmistakably a conversation.' },
+    { type: 'flavor', text: 'Something watches from the tree line the whole way in. Nobody can say from where, exactly.' },
+    { type: 'flavor', text: 'The forest goes quiet in a way that feels deliberate, not natural.' },
+    { type: 'calm', text: 'The approach is uneventful. The shore just gets closer.' }
+  ];
+
+  window.sailToClanSettlement = function(){
+    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
+    const overlay = document.getElementById('voyageScreen');
+    if (!overlay) { goScreen('clansettlement'); return; }
+    game.voyageInProgress = true;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('voyageScreen').classList.add('active');
+    document.getElementById('voyageDest').textContent = 'Toward the Unknown Settlement';
+    document.getElementById('voyageProgress').style.width = '0%';
+    document.getElementById('voyageEvent').innerHTML = '';
+    const totalDays = 2;
+    let currentDay = 0;
+    const interval = setInterval(function(){
+      currentDay++;
+      document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
+      if (Math.random() < 0.45) {
+        const event = CLAN_VOYAGE_EVENTS[Math.floor(Math.random() * CLAN_VOYAGE_EVENTS.length)];
+        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
+        if (event.type === 'combat') {
+          clearInterval(interval);
+          setTimeout(function(){
+            const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(event.combat, 'sea') : null;
+            startCombat({ kind: 'clansettlement_voyage', key: event.combat, enemy: enemy, portId: null });
+          }, 1000);
+          return;
+        }
+      } else {
+        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">The crossing continues.</span>';
+      }
+      if (currentDay >= totalDays) {
+        clearInterval(interval);
+        setTimeout(function(){ goScreen('clansettlement'); }, 800);
+      }
+    }, 900);
+  };
 })();
 </script>
 
