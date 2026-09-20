@@ -4298,7 +4298,15 @@ function goScreen(name) {
   // exists so this one mismatch (and any future one) doesn't need the
   // HTML id itself renamed, and the null-check below means a typo'd or
   // missing screen name logs a warning instead of blanking the page.
-  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen' };
+  // BUG FIX: goScreen('tidenetwork') built 'tidenetworkScreen' (lowercase
+  // n) by the default name+'Screen' pattern, but the actual element is
+  // id="tideNetworkScreen" (capital N, matching the Tide Network build's
+  // own camelCase). That silently failed the null-check below and left
+  // whatever screen was already showing in place — so the "Continue to
+  // the Settlement" button after a Tide Network voyage fight, the nav
+  // card, and any other goScreen('tidenetwork') call never actually
+  // navigated anywhere.
+  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen', tidenetwork: 'tideNetworkScreen', clansettlement: 'clanSettlementScreen' };
   const screenId = SCREEN_ID_OVERRIDES[name] || (name + 'Screen');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const targetScreen = document.getElementById(screenId);
@@ -4789,9 +4797,16 @@ function scaledEnemyForExplore(key, kind='harbor') {
   return scaleCrimsonEnemy(base, kind);
 }
 
-function startHarborFight(key) {
+function startHarborFight(key, returnKind) {
   game.exploreTarget = null;
-  startCombat({ kind: 'harbor', key, enemy: scaledEnemyForExplore(key, 'harbor') });
+  // returnKind lets a secondary location's own Explore tab (Unknown
+  // Harbour, Tide Network settlement, Clan Settlement) tag its fights
+  // distinctly from a home Port's own harbor fights. Without it, every
+  // caller shared the plain 'harbor' kind, which handleVictory has no
+  // branch for — so it fell through to the generic "Return to Port"
+  // button and sailed the crew home instead of keeping them at the
+  // location they were actually exploring.
+  startCombat({ kind: returnKind || 'harbor', key, enemy: scaledEnemyForExplore(key, 'harbor') });
 }
 function startGuardianFight(portId) {
   const port = PORTS.find(p => p.id === portId);
@@ -5893,6 +5908,46 @@ function exitInterworldBattleToDestination() {
   if (typeof renderInterworldScreen === 'function') renderInterworldScreen();
 }
 
+// Same pattern as exitInterworldBattleToDestination, for the Unknown
+// Harbour / Tide Network settlement / Clan Settlement Explore tabs —
+// all three previously shared the plain 'harbor' combat kind with home
+// Port fights, so winning one of these fights fell through to
+// exitBattleToPort() and sailed the crew all the way home instead of
+// leaving them at the location they were exploring.
+function exitHarbourBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('harbour');
+  if (typeof renderHarbourScreen === 'function') renderHarbourScreen();
+}
+function exitTideNetworkBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('tidenetwork');
+  if (typeof renderTideNetworkScreen === 'function') renderTideNetworkScreen();
+}
+function exitClanSettlementBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('clansettlement');
+  if (typeof renderClanSettlementScreen === 'function') renderClanSettlementScreen();
+}
+
 // Always-visible "← Leave" control in the combat header — a persistent
 // escape hatch, separate from the dynamically-rendered combatActions
 // buttons, so a stuck/broken post-battle screen (like the Uncharted
@@ -6690,6 +6745,21 @@ function handleVictory() {
     postBattleMessage = 'Whatever ' + enemy.name + ' was, it\'s staying on that side of the door. The crew holds their ground.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitInterworldBattleToDestination()">🌌 Stay and Explore</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'harbour_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the harbour is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitHarbourBattleToDestination()">⚓ Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'tidenetwork_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitTideNetworkBattleToDestination()">🌊 Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'clansettlement_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitClanSettlementBattleToDestination()">🌕 Continue Exploring</button>' +
       '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'harbour_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
@@ -15204,15 +15274,21 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if(window.arc13ObjectiveState() !== 'complete_arc13_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress13[id] = true;
     if (id === 1) game.harbourDiscovered = true; // unlocks the Harbour location itself
-    if (id === 7 && typeof window.unlockHarbourSection === 'function') window.unlockHarbourSection('market'); // "The Market by the Sea"
     if (id === 8 && typeof window.unlockHarbourSection === 'function') window.unlockHarbourSection('shipwright'); // "The Boats They Build" — Joel studies local shipbuilding
     if (id === 10 && typeof window.unlockHarbourSection === 'function') window.unlockHarbourSection('guesthouse'); // "The Tea House"
     if (id === 12 && typeof window.unlockHarbourSection === 'function') window.unlockHarbourSection('requests'); // "A Request at the Harbour" — explicitly "the first proper Harbour Request gameplay interaction"
     if (id === 12 && typeof window.advanceHarbourRelationship === 'function') window.advanceHarbourRelationship(); // New Visitors -> Recognised Guests
     if (id === 19 && typeof window.advanceHarbourRelationship === 'function') window.advanceHarbourRelationship(); // "The Agreement" -> Trusted Visitors
-    if (id === 22 && typeof window.unlockHarbourSection === 'function') window.unlockHarbourSection('trade'); // "Trade Across Worlds" — "creating the first foundation for future inter-world commerce"
     if (id === 22 && typeof window.advanceHarbourRelationship === 'function') window.advanceHarbourRelationship(); // Trusted Visitors -> Friends / Trade Partners
-    if (id === 25) game.arc13Complete = true;
+    // Market + Trade moved from their original per-chapter unlocks (Ch.7
+    // "The Market by the Sea", Ch.22 "Trade Across Worlds") to firing
+    // together only once the whole arc is complete — per request, real
+    // commerce with the harbour shouldn't be available until the story
+    // arc has actually concluded, not partway through it.
+    if (id === 25) {
+      game.arc13Complete = true;
+      if (typeof window.unlockHarbourSection === 'function') { window.unlockHarbourSection('market'); window.unlockHarbourSection('trade'); }
+    }
     gainXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XIII Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
@@ -15420,7 +15496,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
           '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
           '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
-          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\', \'harbour_explore\')">Fight</button></div></article>';
       });
     } else {
       html += '<div class="panel-title">'+(activeDef?activeDef.icon+' '+activeDef.name:'')+'</div>'+
@@ -15981,7 +16057,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
           '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
           '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
-          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\', \'tidenetwork_explore\')">Fight</button></div></article>';
       });
     } else if (tideNetworkActiveSection === 'observe') {
       const relCount = Object.keys(ts.mappedNodes).length;
@@ -16559,7 +16635,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       toast('🌳 Left in peace, it settles back into the undergrowth.', 3600);
       if (typeof saveGameQuiet === 'function') saveGameQuiet();
     } else {
-      startCombat({kind:'harbor', key:'mossback', enemy: enemy, portId:null});
+      startCombat({kind:'clansettlement_explore', key:'mossback', enemy: enemy, portId:null});
     }
   };
 
@@ -16578,7 +16654,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (typeof saveGameQuiet === 'function') saveGameQuiet();
     } else {
       const enemy = scaledEnemyForExplore('the_old_moon_beast', 'harbor');
-      startCombat({kind:'harbor', key:'the_old_moon_beast', enemy: enemy, portId:null});
+      startCombat({kind:'clansettlement_explore', key:'the_old_moon_beast', enemy: enemy, portId:null});
     }
   };
 
@@ -16630,7 +16706,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
           '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
           '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
-          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\', \'clansettlement_explore\')">Fight</button></div></article>';
       });
     } else if (clanActiveSection === 'wilderness') {
       const status = window.scoutWildernessStatus();
@@ -16652,7 +16728,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
           zone.enemies.forEach(function(key){
             const e = scaledEnemyForExplore(key, 'harbor');
             html += '<div style="font-size:.78rem;margin:4px 0;">'+e.icon+' '+e.name+' ('+e.hp+' HP) '+
-              '<button class="btn btn-small btn-combat" style="margin-left:6px;padding:2px 8px;" onclick="startHarborFight(\''+key+'\')">Fight</button></div>';
+              '<button class="btn btn-small btn-combat" style="margin-left:6px;padding:2px 8px;" onclick="startHarborFight(\''+key+'\', \'clansettlement_explore\')">Fight</button></div>';
           });
           if (zone.special === 'mossback') {
             html += '<div style="font-size:.78rem;margin:6px 0;background:rgba(120,200,120,.1);border-radius:6px;padding:6px;">'+
