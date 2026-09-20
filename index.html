@@ -5874,6 +5874,25 @@ function exitBattleToPort() {
   if (typeof renderPort === 'function') renderPort();
 }
 
+// BUG FIX: winning an Inter-World Expedition fight used the generic
+// exitBattleToPort() button, which sails the crew all the way back to
+// their home port — even though the whole point of "staying" at a
+// destination is to be able to explore it further (launch another
+// expedition roll, hunt for more discoveries) without a fresh two-day
+// crossing each time. This mirrors exitBattleToPort's cleanup exactly,
+// just landing on the interworld screen instead of port.
+function exitInterworldBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('interworld');
+  if (typeof renderInterworldScreen === 'function') renderInterworldScreen();
+}
+
 // Always-visible "← Leave" control in the combat header — a persistent
 // escape hatch, separate from the dynamically-rendered combatActions
 // buttons, so a stuck/broken post-battle screen (like the Uncharted
@@ -6668,8 +6687,10 @@ function handleVictory() {
     postBattleMessage = 'The memory dissolves. Whatever ' + enemy.name + ' was, it isn\'t here anymore.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'interworld') {
-    postBattleMessage = 'The crew makes it back through. Whatever ' + enemy.name + ' was, it\'s staying on that side of the door.';
-    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+    postBattleMessage = 'Whatever ' + enemy.name + ' was, it\'s staying on that side of the door. The crew holds their ground.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitInterworldBattleToDestination()">🌌 Stay and Explore</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'harbour_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'harbour\')">⚓ Continue to the Harbour</button>';
@@ -14967,8 +14988,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       tagline: 'The first world the Horizon Engine ever found. The settlement was empty when the crew arrived — but stocked, as if someone meant to come back.',
       supplyCost: {gold: 80, food: 15},
       enemies: [
-        {name: 'Something in the Empty Settlement', icon: '🏚️', hp: 260, dmg: 18, xp: 240},
-        {name: 'A Shape That Moved Wrong', icon: '👁️', hp: 300, dmg: 20, xp: 260}
+        // BUG FIX: these two were missing `gold`, unlike every other
+        // enemy in the game. handleVictory always does
+        // `game.gold += enemy.gold` — with no gold field that's
+        // `game.gold += undefined`, which silently turns game.gold into
+        // NaN on every Beyond the Horizon combat win. NaN then propagates
+        // through all future gold math, and the landing screen's readout
+        // (`Number(display.gold || 0)`) renders NaN as "0g" — which is
+        // what made it look like a full gold wipe rather than corruption.
+        {name: 'Something in the Empty Settlement', icon: '🏚️', hp: 260, dmg: 18, xp: 240, gold: 100},
+        {name: 'A Shape That Moved Wrong', icon: '👁️', hp: 300, dmg: 20, xp: 260, gold: 110}
       ],
       discoveries: [
         {name: 'A Marking Nobody Recognizes', icon: '🗿', flavor: 'Not Farseer. Not anything Erynn\'s ever catalogued. It means something to somebody, just not to anyone here yet.'},
