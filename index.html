@@ -7287,7 +7287,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V177 · Continuous Gold Guard'</script>
+<script>window.__CT_BUILD__='V178 · Beyond the Horizon Voyage and Voyage Lock'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -16285,6 +16285,101 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   // Catches the case where `game` is already populated and corrupted by
   // the time this script runs (an in-progress session, not a fresh load).
   repairGoldNow();
+})();
+</script>
+
+
+<script id="ct-build-v178-interworld-voyage-and-lock">
+(function(){
+  // -------------------------------------------------------------------
+  // "BEYOND THE HORIZON" VOYAGE TRANSITION + GENERAL VOYAGE LOCK.
+  //
+  // Part 1: gives the original Inter-World Expeditions system (V162,
+  // "Beyond the Horizon" specifically) the same real voyage-screen
+  // treatment the Harbour and Tide Network already got — a progress bar
+  // instead of an instant resolve. Reuses the existing battle-or-
+  // discovery outcome exactly as built; this just adds the trip there.
+  //
+  // Part 2: a general game.voyageInProgress lock so normal port voyages
+  // (doVoyage) can't start while ANY voyage-style transition is already
+  // running — Harbour, Tide Network, or this one. All of these share
+  // the same #voyageScreen UI, so overlapping them would actually
+  // corrupt each other's progress bars/timers, not just be confusing.
+  // Cleared the moment any voyage genuinely arrives somewhere (port,
+  // harbour, tidenetwork, interworld), via a goScreen wrap, so it's
+  // correctly released whether the trip resolved calmly or through
+  // combat that had to be fought first.
+  // -------------------------------------------------------------------
+  const oldDoVoyageForLock = window.doVoyage;
+  window.doVoyage = function(portId, days, dangerLevel){
+    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
+    game.voyageInProgress = true;
+    return oldDoVoyageForLock(portId, days, dangerLevel);
+  };
+
+  const oldGoScreenForVoyageLock = window.goScreen;
+  window.goScreen = function(name){
+    if (['port','harbour','tidenetwork','interworld'].includes(name)) {
+      game.voyageInProgress = false;
+    }
+    return oldGoScreenForVoyageLock(name);
+  };
+
+  window.launchInterworldExpedition = function(destId){
+    if (!window.interWorldTravelUnlocked()) { toast('🔒 Not yet — the way isn\'t open.'); return; }
+    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
+    const dest = window.INTERWORLD_DESTINATIONS.find(d => d.id === destId);
+    if (!dest) return;
+    if (!window.canAffordInterworldTrip(destId)) { toast('Not enough supplies for the crossing.'); return; }
+    game.gold -= (dest.supplyCost.gold||0);
+    game.fairTideResources = game.fairTideResources || {};
+    Object.entries(dest.supplyCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
+
+    game.voyageInProgress = true;
+    const overlay = document.getElementById('voyageScreen');
+    if (!overlay) { resolveInterworldOutcome(dest); return; }
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('voyageScreen').classList.add('active');
+    document.getElementById('voyageDest').textContent = 'Toward ' + dest.name;
+    document.getElementById('voyageProgress').style.width = '0%';
+    document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">Crossing over...</span>';
+    const totalDays = 2;
+    let currentDay = 0;
+    const interval = setInterval(function(){
+      currentDay++;
+      document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
+      if (currentDay >= totalDays) {
+        clearInterval(interval);
+        setTimeout(function(){ resolveInterworldOutcome(dest); }, 800);
+      }
+    }, 900);
+  };
+
+  function resolveInterworldOutcome(dest){
+    if (Math.random() < 0.5) {
+      const enemyBase = dest.enemies[Math.floor(Math.random() * dest.enemies.length)];
+      const enemy = (typeof scaleCrimsonEnemy === 'function') ? scaleCrimsonEnemy(enemyBase, 'harbor') : Object.assign({}, enemyBase);
+      toast('🌌 Something\'s waiting on the other side.', 2600);
+      startCombat({kind:'interworld', key: dest.id, enemy: enemy, portId:null});
+    } else {
+      const disc = dest.discoveries[Math.floor(Math.random() * dest.discoveries.length)];
+      const state = interworldState();
+      const firstEver = state[disc.name] === undefined;
+      state[disc.name] = (state[disc.name]||0) + 1;
+      logEvent('🌌 ' + dest.name + ': the crew brings back ' + disc.icon + ' ' + disc.name + '.', 'gold');
+      if (firstEver) {
+        setTimeout(function(){
+          if (typeof showStoryModal === 'function') showStoryModal({title: disc.icon + ' ' + disc.name, blurb: disc.flavor});
+        }, 500);
+      } else {
+        toast('🌌 The crew brings back another ' + disc.icon + ' ' + disc.name + '.', 3600);
+      }
+      game.voyageInProgress = false;
+      if (typeof goScreen === 'function') goScreen('interworld');
+    }
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  }
+  window.__ctResolveInterworldOutcome = resolveInterworldOutcome;
 })();
 </script>
 
