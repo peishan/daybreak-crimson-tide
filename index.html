@@ -16378,7 +16378,16 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       startCombat({kind:'interworld', key: dest.id, enemy: enemy, portId:null});
     } else {
       const disc = dest.discoveries[Math.floor(Math.random() * dest.discoveries.length)];
-      const state = interworldState();
+      // BUG FIX: this called a bare interworldState() — but that function
+      // is a private local defined inside the separate V162 script block,
+      // only ever exposed globally as window.interworldDiscoveryState.
+      // Calling it by its unexported name threw a ReferenceError here in
+      // the V178 block's own closure, and that error fired before the
+      // code ever switched away from the sailing/voyage screen — so every
+      // "peaceful discovery" outcome (the non-combat ~50% roll) froze the
+      // game on "Crossing over..." at 100% forever. Combat outcomes were
+      // unaffected since they never reached this line.
+      const state = window.interworldDiscoveryState();
       const firstEver = state[disc.name] === undefined;
       state[disc.name] = (state[disc.name]||0) + 1;
       logEvent('🌌 ' + dest.name + ': the crew brings back ' + disc.icon + ' ' + disc.name + '.', 'gold');
