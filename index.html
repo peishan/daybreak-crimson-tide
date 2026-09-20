@@ -3001,7 +3001,23 @@ const HARBOR_ENEMIES = {
   // out of the generic per-port mob lists and shows him as his own
   // "Challenge" card instead, unlocked once Chapter 8 is read.
   robin: { name: 'Robin C. & His Enforcers', icon: '⛓️', hp: 520, dmg: 22, xp: 450, gold: 220, desc: 'Senior Partner at R&C, backed by hired muscle. Binding and freezing magic, and an unshakable belief that everyone has a price — including yours.' },
-  jeff: { name: 'Jeff & His Crew', icon: '🔨', hp: 540, dmg: 26, xp: 460, gold: 220, desc: "Once tried to poach Joel with a bigger ship and better pay. Fights the way he talks — heavy, crushing, and taking the rejection personally." }
+  jeff: { name: 'Jeff & His Crew', icon: '🔨', hp: 540, dmg: 26, xp: 460, gold: 220, desc: "Once tried to poach Joel with a bigger ship and better pay. Fights the way he talks — heavy, crushing, and taking the rejection personally." },
+  // Arc XIII — Unknown Harbour Explore encounters. Themed to a living,
+  // developed civilization that already has its own rules, not Veyren
+  // pirates — misunderstandings and local trouble, not raiders.
+  dockside_pickpockets: { name: 'Dockside Pickpockets', icon: '🥷', hp: 300, dmg: 18, xp: 260, gold: 90, desc: 'Fast hands and faster feet, testing whether visitors know the rules yet.' },
+  lantern_smugglers: { name: 'Lantern-Light Smugglers', icon: '🏮', hp: 320, dmg: 19, xp: 280, gold: 100, desc: "Moving cargo nobody's supposed to ask about, same as anywhere else in the world." },
+  harbor_floor_scavengers: { name: 'Harbor-Floor Scavengers', icon: '🦑', hp: 340, dmg: 20, xp: 290, gold: 100, desc: 'Living in the gaps beneath the docks, taking whatever the tide leaves loose.' },
+  overzealous_tollkeeper: { name: 'An Overzealous Tollkeeper', icon: '🥢', hp: 360, dmg: 21, xp: 310, gold: 110, desc: "Hasn't quite accepted that 'visitor' means 'exception' yet." },
+  restless_shrine_guardian: { name: 'A Restless Shrine Guardian', icon: '🐉', hp: 400, dmg: 23, xp: 340, gold: 130, desc: 'Old magic, older than the harbour itself, still doing whatever job it was built for.' },
+  // Arc XIV — Tide Network Explore encounters. Aquatic and current-
+  // themed, tying into the arc's own "the water moves wrong" premise
+  // rather than being generic sea monsters.
+  confused_shoal: { name: 'A Current-Confused Shoal', icon: '🦐', hp: 300, dmg: 18, xp: 260, gold: 80, desc: 'Disoriented by the wrong-moving water, and lashing out because of it.' },
+  territorial_pufferkin: { name: 'Territorial Puffer-Kin', icon: '🐡', hp: 320, dmg: 19, xp: 280, gold: 85, desc: 'Not hostile by nature. Very hostile about being approached.' },
+  deepwater_opportunist: { name: 'A Deep-Water Opportunist', icon: '🦈', hp: 350, dmg: 21, xp: 300, gold: 95, desc: "Drawn in by the disturbance, hunting whatever else it's confused." },
+  tidewrecked_scavenger: { name: 'A Tide-Wrecked Scavenger', icon: '🐙', hp: 340, dmg: 20, xp: 290, gold: 90, desc: 'Living in the wreckage of a route nobody uses safely anymore.' },
+  unmoored_current_spirit: { name: 'An Unmoored Current-Spirit', icon: '🌊', hp: 400, dmg: 23, xp: 330, gold: 120, desc: "Displaced by whatever's wrong with the water, and furious about it." }
 };
 const SEA_ENEMIES = {
   giant_octopus: { name: 'Giant Octopus', art: '🐙', hp: 340, dmg: 16, xp: 110, gold: 60,  desc: 'Ink clouds the water an instant before the tentacles do.' },
@@ -3009,7 +3025,14 @@ const SEA_ENEMIES = {
   sea_serpent:   { name: 'Sea Serpent', art: '🐍', hp: 450, dmg: 20, xp: 150, gold: 100, desc: 'A massive serpent rises from the depths, scales like wet iron.' },
   siren_pack:    { name: 'Siren Pack', art: '🧜‍♀️', hp: 320, dmg: 14, xp: 100, gold: 70,  desc: 'Haunting songs drift over the water. The crew covers their ears.' },
   ghost_galleon: { name: 'Ghost Galleon', art: '👻', hp: 520, dmg: 22, xp: 180, gold: 140, desc: 'A spectral vessel out of the fog, crewed by the damned.' },
-  kraken:        { name: 'Kraken', art: '🦑', hp: 700, dmg: 28, xp: 260, gold: 220, desc: 'Tentacles thicker than mast ropes close around the hull.' }
+  kraken:        { name: 'Kraken', art: '🦑', hp: 700, dmg: 28, xp: 260, gold: 220, desc: 'Tentacles thicker than mast ropes close around the hull.' },
+  // Voyage-event encounters for the Harbour (Arc XIII) and Tide Network
+  // (Arc XIV) crossings — deliberately not Veyren pirates or sea monsters,
+  // since these voyages aren't through Veyren's own waters.
+  territorial_sea_guardian: { name: 'Territorial Sea Guardian', art: '🐉', hp: 400, dmg: 20, xp: 200, gold: 100, desc: "Something large surfaces nearby. Not aggressive, exactly. Clearly not friendly, either." },
+  suspicious_patrol_boat: { name: 'Suspicious Patrol Boat', art: '⚓', hp: 360, dmg: 18, xp: 180, gold: 80, desc: 'An unmarked local vessel demands you identify yourselves, badly translated and tense.' },
+  unknown_deep_dweller: { name: 'Unknown Deep-Dweller', art: '🐙', hp: 420, dmg: 21, xp: 210, gold: 100, desc: 'Something large moves beneath the ship, unfamiliar and untested.' },
+  disturbed_current_entity: { name: 'A Disturbed Current', art: '🌊', hp: 400, dmg: 20, xp: 200, gold: 90, desc: "The current turns hostile without warning, echoing the same problem the whole arc is built around." }
 };
 const GUARDIANS = {
   wreck_warden:     { name: 'The Wreck Warden', art: '💀', hp: 620,  dmg: 20, xp: 260, gold: 150, desc: 'Wears the shape of every captain who ever drowned on this reef.' },
@@ -6635,6 +6658,12 @@ function handleVictory() {
   } else if (enemy.kind === 'interworld') {
     postBattleMessage = 'The crew makes it back through. Whatever ' + enemy.name + ' was, it\'s staying on that side of the door.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'harbour_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'harbour\')">⚓ Continue to the Harbour</button>';
+  } else if (enemy.kind === 'tidenetwork_voyage') {
+    postBattleMessage = 'The current settles. ' + enemy.name + ' is behind you now.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'tidenetwork\')">🌊 Continue to the Settlement</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
@@ -7258,7 +7287,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 </script>
-<script>window.__CT_BUILD__='V173 · Arc XIII Cover Path Fixed'</script>
+<script>window.__CT_BUILD__='V176 · Arc XV Chapter 1'</script>
 <footer id="ctBuildFooter">Daybreak: Crimson Tide · <strong id="ctBuildFooterVersion">Build …</strong></footer>
 <script>
   // BUG FIX: this footer was a hardcoded static string ("Build V83 ·
@@ -8863,6 +8892,11 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       if (s14 !== null && s14 !== 'arc14_part1_complete_for_now') return s14;
       if (s14 === 'arc14_part1_complete_for_now') lastTerminal = s14;
     }
+    if (typeof window.arc15ObjectiveState === 'function') {
+      const s15 = window.arc15ObjectiveState();
+      if (s15 !== null && s15 !== 'arc15_part1_complete_for_now') return s15;
+      if (s15 === 'arc15_part1_complete_for_now') lastTerminal = s15;
+    }
     return lastTerminal || base;
   };
 
@@ -8894,6 +8928,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if ((m = /^complete_arc12_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XII', m[1], window.ARC12_CHAPTERS);
     if ((m = /^complete_arc13_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XIII', m[1], window.ARC13_CHAPTERS);
     if ((m = /^complete_arc14_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XIV', m[1], window.ARC14_CHAPTERS);
+    if ((m = /^complete_arc15_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XV', m[1], window.ARC15_CHAPTERS);
     if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
     if (state === 'arc9_part1_complete_for_now') return ['Arc IX — All Caught Up', 'Every available Arc IX chapter is read. More is on the way.'];
     if (state === 'arc10_part1_complete_for_now') return ['Arc X — All Caught Up', 'Every available Arc X chapter is read. More is on the way.'];
@@ -8901,6 +8936,7 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
     if (state === 'arc12_part1_complete_for_now') return ['Arc XII — All Caught Up', 'Every available Arc XII chapter is read. More is on the way.'];
     if (state === 'arc13_part1_complete_for_now') return ['Arc XIII — All Caught Up', 'Every available Arc XIII chapter is read. More is on the way.'];
     if (state === 'arc14_part1_complete_for_now') return ['Arc XIV — All Caught Up', 'Every available Arc XIV chapter is read. More is on the way.'];
+    if (state === 'arc15_part1_complete_for_now') return ['Arc XV — All Caught Up', 'Every available Arc XV chapter is read. More is on the way.'];
     return null;
   }
 
@@ -15334,7 +15370,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
         '</div>';
     } else if (harbourActiveSection === 'explore') {
       html += '<div class="panel-title">🧭 Explore</div>'+
-        '<p style="font-size:.85rem;opacity:.85;">Streets they don\'t know yet, in a city that was never waiting for them. Nothing to chart, nothing to claim — just a place worth actually looking at.</p>';
+        '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Streets they don\'t know yet, in a city that was never waiting for them.</p>';
+      ['dockside_pickpockets','lantern_smugglers','harbor_floor_scavengers','overzealous_tollkeeper','restless_shrine_guardian'].forEach(function(key){
+        const e = scaledEnemyForExplore(key, 'harbor');
+        html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
+          '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
+          '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+      });
     } else {
       html += '<div class="panel-title">'+(activeDef?activeDef.icon+' '+activeDef.name:'')+'</div>'+
         '<p style="font-size:.85rem;opacity:.7;">Nothing here yet.</p>';
@@ -15888,7 +15931,14 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
       html += '<div class="story-chip">'+(activeDef?activeDef.lockedText:'🔒 Not available yet')+'</div>';
     } else if (tideNetworkActiveSection === 'enter_settlement') {
       html += '<div class="panel-title">🌊 Enter the Settlement</div>'+
-        '<p style="font-size:.85rem;opacity:.85;">Homes, docks, gathering places — all of it built around how the water actually moves, not fought against.</p>';
+        '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Homes, docks, gathering places — all of it built around how the water actually moves, not fought against.</p>';
+      ['confused_shoal','territorial_pufferkin','deepwater_opportunist','tidewrecked_scavenger','unmoored_current_spirit'].forEach(function(key){
+        const e = scaledEnemyForExplore(key, 'harbor');
+        html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.6rem;">'+e.icon+'</div><div style="flex:1;"><strong>'+e.name+'</strong><br>'+
+          '<span style="font-size:.8rem;opacity:.8;">'+e.desc+'</span><br>'+
+          '<span style="font-size:.8rem;">'+e.hp+' HP · '+e.xp+' XP · '+e.gold+'g · Lv.'+e.scaledFromLevel+'</span></div>'+
+          '<button class="btn btn-small btn-combat" onclick="startHarborFight(\''+key+'\')">Fight</button></div></article>';
+      });
     } else if (tideNetworkActiveSection === 'observe') {
       const relCount = Object.keys(ts.mappedNodes).length;
       html += '<div class="panel-title">👁️ Observe</div>'+
@@ -15952,6 +16002,217 @@ document.addEventListener('DOMContentLoaded',function(){if(typeof goScreen==='fu
   window.goScreen = function(name){
     if (oldGoScreenForTideNetwork) oldGoScreenForTideNetwork(name);
     if (name === 'tidenetwork' && typeof window.renderTideNetworkScreen === 'function') window.renderTideNetworkScreen();
+  };
+})();
+</script>
+
+
+<script id="ct-build-v175-voyage-transitions">
+(function(){
+  // -------------------------------------------------------------------
+  // VOYAGE TRANSITIONS for the Harbour (Arc XIII) and Tide Network (Arc
+  // XIV) — makes reaching either feel like an actual voyage instead of
+  // an instant teleport, reusing the existing #voyageScreen UI. "Full
+  // version" per San's own choice: real risk, themed events, not just a
+  // visual pause. Neither pool touches Veyren's own pirates/monsters —
+  // these are meant to feel like someone else's danger, not more of
+  // Veyren's, per San's own framing when we discussed this.
+  // -------------------------------------------------------------------
+  const HARBOUR_VOYAGE_EVENTS = [
+    { type: 'combat', text: 'Something large surfaces nearby, watching the ship without approaching — yet.', combat: 'territorial_sea_guardian' },
+    { type: 'combat', text: 'An unmarked local vessel signals, then closes distance fast. They want answers, now.', combat: 'suspicious_patrol_boat' },
+    { type: 'flavor', text: 'A local fishing boat gives you a wide, wary berth as you pass.' },
+    { type: 'flavor', text: 'The water shifts color crossing into unfamiliar currents — subtle, but the crew all notice at once.' },
+    { type: 'flavor', text: 'The boundary between worlds feels thinner here than it should. Nobody quite says so out loud.' },
+    { type: 'calm', text: 'The crossing is quiet. Almost too quiet.' }
+  ];
+  const TIDENETWORK_VOYAGE_EVENTS = [
+    { type: 'combat', text: 'Something large moves beneath the hull — big enough that everyone feels it, not just hears it.', combat: 'unknown_deep_dweller' },
+    { type: 'combat', text: 'The current turns without warning, hostile and deliberate.', combat: 'disturbed_current_entity' },
+    { type: 'flavor', text: 'The current pulls at the hull like it\'s trying to lead you somewhere specific.' },
+    { type: 'flavor', text: 'Soel goes very still, staring at the water. He doesn\'t explain why.' },
+    { type: 'flavor', text: 'A school of fish scatters ahead of the ship with unusual, deliberate purpose.' },
+    { type: 'calm', text: 'The water holds steady the whole way through.' }
+  ];
+
+  function runDestinationVoyage(config){
+    const overlay = document.getElementById('voyageScreen');
+    if (!overlay) { goScreen(config.screenName); return; }
+    document.getElementById('voyageScreen').classList.add('active');
+    document.getElementById('voyageDest').textContent = 'Toward ' + config.destLabel;
+    document.getElementById('voyageProgress').style.width = '0%';
+    document.getElementById('voyageEvent').innerHTML = '';
+    const totalDays = 2;
+    let currentDay = 0;
+    const interval = setInterval(function(){
+      currentDay++;
+      document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
+      if (Math.random() < 0.45) {
+        const pool = config.events;
+        const event = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
+        if (event.type === 'combat') {
+          clearInterval(interval);
+          setTimeout(function(){
+            const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(event.combat, 'sea') : null;
+            startCombat({ kind: config.combatKind, key: event.combat, enemy: enemy, portId: null });
+          }, 1000);
+          return;
+        }
+      } else {
+        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">The crossing continues.</span>';
+      }
+      if (currentDay >= totalDays) {
+        clearInterval(interval);
+        setTimeout(function(){ goScreen(config.screenName); }, 800);
+      }
+    }, 900);
+  }
+
+  window.sailToHarbour = function(){
+    runDestinationVoyage({
+      destLabel: 'the Unknown Harbour',
+      events: HARBOUR_VOYAGE_EVENTS,
+      combatKind: 'harbour_voyage',
+      screenName: 'harbour'
+    });
+  };
+  window.sailToTideNetwork = function(){
+    runDestinationVoyage({
+      destLabel: 'the Unknown Tide Settlement',
+      events: TIDENETWORK_VOYAGE_EVENTS,
+      combatKind: 'tidenetwork_voyage',
+      screenName: 'tidenetwork'
+    });
+  };
+
+  // Redirect the existing Sail-screen cards to go through the voyage
+  // transition instead of jumping straight to the destination screen.
+  const oldRenderNavigationForVoyageTransitions = window.renderNavigation;
+  window.renderNavigation = function(){
+    if (oldRenderNavigationForVoyageTransitions) oldRenderNavigationForVoyageTransitions();
+    const grid = document.getElementById('navPortGrid');
+    if (!grid) return;
+    grid.innerHTML = grid.innerHTML
+      .replace(/onclick="goScreen\('harbour'\)"/g, 'onclick="sailToHarbour()"')
+      .replace(/onclick="goScreen\('tidenetwork'\)"/g, 'onclick="sailToTideNetwork()"');
+  };
+})();
+</script>
+
+
+
+<div id="arc15SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
+  <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
+    <img src="assets/comics/arc15/arc15-cover-shape-of-a-people.png" alt="Arc XV — Shape of a People" style="width:100%;border-radius:8px;display:block;">
+    <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc15Splash()">⚓ Begin Arc XV</button>
+  </div>
+</div>
+
+<script id="ct-build-v176-arc15-ch1">
+(function(){
+  // -------------------------------------------------------------------
+  // ARC XV — SHAPE OF A PEOPLE. Only Chapter 1's text has been provided
+  // so far, so ARC15_CHAPTERS starts with just one entry, same pattern
+  // as Arc XIII/XIV's own Ch.1-only starts. Gated behind arc14Complete +
+  // level 225, continuing the +15/arc pace exactly (XIII=195, XIV=210,
+  // XV=225).
+  //
+  // The Clan Settlement/Wilderness mechanic San described (Settlement/
+  // Market/Wilderness/Crafts/Community/Requests/Explore tabs, regional
+  // zone exploration, the 6 themed monsters, the Old Moon Beast) is
+  // deliberately NOT built yet — narrative only, same as how the Tide
+  // Network stayed unbuilt until San explicitly greenlit it separately.
+  // Noted and ready for whenever that's next.
+  // -------------------------------------------------------------------
+  const ARC15_CHAPTERS = [
+    {id:1, title:'The Shape in the Forest', focus:"The Crimson Tide reaches a new world and finds enormous tracks near the shore. At first it looks like a large animal — until the tracks lead directly into a settled community.", image:'assets/comics/arc15/ch01-the-shape-in-the-forest.png', xp:280, action:'👣 Follow the Tracks'}
+  ];
+  window.ARC15_CHAPTERS = ARC15_CHAPTERS;
+
+  window.arc15ObjectiveState = function(){
+    if (!game.arc14Complete) return null;
+    if (level() < 225) return null;
+    game.comicProgress15 = game.comicProgress15 || {};
+    for (const ch of ARC15_CHAPTERS) {
+      if (!game.comicProgress15[ch.id]) return 'complete_arc15_chapter_' + ch.id;
+    }
+    return 'arc15_part1_complete_for_now';
+  };
+
+  const ARC15_CHAPTER_SCENES = {
+    1: "The Crimson Tide reaches a new world.<br><br>Enormous tracks near the shore are the first thing anyone notices.<br><br>At first, the crew assumes they're dealing with a large animal — something to watch for, maybe avoid.<br><br>Then the tracks don't stop at the tree line.<br><br>They lead directly into a settled community."
+  };
+  window.ARC15_CHAPTER_SCENES = ARC15_CHAPTER_SCENES;
+
+  window.markArc15ChapterRead = function(id){
+    id = Number(id);
+    const ch = ARC15_CHAPTERS.find(c=>c.id===id);
+    if(!ch){ console.warn('[Arc15] no chapter data for id', id); return; }
+    game.comicProgress15 = game.comicProgress15||{};
+    if(game.comicProgress15[id]){ toast('✓ Already marked read.'); return; }
+    if(window.arc15ObjectiveState() !== 'complete_arc15_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    game.comicProgress15[id] = true;
+    if (id === 1) game.clanSettlementDiscovered = true; // matches harbourDiscovered/tideNetworkDiscovered — unlocks the location itself once that mechanic is built
+    gainXP(ch.xp);
+    game.reputation = (game.reputation||0) + 1;
+    logEvent('📖 Arc XV Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
+    toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
+    if (ARC15_CHAPTER_SCENES[id]) {
+      game.storyModalQueue = game.storyModalQueue || [];
+      game.storyModalQueue.push({ title: ch.title, blurb: ARC15_CHAPTER_SCENES[id] });
+    }
+    if (typeof renderMainGoal === 'function') try { renderMainGoal(); } catch(e) {}
+    if (typeof renderStory === 'function') try { renderStory(); } catch(e) {}
+  };
+
+  window.__ctShowArc15Splash = function(){
+    const overlay = document.getElementById('arc15SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc15Splash = function(){
+    const overlay = document.getElementById('arc15SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc15SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  const oldRenderStoryForArc15 = window.renderStory;
+  window.renderStory = function(){
+    if (oldRenderStoryForArc15) oldRenderStoryForArc15();
+    const container = document.getElementById('storyContent');
+    if (!container) return;
+    const arc15Ready = window.arc15ObjectiveState() !== null;
+    if (arc15Ready && !game.arc15SplashSeen && typeof window.__ctShowArc15Splash === 'function') {
+      window.__ctShowArc15Splash();
+    }
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<div class="story-act-kicker">Arc XV</div><div class="story-act-title">Shape of a People</div>'+
+      '<div class="story-act-tagline">A people are more than the shape they take.</div></div>';
+    if (!arc15Ready) {
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XV Locked</div><div class="story-chapter-sub">'+
+        (!game.arc14Complete ? 'Finish Arc XIV first.' : 'Reach Level 225 to begin.')+'</div></div></section>';
+      container.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+    const so = window.arc15ObjectiveState();
+    ARC15_CHAPTERS.forEach(function(ch){
+      const done = !!(game.comicProgress15 && game.comicProgress15[ch.id]);
+      const ready = !done && so===('complete_arc15_chapter_'+ch.id);
+      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      let action;
+      if (ready) action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        '<button class="btn btn-small btn-success" onclick="markArc15ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
+        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
+        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+    });
+    if (so==='arc15_part1_complete_for_now'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc XV chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    }
+    html += '</section>';
+    container.insertAdjacentHTML('beforeend', html);
   };
 })();
 </script>
