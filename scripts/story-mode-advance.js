@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V186 · Lewis Ally Captain'
+window.__CT_BUILD__='V187 · Arc XVI Ch.1 and San-Joel Disagreement System'
