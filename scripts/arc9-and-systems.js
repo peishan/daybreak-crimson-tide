@@ -1711,20 +1711,23 @@
       localStorage.setItem(SAVE_KEY, JSON.stringify(game));
       creds.lastSync = Date.now();
       saveGistCreds(creds);
-      setGistStatus('Restored from Gist! (' + new Date().toLocaleTimeString() + ') Reloading…');
-      // BUG FIX (San's report): the restored save was written to
-      // localStorage correctly, but the reload afterward dropped the
-      // player back on the intro screen — the game only ever loads from
-      // localStorage when "Continue Voyage" is explicitly clicked, it
-      // never auto-loads on startup. So the reload LOOKED like the
-      // restore had failed / reset progress to 0, even though the actual
-      // data was fine the whole time — the live game object just hadn't
-      // been loaded into yet. This flag survives the reload (sessionStorage,
-      // not localStorage, since it should only apply to this one reload)
-      // and is checked on startup to auto-continue straight into the
-      // restored save instead of waiting for a manual click.
-      try { sessionStorage.setItem('ct_auto_continue_after_reload', '1'); } catch(e) {}
-      setTimeout(function(){ location.reload(); }, 1200);
+      setGistStatus('Restored from Gist! (' + new Date().toLocaleTimeString() + ')');
+      // BUG FIX (San's report, twice now): a page reload here was
+      // unreliable — the first fix (a sessionStorage flag checked by a
+      // separate file on startup) still failed for San, most likely
+      // because that second file was served stale by the service worker
+      // (each script file is cached independently, so one file updating
+      // doesn't guarantee another did) — a real risk with any reload-
+      // based approach in a PWA like this. Removed the reload entirely:
+      // `game` is already correctly restored in memory at this point
+      // (see the Object.assign above), and the save was just written to
+      // localStorage, so calling loadGame() directly re-reads that same
+      // fresh data, runs its own migrations, and switches screens — all
+      // within this same already-running page, with zero dependency on
+      // any fetch, cache, or second file being up to date.
+      setGistBusy(false);
+      if (typeof loadGame === 'function') loadGame();
+      return;
     } catch(e) {
       setGistStatus('Pull failed — check your token, Gist ID, and connection.');
     }
