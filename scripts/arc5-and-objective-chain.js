@@ -310,6 +310,11 @@
       if (s15 !== null && s15 !== 'arc15_part1_complete_for_now') return s15;
       if (s15 === 'arc15_part1_complete_for_now') lastTerminal = s15;
     }
+    if (typeof window.arc16ObjectiveState === 'function') {
+      const s16 = window.arc16ObjectiveState();
+      if (s16 !== null && s16 !== 'arc16_part1_complete_for_now') return s16;
+      if (s16 === 'arc16_part1_complete_for_now') lastTerminal = s16;
+    }
     return lastTerminal || base;
   };
 
@@ -342,6 +347,7 @@
     if ((m = /^complete_arc13_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XIII', m[1], window.ARC13_CHAPTERS);
     if ((m = /^complete_arc14_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XIV', m[1], window.ARC14_CHAPTERS);
     if ((m = /^complete_arc15_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XV', m[1], window.ARC15_CHAPTERS);
+    if ((m = /^complete_arc16_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc XVI', m[1], window.ARC16_CHAPTERS);
     if (state === 'arc8_part1_complete_for_now') return ['Arc VIII — All Caught Up', 'Every available Arc VIII chapter is read. More is on the way.'];
     if (state === 'arc9_part1_complete_for_now') return ['Arc IX — All Caught Up', 'Every available Arc IX chapter is read. More is on the way.'];
     if (state === 'arc10_part1_complete_for_now') return ['Arc X — All Caught Up', 'Every available Arc X chapter is read. More is on the way.'];
@@ -350,6 +356,7 @@
     if (state === 'arc13_part1_complete_for_now') return ['Arc XIII — All Caught Up', 'Every available Arc XIII chapter is read. More is on the way.'];
     if (state === 'arc14_part1_complete_for_now') return ['Arc XIV — All Caught Up', 'Every available Arc XIV chapter is read. More is on the way.'];
     if (state === 'arc15_part1_complete_for_now') return ['Arc XV — All Caught Up', 'Every available Arc XV chapter is read. More is on the way.'];
+    if (state === 'arc16_part1_complete_for_now') return ['Arc XVI — All Caught Up', 'Every available Arc XVI chapter is read. More is on the way.'];
     return null;
   }
 
