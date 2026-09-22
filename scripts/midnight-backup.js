@@ -31,6 +31,20 @@
 
   window.checkMidnightBackup = function(){
     if (typeof realDateKey !== 'function') return;
+    // CRITICAL BUG FIX (San's report — this overwrote a real Gist backup
+    // with a fresh, unloaded save): this used to fire the moment a new
+    // calendar day was detected, with zero regard for whether the
+    // in-memory `game` object actually represented a loaded save or was
+    // just sitting at hardcoded Level-1 defaults, which is what it holds
+    // on every fresh page load until something explicit loads into it.
+    // If the app happened to open fresh on a new day, with Gist
+    // credentials already saved but no save actually loaded yet, this
+    // could silently push that empty default state straight over a real
+    // backup. gameSessionActive only ever becomes true after a genuine
+    // loadGame(), importSave(), or deliberate "start new voyage" — never
+    // just from being on the intro screen — so gating on it here means
+    // this can never fire against an unloaded game state again.
+    if (typeof gameSessionActive === 'undefined' || !gameSessionActive) return;
     const today = realDateKey();
     const state = midnightBackupState();
     if (state.lastDate === today) return; // already ran today

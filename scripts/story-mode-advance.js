@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V195 · Gist Restore No-Reload Fix'
+window.__CT_BUILD__='V196 · CRITICAL Auto-Backup Data-Loss Fix'
