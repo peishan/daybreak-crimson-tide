@@ -2569,10 +2569,18 @@ function renderComicArchive(){
   // This used to link to a "Legends of Daybreak" PDF that isn't even bundled
   // in this build — leftover from a shared template, not Crimson Tide's own
   // content. Replaced with a real back-reading archive: every chapter the
-  // player has already completed, across both arcs, linking to its full
+  // player has already completed, across every arc, linking to its full
   // page image in a new tab. Chapters not yet reached stay hidden rather
   // than shown locked, since this screen is reachable from the landing page
   // before the player has necessarily loaded their save.
+  //
+  // BUG FIX: this only ever covered Arc I and Arc II — never extended as
+  // Arc III through XVI were built, so by the time a player reached even
+  // Arc V this screen showed almost nothing relevant, and San (at Arc XVI,
+  // Level 210) correctly flagged it as "nothing usable." Now generic across
+  // every arc from ARCn_CHAPTERS/game.comicProgressN, since that naming
+  // pattern has been consistent since Arc II — Arc I alone predates it and
+  // needs its own small image-lookup table, same as before.
   const ARC1_IMAGES = {
     1:'ch01-storm-that-remained.png', 2:'ch02-the-first-port.png', 3:'ch03-a-crew-of-choice.png',
     4:'ch04-the-guardians-fortress.png', 5:'ch05-the-voice-behind-the-wall.png', 6:'ch06-the-shield-returns.png',
@@ -2584,13 +2592,9 @@ function renderComicArchive(){
     22:'ch22-mezstorm.png', 23:'ch23-siblings.png', 24:'ch24-drowned-passage.png'
   };
   const progress1 = (typeof game!=='undefined' && game.comicProgress) || {};
-  const progress2 = (typeof game!=='undefined' && game.comicProgress2) || {};
   const arc1Read = (typeof ARC1_COMICS!=='undefined' ? ARC1_COMICS : [])
     .filter(ch => !!progress1[ch.id] && ARC1_IMAGES[ch.id])
     .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1/'+ARC1_IMAGES[ch.id]}));
-  const arc2Read = (typeof window.ARC2_CHAPTERS!=='undefined' ? window.ARC2_CHAPTERS : [])
-    .filter(ch => !!progress2[ch.id] && ch.image)
-    .map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
 
   function section(label, chapters){
     if(!chapters.length) return '<div class="comic-archive-card"><div class="comic-archive-sub">No '+label+' chapters read yet.</div></div>';
@@ -2600,9 +2604,16 @@ function renderComicArchive(){
     ).join('');
   }
 
-  el.innerHTML =
-    '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read) +
-    '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc II — A Voyage to Remember</div>' + section('Arc II', arc2Read);
+  const ARC_NUMERALS = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII',13:'XIII',14:'XIV',15:'XV',16:'XVI'};
+  let html = '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read);
+  for (let n = 2; n <= 16; n++) {
+    const chapters = window['ARC'+n+'_CHAPTERS'];
+    if (!chapters) continue; // arc not built in this session's file yet — skip rather than show a fake empty section
+    const progress = game['comicProgress'+n] || {};
+    const read = chapters.filter(ch => !!progress[ch.id] && ch.image).map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
+    html += '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc '+ARC_NUMERALS[n]+'</div>' + section('Arc '+ARC_NUMERALS[n], read);
+  }
+  el.innerHTML = html;
 }
 
 function hasSavedVoyage() {
