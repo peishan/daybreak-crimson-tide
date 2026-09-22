@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V189 · Fountain of Youth Prestige'
+window.__CT_BUILD__='V186 · Lewis Ally Captain'
