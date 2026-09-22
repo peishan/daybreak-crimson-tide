@@ -287,7 +287,13 @@
     const idx = board.findIndex(s => s.slotId === slotId);
     if (idx === -1) return;
     const slot = board[idx];
-    if (slot.status !== 'active') return;
+    // BUG FIX: this used to require status === 'active' specifically, but
+    // the only status the "Claim Resolution" button ever actually renders
+    // for is 'ready' (see renderRequestsTab) — so every real click on that
+    // button hit this guard and silently returned, doing nothing at all.
+    // Accepts either status now; the elapsed-time check below is the real
+    // gate on whether it's actually claimable, not the status string.
+    if (slot.status !== 'active' && slot.status !== 'ready') return;
     if (Date.now() - slot.startedAt < slot.durationMs) { toast('⏳ Not back yet.'); return; }
     const template = requestTemplate(slot.requestId);
     if (!template) return;
@@ -367,6 +373,17 @@
       return;
     }
     const board = requestBoard();
+    // BUG FIX: status only ever transitioned 'active' -> 'ready' inside
+    // processAFKRewards(), which only runs on AFK catch-up. During normal
+    // active play a finished request just sat showing "almost done"
+    // forever, since nothing else ever flipped it. Now also checked here,
+    // on every render of this tab, so it naturally becomes claimable
+    // whether or not the player went AFK.
+    board.forEach(function(slot){
+      if (slot.status === 'active' && Date.now() - slot.startedAt >= slot.durationMs) {
+        slot.status = 'ready';
+      }
+    });
     let html = '<div class="panel-title">📋 Fair Tide Requests</div>'+
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">People bring their problems to the dock. San decides who goes.</p>';
     board.forEach(function(slot){
