@@ -70,3 +70,28 @@
     window.checkMidnightBackup();
   };
 })();
+
+
+(function(){
+  // -------------------------------------------------------------------
+  // AUTO-CONTINUE AFTER A GIST RESTORE. San's report: after pulling a
+  // save from Gist, the automatic reload dropped back to the intro
+  // screen instead of straight back into the restored game — which
+  // looked exactly like "progress reset to 0," even though the actual
+  // data was written to localStorage correctly the whole time. The game
+  // never auto-loads on startup; loadGame() only runs when Continue
+  // Voyage is explicitly clicked. pullFromGist() now sets a one-shot
+  // sessionStorage flag right before its own reload (see
+  // arc9-and-systems.js); this checks for it on startup and, if present,
+  // clears it and calls loadGame() immediately instead of waiting.
+  // -------------------------------------------------------------------
+  document.addEventListener('DOMContentLoaded', function(){
+    let shouldAutoContinue = false;
+    try { shouldAutoContinue = sessionStorage.getItem('ct_auto_continue_after_reload') === '1'; } catch(e) {}
+    if (!shouldAutoContinue) return;
+    try { sessionStorage.removeItem('ct_auto_continue_after_reload'); } catch(e) {}
+    if (typeof loadGame === 'function') {
+      setTimeout(function(){ loadGame(); }, 50);
+    }
+  });
+})();

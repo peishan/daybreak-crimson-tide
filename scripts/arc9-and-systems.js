@@ -1712,6 +1712,18 @@
       creds.lastSync = Date.now();
       saveGistCreds(creds);
       setGistStatus('Restored from Gist! (' + new Date().toLocaleTimeString() + ') Reloading…');
+      // BUG FIX (San's report): the restored save was written to
+      // localStorage correctly, but the reload afterward dropped the
+      // player back on the intro screen — the game only ever loads from
+      // localStorage when "Continue Voyage" is explicitly clicked, it
+      // never auto-loads on startup. So the reload LOOKED like the
+      // restore had failed / reset progress to 0, even though the actual
+      // data was fine the whole time — the live game object just hadn't
+      // been loaded into yet. This flag survives the reload (sessionStorage,
+      // not localStorage, since it should only apply to this one reload)
+      // and is checked on startup to auto-continue straight into the
+      // restored save instead of waiting for a manual click.
+      try { sessionStorage.setItem('ct_auto_continue_after_reload', '1'); } catch(e) {}
       setTimeout(function(){ location.reload(); }, 1200);
     } catch(e) {
       setGistStatus('Pull failed — check your token, Gist ID, and connection.');

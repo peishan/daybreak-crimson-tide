@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V193 · Fixed Fair Tide Requests Claim Bug'
+window.__CT_BUILD__='V194 · Gist Restore Auto-Continue Fix'
