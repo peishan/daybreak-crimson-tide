@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v2';
+const CACHE_VERSION = 'crimson-tide-v3';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -20,7 +20,33 @@ const PRECACHE_URLS = [
   './assets/icons/icon-192x192.png',
   './assets/icons/icon-512x512.png',
   './assets/icons/icon-192x192-maskable.png',
-  './assets/icons/icon-512x512-maskable.png'
+  './assets/icons/icon-512x512-maskable.png',
+  // index.html was split into external scripts (v184) — these are now
+  // part of the app shell itself and have to be precached the same way
+  // index.html is, or a fresh install with no prior online visit could
+  // load an index.html with nothing behind it.
+  './scripts/debug-log.js',
+  './scripts/core-engine.js',
+  './scripts/story-mode-advance.js',
+  './scripts/footer-and-arc1.js',
+  './scripts/arc2.js',
+  './scripts/safety-and-fixes.js',
+  './scripts/arc3.js',
+  './scripts/arc4-fairtide.js',
+  './scripts/arc5-and-objective-chain.js',
+  './scripts/fairtide-buildings-and-arc6.js',
+  './scripts/arc7.js',
+  './scripts/arc8.js',
+  './scripts/arc9-and-systems.js',
+  './scripts/arc10-12.js',
+  './scripts/fairtide-systems.js',
+  './scripts/interworld-expeditions.js',
+  './scripts/arc13-harbour.js',
+  './scripts/harbour-and-arc14.js',
+  './scripts/achievements.js',
+  './scripts/tide-network.js',
+  './scripts/arc15-and-voyage-fixes.js',
+  './scripts/clan-settlement-and-sw.js'
 ];
 
 self.addEventListener('install', event => {
