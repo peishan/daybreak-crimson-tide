@@ -4829,7 +4829,17 @@ function handleVictory() {
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'clansettlement\')">🌕 Continue to the Settlement</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
-    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+    // "Challenge Again" (San's request): scoped strictly to this default
+    // branch — regular port explore-tab monster/thief fights. Everything
+    // else (uncharted, the three unknown-location _explore/_voyage kinds,
+    // guardians, sea-voyage pirate encounters) has its own branch above
+    // and never reaches here, so none of those pick this up. Re-uses
+    // startHarborFight(enemy.key) with no returnKind, exactly matching
+    // how the original fight was started — this also means the enemy is
+    // freshly re-scaled to the player's current level via
+    // scaledEnemyForExplore, not the same now-stale enemy object.
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button> '+
+      '<button class="btn btn-combat" onclick="startHarborFight(\''+enemy.key+'\')">⚔️ Challenge Again</button>';
   }
   // BUG FIX: this used to write the post-battle message/buttons straight
   // into the DOM and nowhere else. goScreen('combat') never calls

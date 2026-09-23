@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V200 · Inter-World Voyage Rebuild (10 Ticks)'
+window.__CT_BUILD__='V202 · Challenge Again Button'
