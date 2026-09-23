@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V211 · Forest Coast Diagnostic (Temporary)'
+window.__CT_BUILD__='V212 · Forest Coast Diagnostic Removed'
