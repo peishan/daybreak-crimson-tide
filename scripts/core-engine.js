@@ -1031,6 +1031,11 @@ const CRIT_BASE = 0.10;
 // (one-time story fights that free a companion).
 // ---------------------------------------------------------------------------
 const HARBOR_ENEMIES = {
+  forest_coast_thicket_watchers: { name: 'Thicket Watchers', icon: '🌿', hp: 300, dmg: 15, xp: 260, gold: 100, desc: 'They\'ve been keeping an eye on the treeline long before the crew showed up.' },
+  forest_coast_root_snatchers:   { name: 'Root Snatchers', icon: '🪵', hp: 280, dmg: 14, xp: 250, gold: 95,  desc: 'Fast, low to the ground, and gone into the underbrush before you can land a second hit.' },
+  forest_coast_canopy_scouts:    { name: 'Canopy Scouts', icon: '🍃', hp: 310, dmg: 16, xp: 270, gold: 105, desc: 'They watch from above long before they ever come down.' },
+  forest_coast_tide_foragers:    { name: 'Tide Foragers', icon: '🦞', hp: 290, dmg: 15, xp: 255, gold: 100, desc: 'They work the tideline where the forest meets the shore, and don\'t appreciate company.' },
+  forest_coast_grove_warden:     { name: 'Grove Warden', icon: '🌳', hp: 380, dmg: 19, xp: 320, gold: 140, desc: 'Something old, rooted, and entirely unbothered by a single ship\'s worth of visitors.' },
   bilge_rat:     { name: 'Bilge Rat Gang', icon: '🐀', hp: 120, dmg: 8,  xp: 40,  gold: 15, desc: 'They\'ve been living in the hold longer than the crew has.' },
   dock_thief:    { name: 'Dock Thief', icon: '🥷', hp: 150, dmg: 10, xp: 55,  gold: 25, desc: 'Fast hands, faster feet, gone before the watch turns.' },
   smuggler_crew: { name: 'Smuggler Crew', icon: '🏴', hp: 200, dmg: 12, xp: 70,  gold: 35, desc: 'Running contraband nobody\'s supposed to ask about.' },
@@ -4003,6 +4008,17 @@ function exitHarbourBattleToDestination() {
   goScreen('harbour');
   if (typeof renderHarbourScreen === 'function') renderHarbourScreen();
 }
+function exitForestCoastBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('forestcoast');
+  if (typeof renderForestCoastScreen === 'function') renderForestCoastScreen();
+}
 function exitTideNetworkBattleToDestination() {
   try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
   try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
@@ -4851,6 +4867,11 @@ function handleVictory() {
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitHarbourBattleToDestination()">⚓ Continue Exploring</button>' +
       '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'forestcoast_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitForestCoastBattleToDestination()">🌲 Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'tidenetwork_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
     postBattleButtonsHtml =
@@ -4864,6 +4885,9 @@ function handleVictory() {
   } else if (enemy.kind === 'harbour_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'harbour\')">⚓ Continue to the Harbour</button>';
+  } else if (enemy.kind === 'forestcoast_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'forestcoast\')">🌲 Continue to Forest Coast</button>';
   } else if (enemy.kind === 'tidenetwork_voyage') {
     postBattleMessage = 'The current settles. ' + enemy.name + ' is behind you now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'tidenetwork\')">🌊 Continue to the Settlement</button>';

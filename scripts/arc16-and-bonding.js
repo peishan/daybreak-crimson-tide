@@ -137,6 +137,12 @@
     const gateMsg = arc16InteractiveGateMessage(id);
     if (gateMsg) { toast('🔒 '+gateMsg, 3600); return; }
     game.comicProgress16[id] = true;
+    // Unlocks the Forest Coast location itself, matching the
+    // harbourDiscovered/tideNetworkDiscovered/clanSettlementDiscovered/
+    // archiveDiscovered pattern from every other location — Ch.1 ("A
+    // World Worth Exploring") is where the crew first arrives at this
+    // world at all.
+    if (id === 1) game.forestCoastDiscovered = true;
     // Cross-hook flagged when the San & Joel disagreement system was
     // built (see the second IIFE below): Ch.14 ("The Argument") is what
     // actually starts the disagreement arc. Without this, Ch.14 would
