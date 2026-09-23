@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V204 · Archive Hub + Archive Records'
+window.__CT_BUILD__='V205 · Training Room: One-on-One, One Round'

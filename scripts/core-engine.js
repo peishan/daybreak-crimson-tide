@@ -344,7 +344,20 @@ function memberUnlocked(m){
   if (m.id === 'ser_aldric' || m.id === 'sister_wren') return !!game.finalCleared;
   return !!game.foundCompanions[m.id];
 }
-function getActiveParty(){ return ALL_PARTY.filter(memberUnlocked); }
+// One-on-one training bouts (San's request): a temporary override so a
+// training fight can restrict combat to just San + the sparring partner,
+// instead of the whole active roster piling on one person, which read
+// oddly for what's meant to be a friendly one-on-one spar. Cleared the
+// moment the bout resolves (see handleVictory) so it can never leak into
+// a real fight afterward. getCrimsonCombatParty() builds on this
+// function, so the restriction correctly cascades through combat
+// without needing to touch every call site separately.
+function getActiveParty(){
+  if (game.combatPartyOverride && game.combatPartyOverride.length) {
+    return ALL_PARTY.filter(m => game.combatPartyOverride.indexOf(m.id) !== -1 && memberUnlocked(m));
+  }
+  return ALL_PARTY.filter(memberUnlocked);
+}
 // Eliz and Soel are narratively unkillable — damage still lands, it just
 // can't take them below 1 HP, same rule as the source game.
 const UNKILLABLE_IDS = new Set(['eliz','soel']);
@@ -3829,6 +3842,14 @@ function startCombat(encounter) {
   ctPlayMusic('combat');
   updateCrimsonCombatRosterDisplay();
 
+  // Defensive default: every fight starts with the full active roster
+  // unless something explicitly sets game.combatPartyOverride right
+  // after this call returns (see startTrainingBout). Clearing here
+  // rather than only on victory/defeat means a training override could
+  // never leak into a real fight even in an edge case where the
+  // previous bout didn't resolve cleanly.
+  game.combatPartyOverride = null;
+
   hidePostBattleAction();
   const enemy = encounter.enemy;
   if (!enemy) return;
@@ -4545,6 +4566,23 @@ function endTurn() {
   const alive = party.filter(m => partyHpOf(m) > 0);
   if (game.combatTurn >= alive.length) { game.combatTurn = 0; game.combatRound++; }
 
+  // "One round" (San's request): a training bout is a single exchange,
+  // not a fight to the finish — it ends the moment round 2 would
+  // otherwise begin. Reuses handleVictory() rather than a separate
+  // resolution path, since training already treats any outcome as a
+  // friendly "Good bout!" regardless of who's still standing (see its
+  // own kind==='training' branch) — there was never a real stakes
+  // difference between "won" and "lost" here to preserve. Gated on
+  // alive.length (computed just above) so a genuine defeat during round
+  // 1 — San's own HP hitting 0 from the counter-attack — is correctly
+  // left for the normal allFallen/handleDefeat() check inside
+  // renderCombat() just below, rather than silently overridden by a
+  // false victory here.
+  if (game.combatEnemy && game.combatEnemy.kind === 'training' && game.combatRound >= 2 && !game.combatResolved && alive.length > 0) {
+    handleVictory();
+    return;
+  }
+
   renderCombat();
 }
 
@@ -4659,6 +4697,11 @@ function handleVictory() {
   game.combatResolved = true;
   const enemy = game.combatEnemy;
   game.inCombat = false;
+  // Clear the training-bout one-on-one override the moment ANY fight
+  // resolves — not just training ones — so it can never leak into a
+  // non-combat screen (party list, equipment) in the gap between this
+  // bout ending and the next real fight starting.
+  game.combatPartyOverride = null;
   if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
   gainXP(enemy.xp);
   // Reputation rank gold bonus (see ct-build-v91-reputation-ranks) —
@@ -4864,6 +4907,10 @@ function handleDefeat() {
   if (game.combatResolved || !game.inCombat) return;
   game.combatResolved = true;
   game.inCombat = false;
+  // See the matching note in handleVictory() — clearing on every
+  // resolution, not just victories, so a training bout San loses still
+  // correctly releases the one-on-one override.
+  game.combatPartyOverride = null;
   if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
   const isTrainingBout = game.combatEnemy && game.combatEnemy.kind === 'training';
   if (isTrainingBout) {

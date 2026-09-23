@@ -653,6 +653,12 @@
     const enemy = generateTrainingEnemy(partner);
     toast('⚔️ ' + trainingPartnerLine(partnerId, partner.name), 3600);
     startCombat({kind:'training', key:'training_'+partnerId, enemy});
+    // One-on-one (San's request): restricts this specific bout to San +
+    // the chosen sparring partner only, instead of the whole active
+    // roster piling on one crew member for what's meant to be a
+    // friendly spar. Set after startCombat() clears any stale override
+    // by default — see getActiveParty()/startCombat() in core-engine.js.
+    game.combatPartyOverride = ['san', partnerId];
   };
 
   window.backToTrainingRoom = function(){
