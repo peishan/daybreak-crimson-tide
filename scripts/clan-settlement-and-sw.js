@@ -426,9 +426,35 @@
 // Register the service worker (see sw.js) for offline play + installability.
 // Registered with a relative path so it works whether the game is served
 // from a domain root or a GitHub Pages subpath.
+//
+// BUG FIX (San's report): a hard refresh — even in the actual browser, not
+// just the installed PWA — kept showing an old build number. Root cause:
+// this only ever called .register(), which does NOT force a check for a
+// newer sw.js. The browser's own default update-checking is real but can
+// be delayed or skipped, especially once sw.js itself picks up caching
+// headers from GitHub Pages — so a page-level hard refresh doesn't
+// reliably reach the service-worker layer at all. Incognito correctly
+// showed the latest build because it has no persisted service worker
+// registration to go stale in the first place.
+//
+// Fixed two ways: registration.update() is now called explicitly right
+// after registering, forcing an immediate check for a newer sw.js instead
+// of waiting on browser heuristics; and a controllerchange listener
+// reloads the page exactly once when a new service worker actually takes
+// over, so the player doesn't have to manually refresh a second time
+// after an update is found. The `refreshing` guard prevents a reload loop
+// if controllerchange were to fire more than once.
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(err => {
+    navigator.serviceWorker.register('sw.js').then(registration => {
+      registration.update().catch(() => {});
+    }).catch(err => {
       console.warn('Service worker registration failed:', err);
     });
   });

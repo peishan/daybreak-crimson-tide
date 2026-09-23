@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V197 · Harbour Trade, Location Display, Progress Toasts'
+window.__CT_BUILD__='V198 · Service Worker Update Fix'
