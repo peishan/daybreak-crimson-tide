@@ -1321,6 +1321,8 @@ function checkQuestProgress(type, target, amount) {
       game.gold += q.rw.gold;
       game.reputation += q.rw.rep || 0;
       toast(`🎯 Quest complete: ${q.name} · +${q.rw.xp} XP · +${q.rw.gold}g`);
+    } else if (typeof window.progressToast === 'function') {
+      window.progressToast('📜 ' + q.name + ': ' + q.c + '/' + q.need);
     }
   });
   game.activeQuests = game.activeQuests.filter(q => !q.done);
@@ -1385,6 +1387,8 @@ function checkTempleQuestProgress(type, target, amount) {
       game.gold += q.rw.gold;
       game.reputation += q.rw.rep || 0;
       toast(`⛩️ Vow fulfilled: ${q.name} · +${q.rw.xp} XP · +${q.rw.gold}g`);
+    } else if (typeof window.progressToast === 'function') {
+      window.progressToast('⛩️ ' + q.name + ': ' + q.c + '/' + q.need);
     }
   });
   game.activeTempleQuests = game.activeTempleQuests.filter(q => !q.done);
@@ -3167,6 +3171,8 @@ function checkBountyProgress(type, target, amount) {
       gainXP(b.rw.xp);
       game.gold += b.rw.gold;
       toast(`💰 Bounty complete: ${b.name} · +${b.rw.xp} XP · +${b.rw.gold}g`);
+    } else if (typeof window.progressToast === 'function') {
+      window.progressToast('💰 ' + b.name + ': ' + b.c + '/' + b.need);
     }
   });
 }

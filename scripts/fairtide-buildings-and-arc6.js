@@ -1978,11 +1978,18 @@
     // string first and wrapped in a native <details> element, collapsed
     // by default, with a count in the summary instead of always-open.
     const capturedKeys = Object.keys(game.rivalsCaptured || {}).filter(function(key){ return window.rivalCaptured(key); });
-    if (capturedKeys.length) {
+    // BUG FIX (San's request): completed community service used to stay
+    // listed forever alongside active ones, cluttering the section even
+    // after a rival's term was long since served. Now only active service
+    // shows at all — completed entries are hidden entirely, not just
+    // collapsed. Jeff's own service has no end date (totalDays: null),
+    // so he correctly never gets filtered out here.
+    const activeKeys = capturedKeys.filter(function(key){ const cs = communityServiceState()[key]; return cs && cs.active; });
+    if (activeKeys.length) {
       const container = document.getElementById('exploreContent');
       if (container) {
         let cardsHtml = '';
-        capturedKeys.forEach(function(key){
+        activeKeys.forEach(function(key){
           const name = rivalDisplayName(key);
           const served = window.communityServiceDaysServed(key);
           const cs = communityServiceState()[key] || {totalDays:20, active:false};
@@ -1998,10 +2005,9 @@
             (cs.active ? '<button class="btn btn-small btn-success" style="margin-top:6px;" '+(canClaim?'':'disabled')+' onclick="claimCommunityLabor(\''+key+'\')">'+framing.icon+' Collect Today\'s Labor</button>' : '')+
             '</article>';
         });
-        const activeCount = capturedKeys.filter(function(key){ const cs = communityServiceState()[key]; return cs && cs.active; }).length;
         container.insertAdjacentHTML('beforeend',
           '<details style="margin-top:14px;"><summary style="cursor:pointer;font-family:Cinzel;color:var(--gold);font-size:.95rem;padding:6px 0;">'+
-          '⛓️ Community Service ('+capturedKeys.length+(activeCount?', '+activeCount+' active':'')+')</summary>'+
+          '⛓️ Community Service ('+activeKeys.length+' active)</summary>'+
           cardsHtml+'</details>');
       }
     }

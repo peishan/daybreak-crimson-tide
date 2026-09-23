@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V196 · CRITICAL Auto-Backup Data-Loss Fix'
+window.__CT_BUILD__='V197 · Harbour Trade, Location Display, Progress Toasts'
