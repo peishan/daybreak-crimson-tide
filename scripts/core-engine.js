@@ -4589,7 +4589,7 @@ function enemyCounterAttack() {
   game.partyHp[target.id] = nextHp;
 
   if (aegisTriggered) {
-    logCombat('🛡️✨ The mark on Joel\'s arm flares — <b>First Mate\'s Aegis</b> shields San from the worst of it!');
+    logCombat('🛡️✨ The mark on Joel\'s chest flares — <b>First Mate\'s Aegis</b> shields San from the worst of it!');
   }
   logCombat(esc(enemy.name) + ' strikes ' + esc(target.name) + ' for <span class="damage">' + dmg + '</span> damage!' +
     (nextHp === 0 ? ' <span style="color:#e74c3c">' + esc(target.name) + ' has fallen!</span>' : ''));
