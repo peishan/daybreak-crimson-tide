@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V209 · Forest Coast Discovery Migration Fix'
+window.__CT_BUILD__='V210 · CRITICAL Fielding Corruption Fix'

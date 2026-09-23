@@ -740,6 +740,19 @@
   const oldGetCrimsonCombatPartyForFielding = window.getCrimsonCombatParty || (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty : null);
   window.getCrimsonCombatParty = function(){
     const full = oldGetCrimsonCombatPartyForFielding ? oldGetCrimsonCombatPartyForFielding() : [];
+    // One-on-one training bouts (San's request), moved here after the
+    // critical fix above — this only narrows the COMBAT participant list
+    // itself, and never touches getActiveParty() or getFieldedIds(), so
+    // it can't corrupt game.fieldedIds the way the original
+    // implementation did. Applied against the FULL unlocked roster,
+    // bypassing the fielding filter entirely — training was never
+    // restricted to only currently-fielded companions (the original
+    // "whole party spars against Joel" report implied everyone unlocked
+    // could pile in), and the sparring partner themselves might not
+    // currently be fielded for voyages at all.
+    if (game.combatPartyOverride && game.combatPartyOverride.length) {
+      return full.filter(m => m.temp || game.combatPartyOverride.indexOf(m.id) !== -1);
+    }
     const fieldedIds = new Set(window.getFieldedIds());
     return full.filter(m => m.temp || fieldedIds.has(m.id));
   };

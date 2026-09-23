@@ -344,20 +344,22 @@ function memberUnlocked(m){
   if (m.id === 'ser_aldric' || m.id === 'sister_wren') return !!game.finalCleared;
   return !!game.foundCompanions[m.id];
 }
-// One-on-one training bouts (San's request): a temporary override so a
-// training fight can restrict combat to just San + the sparring partner,
-// instead of the whole active roster piling on one person, which read
-// oddly for what's meant to be a friendly one-on-one spar. Cleared the
-// moment the bout resolves (see handleVictory) so it can never leak into
-// a real fight afterward. getCrimsonCombatParty() builds on this
-// function, so the restriction correctly cascades through combat
-// without needing to touch every call site separately.
-function getActiveParty(){
-  if (game.combatPartyOverride && game.combatPartyOverride.length) {
-    return ALL_PARTY.filter(m => game.combatPartyOverride.indexOf(m.id) !== -1 && memberUnlocked(m));
-  }
-  return ALL_PARTY.filter(memberUnlocked);
-}
+// CRITICAL BUG FIX (San's report — Soel and most of the party got force-
+// fielded right after a training bout): the one-on-one override used to
+// live here, but this function is explicitly documented elsewhere
+// (arc9-and-systems.js, the PARTY FIELDING block) as needing to always
+// mean "everyone unlocked" — equipment eligibility, the crew strip
+// display, and critically getFieldedIds() all depend on that. During a
+// training bout, this returned only San + the sparring partner — and
+// getFieldedIds() (called constantly throughout combat via the wrapped
+// getCrimsonCombatParty()) uses this function's result to decide who's
+// "no longer unlocked" and PERMANENTLY STRIPS them from game.fieldedIds,
+// a real persistent-state mutation, not a temporary combat-only view.
+// That's what actually corrupted the fielded roster. The one-on-one
+// override now lives in the getCrimsonCombatParty() wrap instead (see
+// arc9-and-systems.js), applied after fielding is resolved, so it can
+// never reach getFieldedIds() or touch persistent state at all.
+function getActiveParty(){ return ALL_PARTY.filter(memberUnlocked); }
 // Eliz and Soel are narratively unkillable — damage still lands, it just
 // can't take them below 1 HP, same rule as the source game.
 const UNKILLABLE_IDS = new Set(['eliz','soel']);
