@@ -39,7 +39,27 @@
     {id:'crew_assembled', name:'The Crew Assembles', icon:'⚓', desc:'The core crew is complete.',
       check: crewAssembled},
     {id:'bonded_by_the_tide', name:'Bonded by the Tide', icon:'💞', desc:"San and Joel's bond became something real.",
-      check: function(){ return !!(game.comicProgress5 && game.comicProgress5[4]); }}
+      check: function(){ return !!(game.comicProgress5 && game.comicProgress5[4]); }},
+    {id:'a_debt_repaid', name:'A Debt Repaid', icon:'🧭', desc:'Lewis joined the fleet as an ally captain.',
+      check: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'a_world_of_its_own', name:'A World of Its Own', icon:'⚓', desc:'The Unknown Harbour was found — the first place that runs by its own rules, not Veyren\'s.',
+      check: function(){ return !!game.harbourDiscovered; }},
+    {id:'people_beneath_the_tide', name:'People Beneath the Tide', icon:'🌊', desc:'The sea was not empty after all.',
+      check: function(){ return !!game.tideNetworkDiscovered; }},
+    {id:'a_different_shape', name:'A Different Shape', icon:'🐾', desc:'A different shape doesn\'t mean a different person.',
+      check: function(){ return !!game.clanSettlementDiscovered; }},
+    {id:'the_archive_remembers', name:'The Archive Remembers', icon:'🏛️', desc:'A structure suspended beyond the boundary, still transmitting after everything else fell silent.',
+      check: function(){ return !!game.archiveDiscovered; }},
+    {id:'at_least_you_learned_now', name:'At Least You Learned Now', icon:'❤️', desc:'A disagreement, worked all the way through — and the bond held, stronger for it.',
+      check: function(){ return !!(game.sanJoelDisagreement && game.sanJoelDisagreement.learnedFlags && game.sanJoelDisagreement.learnedFlags.indexOf('joel_can_challenge_san') !== -1); }},
+    {id:'a_trusted_name', name:'A Trusted Name', icon:'🤝', desc:'The Harbour stopped treating the crew like strangers.',
+      check: function(){ return !!(typeof window.harbourState === 'function' && window.harbourState().sections && window.harbourState().sections.trade); }},
+    {id:'borrowed_time', name:'Borrowed Time', icon:'⏳', desc:'The Fountain of Youth was used for the first time. San is not quite the age she was.',
+      check: function(){ return !!(game.fountainPrestige && game.fountainPrestige.count >= 1); }},
+    {id:'the_last_ship_shell_need', name:"The Last Ship She'll Ever Need", icon:'⭐', desc:'The Aethon\'s Pride. By the time San sails this one, her name is already legend.',
+      check: function(){ return !!(typeof currentVessel === 'function' && currentVessel().id === 'aethons_pride'); }},
+    {id:'someone_belonging', name:'Someone Belonging', icon:'👤', desc:'Not a chosen hero — just someone the Archive finally recognized as its own.',
+      check: function(){ return !!(game.comicProgress17 && game.comicProgress17[23]); }}
   ];
   window.ACHIEVEMENTS = ACHIEVEMENTS;
 

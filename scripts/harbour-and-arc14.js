@@ -286,6 +286,7 @@
       window.__ctShowArc14Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc14/arc14-cover-people-beneath-the-tide.png" alt="Arc XIV — People Beneath the Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XIV</div><div class="story-act-title">People Beneath the Tide</div>'+
       '<div class="story-act-tagline">The sea is not empty. It is home to someone.</div></div>';
     if (!arc14Ready) {

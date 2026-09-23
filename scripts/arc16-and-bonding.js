@@ -177,6 +177,7 @@
       window.__ctShowArc16Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc16/arc16-cover-the-price-of-rare-things.png" alt="Arc XVI — The Price of Rare Things" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XVI</div><div class="story-act-title">The Price of Rare Things</div>'+
       '<div class="story-act-tagline">Just because we can take something, does that mean we should?</div></div>';
     if (!arc16Ready) {

@@ -2621,9 +2621,9 @@ function renderComicArchive(){
     ).join('');
   }
 
-  const ARC_NUMERALS = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII',13:'XIII',14:'XIV',15:'XV',16:'XVI'};
+  const ARC_NUMERALS = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII',13:'XIII',14:'XIV',15:'XV',16:'XVI',17:'XVII'};
   let html = '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read);
-  for (let n = 2; n <= 16; n++) {
+  for (let n = 2; n <= 17; n++) {
     const chapters = window['ARC'+n+'_CHAPTERS'];
     if (!chapters) continue; // arc not built in this session's file yet — skip rather than show a fake empty section
     const progress = game['comicProgress'+n] || {};
