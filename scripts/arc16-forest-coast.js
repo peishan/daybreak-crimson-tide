@@ -47,6 +47,20 @@
   window.forestCoastState = forestCoastState;
 
   window.forestCoastUnlocked = function(){
+    // BUG FIX (San's report — Forest Coast card missing on the nav
+    // screen despite being on Ch.2, meaning Ch.1 was already complete):
+    // game.forestCoastDiscovered only ever got set at the exact moment
+    // markArc16ChapterRead(1) runs. Arc XVI's chapters were wired several
+    // versions before this location existed, so anyone who'd already
+    // completed Ch.1 before V208 shipped has comicProgress16[1] === true
+    // but never had the discovery flag set — that code path simply never
+    // ran for them. Self-healing here: if the underlying chapter progress
+    // shows Ch.1 done, the flag is retroactively set the next time this
+    // is checked, rather than requiring a save edit or re-completing the
+    // chapter.
+    if (!game.forestCoastDiscovered && game.comicProgress16 && game.comicProgress16[1]) {
+      game.forestCoastDiscovered = true;
+    }
     return !!game.forestCoastDiscovered;
   };
 
