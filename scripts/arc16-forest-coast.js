@@ -140,6 +140,25 @@
   window.renderNavigation = function(){
     if (oldRenderNavigationForForestCoast) oldRenderNavigationForForestCoast();
     const grid = document.getElementById('navPortGrid');
+    // TEMPORARY DIAGNOSTIC (remove once the missing-card issue is solved):
+    // San's reported symptom has survived every fix I can verify from
+    // code alone — the flag-setting logic, the migration self-heal, and
+    // every renderNavigation wrap in the chain all check out individually,
+    // yet the card still doesn't appear. This surfaces the actual runtime
+    // state directly in the app, so we can see real data from the device
+    // instead of continuing to guess from static review.
+    if (grid) {
+      grid.insertAdjacentHTML('beforeend',
+        '<div class="port-card" style="border-color:rgba(255,100,100,.6);grid-column:1/-1;">'+
+        '<div style="font-size:.7rem;text-align:left;line-height:1.6;opacity:.85;">'+
+        '🔧 DIAGNOSTIC (temporary)<br>'+
+        'forestCoastUnlocked(): '+String(typeof window.forestCoastUnlocked === 'function' ? window.forestCoastUnlocked() : 'FUNCTION MISSING')+'<br>'+
+        'game.forestCoastDiscovered: '+String(game.forestCoastDiscovered)+'<br>'+
+        'game.comicProgress16[1]: '+String(game.comicProgress16 && game.comicProgress16[1])+'<br>'+
+        'sailToForestCoast defined: '+String(typeof window.sailToForestCoast === 'function')+'<br>'+
+        'renderForestCoastScreen defined: '+String(typeof window.renderForestCoastScreen === 'function')+
+        '</div></div>');
+    }
     if (!grid || !window.forestCoastUnlocked()) return;
     const fs = forestCoastState();
     grid.insertAdjacentHTML('beforeend',

@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V210 · CRITICAL Fielding Corruption Fix'
+window.__CT_BUILD__='V211 · Forest Coast Diagnostic (Temporary)'
