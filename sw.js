@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v6';
+const CACHE_VERSION = 'crimson-tide-v7';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -71,37 +71,59 @@ self.addEventListener('activate', event => {
   );
 });
 
+// BUG FIX (San's report — comparing against the Daybreak project's own
+// sw.js, which never had this problem): script files fell through to the
+// generic final block below, which is pure cache-first with NO network
+// check at all. Even after index.html itself got fresh via the
+// navigate-network-first rule below, its own <script src="..."> tags
+// still got intercepted and served from whatever the currently-active
+// service worker had cached — which only updates once the full
+// install/activate lifecycle completes. That lifecycle depends on the
+// browser noticing sw.js itself has changed, which can be delayed or
+// blocked by ordinary HTTP caching of sw.js — a fragile, multi-step path
+// with several places to silently stall, which is exactly what kept
+// happening. Daybreak's sw.js sidesteps all of this: it treats its core
+// files (game.js, styles.css, etc.) as network-first, so every load
+// fetches the latest version directly, completely independent of
+// whether the service worker itself has been detected as updated. Every
+// script file here is now treated the same way — this doesn't just make
+// the update check fire sooner, it removes the dependency on that whole
+// mechanism for getting fresh code in the first place.
+function isAppShellRequest(url) {
+  return PRECACHE_URLS.some(function(asset){
+    const clean = asset.replace('./', '/');
+    return url.pathname.endsWith(clean) || (clean === '/' && url.pathname === '/');
+  });
+}
+
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Page navigations: try the network first (so players always get the
-  // latest build while online), fall back to the cached shell if offline.
+  // Page navigations AND app-shell files (scripts, index.html, manifest):
+  // network-first, so players always get the latest build while online —
+  // this is the fix. Falls back to the cached shell if offline. See the
+  // BUG FIX note above for why this now covers script files too, not
+  // just the navigation itself.
   //
-  // BUG FIX: this used to be `fetch(req).catch(() => caches.match(...))`,
-  // which has two failure modes that both look like "tap the icon, nothing
-  // happens" — the exact symptom that was forcing repeated reinstalls:
-  //   1. No timeout on the network attempt. A slow/flaky mobile connection
-  //      at launch doesn't reject quickly, it just hangs — and with no
-  //      race against that, the navigation stalls indefinitely instead of
-  //      falling back to the cached shell.
-  //   2. No guaranteed fallback. caches.match() can resolve to undefined
-  //      (e.g. right after a deploy, before that exact URL's been cached
-  //      under the new version). respondWith(undefined) is invalid — in
-  //      standalone/installed mode Chrome fails the navigation silently
-  //      instead of showing any error page, so tapping the icon does
-  //      nothing at all, with no indication anything went wrong.
-  // Racing a short timeout against the network, and always falling back to
-  // an actual Response (the cached shell, or as a last resort a minimal
-  // inline offline page) fixes both — launch either gets the fresh page,
-  // the cached one, or a real "you're offline" screen, but never nothing.
-  if (req.mode === 'navigate') {
+  // The timeout-race + guaranteed-Response fallback here predates this
+  // change and stays as-is: no timeout on a slow/flaky connection means
+  // the fetch just hangs instead of falling back, and caches.match() can
+  // resolve to undefined (e.g. right after a deploy), and
+  // respondWith(undefined) fails navigations silently in standalone mode.
+  if (req.mode === 'navigate' || isAppShellRequest(new URL(req.url))) {
     event.respondWith(
       Promise.race([
         fetch(req),
         new Promise((_, reject) => setTimeout(() => reject(new Error('nav-timeout')), 3000))
-      ]).catch(() =>
-        caches.match('./index.html').then(cached => cached || caches.match('./')).then(cached =>
+      ]).then(response => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(PRECACHE).then(cache => cache.put(req, copy));
+        }
+        return response;
+      }).catch(() =>
+        caches.match(req).then(cached => cached || caches.match('./index.html')).then(cached =>
           cached || new Response(
             '<!doctype html><meta charset="utf-8"><title>Crimson Tide — Offline</title>' +
             '<body style="background:#0d1f2d;color:#e8c96a;font-family:sans-serif;text-align:center;padding:3em 1em;">' +
