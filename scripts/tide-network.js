@@ -260,6 +260,9 @@
     { type: 'flavor', text: 'A local fishing boat gives you a wide, wary berth as you pass.' },
     { type: 'flavor', text: 'The water shifts color crossing into unfamiliar currents — subtle, but the crew all notice at once.' },
     { type: 'flavor', text: 'The boundary between worlds feels thinner here than it should. Nobody quite says so out loud.' },
+    { type: 'flavor', text: 'The wind changes direction twice in an hour, neither time in a way that makes sense.' },
+    { type: 'flavor', text: 'A shape breaks the surface far off the bow — gone before anyone can say what it was.' },
+    { type: 'flavor', text: 'The charts stop being useful somewhere around here. The crew navigates by feel instead.' },
     { type: 'calm', text: 'The crossing is quiet. Almost too quiet.' }
   ];
   const TIDENETWORK_VOYAGE_EVENTS = [
@@ -268,27 +271,49 @@
     { type: 'flavor', text: 'The current pulls at the hull like it\'s trying to lead you somewhere specific.' },
     { type: 'flavor', text: 'Soel goes very still, staring at the water. He doesn\'t explain why.' },
     { type: 'flavor', text: 'A school of fish scatters ahead of the ship with unusual, deliberate purpose.' },
+    { type: 'flavor', text: 'The water goes glassy-calm for a stretch, no wind to explain it.' },
+    { type: 'flavor', text: 'Something down in the deep answers back — not words, just a pressure the crew all feel at once.' },
+    { type: 'flavor', text: 'Bioluminescence traces the hull\'s wake for a while, then fades as suddenly as it started.' },
     { type: 'calm', text: 'The water holds steady the whole way through.' }
   ];
 
+  // BUG FIX / REBUILD (San's request): these voyages were only 2 ticks —
+  // functionally instant compared to a real port-to-port voyage — and had
+  // no voyageInProgress lock at all (Clan Settlement's own, separately
+  // duplicated version did have the lock, which was itself an
+  // inconsistency). Inter-world crossings now run 10 ticks, matching
+  // San's own suggested figure, since these are meant to read as a
+  // genuinely different, longer kind of crossing than a familiar port
+  // route. The flat 45%-per-tick chance from the old 2-tick version
+  // would have meant a near-guaranteed encounter on almost every single
+  // tick across 10 (1-in-1000 chance of a fully quiet crossing) — rescaled
+  // down so the crossing still feels more dangerous than a normal voyage
+  // overall, without being combat on every tick. Now exposed on window so
+  // Clan Settlement's own sail function can share this exact logic
+  // instead of maintaining a second, drifting copy of it.
   function runDestinationVoyage(config){
+    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
     const overlay = document.getElementById('voyageScreen');
     if (!overlay) { goScreen(config.screenName); return; }
+    game.voyageInProgress = true;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('voyageScreen').classList.add('active');
     document.getElementById('voyageDest').textContent = 'Toward ' + config.destLabel;
     document.getElementById('voyageProgress').style.width = '0%';
     document.getElementById('voyageEvent').innerHTML = '';
-    const totalDays = 2;
+    const totalDays = config.totalDays || 10;
+    const perTickChance = config.perTickChance || 0.16;
     let currentDay = 0;
     const interval = setInterval(function(){
       currentDay++;
       document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
-      if (Math.random() < 0.45) {
+      if (Math.random() < perTickChance) {
         const pool = config.events;
         const event = pool[Math.floor(Math.random() * pool.length)];
         document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
         if (event.type === 'combat') {
           clearInterval(interval);
+          game.voyageInProgress = false;
           setTimeout(function(){
             const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(event.combat, 'sea') : null;
             startCombat({ kind: config.combatKind, key: event.combat, enemy: enemy, portId: null });
@@ -300,17 +325,20 @@
       }
       if (currentDay >= totalDays) {
         clearInterval(interval);
+        game.voyageInProgress = false;
         setTimeout(function(){ goScreen(config.screenName); }, 800);
       }
     }, 900);
   }
+  window.runDestinationVoyage = runDestinationVoyage;
 
   window.sailToHarbour = function(){
     runDestinationVoyage({
       destLabel: 'the Unknown Harbour',
       events: HARBOUR_VOYAGE_EVENTS,
       combatKind: 'harbour_voyage',
-      screenName: 'harbour'
+      screenName: 'harbour',
+      totalDays: 10
     });
   };
   window.sailToTideNetwork = function(){
@@ -318,7 +346,8 @@
       destLabel: 'the Unknown Tide Settlement',
       events: TIDENETWORK_VOYAGE_EVENTS,
       combatKind: 'tidenetwork_voyage',
-      screenName: 'tidenetwork'
+      screenName: 'tidenetwork',
+      totalDays: 10
     });
   };
 

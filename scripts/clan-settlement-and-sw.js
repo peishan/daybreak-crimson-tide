@@ -256,43 +256,28 @@
     { type: 'flavor', text: 'Distant howls answer each other across the hills, back and forth, unmistakably a conversation.' },
     { type: 'flavor', text: 'Something watches from the tree line the whole way in. Nobody can say from where, exactly.' },
     { type: 'flavor', text: 'The forest goes quiet in a way that feels deliberate, not natural.' },
+    { type: 'flavor', text: 'A shape crosses the ridge above, moving on two legs, then four, then two again.' },
+    { type: 'flavor', text: 'The shoreline birds all go silent at once, then just as suddenly start up again.' },
+    { type: 'flavor', text: 'Smoke rises from somewhere inland — controlled, deliberate, not a wildfire.' },
     { type: 'calm', text: 'The approach is uneventful. The shore just gets closer.' }
   ];
 
+  // REBUILT (San's request, consolidated with Harbour/Tide Network): this
+  // used to be a fully separate, duplicated copy of the same voyage logic
+  // — same shape, but drifting independently (e.g. it had the
+  // voyageInProgress lock the other two didn't). Now calls the single
+  // shared runDestinationVoyage() in tide-network.js instead, so all
+  // three inter-world crossings share one implementation and can't drift
+  // out of sync with each other again.
   window.sailToClanSettlement = function(){
-    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
-    const overlay = document.getElementById('voyageScreen');
-    if (!overlay) { goScreen('clansettlement'); return; }
-    game.voyageInProgress = true;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('voyageScreen').classList.add('active');
-    document.getElementById('voyageDest').textContent = 'Toward the Unknown Settlement';
-    document.getElementById('voyageProgress').style.width = '0%';
-    document.getElementById('voyageEvent').innerHTML = '';
-    const totalDays = 2;
-    let currentDay = 0;
-    const interval = setInterval(function(){
-      currentDay++;
-      document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
-      if (Math.random() < 0.45) {
-        const event = CLAN_VOYAGE_EVENTS[Math.floor(Math.random() * CLAN_VOYAGE_EVENTS.length)];
-        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
-        if (event.type === 'combat') {
-          clearInterval(interval);
-          setTimeout(function(){
-            const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(event.combat, 'sea') : null;
-            startCombat({ kind: 'clansettlement_voyage', key: event.combat, enemy: enemy, portId: null });
-          }, 1000);
-          return;
-        }
-      } else {
-        document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">The crossing continues.</span>';
-      }
-      if (currentDay >= totalDays) {
-        clearInterval(interval);
-        setTimeout(function(){ goScreen('clansettlement'); }, 800);
-      }
-    }, 900);
+    if (typeof window.runDestinationVoyage !== 'function') { goScreen('clansettlement'); return; }
+    window.runDestinationVoyage({
+      destLabel: 'the Unknown Settlement',
+      events: CLAN_VOYAGE_EVENTS,
+      combatKind: 'clansettlement_voyage',
+      screenName: 'clansettlement',
+      totalDays: 10
+    });
   };
 })();
 
