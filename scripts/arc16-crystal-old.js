@@ -20,6 +20,7 @@
   window.makeHarbourModule({
     stateKey: 'crystalCoastState', stateFn: 'crystalCoastState',
     discoveredFlag: 'crystalCoastDiscovered', unlockedFn: 'crystalCoastUnlocked',
+    migrationChapter: 19,
     unlockSectionFn: 'unlockCrystalCoastSection', setNameFn: 'setCrystalCoastName',
     advanceRelFn: 'advanceCrystalCoastRelationship', switchFn: 'switchCrystalCoastSection',
     renderFn: 'renderCrystalCoastScreen', sailFn: 'sailToCrystalCoast',
@@ -52,6 +53,7 @@
   window.makeHarbourModule({
     stateKey: 'oldHarbourState', stateFn: 'oldHarbourState',
     discoveredFlag: 'oldHarbourDiscovered', unlockedFn: 'oldHarbourUnlocked',
+    migrationChapter: 23,
     unlockSectionFn: 'unlockOldHarbourSection', setNameFn: 'setOldHarbourName',
     advanceRelFn: 'advanceOldHarbourRelationship', switchFn: 'switchOldHarbourSection',
     renderFn: 'renderOldHarbourScreen', sailFn: 'sailToOldHarbour',

@@ -37,7 +37,20 @@
     }
     window[cfg.stateFn] = state;
 
-    window[cfg.unlockedFn] = function(){ return !!game[cfg.discoveredFlag]; };
+    window[cfg.unlockedFn] = function(){
+      // Self-healing migration (same fix class as Forest Coast, several
+      // turns back): the discovery flag only ever gets set at the exact
+      // moment markArc16ChapterRead(cfg.migrationChapter) runs. Anyone
+      // who'd already completed that chapter before this location's own
+      // code shipped has the underlying chapter progress but never had
+      // the flag set — that code path simply never ran for them. This
+      // retroactively sets the flag from the real chapter progress the
+      // next time it's checked, rather than requiring a save edit.
+      if (!game[cfg.discoveredFlag] && game.comicProgress16 && game.comicProgress16[cfg.migrationChapter]) {
+        game[cfg.discoveredFlag] = true;
+      }
+      return !!game[cfg.discoveredFlag];
+    };
     window[cfg.unlockSectionFn] = function(key){ const s = state(); if (s.sections[key] !== undefined) s.sections[key] = true; };
     window[cfg.setNameFn] = function(name){ const s = state(); s.name = name; s.nameKnown = true; };
     window[cfg.advanceRelFn] = function(){
@@ -145,6 +158,7 @@
   makeHarbourModule({
     stateKey: 'dragonCoastState', stateFn: 'dragonCoastState',
     discoveredFlag: 'dragonCoastDiscovered', unlockedFn: 'dragonCoastUnlocked',
+    migrationChapter: 6,
     unlockSectionFn: 'unlockDragonCoastSection', setNameFn: 'setDragonCoastName',
     advanceRelFn: 'advanceDragonCoastRelationship', switchFn: 'switchDragonCoastSection',
     renderFn: 'renderDragonCoastScreen', sailFn: 'sailToDragonCoast',
@@ -177,6 +191,7 @@
   makeHarbourModule({
     stateKey: 'mountainPortState', stateFn: 'mountainPortState',
     discoveredFlag: 'mountainPortDiscovered', unlockedFn: 'mountainPortUnlocked',
+    migrationChapter: 13,
     unlockSectionFn: 'unlockMountainPortSection', setNameFn: 'setMountainPortName',
     advanceRelFn: 'advanceMountainPortRelationship', switchFn: 'switchMountainPortSection',
     renderFn: 'renderMountainPortScreen', sailFn: 'sailToMountainPort',

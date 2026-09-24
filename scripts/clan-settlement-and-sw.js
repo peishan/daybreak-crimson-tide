@@ -437,7 +437,13 @@ if ('serviceWorker' in navigator) {
     location.reload();
   });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(registration => {
+    // updateViaCache: 'none' — without this, the SPEC-DEFAULT behavior
+    // ('imports') still allows the browser's own ordinary HTTP cache to
+    // serve a stale copy of sw.js itself when checking for updates, which
+    // would silently defeat the registration.update() call below (it
+    // can't detect a change it's not actually allowed to see). This
+    // forces every update check to always bypass HTTP cache for sw.js.
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(registration => {
       registration.update().catch(() => {});
     }).catch(err => {
       console.warn('Service worker registration failed:', err);
