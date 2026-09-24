@@ -77,7 +77,7 @@
       name: "Renn's Civilization",
       stages: {
         9: { status: 'Observed', note: "A name remarkably close to Renn's, in an old record. Then another. Different records, different dates — the same family line." },
-        17: { status: 'Verified', note: "Direct records confirming Renn came from this world, part of the final generation connected to the Archive." },
+        18: { status: 'Verified', note: "Direct records confirming Renn came from this world, part of the final generation connected to the Archive." },
         23: { status: 'Archived', note: "The Archive recognizes Renn — not as a chosen hero, but as someone belonging to the civilization that built it. Access restored." }
       }
     },
@@ -87,9 +87,9 @@
       icon: '⚠️',
       name: 'The Great Separation',
       stages: {
-        14: { status: 'Observed', note: 'The most important part of the Archive was deliberately removed, not merely lost — concerning the final period of this civilization.' },
+        15: { status: 'Observed', note: 'The most important part of the Archive was deliberately removed, not merely lost — concerning the final period of this civilization.' },
         16: { status: 'Verified', note: 'The civilization grew dependent on inter-world travel. Different factions disagreed, sharply, over how it should be used.' },
-        21: { status: 'Archived', note: "Inter-world travel itself was never the problem. Uncontrolled access was — some began treating other worlds as resources rather than places inhabited by people." }
+        22: { status: 'Archived', note: "Inter-world travel itself was never the problem. Uncontrolled access was — some began treating other worlds as resources rather than places inhabited by people." }
       }
     },
     {

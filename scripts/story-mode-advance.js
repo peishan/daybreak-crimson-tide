@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V224 · Renn/Erynn/Mimi Spellbooks + Arc XVII Cover Art'
+window.__CT_BUILD__='V225 · Arc XVII Ch.6-25 Wired + Record Stage Fixes'
