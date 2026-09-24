@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V217 · Harbour Discovery Migration Fix (4 Locations)'
+window.__CT_BUILD__='V218 · San/Joel Disagreement Migration Fix'

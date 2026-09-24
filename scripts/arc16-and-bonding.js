@@ -274,7 +274,22 @@
       learnedFlags: [],
       crewPerspectivesSeen: []
     };
-    return game.sanJoelDisagreement;
+    // Self-healing migration (same fix class as Forest Coast and the four
+    // harbours): triggerSanJoelDisagreement() only ever runs at the exact
+    // moment markArc16ChapterRead(14) fires. Anyone who'd already
+    // completed Ch.14 before this hook existed has the chapter marked
+    // complete but the disagreement stuck at its 'connected' default —
+    // that code path simply never ran for them, which also silently hid
+    // the whole panel (sjDisagreementPanelHtml returns '' while
+    // 'connected') and left Ch.15's gate message permanently showing
+    // "haven't reached an understanding yet." Retroactively starts the
+    // disagreement here instead of requiring a save edit.
+    const d = game.sanJoelDisagreement;
+    if (d.state === 'connected' && game.comicProgress16 && game.comicProgress16[14]) {
+      d.state = 'tension';
+      d.issueId = 'rare_material';
+    }
+    return d;
   }
   window.sanJoelDisagreementState = sjDisagreement;
 
