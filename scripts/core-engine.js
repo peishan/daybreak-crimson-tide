@@ -1038,6 +1038,26 @@ const HARBOR_ENEMIES = {
   forest_coast_canopy_scouts:    { name: 'Canopy Scouts', icon: '🍃', hp: 310, dmg: 16, xp: 270, gold: 105, desc: 'They watch from above long before they ever come down.' },
   forest_coast_tide_foragers:    { name: 'Tide Foragers', icon: '🦞', hp: 290, dmg: 15, xp: 255, gold: 100, desc: 'They work the tideline where the forest meets the shore, and don\'t appreciate company.' },
   forest_coast_grove_warden:     { name: 'Grove Warden', icon: '🌳', hp: 380, dmg: 19, xp: 320, gold: 140, desc: 'Something old, rooted, and entirely unbothered by a single ship\'s worth of visitors.' },
+  dragon_coast_watchful_wyrmling: { name: 'Watchful Wyrmling', icon: '🐲', hp: 340, dmg: 17, xp: 300, gold: 120, desc: 'Young, curious, and not remotely as harmless as that makes it sound.' },
+  dragon_coast_drake_scout:      { name: 'Drake Scout', icon: '🦅', hp: 320, dmg: 18, xp: 290, gold: 115, desc: 'Fast, airborne, and reporting back to something bigger the moment it spots you.' },
+  dragon_coast_territory_marker: { name: 'Territory Marker', icon: '🔥', hp: 350, dmg: 18, xp: 305, gold: 125, desc: 'Not guarding treasure. Guarding a boundary that matters to more than just itself.' },
+  dragon_coast_tide_kin:         { name: 'Tide-Dragon Kin', icon: '🌊', hp: 330, dmg: 17, xp: 295, gold: 118, desc: 'Half at home in the water, half in the air, entirely unimpressed by a ship.' },
+  dragon_coast_elder_sentinel:   { name: 'Elder Sentinel', icon: '🐉', hp: 420, dmg: 22, xp: 360, gold: 160, desc: 'Old enough to remember when this coast had a different name.' },
+  mountain_port_tunnel_warden:   { name: 'Tunnel Warden', icon: '⛏️', hp: 350, dmg: 17, xp: 300, gold: 120, desc: 'Whatever it is, it knows these tunnels better than anyone who\'s ever mapped them.' },
+  mountain_port_seam_prowler:    { name: 'Seam Prowler', icon: '💠', hp: 330, dmg: 16, xp: 285, gold: 112, desc: 'Fast along the ore seams, gone before a lantern catches more than an outline.' },
+  mountain_port_stoneback_guardian: { name: 'Stoneback Guardian', icon: '🪨', hp: 400, dmg: 19, xp: 330, gold: 135, desc: 'Looks like part of the mountain until it isn\'t.' },
+  mountain_port_shaft_lurker:    { name: 'Shaft Lurker', icon: '🕳️', hp: 320, dmg: 17, xp: 290, gold: 115, desc: 'Something that\'s made a home in the deeper, older shafts nobody uses anymore.' },
+  mountain_port_own_guardian:    { name: "The Mountain's Own", icon: '⛰️', hp: 430, dmg: 22, xp: 365, gold: 160, desc: 'Not hostile, exactly. Just entirely unwilling to be moved.' },
+  crystal_coast_song_watcher:    { name: 'Crystal-Song Watcher', icon: '💠', hp: 360, dmg: 18, xp: 315, gold: 128, desc: 'It hums before it strikes, like it\'s giving fair warning out of some old courtesy.' },
+  crystal_coast_shard_crawler:   { name: 'Shard-Back Crawler', icon: '🔷', hp: 340, dmg: 17, xp: 300, gold: 120, desc: 'Fast, glinting, and gone beneath the surface before you can be sure what you saw.' },
+  crystal_coast_resonant_guardian: { name: 'Resonant Guardian', icon: '🔔', hp: 410, dmg: 20, xp: 345, gold: 145, desc: 'The water itself seems to answer when it moves.' },
+  crystal_coast_prism_swimmer:   { name: 'Prism-Scale Swimmer', icon: '🐟', hp: 350, dmg: 17, xp: 305, gold: 122, desc: 'Scatters light in colors that shouldn\'t exist underwater, and it knows it.' },
+  crystal_coast_first_keeper:    { name: 'The First Crystal Keeper', icon: '💎', hp: 440, dmg: 23, xp: 375, gold: 165, desc: 'Older than the coast\'s current name, and not especially interested in the new one.' },
+  old_harbour_weathered_dockhand: { name: 'Weathered Dockhand', icon: '⚓', hp: 340, dmg: 16, xp: 300, gold: 120, desc: 'Wary, not hostile — but they\'ve seen enough visitors to know caution first.' },
+  old_harbour_ruin_keeper:       { name: 'Ruin Keeper', icon: '🏛️', hp: 400, dmg: 19, xp: 335, gold: 138, desc: 'Still keeping watch over something, long after most people stopped asking what.' },
+  old_harbour_tideworn_sentry:   { name: 'Tideworn Sentry', icon: '🗿', hp: 380, dmg: 18, xp: 320, gold: 130, desc: 'Worn smooth by time, but still exactly where it\'s always stood.' },
+  old_harbour_archive_touched:   { name: 'Archive-Touched Wanderer', icon: '📜', hp: 350, dmg: 17, xp: 310, gold: 124, desc: 'Something about it doesn\'t quite belong to this century.' },
+  old_harbour_last_guardian:     { name: 'The Last Guardian', icon: '⚔️', hp: 450, dmg: 23, xp: 380, gold: 170, desc: 'The one still standing, after everyone it was protecting has gone.' },
   bilge_rat:     { name: 'Bilge Rat Gang', icon: '🐀', hp: 120, dmg: 8,  xp: 40,  gold: 15, desc: 'They\'ve been living in the hold longer than the crew has.' },
   dock_thief:    { name: 'Dock Thief', icon: '🥷', hp: 150, dmg: 10, xp: 55,  gold: 25, desc: 'Fast hands, faster feet, gone before the watch turns.' },
   smuggler_crew: { name: 'Smuggler Crew', icon: '🏴', hp: 200, dmg: 12, xp: 70,  gold: 35, desc: 'Running contraband nobody\'s supposed to ask about.' },
@@ -2370,7 +2390,7 @@ function goScreen(name) {
   // the Settlement" button after a Tide Network voyage fight, the nav
   // card, and any other goScreen('tidenetwork') call never actually
   // navigated anywhere.
-  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen', tidenetwork: 'tideNetworkScreen', clansettlement: 'clanSettlementScreen', forestcoast: 'forestCoastScreen' };
+  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen', tidenetwork: 'tideNetworkScreen', clansettlement: 'clanSettlementScreen', forestcoast: 'forestCoastScreen', dragoncoast: 'dragonCoastScreen', mountainport: 'mountainPortScreen', crystalcoast: 'crystalCoastScreen', oldharbour: 'oldHarbourScreen' };
   const screenId = SCREEN_ID_OVERRIDES[name] || (name + 'Screen');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const targetScreen = document.getElementById(screenId);
@@ -4021,6 +4041,52 @@ function exitForestCoastBattleToDestination() {
   goScreen('forestcoast');
   if (typeof renderForestCoastScreen === 'function') renderForestCoastScreen();
 }
+function exitDragonCoastBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('dragoncoast');
+  if (typeof renderDragonCoastScreen === 'function') renderDragonCoastScreen();
+}
+function exitMountainPortBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('mountainport');
+  if (typeof renderMountainPortScreen === 'function') renderMountainPortScreen();
+}
+function exitCrystalCoastBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('crystalcoast');
+  if (typeof renderCrystalCoastScreen === 'function') renderCrystalCoastScreen();
+}
+function exitOldHarbourBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('oldharbour');
+  if (typeof renderOldHarbourScreen === 'function') renderOldHarbourScreen();
+}
+
+
 function exitTideNetworkBattleToDestination() {
   try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
   try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
@@ -4874,6 +4940,26 @@ function handleVictory() {
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitForestCoastBattleToDestination()">🌲 Continue Exploring</button>' +
       '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'dragoncoast_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitDragonCoastBattleToDestination()">🐉 Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'mountainport_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the mountain is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitMountainPortBattleToDestination()">🏔️ Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'crystalcoast_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitCrystalCoastBattleToDestination()">💎 Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'oldharbour_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The rest of the harbour is still out there.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitOldHarbourBattleToDestination()">⚓ Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'tidenetwork_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
     postBattleButtonsHtml =
@@ -4890,6 +4976,18 @@ function handleVictory() {
   } else if (enemy.kind === 'forestcoast_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'forestcoast\')">🌲 Continue to Forest Coast</button>';
+  } else if (enemy.kind === 'dragoncoast_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'dragoncoast\')">🐉 Continue to Dragon Coast</button>';
+  } else if (enemy.kind === 'mountainport_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'mountainport\')">🏔️ Continue to Mountain Port</button>';
+  } else if (enemy.kind === 'crystalcoast_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'crystalcoast\')">💎 Continue to Crystal Coast</button>';
+  } else if (enemy.kind === 'oldharbour_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'oldharbour\')">⚓ Continue to Old Harbour</button>';
   } else if (enemy.kind === 'tidenetwork_voyage') {
     postBattleMessage = 'The current settles. ' + enemy.name + ' is behind you now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'tidenetwork\')">🌊 Continue to the Settlement</button>';

@@ -143,6 +143,14 @@
     // World Worth Exploring") is where the crew first arrives at this
     // world at all.
     if (id === 1) game.forestCoastDiscovered = true;
+    // Remaining four harbours from San's multi-harbour progression doc,
+    // matching the exact chapter ranges: Ch.6-9 Dragon Coast, Ch.13-16
+    // Mountain Port, Ch.19-22 Crystal Coast, Ch.23-25 Old Harbour — each
+    // flag set at the first chapter of its own range.
+    if (id === 6) game.dragonCoastDiscovered = true;
+    if (id === 13) game.mountainPortDiscovered = true;
+    if (id === 19) game.crystalCoastDiscovered = true;
+    if (id === 23) game.oldHarbourDiscovered = true;
     // Cross-hook flagged when the San & Joel disagreement system was
     // built (see the second IIFE below): Ch.14 ("The Argument") is what
     // actually starts the disagreement arc. Without this, Ch.14 would
