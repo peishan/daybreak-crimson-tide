@@ -442,7 +442,20 @@
     if (oldRenderBondsTabForSJ) oldRenderBondsTabForSJ();
     const el = document.getElementById('ft-tab-bonds');
     if (!el) return;
+    // BUG FIX (San's report — the panel stacking a new copy of itself on
+    // top of every previous one, showing the disagreement's entire
+    // history at once instead of just its current state): the old logic
+    // (`el.innerHTML = panel + el.innerHTML`) prepended on every render
+    // without ever removing what it had prepended last time — and since
+    // any disagreement action (a response, a repair step) re-renders the
+    // Bonds tab to refresh the UI, each action left its own permanent
+    // snapshot behind rather than replacing the one before it. Wrapping
+    // the panel in its own identifiable container and removing that
+    // specific container before re-inserting means exactly one copy can
+    // ever exist, no matter how many times this runs.
+    const existing = document.getElementById('sjDisagreementPanelWrap');
+    if (existing) existing.remove();
     const panel = sjDisagreementPanelHtml();
-    if (panel) el.innerHTML = panel + el.innerHTML;
+    if (panel) el.insertAdjacentHTML('afterbegin', '<div id="sjDisagreementPanelWrap">'+panel+'</div>');
   };
 })();
