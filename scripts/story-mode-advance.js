@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V218 · San/Joel Disagreement Migration Fix'
+window.__CT_BUILD__='V219 · Bonds Tab Panel Bare-Identifier Fix'

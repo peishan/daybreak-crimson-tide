@@ -479,7 +479,17 @@
     if (el) el.classList.toggle('active', tab==='bonds');
     if (btn) btn.classList.toggle('active', tab==='bonds');
     if (oldRenderFairTideHubForBonds) oldRenderFairTideHubForBonds();
-    if (tab==='bonds') renderBondsTab();
+    // BUG FIX (San's report — the San/Joel disagreement panel never
+    // showing on the Bonds tab, even after Ch.14 triggers it): this bare
+    // renderBondsTab() call is lexically inside the SAME IIFE as this
+    // file's own renderBondsTab() declaration below, so it always
+    // resolved to that local, closure-scoped function — regardless of
+    // arc16-and-bonding.js later wrapping window.renderBondsTab to add
+    // the disagreement panel. A bare call from within the same closure
+    // that declared the function can never see a later wrap made by a
+    // different file; only going through window. explicitly picks up
+    // whichever version is currently the latest-wrapped one.
+    if (tab==='bonds' && typeof window.renderBondsTab === 'function') window.renderBondsTab();
   };
 
   function renderBondsTab(){
