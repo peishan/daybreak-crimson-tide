@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V222 · Arc XVII Research System'
+window.__CT_BUILD__='V224 · Renn/Erynn/Mimi Spellbooks + Arc XVII Cover Art'

@@ -861,22 +861,84 @@ const CLASS_KIT = {
       {name:"Haste", icon:"💨", mp:22, levelReq:16, desc:"Strikes harder and faster.", buffType:"haste", buffVal:6, buffTurns:3},
       {name:"Stoneskin", icon:"🛡️", mp:28, levelReq:19, desc:"Flesh hardens to stone.", buffType:"defense", buffVal:10, buffTurns:4},
       {name:"Chain Lightning", icon:"⚡", mp:45, levelReq:22, desc:"Lightning arcs between foes.", dice:"4d8", status:{type:'shock',chance:0.4,turns:1}},
-      {name:"Meteor Swarm", icon:"🔥", mp:60, levelReq:26, desc:"Destruction from the sky.", dice:"4d10", status:{type:'burn',chance:0.5,dmg:8,turns:3}}
+      {name:"Meteor Swarm", icon:"🔥", mp:60, levelReq:26, desc:"Destruction from the sky.", dice:"4d10", status:{type:'burn',chance:0.5,dmg:8,turns:3}},
+      // Extended past level 26 — San's spellbook originally capped here
+      // (a "travel-sized" trim from Legends of Daybreak's fuller list),
+      // but she's long outgrown it. Levels 30-50 adapt Daybreak's own
+      // tiers 6-9 (same evocation D&D-tradition spells San asked for by
+      // name — Finger of Death, Meteor Swarm already above), kept
+      // mechanically faithful since dice-damage + optional status is
+      // already fully proven. From level 55 on, these are new,
+      // Crimson-Tide-specific capstones tied to San's own story beats
+      // rather than reused Daybreak flavor text — a different journey,
+      // so a different meaning at each milestone.
+      {name:"Withering Fog", icon:"☠️", mp:42, levelReq:33, desc:"A caustic mist that eats through armor and flesh alike.", dice:"3d10", status:{type:'poison',chance:0.5,dmg:8,turns:3}},
+      {name:"Improved Haste", icon:"💨", mp:35, levelReq:34, desc:"Time bends further still.", buffType:"haste", buffVal:10, buffTurns:4},
+      {name:"Finger of Death", icon:"☠️", mp:55, levelReq:35, desc:"A single word that unmakes.", dice:"5d8", status:{type:'poison',chance:0.4,dmg:10,turns:3}},
+      {name:"Spectral Blade", icon:"👻", mp:50, levelReq:37, desc:"A conjured blade strikes with independent will.", dice:"4d10"},
+      {name:"Prismatic Spray", icon:"🌈", mp:52, levelReq:38, desc:"Seven rays of pure devastation.", dice:"4d12", status:{type:'burn',chance:0.4,dmg:8,turns:3}},
+      {name:"Arcane Ward", icon:"🛡️", mp:40, levelReq:39, desc:"A standing ward of pre-cast protection.", buffType:"defense", buffVal:12, buffTurns:4},
+      {name:"Incendiary Cloud", icon:"☁️", mp:60, levelReq:41, desc:"A roiling cloud of superheated ash.", dice:"5d10", status:{type:'burn',chance:0.5,dmg:10,turns:3}},
+      {name:"Sunburst", icon:"💥", mp:65, levelReq:43, desc:"Radiant fire scours the battlefield.", dice:"5d12", status:{type:'burn',chance:0.5,dmg:12,turns:3}},
+      {name:"Horrid Wilting", icon:"🥀", mp:62, levelReq:45, desc:"Moisture is torn from the target's very cells.", dice:"6d8", status:{type:'poison',chance:0.5,dmg:12,turns:3}},
+      {name:"Black Blade of Disaster", icon:"⚔️", mp:70, levelReq:48, desc:"A blade of pure entropy that unmakes what it touches.", dice:"6d10"},
+      {name:"Eye of the Storm", icon:"⏳", mp:80, levelReq:50, desc:"For a moment, everyone else is impossibly slow.", buffType:"haste", buffVal:14, buffTurns:5},
+      {name:"Wellspring", icon:"💫", mp:0, levelReq:55, desc:"Draws the excess back — a lesson learned from watching Eliz work.", effect:'restoreMp', restoreAmt:60},
+      {name:"Aethon's Judgment", icon:"⚡", mp:85, levelReq:90, desc:"Every world San has crossed since Aethon left its mark on this spell.", dice:"7d10", status:{type:'shock',chance:0.4,turns:1}},
+      {name:"Understood, Not Alone", icon:"🤝", mp:0, levelReq:210, desc:"What San learned turning to the crew instead of solving it herself. A quieter kind of power.", buffType:"defense", buffVal:16, buffTurns:5},
+      {name:"The Signal's Fire", icon:"📡", mp:90, levelReq:255, desc:"Everything the Archive taught her about what her own fire actually is.", dice:"8d10", status:{type:'burn',chance:0.55,dmg:14,turns:3}}
     ],
     skill:{name:"Daybreak Ward", icon:'🛡️', mp:10, effect:'ward'}},
   joel:        {role:'tank',   spell:null, skill:{name:"Shield Wall", icon:'⚔️', mp:0, effect:'taunt'}},
   aisyah:      {role:'melee',  spell:null, skill:{name:'Coup de Grace', icon:'💀', mp:0, mult:1.8}},
   eliz:        {role:'healer',
+    // Broad range per San's request: stronger healing as she grows,
+    // more ways to keep the crew's MP up, and — new here — a second,
+    // higher-level revive that brings someone back at full HP rather
+    // than her existing 50% skill-based Resurrect. That original skill
+    // is untouched; this is a second, later option, not a replacement.
     spells:[
       {name:'Heal', icon:'💚', mp:10, levelReq:1, desc:'Restores HP to the lowest-HP ally.', healMult:1},
-      {name:'Well of Light', icon:'💧', mp:15, levelReq:12, desc:"Restores MP — answers San's need first.", effect:'restoreMp', restoreAmt:40}
+      {name:'Well of Light', icon:'💧', mp:15, levelReq:12, desc:"Restores MP — answers San's need first.", effect:'restoreMp', restoreAmt:40},
+      {name:"Steady Hands", icon:'🩹', mp:18, levelReq:16, desc:'A more practiced touch, restoring more than her first spells could.', healMult:1.6},
+      {name:'Shared Reserve', icon:'💧', mp:0, levelReq:24, desc:"Gives up some of her own MP so someone else doesn't run dry.", effect:'shareMp', restoreAmt:30},
+      {name:"Gentle Current", icon:'💚', mp:26, levelReq:32, desc:'A deeper, steadier restoration.', healMult:2.2},
+      {name:'Wellspring Tide', icon:'💧', mp:0, levelReq:38, desc:"Restores MP to whoever's run driest, not just San.", effect:'restoreMp', restoreAmt:55},
+      {name:"Breath of Renewal", icon:'✨', mp:50, levelReq:45, desc:'Brings someone back at full strength, not just enough to stand.', effect:'revive', revivePct:1.0},
+      {name:"Everything She Has", icon:'💚', mp:38, levelReq:60, desc:"There's no held-back version of Eliz helping someone.", healMult:3.0},
+      {name:"What Endures", icon:'🌿', mp:0, levelReq:150, desc:"Cannot be reduced below 1 HP for a moment — the same stubbornness that's always kept her standing.", buffType:'defense', buffVal:20, buffTurns:2}
     ],
     skill:{name:'Resurrect', icon:'🌟', mp:35, effect:'revive'},
     highSkill:{name:'Cure Disease', icon:'🌿', mp:20, effect:'cleanse', levelReq:20}},
   mezstorm:    {role:'caster',
+    // Storm/lightning is his own distinct pool, deliberately separate
+    // from San's broader arcane range — she reaches for fire and force,
+    // he reaches for wind and current. Expanded from 2 spells to a full
+    // progression matching how thin his original kit was relative to
+    // San's, same reasoning that prompted the expansion in the first
+    // place.
     spells:[
-      {name:'Tempest Fury', icon:'🌀', mp:18, mult:1.7, levelReq:1, desc:'His core damage spell.'},
-      {name:'Storm Share', icon:'🤝', mp:15, levelReq:12, desc:"Spends his own MP to restore an ally's.", effect:'shareMp', restoreAmt:35}
+      // BUG FIX: this used mult:1.7, but castSpell() only ever checks
+      // spell.dice for damage — mult is never read anywhere. Mezstorm's
+      // own core damage spell has silently done nothing but consume MP
+      // and end his turn since it was written. Converted to dice
+      // (1d10, matching San's similarly-early Chromatic Orb's damage
+      // tier) to preserve the original intended power level while using
+      // the actually-functional mechanic.
+      {name:'Tempest Fury', icon:'🌀', mp:18, dice:'1d10', levelReq:1, desc:'His core damage spell.', status:{type:'shock',chance:0.2,turns:1}},
+      {name:'Squall Line', icon:'🌬️', mp:14, dice:'1d9', levelReq:5, desc:'A fast-moving front of wind and static.', status:{type:'shock',chance:0.2,turns:1}},
+      {name:'Gale Guard', icon:'🛡️', mp:16, levelReq:8, desc:'A rotating wall of wind turns blows aside.', buffType:'defense', buffVal:6, buffTurns:3},
+      {name:'Storm Share', icon:'🤝', mp:15, levelReq:12, desc:"Spends his own MP to restore an ally's.", effect:'shareMp', restoreAmt:35},
+      {name:'Crackling Bolt', icon:'⚡', mp:24, dice:'1d12', levelReq:15, desc:'A single, focused strike.', status:{type:'shock',chance:0.3,turns:1}},
+      {name:'Downdraft', icon:'🌪️', mp:20, dice:'1d11', levelReq:18, desc:"Knocks the fight out of an opponent's stance.", status:{type:'shock',chance:0.35,turns:1}},
+      {name:'Chain Lightning', icon:'⚡', mp:40, dice:'3d8', levelReq:22, desc:'Lightning arcs from foe to foe.', status:{type:'shock',chance:0.35,turns:1}},
+      {name:'Static Skin', icon:'🔷', mp:26, levelReq:26, desc:'The air around him hums, deflecting what comes close.', buffType:'defense', buffVal:9, buffTurns:4},
+      {name:'Thunderhead', icon:'⛈️', mp:44, dice:'3d10', levelReq:30, desc:'A storm cell gathers directly overhead the target.', status:{type:'shock',chance:0.4,turns:1}},
+      {name:'Building Front', icon:'💨', mp:30, levelReq:35, desc:'The storm quickens around the whole crew.', buffType:'haste', buffVal:8, buffTurns:4},
+      {name:'Eye Wall', icon:'🌀', mp:50, dice:'4d10', levelReq:40, desc:'Everything at the edge of the storm gets pulled in.', status:{type:'shock',chance:0.45,turns:1}},
+      {name:"Storm's Reckoning", icon:'⚡', mp:65, dice:'5d10', levelReq:50, desc:'What the storm was always building toward.', status:{type:'shock',chance:0.5,turns:1}},
+      {name:'Kin of the Tide', icon:'🌊', mp:0, levelReq:120, desc:"His storm answers hers now, without either of them having to ask.", buffType:'haste', buffVal:10, buffTurns:4},
+      {name:'The Long Current', icon:'🌩️', mp:75, dice:'6d10', levelReq:200, desc:"Every crossing since he first stood on this deck, called down at once.", status:{type:'shock',chance:0.5,turns:1}}
     ],
     skill:{name:'Thunderclap', icon:'🔊', mp:12, effect:'stun'}},
   senedra:     {role:'ranged', spell:null, skill:{name:"Hunter's Mark", icon:'🎯', mp:0, effect:'mark'}},
@@ -939,10 +1001,22 @@ const CLASS_KIT = {
   // opening rather than Senedra spotting it. Free (mp:0) like Senedra's,
   // since it's a utility read, not a spell.
   mimi: {role:'caster',
+    // Diviner — extends the existing "sees it before it happens" theme.
+    // Tied to her own Arc XVII research (the signal's emotional register,
+    // what the records couldn't say about Renn's people) at the higher
+    // levels, matching how her research findings deepen what's already
+    // established about her rather than introducing something new.
     spells:[
       {name:'Tide Sight', icon:'🔮', mp:9,  levelReq:1,  desc:'Strikes at a weakness only she can see.', dice:'1d9'},
       {name:"Fortune's Edge", icon:'🌊', mp:14, levelReq:6,  desc:'Bends probability against the enemy.', dice:'1d11', status:{type:'shock',chance:0.25,turns:1}},
-      {name:'Foretold Ruin', icon:'💀', mp:20, levelReq:12, desc:'A future she has already seen happen.', dice:'1d14'}
+      {name:'Foretold Ruin', icon:'💀', mp:20, levelReq:12, desc:'A future she has already seen happen.', dice:'1d14'},
+      {name:'Second Sight', icon:'👁️', mp:24, levelReq:18, desc:'She saw the blow before it landed, and struck first.', dice:'2d10', status:{type:'shock',chance:0.3,turns:1}},
+      {name:'Warded Glimpse', icon:'🛡️', mp:20, levelReq:24, desc:"Knowing what's coming is its own kind of armor.", buffType:'defense', buffVal:8, buffTurns:3},
+      {name:'The Path Not Taken', icon:'🌀', mp:32, levelReq:30, desc:'Every outcome she rejected, spent at once.', dice:'2d14', status:{type:'shock',chance:0.35,turns:1}},
+      {name:'Acting on It', icon:'💨', mp:26, levelReq:38, desc:"Seeing the opening is nothing without moving on it.", buffType:'haste', buffVal:8, buffTurns:4},
+      {name:'Certainty', icon:'💀', mp:45, levelReq:45, desc:'Not a guess anymore. She already knows.', dice:'3d14', status:{type:'shock',chance:0.4,turns:1}},
+      {name:"What the Signal Meant", icon:'📡', mp:0, levelReq:120, desc:"A door left unlocked on the way out, not a warning. She finally understands what she felt.", buffType:'defense', buffVal:14, buffTurns:4},
+      {name:"Grief, Threaded Through", icon:'🔮', mp:60, levelReq:200, desc:"What it actually felt like to be one of Renn's people — carried into the strike.", dice:'4d14', status:{type:'shock',chance:0.4,turns:1}}
     ],
     skill:{name:"Reader's Omen", icon:'👁️', mp:0, effect:'mark'}},
   // Brada Shah (Bard/Support, mp:60): "songs, strategy, and steadier
@@ -962,10 +1036,23 @@ const CLASS_KIT = {
     ],
     skill:{name:'Showstopper', icon:'🥁', mp:0, mult:1.3}},
   renn: {role:'caster',
+    // Conjurer/trickster — extends the existing illusion-adjacent theme
+    // (Phantom Fleet's illusory ships) further into conjuration:
+    // summoned effects, misdirection, things that aren't really there.
+    // Tied at higher levels to his own Arc XVII origin — the Archive as
+    // route terminus, the Door as reconstruction rather than invention —
+    // matching what he actually discovers about himself in that arc.
     spells:[
       {name:'Gale Dart', icon:'💨', mp:9,  levelReq:1,  desc:'A quick burst of wind, sharp as a blade.', dice:'1d9'},
       {name:'Mirror Currents', icon:'🌊', mp:14, levelReq:5,  desc:'Bends the light and the tide together.', dice:'1d11', status:{type:'shock',chance:0.25,turns:1}},
-      {name:'Phantom Fleet', icon:'👻', mp:18, levelReq:10, desc:"Illusory ships crowd the enemy's vision.", dice:'1d13'}
+      {name:'Phantom Fleet', icon:'👻', mp:18, levelReq:10, desc:"Illusory ships crowd the enemy's vision.", dice:'1d13'},
+      {name:'Conjured Blade', icon:'⚔️', mp:22, levelReq:16, desc:'A weapon that was never really there strikes anyway.', dice:'1d15'},
+      {name:'Misdirection', icon:'🎭', mp:20, levelReq:22, desc:'The enemy is certain the next blow is coming from somewhere else.', buffType:'defense', buffVal:9, buffTurns:3},
+      {name:'Summoned Squall', icon:'🌪️', mp:34, levelReq:28, desc:'Called from nowhere, gone before it can be traced.', dice:'2d13', status:{type:'shock',chance:0.3,turns:1}},
+      {name:'The Double', icon:'👥', mp:26, levelReq:35, desc:"A copy of himself, close enough to fool a blade.", buffType:'defense', buffVal:13, buffTurns:4},
+      {name:"Nothing There At All", icon:'👻', mp:48, levelReq:42, desc:'By the time it registers as an attack, it already landed.', dice:'3d13', status:{type:'shock',chance:0.35,turns:1}},
+      {name:"What He Rebuilt, Not Invented", icon:'🔧', mp:65, levelReq:90, desc:"Every instinct he never questioned, finally understood as memory instead of talent.", dice:'4d13', status:{type:'shock',chance:0.4,turns:1}},
+      {name:'The Door Was Always Part of It', icon:'🚪', mp:0, levelReq:180, desc:"He wasn't a separate anomaly. Neither was she — or any of them. Just routes that had lost their other end.", buffType:'haste', buffVal:10, buffTurns:4}
     ],
     skill:{name:"Trickster's Hex", icon:'🎭', mp:22, effect:'hex'}},
   // Erynn Farseer (Arc VII, recruited Ch.23 "The Farseer Who Stayed").
@@ -981,10 +1068,22 @@ const CLASS_KIT = {
   // Free skill mechanically realizes the trio dynamic — see the
   // exposeTrio effect branch above.
   erynn: {role:'support',
+    // Deliberately stays within the established constraint (see the
+    // design note above): still not a damage-nuker like Renn/Mimi at
+    // higher levels either. Extended with stronger expose effects and
+    // research-appropriate utility (restoring the crew's focus, not
+    // hitting harder), tied at the top to what his own Arc XVII research
+    // actually uncovers about the Farseer tradition and the Separation.
     spells:[
       {name:"Varel's Ledger", icon:'📜', mp:12, levelReq:1,  desc:'A documented weakness, generations old and still accurate.', buffType:'expose', buffVal:15, buffTurns:3},
       {name:"Tenn's Correction", icon:'🧭', mp:16, levelReq:8,  desc:"A refinement of Varel's original theory — sharper, and it shows.", buffType:'expose', buffVal:22, buffTurns:3},
-      {name:"The Old Marker's Warning", icon:'⚠️', mp:22, levelReq:14, desc:'Not every mystery needs solving to be useful.', buffType:'expose', buffVal:30, buffTurns:4}
+      {name:"The Old Marker's Warning", icon:'⚠️', mp:22, levelReq:14, desc:'Not every mystery needs solving to be useful.', buffType:'expose', buffVal:30, buffTurns:4},
+      {name:'Cross-Referenced', icon:'📖', mp:24, levelReq:20, desc:'Three separate records, all agreeing on the same weak point.', buffType:'expose', buffVal:36, buffTurns:4},
+      {name:'A Quiet Word', icon:'💧', mp:0, levelReq:28, desc:"Reminds the crew what they already knew, when they need it again.", effect:'restoreMp', restoreAmt:45},
+      {name:'What the Text Actually Says', icon:'📜', mp:30, levelReq:36, desc:'Not the translation everyone assumed. The real one.', buffType:'expose', buffVal:44, buffTurns:4},
+      {name:"An Annotated Certainty", icon:'🧭', mp:36, levelReq:45, desc:'There is no longer any reasonable doubt about where this ends.', buffType:'expose', buffVal:52, buffTurns:5},
+      {name:'What the Farseers Kept', icon:'📖', mp:0, levelReq:100, desc:"The shape of the knowledge survived. The reasoning behind it didn't — until now.", buffType:'defense', buffVal:14, buffTurns:4},
+      {name:'Four Positions, Not Two', icon:'⚖️', mp:40, levelReq:170, desc:"Nobody wanted what happened. It was just what was left once every smaller compromise had failed.", buffType:'expose', buffVal:60, buffTurns:5}
     ],
     skill:{name:'Three Ways of Knowing', icon:'📖', mp:0, effect:'exposeTrio'}}
 };
@@ -4381,7 +4480,14 @@ function combatAction(action) {
         const fallen = sanFallen || party.find(m => partyHpOf(m) <= 0);
         if (!fallen) { toast('No one has fallen.'); return; }
         game.partyMp[actor.id] = mp - skill.mp;
-        game.partyHp[fallen.id] = Math.round(effectiveMaxHp(fallen) * 0.5);
+        // Configurable via skill.revivePct (San's request: a tiered
+        // revive system for Eliz — the existing 50% skill kept exactly
+        // as-is, plus a new, higher-level full-HP one). Defaults to the
+        // original hardcoded 0.5 so every existing user of this effect
+        // (Joel/Dr. AA/Sister Wren, wherever else it's used) is
+        // completely unaffected by adding this parameter.
+        const revivePct = (typeof skill.revivePct === 'number') ? skill.revivePct : 0.5;
+        game.partyHp[fallen.id] = Math.round(effectiveMaxHp(fallen) * revivePct);
         logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! ' + esc(fallen.name) + ' returns to the fight.');
       } else if (skill.effect === 'cleanse') {
         // Was never checking/deducting MP at all — harmless for Sister
@@ -4552,6 +4658,20 @@ function castSpell(spellIndex) {
     game.enemyVulnerable = spell.buffTurns || 3;
     game.enemyVulnerablePct = spell.buffVal / 100;
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! The enemy is exposed for ' + game.enemyVulnerable + ' turns.');
+  } else if (spell.effect === 'revive') {
+    // Mirrors the skill-path 'revive' branch in combatAction exactly
+    // (same San-priority targeting, same configurable revivePct) — added
+    // here so a revive-type ability can also live in a level-gated
+    // spells array, not only in the single fixed skill/highSkill slots.
+    // Built for Eliz's tiered revive system: her existing 50% skill stays
+    // exactly as it was, and a new, higher-level full-HP version unlocks
+    // as a spell alongside her others.
+    const sanFallenSpell = party.find(m => m.id === 'san' && partyHpOf(m) <= 0);
+    const fallenSpell = sanFallenSpell || party.find(m => partyHpOf(m) <= 0);
+    if (!fallenSpell) { toast('No one has fallen.'); game.partyMp[actor.id] = mp; return; }
+    const revivePctSpell = (typeof spell.revivePct === 'number') ? spell.revivePct : 0.5;
+    game.partyHp[fallenSpell.id] = Math.round(effectiveMaxHp(fallenSpell) * revivePctSpell);
+    logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! ' + esc(fallenSpell.name) + ' returns to the fight.');
   } else if (spell.healMult) {
     // Eliz is San's dedicated healer — the story treats this as a specific
     // relationship, not generic "whoever's lowest %". If San's not at full
