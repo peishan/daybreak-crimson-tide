@@ -523,6 +523,16 @@
     });
     el.innerHTML = html;
   }
+  // BUG FIX (San's report — the normal daily bond-action buttons
+  // disappearing entirely, leaving only the disagreement panel): this
+  // function was never actually exposed as window.renderBondsTab — only
+  // ever the bare, closure-local name. arc16-and-bonding.js's wrap reads
+  // window.renderBondsTab as "the base function to chain to" before
+  // adding the disagreement panel; since that was undefined until the
+  // wrap itself first set it, the wrap's captured "base" was never
+  // callable, so this real card-building logic silently never ran at
+  // all under the new call path from V219's own fix.
+  window.renderBondsTab = renderBondsTab;
 })();
 
 

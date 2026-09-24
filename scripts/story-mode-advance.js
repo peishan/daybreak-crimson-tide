@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V220 · Disagreement Panel Accumulation Fix'
+window.__CT_BUILD__='V222 · Arc XVII Research System'
