@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V227 · Sealed Records + Fair Tide Archive Building';
+window.__CT_BUILD__='V231 · Route Access System';
