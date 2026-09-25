@@ -100,6 +100,39 @@
       stages: {
         13: { status: 'Verified', note: "The mysterious Door wasn't an isolated phenomenon. It was one piece of an ancient network Renn had unknowingly been connected to long before she understood it." }
       }
+    },
+    {
+      // Sealed Records, per the design doc: "some information should
+      // literally be inaccessible... this prevents Arc 17 from dumping
+      // the entire history of inter-world travel on the player." This
+      // one demonstrates the doc's first variant — discovered sealed,
+      // later unseals within the same arc. Deliberately kept distinct
+      // from renns_civilization above rather than duplicating its Ch.23
+      // recognition beat: this record is about the sealing mechanism
+      // itself (Ch.15's removal, Ch.21's chamber), not the recognition
+      // narrative renns_civilization already covers.
+      key: 'renns_sealed_pages',
+      category: 'Sealed Record',
+      icon: '🔒',
+      name: 'The Missing Pages',
+      stages: {
+        15: { status: 'Sealed', sealReason: 'Historical restriction', note: "Something here concerns Renn specifically — deliberately removed, not merely lost. The Archive isn't saying why yet." },
+        21: { status: 'Observed', note: "The sealed chamber, opened. What was hidden here was never dangerous. Just personal — records the civilization chose to keep close, until someone who belonged to it came looking." }
+      }
+    },
+    {
+      // Second variant: discovered sealed, and deliberately never
+      // unseals within Arc XVII at all — the doc's own "some answers
+      // remain for later arcs." Directly the arc's own final-scene hook
+      // (Ch.25: "a system that hasn't activated in thousands of years
+      // suddenly detects another Horizon signature. Not from Veyren.").
+      key: 'unknown_signal',
+      category: 'Horizon route',
+      icon: '🔒',
+      name: 'An Unfamiliar Signature',
+      stages: {
+        25: { status: 'Sealed', sealReason: 'Unknown access condition', note: "A dormant system just detected something. Not from Veyren. The Archive doesn't seem to know what it's looking at — or isn't saying." }
+      }
     }
   ];
   window.ARCHIVE_RECORDS = ARCHIVE_RECORDS;
@@ -117,7 +150,7 @@
           notes.push(rec.stages[chapterId]);
         }
       });
-      return { key: rec.key, category: rec.category, icon: rec.icon, name: rec.name, status: current ? current.status : null, note: current ? current.note : null, history: notes };
+      return { key: rec.key, category: rec.category, icon: rec.icon, name: rec.name, status: current ? current.status : null, note: current ? current.note : null, sealReason: current ? current.sealReason : null, history: notes };
     }).filter(function(r){ return r.status !== null; }); // undiscovered records don't appear at all — not a blank encyclopedia
   }
   window.archiveRecordsState = archiveRecordsState;
@@ -130,6 +163,14 @@
       return html;
     }
     records.forEach(function(r){
+      if (r.status === 'Sealed') {
+        html += '<article class="quest-item" style="border-color:rgba(200,80,80,.4);"><div style="display:flex;gap:10px;align-items:flex-start;">'+
+          '<div style="font-size:1.4rem;">'+r.icon+'</div>'+
+          '<div style="flex:1;"><strong>'+esc(r.name)+'</strong> <span class="story-chip" style="background:rgba(200,80,80,.22);">🔒 Sealed</span><br>'+
+          '<span style="font-size:.72rem;opacity:.6;">'+esc(r.category)+' — '+esc(r.sealReason)+'</span><br>'+
+          '<span style="font-size:.8rem;opacity:.85;">'+esc(r.note)+'</span></div></div></article>';
+        return;
+      }
       const statusIdx = STATUS_ORDER.indexOf(r.status);
       const statusChip = r.status === 'Archived' ? '<span class="story-chip" style="background:rgba(120,200,140,.25);">✓ Archived</span>' :
                           r.status === 'Verified' ? '<span class="story-chip" style="background:rgba(200,180,100,.25);">Verified</span>' :

@@ -150,6 +150,19 @@
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
   };
 
+  // Fair Tide's Archive building (see fairtide-buildings-and-arc6.js),
+  // tiers 2 and 4 specifically ("Research Desk", "Boundary Observatory")
+  // speed up every research project here. Capped at a minimum of 1 day
+  // so it never becomes instant regardless of building level.
+  function effectiveResearchDuration(baseDays){
+    const archiveLevel = (game.fairTideBuildings && game.fairTideBuildings.archive) || 0;
+    let reduction = 0;
+    if (archiveLevel >= 2) reduction += 1;
+    if (archiveLevel >= 4) reduction += 2;
+    return Math.max(1, baseDays - reduction);
+  }
+  window.effectiveResearchDuration = effectiveResearchDuration;
+
   window.canAdvanceResearch = function(researcherId){
     const rs = researchState()[researcherId];
     if (!rs.activeProjectKey) return false;
@@ -164,7 +177,7 @@
     if (!project) { rs.activeProjectKey = null; return; }
     rs.progressDays += 1;
     rs.lastAdvancedDay = game.day;
-    if (rs.progressDays >= project.durationDays) {
+    if (rs.progressDays >= effectiveResearchDuration(project.durationDays)) {
       rs.completedKeys.push(project.key);
       rs.activeProjectKey = null;
       rs.progressDays = 0;
@@ -176,7 +189,7 @@
         }, 400);
       }
     } else {
-      toast(researcher.icon + ' ' + researcher.name + ' continues: ' + project.title + ' (' + rs.progressDays + '/' + project.durationDays + ')', 2800);
+      toast(researcher.icon + ' ' + researcher.name + ' continues: ' + project.title + ' (' + rs.progressDays + '/' + effectiveResearchDuration(project.durationDays) + ')', 2800);
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
@@ -202,7 +215,7 @@
         const project = researcher.projects.find(function(p){ return p.key === rs.activeProjectKey; });
         const canAdvance = window.canAdvanceResearch(rid);
         html += '<span style="font-size:.8rem;opacity:.85;">Researching: <strong>'+esc(project.title)+'</strong></span><br>'+
-          '<span style="font-size:.76rem;opacity:.65;">Progress: '+rs.progressDays+' / '+project.durationDays+' days</span>'+
+          '<span style="font-size:.76rem;opacity:.65;">Progress: '+rs.progressDays+' / '+effectiveResearchDuration(project.durationDays)+' days</span>'+
           '<div style="margin-top:6px;"><button class="btn btn-small btn-success" '+(canAdvance?'':'disabled')+' onclick="advanceResearchProject(\''+rid+'\')">🔬 Check In</button></div>';
       } else {
         const available = researcher.projects.filter(function(p){ return projectAvailable(rid, p); });
@@ -213,7 +226,7 @@
             html += '<div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08);">'+
               '<strong style="font-size:.82rem;">'+esc(p.title)+'</strong><br>'+
               '<span style="font-size:.76rem;opacity:.7;">'+esc(p.desc)+'</span><br>'+
-              '<span style="font-size:.72rem;opacity:.55;">'+p.durationDays+' days</span>'+
+              '<span style="font-size:.72rem;opacity:.55;">'+effectiveResearchDuration(p.durationDays)+' days</span>'+
               '<div style="margin-top:4px;"><button class="btn btn-small" onclick="startResearchProject(\''+rid+'\',\''+p.key+'\')">🔬 Begin</button></div></div>';
           });
         } else if (completed.length === researcher.projects.length) {

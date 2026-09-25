@@ -27,14 +27,38 @@
     workshop:     {name:'Workshop',      icon:'🔧', desc:'Cheaper Shipyard hull upgrades.', rosterKey:'jorvin', companionName:'Jorvin', cost:{stone:30,trade:15},
       tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']},
     watchtower:   {name:'Watchtower',    icon:'🔭', desc:'Imah keeps watch over the water. Periodically spots something worth investigating — a lead the Research Expedition team can follow up on.', rosterKey:'imah', companionName:'Imah', cost:{timber:25,stone:35},
-      tierNames:["A Lookout Post","A Proper Watch","The Watchtower","Eyes on Every Horizon","Imah's Watch"]}
+      tierNames:["A Lookout Post","A Proper Watch","The Watchtower","Eyes on Every Horizon","Imah's Watch"]},
+    // Ch.25 ("The First Archivist") is the literal narrative origin of
+    // this building — Renn establishing a small Archive section at Fair
+    // Tide, Erynn contributing Farseer records, Mimi contributing
+    // divination records. Gated behind arc17Complete for exactly that
+    // reason: it shouldn't exist as an option before the story
+    // introduces it. Each tier gets one concrete effect tied to a
+    // system that already exists, rather than inventing new mechanics
+    // for a building whose job is to support existing ones: tiers 2/4
+    // speed up Research (arc17-research.js's durationDays), tiers 3/5
+    // add a story XP bonus, matching "knowledge compounds" as a theme.
+    archive:      {name:'Archive',       icon:'🏛️', desc:"Renn's own collection, growing alongside the ancient one. Speeds up research projects and deepens what every chapter teaches.", cost:{timber:35,stone:25,trade:40}, gate: function(){ return !!game.arc17Complete; },
+      tierNames:['Archive Room','Research Desk','Horizon Records','Boundary Observatory','Archive Institute']},
   };
   const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
   const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
 
   function ftResources(){ game.fairTideResources = game.fairTideResources || {timber:0,stone:0,food:0,trade:0}; return game.fairTideResources; }
-  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0,watchtower:0}; return game.fairTideBuildings; }
+  function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0,watchtower:0,archive:0}; return game.fairTideBuildings; }
   function fmtClockFT(sec){ const m = Math.floor(sec/60), s = sec%60; return m+':'+String(s).padStart(2,'0'); }
+
+  // For Arc 18+ chapter-completion logic to use when granting story XP.
+  // Deliberately NOT wired into Arc XVII's own gainXP call: the Archive
+  // building is gated behind arc17Complete, so it can only exist once
+  // every Arc XVII chapter is already read — a bonus applied there
+  // would be dead code that could never actually fire.
+  window.fairTideArchiveStoryXpMult = function(){
+    const lvl = ftBuildings().archive || 0;
+    if (lvl >= 5) return 1.20;
+    if (lvl >= 3) return 1.10;
+    return 1.0;
+  };
 
   window.fairTideResourceCap = function(){
     return 200 + (ftBuildings().warehouse||0) * 100;
@@ -184,6 +208,7 @@
       Object.entries(FT_RES_LABEL).map(([k,label])=>'<span>'+label+': <strong>'+(res[k]||0)+'</strong></span>').join('')+
       '<span style="opacity:.7;">(cap '+window.fairTideResourceCap()+' each)</span></div>';
     Object.entries(FT_BUILDINGS).forEach(([key,cfg])=>{
+      if (cfg.gate && !cfg.gate()) return; // not yet narratively unlocked — skip entirely, not just shown-locked
       const level = b[key]||0;
       const cap = window.fairTideBuildingCap(key);
       const maxed = level >= cap;
