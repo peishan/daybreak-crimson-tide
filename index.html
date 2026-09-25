@@ -1820,6 +1820,7 @@ body{
       <button class="nav-btn" onclick="goScreen('tavern')">🍺 Tavern</button>
       <button class="nav-btn active" onclick="goScreen('log')">📜 Log</button>
       <button class="nav-btn" onclick="goScreen('achievements')">🏆 Achievements</button>
+      <button class="nav-btn" onclick="goScreen('bestiary')">📖 Bestiary</button>
     </div>
     <div class="panel">
       <div class="panel-title">📜 Journey Log</div>
@@ -2121,6 +2122,8 @@ body{
 <script src="scripts/harbour-and-arc14.js"></script>
 <script src="scripts/arc17-archive-hub.js"></script>
 <script src="scripts/arc17-research.js"></script>
+<script src="scripts/arc17-renn-origin.js"></script>
+<script src="scripts/arc17-farseer-layer.js"></script>
 <script src="scripts/arc16-forest-coast.js"></script>
 <script src="scripts/arc16-dragon-mountain.js"></script>
 <script src="scripts/arc16-crystal-old.js"></script>
@@ -2136,7 +2139,18 @@ body{
   </div>
 </div>
 
+<div class="screen" id="bestiaryScreen">
+  <div class="game-container">
+    <div class="header"><h1>📖 Bestiary</h1><div class="subtitle">Everything the crew has ever fought</div></div>
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="goScreen('log')">📜 Back to Log</button>
+    </div>
+    <div id="bestiaryContent"></div>
+  </div>
+</div>
+
 <script src="scripts/achievements.js"></script>
+<script src="scripts/bestiary.js"></script>
 
 
 <div class="screen" id="tideNetworkScreen">
