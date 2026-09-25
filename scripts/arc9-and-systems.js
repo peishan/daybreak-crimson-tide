@@ -1491,7 +1491,24 @@
   // rival_frigate fight forced to that specific captain instead.
   const oldHuntDownRivalForCaptains = window.huntDownRival;
   window.huntDownRival = function(key){
-    if (!(window.ALL_CAPTAIN_KEYS || CAPTAIN_KEYS).includes(key)) { if (oldHuntDownRivalForCaptains) oldHuntDownRivalForCaptains(key); return; }
+    if (!(window.ALL_CAPTAIN_KEYS || CAPTAIN_KEYS).includes(key)) {
+      // BUG FIX: this branch always called oldHuntDownRivalForCaptains,
+      // but that was undefined — no file anywhere ever defined a base
+      // huntDownRival function, even though the comment above already
+      // describes exactly what Robin/Jeff's path should do. The "Hunt
+      // Him Down" button for either of them has been a complete no-op
+      // since it was written: no combat, no toast, nothing. Implementing
+      // the described behavior directly here instead of deferring to a
+      // function that was never actually written anywhere.
+      if (oldHuntDownRivalForCaptains) { oldHuntDownRivalForCaptains(key); return; }
+      if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) { toast('Already captured.'); return; }
+      const rivalEnemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore(key, 'sea') : null;
+      if (!rivalEnemy) { toast('Could not find him right now — try again later.'); return; }
+      const rivalName = (typeof rivalDisplayName === 'function') ? rivalDisplayName(key) : key;
+      toast('🗡️ Tracked ' + rivalName + ' down.', 2200);
+      startCombat({kind:'sea', key:key, enemy: rivalEnemy, portId:null});
+      return;
+    }
     if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(key)) { toast('Already captured.'); return; }
     const enemy = frigateEnemyForCaptain(key);
     if (!enemy) { toast('Could not find him right now — try again later.'); return; }
