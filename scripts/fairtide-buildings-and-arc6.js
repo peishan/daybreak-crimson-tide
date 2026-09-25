@@ -880,8 +880,30 @@
   // no new code needed per-person.
   function rivalDisplayName(key){
     const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[key] : null;
-    if (base && base.name) return base.name.split(' ')[0].replace(/[^\w]/g,''); // first word, e.g. "Robin C. & His Enforcers" -> "Robin"
-    return key.charAt(0).toUpperCase() + key.slice(1);
+    if (!base || !base.name) return key.charAt(0).toUpperCase() + key.slice(1);
+    const words = base.name.split(' ');
+    const firstWord = words[0].replace(/[^\w]/g,'');
+    // BUG FIX: two different captains (Siti Norhayati / Siti Rahayu)
+    // both reduced to the same display name "Siti" — the modal, toast,
+    // and "At Large" card all showed the plain first word with no way
+    // to tell them apart, so capturing or hunting one could easily read
+    // as "the same pirate keeps coming back" when it was actually a
+    // second, distinct, not-yet-captured captain. Checking for a
+    // first-word collision against every other roster entry and
+    // including the second word whenever one exists, rather than
+    // hardcoding this one pair — protects against the same collision
+    // happening again if the roster grows.
+    const firstWordCollides = Object.keys(HARBOR_ENEMIES).some(function(otherKey){
+      if (otherKey === key) return false;
+      const other = HARBOR_ENEMIES[otherKey];
+      if (!other || !other.name) return false;
+      return other.name.split(' ')[0].replace(/[^\w]/g,'') === firstWord;
+    });
+    if (firstWordCollides && words[1]) {
+      const secondWord = words[1].replace(/'s$/i, '').replace(/[^\w]/g,'');
+      return firstWord + ' ' + secondWord;
+    }
+    return firstWord;
   }
   window.rivalDisplayName = rivalDisplayName;
   window.rivalCaptured = function(key){
@@ -1116,6 +1138,26 @@
     if (!def) return;
     ship.status = def.label;
     ship.designation = designation;
+    // BUG FIX: designation used to be purely a status label — the actual
+    // mechanical consequence (stats for upgrading, trade income, the
+    // cargo bonus) only ever got applied inside completeArc6Chapter5()
+    // below, a ONE-TIME function that only ever ran once, processing
+    // only whatever ships existed in game.inheritedShips at that single
+    // moment (Robin's and Jeff's, from Arc VI's own story capture). Any
+    // ship captured later — from the much larger roster of named
+    // captains added afterward — could still be designated through this
+    // same function, but would never actually receive .stats, so
+    // upgradeFleetShip() would always correctly (but uselessly) reject
+    // it as "not a fleet ship," no matter how it was designated. Ships
+    // already processed by the one-time Arc VI function are unaffected
+    // here — .stats/.tradeIncome only ever get created if missing
+    // (||=), never overwritten, so no existing progress is touched.
+    if (designation === 'fleet') ship.stats = ship.stats || {hull:1, cannons:1, sails:1, cargo:1};
+    if (designation === 'trade') ship.tradeIncome = ship.tradeIncome || {lastClaimDay:-1};
+    if (designation === 'transport' && !ship.transportBonusApplied) {
+      game.cargoCapacity = Math.max(Number(game.cargoCapacity||50), Number(game.cargoCapacity||50) + 25);
+      ship.transportBonusApplied = true; // one-time bonus, guarded so re-designating away and back can't stack it
+    }
     toast(def.icon + ' ' + ship.name + ': ' + def.label + '.', 3200);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
