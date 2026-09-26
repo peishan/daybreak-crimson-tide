@@ -170,7 +170,7 @@
       window.__ctShowArc18Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc18/arc18-cover-the-routes-others-want.png" alt="Arc XVIII — The Routes Others Want" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc18/arc18-cover-routes-others-want.png" alt="Arc XVIII — The Routes Others Want" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XVIII</div><div class="story-act-title">The Routes Others Want</div>'+
       '<div class="story-act-tagline">If we discover a way between worlds, who has the right to decide where it leads?</div></div>';
     if (!arc18Ready) {
