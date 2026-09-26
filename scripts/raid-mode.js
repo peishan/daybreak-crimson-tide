@@ -172,26 +172,37 @@
   // not generic to Raid Mode as a whole.
   // -------------------------------------------------------------------
 
-  const REJUVENATION_HP_BONUS = 40;
-  const REJUVENATION_MP_BONUS = 15;
+  // Percentage-based, not a flat number — San's own confirmed direction
+  // after reconsidering the original flat +40/+15: a flat bonus is
+  // meaningful early and negligible late, since it never scales with
+  // the receiving character's own growing stats. A percentage of the
+  // character's own max HP/MP stays proportionally consistent at any
+  // point in the game and matches the design doc's own instruction to
+  // keep this modest by construction, not by a guessed flat value.
+  const REJUVENATION_HP_PCT = 0.06;
+  const REJUVENATION_MP_PCT = 0.06;
 
   function isRejuvenated(id){ return !!(game.rejuvenated && game.rejuvenated[id]); }
   window.isRejuvenated = isRejuvenated;
 
-  function rejuvenationHpBonus(id){ return isRejuvenated(id) ? REJUVENATION_HP_BONUS : 0; }
-  function rejuvenationMpBonus(id){ return isRejuvenated(id) ? REJUVENATION_MP_BONUS : 0; }
+  // Takes the already-computed base value rather than calling
+  // effectiveMaxHp/Mp itself — those are exactly what this function
+  // feeds into below, so calling them again from in here would recurse
+  // into this same wrap.
+  function rejuvenationHpBonus(id, baseValue){ return isRejuvenated(id) ? Math.round(baseValue * REJUVENATION_HP_PCT) : 0; }
+  function rejuvenationMpBonus(id, baseValue){ return isRejuvenated(id) ? Math.round(baseValue * REJUVENATION_MP_PCT) : 0; }
   window.rejuvenationHpBonus = rejuvenationHpBonus;
   window.rejuvenationMpBonus = rejuvenationMpBonus;
 
   const oldEffectiveMaxHpForFountain = window.effectiveMaxHp;
   window.effectiveMaxHp = function(m){
     const base = oldEffectiveMaxHpForFountain(m);
-    return base + rejuvenationHpBonus(m.id);
+    return base + rejuvenationHpBonus(m.id, base);
   };
   const oldEffectiveMaxMpForFountain = window.effectiveMaxMp;
   window.effectiveMaxMp = function(m){
     const base = oldEffectiveMaxMpForFountain(m);
-    return base + rejuvenationMpBonus(m.id);
+    return base + rejuvenationMpBonus(m.id, base);
   };
 
   // Future hook — restoration for permanent negative effects. Deliberately

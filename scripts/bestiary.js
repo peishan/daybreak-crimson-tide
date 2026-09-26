@@ -69,7 +69,7 @@
         const found = !!discoveredSet[key];
         if (found) {
           html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;">'+
-            '<div style="font-size:1.6rem;">'+entry.art+'</div><div style="flex:1;">'+
+            '<div style="font-size:1.6rem;">'+(entry.icon||entry.art)+'</div><div style="flex:1;">'+
             '<strong>'+esc(entry.name)+'</strong><br>'+
             '<span style="font-size:.78rem;opacity:.75;">'+esc(entry.desc)+'</span><br>'+
             '<span style="font-size:.78rem;">'+entry.hp+' HP · '+entry.dmg+' DMG · '+entry.xp+' XP · '+entry.gold+'g</span>'+

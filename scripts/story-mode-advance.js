@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V250 · Arc XVIII Cover Image Fix';
+window.__CT_BUILD__='V253 · Arc XXI Wired (Ch.1-16) + Splash Fix';
