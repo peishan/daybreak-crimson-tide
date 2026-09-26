@@ -48,6 +48,15 @@
       text: "The Horizon Engine isn't a weapon, and Fair Tide won't treat it — or let anyone else treat it — as one without genuine cause."
     },
     {
+      // Added after the original build missed it — Ch.16's actual text
+      // has six rules, not five. Wording matches the source directly:
+      // "No revealing a world's location without weighing what that
+      // exposure actually costs the people who live there."
+      key: 'no_unweighed_disclosure',
+      rule: "No Unweighed Disclosure",
+      text: "A world's location isn't shared without first weighing what that exposure would actually cost the people who live there."
+    },
+    {
       key: 'no_ownership_over_worlds',
       rule: 'No Ownership Over Other Worlds',
       text: "Finding a route to somewhere doesn't make that place Fair Tide's to claim, govern, or decide for."
