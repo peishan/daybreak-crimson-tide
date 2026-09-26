@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V247 · Arc I Guardian Rematches (Level-Scaled)';
+window.__CT_BUILD__='V249 · Arc XX Complete (24/24 Chapters)';
