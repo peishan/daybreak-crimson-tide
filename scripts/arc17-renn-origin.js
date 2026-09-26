@@ -13,10 +13,10 @@
   // Four stages exactly as specified, mapped to real chapter beats now
   // that the full 25-chapter text exists:
   //   Unknown            -> default, before Ch.6
-  //   Possible Connection -> Ch.6 ("Familiar") — instinct she can't explain
-  //   Archive Recognition -> Ch.18 ("Renn") — the RECORDS confirm her
+  //   Possible Connection -> Ch.6 ("Familiar") — instinct he can't explain
+  //   Archive Recognition -> Ch.18 ("Renn") — the RECORDS confirm his
   //                          lineage; documentary fact, not yet the
-  //                          place itself acknowledging her
+  //                          place itself acknowledging him
   //   Origin Confirmed    -> Ch.23 ("The Archive Remembers") — the
   //                          Archive itself recognizes her as belonging,
   //                          restores access; the full, final act of

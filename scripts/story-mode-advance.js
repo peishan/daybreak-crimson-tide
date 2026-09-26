@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V236 · Captain Name Collision + Fleet Ship Upgrade Fix';
+window.__CT_BUILD__='V239 · Fair Tide Council';

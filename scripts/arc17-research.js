@@ -61,7 +61,7 @@
           key: 'door_mechanism', tiedRecord: 'the_door_connection', minStatus: 'Verified', durationDays: 5,
           title: 'The Door\'s Mechanism',
           desc: 'If the Door from all that time ago is genuinely part of this network, Renn wants to understand how — not just that it is.',
-          finding: 'The Door was never a separate anomaly. It\'s a route terminus, same as the ones cataloged here — just one that had lost its other end. Renn built the Horizon Engine from first principles, using instincts she never questioned. She was reconstructing something. Not inventing it.'
+          finding: 'The Door was never a separate anomaly. It\'s a route terminus, same as the ones cataloged here — just one that had lost its other end. Renn built the Horizon Engine from first principles, using instincts he never questioned. He was reconstructing something. Not inventing it.'
         }
       ]
     },

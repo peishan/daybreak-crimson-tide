@@ -98,7 +98,7 @@
       icon: '🚪',
       name: 'The Door (Arc VII)',
       stages: {
-        13: { status: 'Verified', note: "The mysterious Door wasn't an isolated phenomenon. It was one piece of an ancient network Renn had unknowingly been connected to long before she understood it." }
+        13: { status: 'Verified', note: "The mysterious Door wasn't an isolated phenomenon. It was one piece of an ancient network Renn had unknowingly been connected to long before he understood it." }
       }
     },
     {
