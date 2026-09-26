@@ -625,7 +625,7 @@
   // Joel joins this list too — San and Joel are the emotional core of the
   // story and (from Arc V on, see getRequiredFieldedIds) can't be fielded
   // without each other anyway, so he shouldn't cost a slot either.
-  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel']);
+  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel', 'ate_joy']);
   window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
 
   // Self-healing rather than hooked into every companion-recruitment call

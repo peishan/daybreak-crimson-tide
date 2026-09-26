@@ -336,7 +336,20 @@ const ALL_PARTY = [
   // recruitment hook, Ch.23). Sturdier than Mimi/Renn by design (he's an
   // adult researcher, not thrown into the same fragile-caster mold) —
   // lower MP pool fits his lighter 12-22 mp spell costs vs. their 9-18.
-  {id:'erynn',       name:'ERYNN',      role:'Farseer Descendant',    combatRole:'Support',  hp:85, mp:90,  portrait:'🧭', portraitAsset:'assets/portraits/erynn.png', desc:'Descendant of Varel Farseer. Generations of documented weaknesses mean he rarely has to guess.'}
+  {id:'erynn',       name:'ERYNN',      role:'Farseer Descendant',    combatRole:'Support',  hp:85, mp:90,  portrait:'🧭', portraitAsset:'assets/portraits/erynn.png', desc:'Descendant of Varel Farseer. Generations of documented weaknesses mean he rarely has to guess.'},
+  // Arc XX recruit — Joel's sister, introduced Ch.9 ("Ate Joy"). Unlocked
+  // via game.foundCompanions like every other companion (the default path
+  // in memberUnlocked() below already covers her, no special case needed).
+  // A storyline character per San's own spec, not a field-slot-consuming
+  // recruit — added to FREE_FIELD_IDS in arc9-and-systems.js alongside
+  // San/Joel/Soel, so fielding her never counts against the party cap.
+  {id:'ate_joy',     name:'ATE JOY',    role:'Warden',                combatRole:'Tank',     hp:92, mp:70,  portrait:'🛡️', portraitAsset:'assets/portraits/ate_joy.jpg', desc:"Joel's sister. A living wall between danger and the people she's chosen to protect."},
+  // Arc XX recruit — introduced independently of Joy (Ch.13, "A Stranger
+  // at Fair Tide"); no established romance in Arc XX per San's own spec.
+  // Unlike Joy, he IS a normal field-slot-consuming recruit — that
+  // distinction (protects people vs. protects places/equipment/ships) is
+  // the whole point of keeping the two mechanically separate.
+  {id:'caelan',      name:'CAELAN',     role:'Magical Artificer',     combatRole:'Support',  hp:78, mp:95,  portrait:'⚙️', portraitAsset:'assets/portraits/caelan.jpg', desc:'Warden Engineer. Native to Veyren — his craft is what holds a place together, not what wins a fight outright.'}
 ];
 function memberUnlocked(m){
   if (m.id === 'san') return true;
@@ -397,6 +410,14 @@ const GEAR_ROLE_RULES = {
   // spellcasting foci. Robe or light armor: sturdier than the pure casters
   // per the brainstorm, but still not built for melee.
   erynn:      {weapon:['astrolabe','any'], armor:['robe','light'], label:'Astrolabe / Robes'},
+  // Warhammer/mace and warden shield per San's own spec — same weapon
+  // slot pattern as Joel's shield/sword (this game's gear system doesn't
+  // have a separate off-hand slot), heavy armor to match her Guardian role.
+  ate_joy:    {weapon:['mace','shield','any'], armor:['heavy'], label:'Warhammer / Warden Shield'},
+  // Artificer/engineer tools rather than a melee loadout — deliberately
+  // distinct from Joy's warhammer/shield, matching his utility-support
+  // (not frontline-tank) combat role.
+  caelan:     {weapon:['staff','mace','any'], armor:['light','robe'], label:"Artificer's Tools / Light Gear"},
 };
 
 const EQUIPMENT_CATALOG = [
@@ -1085,7 +1106,45 @@ const CLASS_KIT = {
       {name:'What the Farseers Kept', icon:'📖', mp:0, levelReq:100, desc:"The shape of the knowledge survived. The reasoning behind it didn't — until now.", buffType:'defense', buffVal:14, buffTurns:4},
       {name:'Four Positions, Not Two', icon:'⚖️', mp:40, levelReq:170, desc:"Nobody wanted what happened. It was just what was left once every smaller compromise had failed.", buffType:'expose', buffVal:60, buffTurns:5}
     ],
-    skill:{name:'Three Ways of Knowing', icon:'📖', mp:0, effect:'exposeTrio'}}
+    skill:{name:'Three Ways of Knowing', icon:'📖', mp:0, effect:'exposeTrio'}},
+  // Arc XX recruit (Ch.9, "Ate Joy") — Warden/Guardian Support per San's
+  // own spec. Five named abilities mapped onto proven engine mechanics
+  // rather than anything new: Warden's Guard reuses the exact taunt
+  // pattern Joel's Shield Wall already uses (mp:0, always available,
+  // matching her "intercepts an attack meant for an ally" identity).
+  // Ate's Shelter/Anchored Ward reuse buffType:'defense' (progressively
+  // stronger party shields). Stay With Me/No One Left Behind reuse
+  // effect:'revive' at two tiers — a modest stabilize early, and a
+  // near-full "automatically intervene" ultimate late, the same
+  // configurable-revivePct pattern built for Eliz's own tiered revive.
+  ate_joy: {role:'tank',
+    spells:[
+      {name:"Ate's Shelter", icon:'🛡️', mp:14, levelReq:1,  desc:'A ward settles over the party — steady, unhurried, the way she does everything.', buffType:'defense', buffVal:18, buffTurns:3},
+      {name:'Stay With Me', icon:'💗', mp:26, levelReq:10, desc:"Won't let anyone go down while she's still standing.", effect:'revive', revivePct:0.35},
+      {name:'Anchored Ward', icon:'⚓', mp:22, levelReq:25, desc:'The ward holds firmer this time — nothing gets through it easily.', buffType:'defense', buffVal:28, buffTurns:4}
+    ],
+    skill:{name:"Warden's Guard", icon:'⚔️', mp:0, effect:'taunt'},
+    highSkill:{name:'No One Left Behind', icon:'✨', mp:45, levelReq:40, effect:'revive', revivePct:0.9}},
+  // Arc XX recruit (Ch.13, "A Stranger at Fair Tide") — Magical
+  // Artificer / Warden Engineer per San's own spec. Deliberately built
+  // around different mechanics than Ate Joy's kit, per San's explicit
+  // "mechanically redundant" concern: his skill is enemy control (stun —
+  // currently only Mez's Thunderclap uses this, and hers is unrelated
+  // storm magic, so this stays his own defining trick), and his kit
+  // includes a real damage spell, which Joy has none of at all. His one
+  // shared mechanic with Joy (buffType:'defense') is already a common,
+  // multi-character utility across the roster (haste/restoreMp work the
+  // same way), not anyone's signature — expose was deliberately avoided
+  // here since that's entirely Erynn's own identity (his whole 7-spell
+  // kit is built on it).
+  caelan: {role:'support',
+    spells:[
+      {name:'Reinforced Line', icon:'🧱', mp:16, levelReq:1,  desc:'A ward built the way he builds everything — carefully, to actually hold.', buffType:'defense', buffVal:15, buffTurns:3},
+      {name:'Field Recharge', icon:'🔋', mp:0,  levelReq:15, desc:"Doesn't ask what broke first — just gets it working again.", effect:'shareMp', restoreAmt:35},
+      {name:'Siege Battery', icon:'💥', mp:34, levelReq:30, dice:'5d10', desc:'Everything he knows about fortification, pointed the other way for once.'},
+      {name:'Bastion Array', icon:'🏰', mp:55, levelReq:45, desc:'Every ward he has ever built, all standing at once.', buffType:'defense', buffVal:32, buffTurns:5}
+    ],
+    skill:{name:'Lockdown Field', icon:'🔧', mp:12, effect:'stun'}}
 };
 function kitFor(id){ return CLASS_KIT[id] || {role:'melee', spell:null, skill:null}; }
 // Two shapes exist across CLASS_KIT: most casters/healers use a `spells`
@@ -2926,7 +2985,7 @@ function renderExplore() {
     const g = GUARDIANS[port.guardian];
     html += `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🎯 Chapter ${port.chapterId} — ${done ? 'Cleared' : 'Guardian'}</h3>`;
     if (done) {
-      html += `<article class="quest-item" style="border-left-color:#6fb57d;"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">Cleared · optional rematch available</span></div></div></article>`;
+      html += `<article class="quest-item" style="border-left-color:#6fb57d;"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">Cleared · optional rematch available</span></div><button class="btn btn-small" onclick="startGuardianRematch('${port.id}')">🔁 Rematch</button></div></article>`;
     } else {
       const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
       const label = escaped ? 'Optional Guardian' : 'Guardian';
@@ -2937,10 +2996,13 @@ function renderExplore() {
   }
 
   if (game.foundCompanions && Object.keys(game.foundCompanions).length >= 6 && !game.finalCleared) {
-    const done = false;
     const g = GUARDIANS.drowned_admiral;
     html += `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🎯 Chapter 8 — The Drowned Passage</h3>`;
     html += `<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">${g.hp} HP · final encounter</span></div><button class="btn btn-small btn-danger" onclick="startFinalFight()">Sail the Passage</button></div></article>`;
+  } else if (game.finalCleared) {
+    const g = GUARDIANS.drowned_admiral;
+    html += `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🎯 Chapter 8 — The Drowned Passage</h3>`;
+    html += `<article class="quest-item" style="border-left-color:#6fb57d;"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">Cleared · optional rematch available</span></div><button class="btn btn-small" onclick="startFinalRematch()">🔁 Rematch</button></div></article>`;
   }
 
   const act2 = game.finalCleared ? currentAct2Chapter() : null;
@@ -2958,6 +3020,27 @@ function renderExplore() {
 }
 function scaleCrimsonEnemy(baseEnemy, kind='harbor', storyLevel=null) {
   if (!baseEnemy) return null;
+  // Optional Arc I Guardian rematches — deliberately separate from the
+  // 'guardian' kind below (which stays capped near story level, by
+  // design, for first-time recruitment fights) and from the default
+  // harbor-style scaling (which also caps early, at 2.8x by ~level 19 —
+  // trivial against a level-300+ party). This scales linearly with no
+  // ceiling, calibrated so Wreck Warden (620 HP base) reaches roughly
+  // 3000 HP at level 300 — comparable to the Fountain's own Stage 3
+  // boss (3400 HP), genuinely challenging without being the game's
+  // actual endgame content.
+  if (kind === 'guardian_rematch') {
+    const lv = Math.max(1, Number(storyLevel || level()));
+    const hpMult = 1 + (lv - 1) * 0.0128;
+    const dmgMult = 1 + (lv - 1) * 0.0095;
+    return Object.assign({}, baseEnemy, {
+      hp: Math.max(baseEnemy.hp, Math.round(baseEnemy.hp * hpMult)),
+      dmg: Math.max(baseEnemy.dmg, Math.round(baseEnemy.dmg * dmgMult)),
+      xp: Math.max(baseEnemy.xp, Math.round(baseEnemy.xp * (0.5 + lv * 0.03))),
+      gold: Math.max(baseEnemy.gold, Math.round(baseEnemy.gold * (0.5 + lv * 0.02))),
+      scaledFromLevel: lv
+    });
+  }
   // Guardians are tuned to their story level rather than using the late-game base stats.
   if (kind === 'guardian') {
     const lv = Math.max(1, Number(storyLevel || level()));
@@ -3030,6 +3113,22 @@ function startGuardianFight(portId) {
     : (port.preFight || "San steadies herself at the threshold. Whatever's waiting below, she isn't leaving without them.");
   showModal(`${escaped ? 'Optional Rematch' : 'Chapter '+port.chapterId}`, pre,
     [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: scaleCrimsonEnemy(GUARDIANS[port.guardian], 'guardian', quest?.level || level()), portId }); }},
+     {text: 'Not Yet', action: closeModal}]);
+}
+function startGuardianRematch(portId) {
+  const port = PORTS.find(p => p.id === portId);
+  if (!port || !port.guardian) return;
+  if (!game.clearedGuardians[port.guardian]) return; // only ever offered once already cleared
+  const g = GUARDIANS[port.guardian];
+  showModal('Optional Rematch', `${g.name} has returned to guard the harbor, stronger than before — a real fight now, worth revisiting with everything San has since gained.`,
+    [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: scaleCrimsonEnemy(GUARDIANS[port.guardian], 'guardian_rematch', level()), portId }); }},
+     {text: 'Not Yet', action: closeModal}]);
+}
+function startFinalRematch() {
+  if (!game.finalCleared) return;
+  const g = GUARDIANS.drowned_admiral;
+  showModal('Optional Rematch', `${g.name} still holds the Drowned Passage, harder to put down a second time — a real test now, worth revisiting with the crew San has built since.`,
+    [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'final_rematch', key: 'drowned_admiral', enemy: scaleCrimsonEnemy(GUARDIANS.drowned_admiral, 'guardian_rematch', level()) }); }},
      {text: 'Not Yet', action: closeModal}]);
 }
 function startFinalFight() {
@@ -4693,7 +4792,7 @@ function castSpell(spellIndex) {
     game.partyHp[healTarget.id] = Math.min(effectiveMaxHp(healTarget), curHp + healAmt);
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! ' + esc(healTarget.name) + ' recovers <span class="heal">' + healAmt + '</span> HP.');
   } else if (spell.effect === 'restoreMp' || spell.effect === 'shareMp') {
-    const target = spell.effect === 'restoreMp' ? (party.find(m => m.id === 'san') || actor) : (party.find(m => m.mp > 0 && (game.partyMp[m.id] || m.mp) < m.mp) || actor);
+    const target = spell.effect === 'restoreMp' ? (party.find(m => m.id === 'san') || actor) : (party.find(m => m.id !== actor.id && effectiveMaxMp(m) > 0 && (game.partyMp[m.id] || 0) < effectiveMaxMp(m)) || actor);
     const curMp = game.partyMp[target.id] || target.mp;
     game.partyMp[target.id] = Math.min(effectiveMaxMp(target), curMp + spell.restoreAmt);
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! ' + esc(target.name) + ' restores <span class="heal">' + spell.restoreAmt + '</span> MP.');
@@ -4901,6 +5000,12 @@ function handleVictory() {
   game.combatResolved = true;
   const enemy = game.combatEnemy;
   game.inCombat = false;
+  // Bestiary discovery — marks this enemy seen the first time it's
+  // actually defeated. Deliberately every victory, not just certain
+  // combat kinds, since the Bestiary's whole point is a complete record
+  // of everything the crew has ever fought.
+  game.bestiaryDiscovered = game.bestiaryDiscovered || {};
+  if (enemy && enemy.key) game.bestiaryDiscovered[enemy.key] = true;
   // Clear the training-bout one-on-one override the moment ANY fight
   // resolves — not just training ones — so it can never leak into a
   // non-combat screen (party list, equipment) in the gap between this
