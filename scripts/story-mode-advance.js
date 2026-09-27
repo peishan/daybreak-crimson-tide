@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V257 · PWA Install Fix + Market Quarter';
+window.__CT_BUILD__='V258 · Arc XXI Complete + Capture Pool & Fleet Cache Fixes';
