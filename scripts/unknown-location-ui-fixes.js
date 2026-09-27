@@ -29,6 +29,17 @@
     clansettlement: function(){
       const cs = window.clanSettlementState ? window.clanSettlementState() : null;
       return { icon: '🌕', name: (cs && cs.nameKnown) ? cs.name : 'Unknown Settlement' };
+    },
+    // Pirate Cove and Inter-World Expeditions (added after this fix, and
+    // after the note above about "deliberately never touched" for
+    // game.location) had the exact same stale-dock symptom San originally
+    // reported here — same fix, same reason: neither is a real port, so
+    // game.location still isn't touched for either.
+    piratecove: function(){
+      return { icon: '🏴‍☠️', name: 'Pirate Cove' };
+    },
+    interworld: function(){
+      return { icon: '🌌', name: 'Beyond the Horizon Engine\'s Door' };
     }
   };
 

@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V269 · Local Port Standing + Live Title';
+window.__CT_BUILD__='V270 · Pirate Cove & Inter-World Voyages';

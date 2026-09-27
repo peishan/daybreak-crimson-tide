@@ -60,6 +60,25 @@
     return Object.entries(dest.supplyCost).every(([k,v]) => k === 'gold' || (res[k]||0) >= v);
   };
 
+  // Crossing-only flavor events — no combat entries here on purpose. The
+  // real encounter-or-discovery roll already happens on arrival (see
+  // resolveInterworldExpedition below); giving the crossing itself its
+  // own separate combat chance would just double up that risk rather
+  // than adding anything new.
+  const INTERWORLD_VOYAGE_EVENTS = [
+    { type: 'flavor', text: 'The Horizon Engine\'s door holds steady behind you. Ahead, there\'s nothing to steer by at all.' },
+    { type: 'flavor', text: 'The crew stops trying to describe what\'s outside the hull. Words weren\'t built for it.' },
+    { type: 'flavor', text: 'For a moment the ship isn\'t moving through water anymore. Then it is again, and nobody mentions it.' },
+    { type: 'flavor', text: 'Erynn keeps a running count of things she can\'t explain. She stopped reading it aloud after the third one.' },
+    { type: 'calm', text: 'The crossing settles into something almost ordinary. Almost.' }
+  ];
+
+  // Deducts supplies immediately (so a player who bails out mid-crossing
+  // hasn't gotten a free look), then spends real game days on the
+  // crossing itself via the shared runDestinationVoyage() — same
+  // mechanism as every other special-location destination — before the
+  // existing combat-or-discovery roll fires on arrival. Previously this
+  // resolved instantly with no travel cost at all.
   window.launchInterworldExpedition = function(destId){
     if (!window.interWorldTravelUnlocked()) { toast('🔒 Not yet — the way isn\'t open.'); return; }
     const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
@@ -69,6 +88,21 @@
     game.fairTideResources = game.fairTideResources || {};
     Object.entries(dest.supplyCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
 
+    game.pendingInterworldExpedition = destId;
+    if (typeof window.runDestinationVoyage === 'function') {
+      window.runDestinationVoyage({
+        destLabel: dest.name,
+        events: INTERWORLD_VOYAGE_EVENTS,
+        combatKind: 'interworld_crossing_voyage',
+        screenName: 'interworld',
+        totalDays: 10
+      });
+    } else {
+      resolveInterworldExpedition(dest);
+    }
+  };
+
+  function resolveInterworldExpedition(dest){
     if (Math.random() < 0.5) {
       const enemyBase = dest.enemies[Math.floor(Math.random() * dest.enemies.length)];
       const enemy = (typeof scaleCrimsonEnemy === 'function') ? scaleCrimsonEnemy(enemyBase, 'harbor') : Object.assign({}, enemyBase);
@@ -90,7 +124,7 @@
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof renderInterworldScreen === 'function') renderInterworldScreen();
-  };
+  }
 
   window.renderInterworldScreen = function(){
     const container = document.getElementById('interworldContent');
@@ -136,6 +170,13 @@
   const oldGoScreenForInterworld = window.goScreen;
   window.goScreen = function(name){
     if (oldGoScreenForInterworld) oldGoScreenForInterworld(name);
-    if (name === 'interworld' && typeof window.renderInterworldScreen === 'function') window.renderInterworldScreen();
+    if (name !== 'interworld') return;
+    if (game.pendingInterworldExpedition) {
+      const destId = game.pendingInterworldExpedition;
+      game.pendingInterworldExpedition = null;
+      const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
+      if (dest) { resolveInterworldExpedition(dest); return; }
+    }
+    if (typeof window.renderInterworldScreen === 'function') window.renderInterworldScreen();
   };
 })();

@@ -306,6 +306,13 @@
     let currentDay = 0;
     const interval = setInterval(function(){
       currentDay++;
+      // These crossings ticked days on their own internal progress bar
+      // without ever advancing game.day, unlike a normal port-to-port
+      // voyage (doVoyage in core-engine.js) — so time spent reaching the
+      // Unknown Harbour/Tide Settlement/etc. was completely free. Every
+      // destination sharing this function now spends real game days on
+      // the crossing too, same as sailing between regular ports.
+      game.day++;
       document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
       if (Math.random() < perTickChance) {
         const pool = config.events;
