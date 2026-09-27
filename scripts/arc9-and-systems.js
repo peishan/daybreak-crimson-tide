@@ -1621,6 +1621,162 @@
 
 (function(){
   // -------------------------------------------------------------------
+  // ENDLESS CAPTAIN POOL — bug fix (San's report, Level 250+): the
+  // 52-name roster above (18 + 32, plus Robin/Jeff) is finite, and
+  // captures are permanent — rivalCaptured() never resets, even after a
+  // captain's 20-day community service completes (fairtide-buildings-
+  // and-arc6.js). A dedicated player eventually captures literally
+  // everyone. Once that happens, randomAtLargeCaptainKey() returns null,
+  // scaledEnemyForExplore leaves enemy.captainKey unset, and
+  // handleVictory's rival-capture hook (rivalKey = enemy.captainKey ||
+  // enemy.key, then checks it against KNOWN_RIVAL_KEYS) silently no-ops
+  // forever after, since the fallback 'rival_frigate' key was never a
+  // named rival. No error — the entire 50%/80%/20-day-service/inherited-
+  // ship mechanic this player specifically designed just stops working,
+  // which is exactly what was reported.
+  //
+  // Per direction: rather than recycling captured rivals or falling
+  // back to a generic reward once the roster is exhausted, this makes
+  // the pool effectively endless — procedurally combining name parts
+  // from the same seven cultural groups already used above (Chinese,
+  // Malay, Filipino, Thai, Indonesian, Vietnamese, Myanmar) rather than
+  // another fixed batch that would just hit the same wall later, only
+  // further out. Each of 500 base given+surname combinations can itself
+  // be reused indefinitely with a Roman-numeral suffix (a "II", "III"…
+  // successor captain, the same trope as a ship's namesake) once truly
+  // pushed to the limit, so the pool never actually runs out.
+  //
+  // Wraps randomAtLargeCaptainKey() rather than editing it — same
+  // chaining convention as getReputationBonus/handleVictory/
+  // renderArchiveScreen elsewhere in this codebase. The original
+  // function and its finite 52-name pool are left completely untouched;
+  // this only replaces its null ("pool exhausted") result with a freshly
+  // generated identity, registered into HARBOR_ENEMIES and
+  // window.KNOWN_RIVAL_KEYS exactly the way the two fixed batches above
+  // already are, so capture, escape, the "At Large" hunt list, and
+  // community service all work identically for a generated captain —
+  // nothing downstream needs to know the difference.
+  //
+  // Persistence: every generated captain's descriptor is saved in
+  // game.generatedCaptains (plain JSON, survives saveGame/loadGame like
+  // the rest of `game`), NOT just left in the runtime-only HARBOR_ENEMIES
+  // object — that object is rebuilt from scratch by re-running this
+  // script on every page load, so without this, an escaped-but-not-yet-
+  // recaptured generated captain from a prior session would silently
+  // vanish from the "At Large" list after a reload. ensureGeneratedCap-
+  // tainsReplayed() re-registers every saved descriptor back into
+  // HARBOR_ENEMIES/KNOWN_RIVAL_KEYS, guarded by a one-time flag so it's
+  // cheap to call defensively from multiple entry points (this file's
+  // load time, the next capture-pool draw, and the next "At Large" card
+  // render) since it isn't certain loadGame() has already run by the
+  // time this script itself first executes.
+  // -------------------------------------------------------------------
+
+  const NAME_BANKS = [
+    { title: 'Captain', given: ['Wei Ming','Jun Hao','Xiu Ying','Kai Feng','Li Na','Jia Hui','Cheng Long','Mei Xin','Zhi Yong','Yan Ting'],
+      surname: ['Lim','Tan','Ng','Chen','Wong','Ho','Lee','Goh','Ong','Sim'] },
+    { title: 'Nakhoda', given: ['Aziz','Hafiz','Nurul','Farah','Idris','Aisyah','Rahman','Zainab','Yusri','Mazlan'],
+      surname: ['bin Yaakob','binti Rahman','bin Samad','binti Aziz','bin Karim','binti Hashim','bin Osman','binti Latif','bin Zaman','binti Idris'] },
+    { title: 'Kapitan', given: ['Ramon','Corazon','Danilo','Teresita','Ernesto','Remedios','Rodrigo','Consuelo','Bayani','Luzviminda'],
+      surname: ['Santos','Cruz','Bautista','Garcia','Ramos','Mercado','Aquino','Torres','Del Rosario','Navarro'] },
+    { title: 'Thuyen Truong', given: ['Van Hai','Thi Thu','Duc Anh','Ngoc Anh','Quang Minh','Thanh Ha','Van Tam','Thi Hoa','Cong Danh','Kim Ngan'],
+      surname: ['Nguyen','Tran','Le','Pham','Hoang','Vu','Dang','Bui','Do','Ngo'] },
+    { title: 'Bo', given: ['Zaw Min','Thida','Kyaw Swar','Nilar','Htet Aung','Khin Mar','Ye Naing','Su Mon','Aung Ko','Moe Thuzar'],
+      surname: ['Win','Aung','Htun','Naing','Thura','Maung','Kyaw','Soe','Tun','Myat'] }
+  ];
+
+  function sanitizeKeyPart(s){
+    return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  }
+
+  const ROMAN = ['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV'];
+  function romanSuffix(n){
+    if (n <= 0) return '';
+    if (n < ROMAN.length) return ' ' + ROMAN[n];
+    return ' ' + (n + 1); // beyond XV, just count — nobody's actually going to see this
+  }
+
+  function generatedCaptainsState(){
+    game.generatedCaptains = game.generatedCaptains || {};
+    return game.generatedCaptains;
+  }
+  window.generatedCaptainsState = generatedCaptainsState;
+
+  const GENERATED_TITLES = {};
+
+  function registerGeneratedCaptain(fullKey, d){
+    HARBOR_ENEMIES[fullKey] = {
+      name: d.displayName + "'s Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90,
+      desc: d.title + ' ' + d.displayName + ', one of many captains still sailing free waters.'
+    };
+    GENERATED_TITLES[fullKey] = d.title;
+    window.KNOWN_RIVAL_KEYS = window.KNOWN_RIVAL_KEYS || [];
+    if (!window.KNOWN_RIVAL_KEYS.includes(fullKey)) window.KNOWN_RIVAL_KEYS.push(fullKey);
+  }
+
+  let replayed = false;
+  function ensureGeneratedCaptainsReplayed(){
+    if (replayed) return;
+    replayed = true;
+    const store = generatedCaptainsState();
+    Object.keys(store).forEach(function(key){ registerGeneratedCaptain(key, store[key]); });
+  }
+  ensureGeneratedCaptainsReplayed(); // best-effort at load time; re-armed below in case loadGame() hasn't run yet
+
+  function countPriorUses(baseKey){
+    const store = generatedCaptainsState();
+    let count = 0;
+    Object.keys(store).forEach(function(k){
+      if (k === baseKey || k.indexOf(baseKey + '_v') === 0) count++;
+    });
+    return count;
+  }
+
+  function generateEndlessCaptainKey(){
+    const bank = NAME_BANKS[Math.floor(Math.random() * NAME_BANKS.length)];
+    const given = bank.given[Math.floor(Math.random() * bank.given.length)];
+    const surname = bank.surname[Math.floor(Math.random() * bank.surname.length)];
+    const baseKey = 'gen_' + sanitizeKeyPart(surname) + '_' + sanitizeKeyPart(given);
+    const priorUses = countPriorUses(baseKey);
+    const fullKey = priorUses === 0 ? baseKey : baseKey + '_v' + (priorUses + 1);
+    const descriptor = {
+      displayName: surname + ' ' + given + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
+      title: bank.title
+    };
+    generatedCaptainsState()[fullKey] = descriptor;
+    registerGeneratedCaptain(fullKey, descriptor);
+    return fullKey;
+  }
+  window.generateEndlessCaptainKey = generateEndlessCaptainKey;
+
+  const oldRandomAtLargeCaptainKeyForEndlessPool = window.randomAtLargeCaptainKey;
+  window.randomAtLargeCaptainKey = function(){
+    ensureGeneratedCaptainsReplayed();
+    const fromFixedPool = oldRandomAtLargeCaptainKeyForEndlessPool ? oldRandomAtLargeCaptainKeyForEndlessPool() : null;
+    if (fromFixedPool) return fromFixedPool;
+    return generateEndlessCaptainKey();
+  };
+
+  const oldCaptainTitleForEndlessPool = window.captainTitle;
+  window.captainTitle = function(key){
+    if (GENERATED_TITLES[key]) return GENERATED_TITLES[key];
+    return oldCaptainTitleForEndlessPool ? oldCaptainTitleForEndlessPool(key) : '';
+  };
+
+  // The "At Large" hunt list (renderExplore, wrapped earlier in this
+  // same file) iterates window.KNOWN_RIVAL_KEYS directly — make sure any
+  // generated captain from a prior session is re-registered into it
+  // before that list is built, not just before the next capture roll.
+  const oldRenderExploreForEndlessPool = window.renderExplore;
+  window.renderExplore = function(){
+    ensureGeneratedCaptainsReplayed();
+    if (oldRenderExploreForEndlessPool) oldRenderExploreForEndlessPool();
+  };
+})();
+
+
+(function(){
+  // -------------------------------------------------------------------
   // GITHUB GIST BACKUP — same pattern as Legends: Daybreak Quest's
   // implementation (classic PAT, gist scope only, stored client-side in
   // localStorage, push/pull via the Gists REST API), adapted to Crimson
