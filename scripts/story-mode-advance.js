@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V266 · Rumor Market Effects';
+window.__CT_BUILD__='V267 · Voyage Insurance';
