@@ -4308,6 +4308,18 @@ function exitTideNetworkBattleToDestination() {
   goScreen('tidenetwork');
   if (typeof renderTideNetworkScreen === 'function') renderTideNetworkScreen();
 }
+
+function exitPirateCoveBattleToDestination() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('piratecove');
+  if (typeof renderPirateCoveScreen === 'function') renderPirateCoveScreen();
+}
 function exitClanSettlementBattleToDestination() {
   try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
   try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
@@ -5206,6 +5218,11 @@ function handleVictory() {
     postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitClanSettlementBattleToDestination()">🌕 Continue Exploring</button>' +
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'piratecove_explore') {
+    postBattleMessage = enemy.name + ' is dealt with. The Cove doesn\'t stay quiet for long.';
+    postBattleButtonsHtml =
+      '<button class="btn btn-success" onclick="exitPirateCoveBattleToDestination()">🏴‍☠️ Continue Exploring</button>' +
       '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'harbour_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
