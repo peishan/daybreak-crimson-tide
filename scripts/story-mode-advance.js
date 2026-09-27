@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V262 · Character Bios';
+window.__CT_BUILD__='V263 · San & Joel Bio Cover';

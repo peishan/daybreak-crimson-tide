@@ -21,9 +21,19 @@
   // this naturally gates on whichever of its characters joins last —
   // Caelan (Ch.13) for the Joy/Caelan sheet, Erynn (Arc 7) for the
   // Renn/Erynn/Mimi trio sheet, confirmed against San's own correction.
+  //
+  // The San/Joel couple portrait is the one exception — gating it on
+  // "both recruited" would unlock it on day one, Joel joins in Arc I.
+  // Uses customUnlocked instead, tied to the existing San/Joel bond
+  // track (SAN_JOEL_TIERS, arc9-and-systems.js) reaching its top tier
+  // ("Two Hearts, One Ship") — a relationship-progression reward
+  // that already exists and fits a warm, established-couple image far
+  // better than a recruitment check ever would.
   // -------------------------------------------------------------------
 
   const CHARACTER_BIOS = [
+    { key: 'san_joel_cover',    label: 'San & Joel',                image: 'assets/bios/san-joel.png',
+      customUnlocked: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_joel') >= 4; } },
     { key: 'san',               label: 'San',                       ids: ['san'],                         image: 'assets/bios/san.png' },
     { key: 'joel',               label: 'Joel',                      ids: ['joel'],                        image: 'assets/bios/joel.png' },
     { key: 'aisyah_mezstorm',    label: 'Aisyah & Mezstorm',         ids: ['aisyah', 'mezstorm'],          image: 'assets/bios/aisyah-mezstorm.png' },
@@ -37,6 +47,7 @@
   window.CHARACTER_BIOS = CHARACTER_BIOS;
 
   function bioUnlocked(bio){
+    if (typeof bio.customUnlocked === 'function') return bio.customUnlocked();
     return bio.ids.every(function(id){
       return typeof memberUnlocked === 'function' && memberUnlocked({ id: id });
     });
