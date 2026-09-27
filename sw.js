@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v25';
+const CACHE_VERSION = 'crimson-tide-v32';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -65,6 +65,12 @@ const PRECACHE_URLS = [
   './scripts/arc19.js',
   './scripts/arc20.js',
   './scripts/arc21.js',
+  './scripts/arc21-council-hall.js',
+  './scripts/arc21-harbour-office.js',
+  './scripts/arc21-market-quarter.js',
+  './scripts/arc21-supply-house.js',
+  './scripts/arc21-medical-house.js',
+  './scripts/arc21-workshop.js',
   './scripts/bestiary.js',
   './scripts/arc16-forest-coast.js',
   './scripts/arc16-dragon-mountain.js',
@@ -74,7 +80,30 @@ const PRECACHE_URLS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(PRECACHE)
-      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(cache => {
+        // BUG FIX (San's report — app wouldn't open at all, needed a
+        // full delete+reinstall to recover): cache.addAll() is atomic —
+        // if even ONE of the ~54 URLs below fails to fetch (a missing
+        // icon, a renamed script, any 404), the entire install event
+        // rejects and the service worker never successfully installs at
+        // all. That leaves the browser stuck serving whatever
+        // (possibly broken, possibly nonexistent) service worker state
+        // it had before, with no way to recover except removing the app
+        // entirely and starting over — which matches San's exact
+        // symptom. Caching each file independently instead, each
+        // wrapped in its own .catch(), means one missing asset (5 icon
+        // files were confirmed missing at the time of this fix) just
+        // gets skipped and logged rather than taking down the whole
+        // install — and protects against the same failure recurring
+        // from any future missing or renamed file in this list.
+        return Promise.all(
+          PRECACHE_URLS.map(url =>
+            cache.add(url).catch(err => {
+              console.warn('[SW] Skipping failed precache URL:', url, err && err.message);
+            })
+          )
+        );
+      })
       .then(() => self.skipWaiting())
   );
 });
