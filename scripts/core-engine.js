@@ -2548,7 +2548,7 @@ function goScreen(name) {
   // the Settlement" button after a Tide Network voyage fight, the nav
   // card, and any other goScreen('tidenetwork') call never actually
   // navigated anywhere.
-  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen', tidenetwork: 'tideNetworkScreen', clansettlement: 'clanSettlementScreen', forestcoast: 'forestCoastScreen', dragoncoast: 'dragonCoastScreen', mountainport: 'mountainPortScreen', crystalcoast: 'crystalCoastScreen', oldharbour: 'oldHarbourScreen' };
+  const SCREEN_ID_OVERRIDES = { fairtide: 'fairTideScreen', tidenetwork: 'tideNetworkScreen', clansettlement: 'clanSettlementScreen', forestcoast: 'forestCoastScreen', dragoncoast: 'dragonCoastScreen', mountainport: 'mountainPortScreen', crystalcoast: 'crystalCoastScreen', oldharbour: 'oldHarbourScreen', piratecove: 'pirateCoveScreen' };
   const screenId = SCREEN_ID_OVERRIDES[name] || (name + 'Screen');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const targetScreen = document.getElementById(screenId);
