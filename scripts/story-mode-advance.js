@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V260 · Pirate Cove';
+window.__CT_BUILD__='V261 · Pirate Cove Blank-Screen Fix';
