@@ -845,7 +845,7 @@
   const oldRenderNavigationForIllusions = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForIllusions) oldRenderNavigationForIllusions();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.illusionsUnlocked()) return;
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(150,120,255,.5);" onclick="goScreen(\'illusions\')">'+

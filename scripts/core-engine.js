@@ -3450,6 +3450,18 @@ function isPortUnlocked(portId){
 function renderNavigation() {
   const grid = document.getElementById('navPortGrid');
   if (!grid) return;
+  // Special locations (Harbour, Tide Network, Clan Settlement, Inter-World
+  // Expeditions, the Archive, Illusionary Waters, etc.) used to append their
+  // own card straight into navPortGrid alongside the regular ports — as
+  // more of these shipped over time, "Chart Your Course" turned into one
+  // long, mixed grid of real destinations and one-off unlockables. They
+  // now render into this separate grid instead (each one's own wrap just
+  // has its insertAdjacentHTML target changed — nothing about their own
+  // unlock checks or card content touched). Cleared here, once, every
+  // render, since navPortGrid's own clear-and-rebuild (right below) is
+  // what previously kept those appends from piling up on every re-render.
+  const specialGrid = document.getElementById('navSpecialLocationsGrid');
+  if (specialGrid) specialGrid.innerHTML = '';
   const currentPort = PORTS.find(p => p.id === game.location);
   const objective = objectiveState();
   grid.innerHTML = PORTS.map(port => {

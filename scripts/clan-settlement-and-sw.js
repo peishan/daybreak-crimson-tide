@@ -231,7 +231,7 @@
   const oldRenderNavigationForClan = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForClan) oldRenderNavigationForClan();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.clanSettlementUnlocked()) return;
     const cs = clanSettlementState();
     grid.insertAdjacentHTML('beforeend',

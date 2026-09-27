@@ -209,7 +209,7 @@
   const oldRenderNavigationForArchive = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForArchive) oldRenderNavigationForArchive();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.archiveUnlocked()) return;
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(200,160,255,.5);border-style:dashed;" onclick="goScreen(\'archive\')">'+

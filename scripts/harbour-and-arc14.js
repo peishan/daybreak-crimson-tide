@@ -143,7 +143,7 @@
   const oldRenderNavigationForHarbour = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForHarbour) oldRenderNavigationForHarbour();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.harbourUnlocked()) return;
     const hs = harbourState();
     grid.insertAdjacentHTML('beforeend',
@@ -384,7 +384,7 @@
   const oldRenderNavigationForRemote = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForRemote) oldRenderNavigationForRemote();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.remoteAccessUnlocked()) return;
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(120,180,255,.5);" onclick="enterFairTideRemotely()">'+
