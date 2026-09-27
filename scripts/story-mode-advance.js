@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V267 · Voyage Insurance';
+window.__CT_BUILD__='V268 · Fleet Ship Stats Repair';
