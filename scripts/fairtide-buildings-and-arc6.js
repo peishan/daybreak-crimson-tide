@@ -332,8 +332,16 @@
               return '<button class="btn btn-small" onclick="upgradeFleetShip(\''+ship.id+'\',\''+stat+'\')">⬆️ '+stat+' ('+cost+'g)</button>';
             }).join('')+'</div>';
         } else if (ship.tradeIncome) {
-          const canClaim = window.canClaimTradeIncome ? window.canClaimTradeIncome(ship.id) : false;
-          extra = '<div style="margin-top:6px;"><button class="btn btn-small btn-success" '+(canClaim?'':'disabled')+' onclick="claimTradeIncome(\''+ship.id+'\')">💰 Collect Trade Income</button></div>';
+          // Fleet Trade Routes (fleet-trade-routes.js) took over this
+          // branch's rendering — daily claim button plus, when a route
+          // isn't already underway, a picker to send this ship out on a
+          // real risk/reward run instead of just the flat daily trickle.
+          extra = (typeof window.renderFleetTradeRouteUI === 'function')
+            ? window.renderFleetTradeRouteUI(ship)
+            : (function(){
+                const canClaim = window.canClaimTradeIncome ? window.canClaimTradeIncome(ship.id) : false;
+                return '<div style="margin-top:6px;"><button class="btn btn-small btn-success" '+(canClaim?'':'disabled')+' onclick="claimTradeIncome(\''+ship.id+'\')">💰 Collect Trade Income</button></div>';
+              })();
         }
         html += '<article class="quest-item"><strong>'+(ship.flag||'🚢')+' '+esc(ship.name)+'</strong> — <span style="opacity:.8;">'+esc(ship.status||'Undesignated')+'</span>'+
           (designated ? '' : '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">'+
