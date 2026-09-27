@@ -9,6 +9,10 @@
   document.addEventListener('DOMContentLoaded', function(){
     const el = document.getElementById('ctBuildFooterVersion');
     if (el) el.textContent = 'Build ' + (window.__CT_BUILD__ || '?');
+    // Same staleness bug, same fix, for the browser tab title — it was
+    // still hardcoded to "Build V83" in index.html's <title> and never
+    // read window.__CT_BUILD__ back out either.
+    if (window.__CT_BUILD__) document.title = 'Daybreak: Crimson Tide — ' + window.__CT_BUILD__;
   });
 
 
