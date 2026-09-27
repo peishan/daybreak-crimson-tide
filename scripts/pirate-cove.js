@@ -37,6 +37,35 @@
 
   const PIRATE_COVE_ENEMY_KEYS = ['cove_lookout', 'powder_smuggler', 'cove_enforcer', 'the_quartermaster'];
 
+  // Voyage events for the crossing itself, run through the shared
+  // runDestinationVoyage() (tide-network.js) — same real-time-costs-real-
+  // game-days crossing already used for the Unknown Harbour, Tide
+  // Settlement, Clan Settlement, and the Forest/Dragon/Mountain/Crystal
+  // coast destinations, rather than a bespoke one-off. Two of the Cove's
+  // own enemies (already registered in HARBOR_ENEMIES above) double as
+  // ambush encounters en route — fitting for a smugglers' den that
+  // doesn't take kindly to being found.
+  const PIRATE_COVE_VOYAGE_EVENTS = [
+    { type: 'combat', text: 'A boat runs dark across your bow — whoever they are, they didn\'t want to be seen either.', combat: 'cove_lookout' },
+    { type: 'combat', text: 'Someone\'s moving cargo out here who\'d rather not be asked about it.', combat: 'powder_smuggler' },
+    { type: 'flavor', text: 'The charts thin out the closer you get — the Cove was never meant to be easy to find.' },
+    { type: 'flavor', text: 'A light blinks once on a far shoal, then goes dark. Nobody says anything about it.' },
+    { type: 'flavor', text: 'The crew keeps the lanterns low without needing to be told.' },
+    { type: 'calm', text: 'Quiet water the whole way in. Almost unsettling, for these waters.' }
+  ];
+
+  window.sailToPirateCove = function(){
+    if (!pirateCoveUnlocked()) { toast('🔒 Opens at Level 270.'); return; }
+    if (typeof window.runDestinationVoyage !== 'function') { goScreen('piratecove'); return; }
+    window.runDestinationVoyage({
+      destLabel: 'the Pirate Cove',
+      events: PIRATE_COVE_VOYAGE_EVENTS,
+      combatKind: 'piratecove_voyage',
+      screenName: 'piratecove',
+      totalDays: 10
+    });
+  };
+
   function pirateCoveUnlocked(){
     return typeof level === 'function' && level() >= 270;
   }
@@ -102,7 +131,7 @@
     const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !pirateCoveUnlocked()) return;
     grid.insertAdjacentHTML('beforeend',
-      '<div class="port-card" style="cursor:pointer;border-color:rgba(180,50,50,.5);border-style:dashed;" onclick="goScreen(\'piratecove\')">'+
+      '<div class="port-card" style="cursor:pointer;border-color:rgba(180,50,50,.5);border-style:dashed;" onclick="sailToPirateCove()">'+
       '<div style="font-size:1.6rem;">🏴‍☠️</div><div style="font-weight:600;">Pirate Cove</div>'+
       '<div style="font-size:.72rem;opacity:.7;">Where the ones still running go to ground.</div></div>');
   };

@@ -5248,6 +5248,9 @@ function handleVictory() {
   } else if (enemy.kind === 'clansettlement_voyage') {
     postBattleMessage = 'The shore is quiet again. ' + enemy.name + " won't be following the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'clansettlement\')">🌕 Continue to the Settlement</button>';
+  } else if (enemy.kind === 'piratecove_voyage') {
+    postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'piratecove\')">🏴‍☠️ Continue to the Cove</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     // "Challenge Again" (San's request): scoped strictly to this default
