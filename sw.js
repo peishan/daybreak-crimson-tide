@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v25';
+const CACHE_VERSION = 'crimson-tide-v26';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -46,6 +46,7 @@ const PRECACHE_URLS = [
   './scripts/achievements.js',
   './scripts/tide-network.js',
   './scripts/arc15-and-voyage-fixes.js',
+  './scripts/arc16-and-bonding.js',
   './scripts/clan-settlement-and-sw.js',
   './scripts/raid-mode.js',
   './scripts/midnight-backup.js',
@@ -65,6 +66,18 @@ const PRECACHE_URLS = [
   './scripts/arc19.js',
   './scripts/arc20.js',
   './scripts/arc21.js',
+  './scripts/arc21-council-hall.js',
+  './scripts/arc21-harbour-office.js',
+  './scripts/arc21-market-quarter.js',
+  './scripts/arc21-supply-house.js',
+  './scripts/arc21-medical-house.js',
+  './scripts/arc21-workshop.js',
+  './scripts/arc21-wardens-hall.js',
+  './scripts/arc21-route-observatory.js',
+  './scripts/arc21-horizon-chamber.js',
+  './scripts/arc21-route-preparation.js',
+  './scripts/arc21-commons.js',
+  './scripts/arc21-ledger.js',
   './scripts/bestiary.js',
   './scripts/arc16-forest-coast.js',
   './scripts/arc16-dragon-mountain.js',
