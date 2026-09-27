@@ -122,7 +122,7 @@
     const oldRenderNavigation = window.renderNavigation;
     window.renderNavigation = function(){
       if (oldRenderNavigation) oldRenderNavigation();
-      const grid = document.getElementById('navPortGrid');
+      const grid = document.getElementById('navSpecialLocationsGrid');
       if (!grid || !window[cfg.unlockedFn]()) return;
       const s = state();
       grid.insertAdjacentHTML('beforeend',

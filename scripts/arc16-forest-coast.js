@@ -139,7 +139,7 @@
   const oldRenderNavigationForForestCoast = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForForestCoast) oldRenderNavigationForForestCoast();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.forestCoastUnlocked()) return;
     const fs = forestCoastState();
     grid.insertAdjacentHTML('beforeend',

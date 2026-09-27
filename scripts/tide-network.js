@@ -227,7 +227,7 @@
   const oldRenderNavigationForTideNetwork = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForTideNetwork) oldRenderNavigationForTideNetwork();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.tideNetworkUnlocked()) return;
     const ts = tideNetworkState();
     grid.insertAdjacentHTML('beforeend',
@@ -356,7 +356,7 @@
   const oldRenderNavigationForVoyageTransitions = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForVoyageTransitions) oldRenderNavigationForVoyageTransitions();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid) return;
     grid.innerHTML = grid.innerHTML
       .replace(/onclick="goScreen\('harbour'\)"/g, 'onclick="sailToHarbour()"')

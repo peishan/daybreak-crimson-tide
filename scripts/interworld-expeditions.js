@@ -125,7 +125,7 @@
   const oldRenderNavigationForInterworld = window.renderNavigation;
   window.renderNavigation = function(){
     if (oldRenderNavigationForInterworld) oldRenderNavigationForInterworld();
-    const grid = document.getElementById('navPortGrid');
+    const grid = document.getElementById('navSpecialLocationsGrid');
     if (!grid || !window.interWorldTravelUnlocked()) return;
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(255,180,80,.5);" onclick="goScreen(\'interworld\')">'+
