@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V253 · Arc XXI Wired (Ch.1-16) + Splash Fix';
+window.__CT_BUILD__='V256 · Arc XXI Complete (24/24 Chapters)';
