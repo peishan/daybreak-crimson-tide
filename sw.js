@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v45';
+const CACHE_VERSION = 'crimson-tide-v46';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -60,6 +60,7 @@ const PRECACHE_URLS = [
   './scripts/voyage-insurance.js',
   './scripts/fleet-ship-stats-repair.js',
   './scripts/local-port-standing.js',
+  './scripts/quest-tracker-widget.js',
   './scripts/arc17-archive-hub.js',
   './scripts/arc17-research.js',
   './scripts/arc17-renn-origin.js',

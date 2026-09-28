@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V270 · Pirate Cove & Inter-World Voyages';
+window.__CT_BUILD__='V271 · Quest Tracker Widget + Tavern Reorder';
