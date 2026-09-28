@@ -179,7 +179,12 @@
         '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;margin-bottom:8px;">A weathered harbour, worth bringing back to life. Send a gathering party out for whichever task needs it most.</div>'+
         Object.entries(FAIR_TIDE_TASKS).map(([k,t])=>'<div style="font-size:.8rem;margin:3px 0;">'+t.icon+' '+esc(t.label)+' — <strong>'+r[k]+'/'+t.need+'</strong> <span style="opacity:.7;">('+t.companion+')</span></div>').join('')+
         '<div style="margin-top:10px;">'+dispatchHtml+'</div></article>';
-      container.insertAdjacentHTML('beforeend', dockHtml);
+      // San's request: this used to land at the bottom of the Explore
+      // panel (appended after every guardian/bounty/rival card already
+      // there), meaning scrolling past all of it just to reach the one
+      // button most players at Fair Tide want most. Inserted at the
+      // front instead, so it's the very first thing shown.
+      container.insertAdjacentHTML('afterbegin', dockHtml);
     } else {
       // Renovation's done — the Dock, Buildings, Trade, and Clinic all
       // moved to their own Fair Tide Hub screen (see the Buildings script
@@ -187,7 +192,9 @@
       const hubHtml = '<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">🏮 Fair Tide</h3>'+
         '<article class="quest-item"><div style="font-size:.85rem;opacity:.85;margin-bottom:10px;">The port is open for good. Buildings, trade, gathering, and the Clinic are all run from the hub now.</div>'+
         '<button class="btn btn-success" onclick="goScreen(\'fairtide\')">🏮 Enter Fair Tide Hub</button></article>';
-      container.insertAdjacentHTML('beforeend', hubHtml);
+      // Same fix, same reason — moved to the top of the Explore panel
+      // instead of the bottom.
+      container.insertAdjacentHTML('afterbegin', hubHtml);
     }
   };
   window.__ctOpenFairTideClinic = function(){
