@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V274 · Streak Shields + Rewards in Quest Tracker';
+window.__CT_BUILD__='V275 · Fixed Slow Voyage/Load on Long-Lived Saves';
