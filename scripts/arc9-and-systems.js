@@ -1704,14 +1704,37 @@
 
   const GENERATED_TITLES = {};
 
+  // PERFORMANCE FIX (San's report: voyages and the offline-earnings check
+  // getting slow on a long-lived, high-level save). A level-250+ save
+  // that's exhausted the fixed captain pool has been minting a brand new
+  // permanent entry in game.generatedCaptains on essentially every random
+  // sea "pirates" encounter for a long time — that's real, necessary data
+  // (captured generated captains still need their name for the Fair Tide
+  // community-service roster), not something to prune. But two things
+  // reading that growing store were needlessly quadratic on top of it:
+  // 1) registerGeneratedCaptain() used Array#includes() to dedupe against
+  //    KNOWN_RIVAL_KEYS — fine for one captain, but ensureGeneratedCaptains
+  //    Replayed() called it once per saved captain on every single page
+  //    load, turning an O(n) replay into O(n²) for a large store.
+  // 2) countPriorUses() rescanned the ENTIRE store from scratch on every
+  //    single new mint, so the cost of generating one more captain grew
+  //    with the player's whole history, not just with that one action.
+  // Both are now backed by a small cache built once (O(n)) and kept
+  // incrementally up to date (O(1) per mint) instead of rescanning.
+  const knownRivalKeySet = new Set(window.KNOWN_RIVAL_KEYS || []);
+  window.KNOWN_RIVAL_KEYS = window.KNOWN_RIVAL_KEYS || [];
+  let baseKeyUseCounts = null;
+
   function registerGeneratedCaptain(fullKey, d){
     HARBOR_ENEMIES[fullKey] = {
       name: d.displayName + "'s Crew", icon: '🏴', hp: 380, dmg: 18, xp: 130, gold: 90,
       desc: d.title + ' ' + d.displayName + ', one of many captains still sailing free waters.'
     };
     GENERATED_TITLES[fullKey] = d.title;
-    window.KNOWN_RIVAL_KEYS = window.KNOWN_RIVAL_KEYS || [];
-    if (!window.KNOWN_RIVAL_KEYS.includes(fullKey)) window.KNOWN_RIVAL_KEYS.push(fullKey);
+    if (!knownRivalKeySet.has(fullKey)) {
+      knownRivalKeySet.add(fullKey);
+      window.KNOWN_RIVAL_KEYS.push(fullKey);
+    }
   }
 
   let replayed = false;
@@ -1723,13 +1746,21 @@
   }
   ensureGeneratedCaptainsReplayed(); // best-effort at load time; re-armed below in case loadGame() hasn't run yet
 
-  function countPriorUses(baseKey){
+  function ensureBaseKeyUseCounts(){
+    if (baseKeyUseCounts) return baseKeyUseCounts;
+    baseKeyUseCounts = {};
     const store = generatedCaptainsState();
-    let count = 0;
     Object.keys(store).forEach(function(k){
-      if (k === baseKey || k.indexOf(baseKey + '_v') === 0) count++;
+      // Mirrors the original matching rule exactly: a key is either the
+      // bare base key itself, or base+'_v<n>'.
+      const m = k.match(/^(.*)_v\d+$/);
+      const base = m ? m[1] : k;
+      baseKeyUseCounts[base] = (baseKeyUseCounts[base] || 0) + 1;
     });
-    return count;
+    return baseKeyUseCounts;
+  }
+  function countPriorUses(baseKey){
+    return ensureBaseKeyUseCounts()[baseKey] || 0;
   }
 
   function generateEndlessCaptainKey(){
@@ -1745,6 +1776,8 @@
     };
     generatedCaptainsState()[fullKey] = descriptor;
     registerGeneratedCaptain(fullKey, descriptor);
+    const counts = ensureBaseKeyUseCounts();
+    counts[baseKey] = (counts[baseKey] || 0) + 1;
     return fullKey;
   }
   window.generateEndlessCaptainKey = generateEndlessCaptainKey;
