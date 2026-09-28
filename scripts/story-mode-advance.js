@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V278 · Hang Out as a Separate Action';
+window.__CT_BUILD__='V279 · Hang Out (San & Crew, San & Trio)';

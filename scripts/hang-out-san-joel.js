@@ -47,6 +47,28 @@
   }
   window.sharedMoments = sharedMoments;
 
+  // One shared array across every Hang Out track (San & Crew/San & Trio
+  // build on this same store — see scripts/hang-out-crew-trio.js) rather
+  // than a separate array per track, tagged by `track` so each panel can
+  // show just its own history. Entries from before this generalization
+  // have no `track` field at all — they can only be San & Joel's own
+  // (the only track that ever wrote here), so those are treated as
+  // 'san_joel' for back-compat rather than silently disappearing from
+  // his own log.
+  function sharedMomentsFor(trackKey){
+    return sharedMoments().filter(function(m){
+      return m.track === trackKey || (!m.track && trackKey === 'san_joel');
+    });
+  }
+  window.sharedMomentsFor = sharedMomentsFor;
+
+  function recordSharedMoment(trackKey, activityId){
+    const moments = sharedMoments();
+    moments.push({id: activityId, day: game.day, track: trackKey});
+    if (moments.length > MAX_SHARED_MOMENTS) moments.splice(0, moments.length - MAX_SHARED_MOMENTS);
+  }
+  window.recordSharedMoment = recordSharedMoment;
+
   window.hangOutWithJoel = function(activityId){
     if (!hangOutUnlocked()) return;
     const activity = HANG_OUT_ACTIVITIES.find(function(a){ return a.id === activityId; });
@@ -60,11 +82,7 @@
     // spendTimeWithBond() no-ops (with its own toast) if the daily cap
     // was already hit — only log a fresh moment if it actually spent.
     const after = (window.bondState ? window.bondState().san_joel.lastSpentDay : null);
-    if (after !== before) {
-      const moments = sharedMoments();
-      moments.push({id: activityId, day: game.day});
-      if (moments.length > MAX_SHARED_MOMENTS) moments.splice(0, moments.length - MAX_SHARED_MOMENTS);
-    }
+    if (after !== before) recordSharedMoment('san_joel', activityId);
   };
 
   function hangOutPanelHtml(){
@@ -77,7 +95,7 @@
       html += '<button class="btn btn-small btn-success" '+(canSpend?'':'disabled')+' onclick="hangOutWithJoel(\''+a.id+'\')">'+a.icon+' '+esc(a.label)+'</button>';
     });
     html += '</div>';
-    const moments = sharedMoments();
+    const moments = sharedMomentsFor('san_joel');
     if (moments.length) {
       html += '<div style="font-size:.74rem;opacity:.7;margin-top:10px;">🌊 Shared Moments</div>';
       html += '<div style="font-size:.72rem;opacity:.65;line-height:1.6;">';
