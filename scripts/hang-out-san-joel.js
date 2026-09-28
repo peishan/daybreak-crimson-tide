@@ -5,8 +5,7 @@
   // the Bonds tab in the Fair Tide Hub) rather than a new, competing
   // system — that track already has the points, tiers, once-a-day cap,
   // and the combat bonuses (HP/MP%, damage reduction, haste) every tier
-  // grants. This only replaces the ONE generic "Spend a quiet evening
-  // with Joel" button with a choice of several flavored activities, all
+  // grants. This adds a choice of several flavored activities, all
   // feeding the exact same points/tier/daily-cap — one bond number, not
   // two — plus a small "Shared Moments" log (a memory collection, not a
   // second score) recording which activities have actually happened.
@@ -15,9 +14,14 @@
   // underlying points system has existed since Arc V, but "Hang Out" as
   // a concept — San taking deliberate time off to spend with Joel — is
   // what Arc XX Ch.2 ("The Captain's Day Off") actually establishes in
-  // the story, so the richer picker only appears once that chapter's
-  // been read. Before that, or before Arc V Ch.4, the Bonds tab's
-  // existing single button/lock message is left completely untouched.
+  // the story, so this only appears once that chapter's been read.
+  //
+  // Kept as its own separate panel/action (San's explicit call) rather
+  // than replacing the Bonds tab's existing "Spend a quiet evening with
+  // Joel" button — that button, the San & Crew/San & Trio cards, and the
+  // Commons building are all left completely untouched. This just
+  // appends a distinct "🌊 Hang Out" section below everything the base
+  // Bonds tab already renders.
   // -------------------------------------------------------------------
 
   const HANG_OUT_ACTIVITIES = [
@@ -63,10 +67,11 @@
     }
   };
 
-  function hangOutPickerHtml(){
+  function hangOutPanelHtml(){
     const canSpend = (typeof window.canSpendTimeOnBond === 'function') ? window.canSpendTimeOnBond('san_joel') : true;
-    let html = '<div style="margin-top:6px;">'+
-      '<div style="font-size:.76rem;opacity:.75;margin-bottom:5px;">Spend today\'s time together — pick one:</div>'+
+    let html = '<div class="panel-title" style="margin-top:14px;">🌊 Hang Out</div>'+
+      '<article class="quest-item">'+
+      '<div style="font-size:.82rem;opacity:.85;margin-bottom:8px;">Take a break with Joel — pick something to do together. This still uses today\'s San &amp; Joel time, same as above.</div>'+
       '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
     HANG_OUT_ACTIVITIES.forEach(function(a){
       html += '<button class="btn btn-small btn-success" '+(canSpend?'':'disabled')+' onclick="hangOutWithJoel(\''+a.id+'\')">'+a.icon+' '+esc(a.label)+'</button>';
@@ -74,7 +79,7 @@
     html += '</div>';
     const moments = sharedMoments();
     if (moments.length) {
-      html += '<div style="font-size:.74rem;opacity:.7;margin-top:8px;">🌊 Shared Moments</div>';
+      html += '<div style="font-size:.74rem;opacity:.7;margin-top:10px;">🌊 Shared Moments</div>';
       html += '<div style="font-size:.72rem;opacity:.65;line-height:1.6;">';
       moments.slice(-8).reverse().forEach(function(m){
         const a = HANG_OUT_ACTIVITIES.find(function(x){ return x.id === m.id; });
@@ -82,25 +87,24 @@
       });
       html += '</div>';
     }
-    html += '</div>';
+    html += '</article>';
     return html;
   }
 
-  // Replaces the San & Joel row's single generic button with the
-  // activity picker above, once Hang Out is unlocked — leaves the row
-  // completely untouched (still the original single button, or the
-  // Arc V lock message) otherwise. Matches on the onclick attribute the
-  // base renderBondsTab() emits, not on exact surrounding whitespace, so
-  // this stays correct whether or not today's action has already been
-  // spent (which changes the button's disabled state/markup slightly).
-  const SAN_JOEL_BUTTON_BLOCK = /<div style="margin-top:6px;"><button class="btn btn-small btn-success"[^>]*onclick="spendTimeWithBond\('san_joel'\)">[^<]*<\/button><\/div>/;
-
+  // Appended as its own separate panel below whatever the base Bonds tab
+  // already rendered (San's explicit call: a distinct action, not a
+  // replacement for the existing "Spend a quiet evening with Joel"
+  // button) — that button, San & Crew/San & Trio, and the Commons
+  // building are all left completely untouched. Only shown once the
+  // San & Joel bond track itself is actually unlocked (Arc V Ch.4) —
+  // otherwise there's no bond action underneath it to spend at all.
   const oldRenderBondsTabForHangOut = window.renderBondsTab;
   window.renderBondsTab = function(){
     if (oldRenderBondsTabForHangOut) oldRenderBondsTabForHangOut();
     if (!hangOutUnlocked()) return;
+    if (!(game.comicProgress5 && game.comicProgress5[4])) return;
     const el = document.getElementById('ft-tab-bonds');
-    if (!el || !SAN_JOEL_BUTTON_BLOCK.test(el.innerHTML)) return;
-    el.innerHTML = el.innerHTML.replace(SAN_JOEL_BUTTON_BLOCK, hangOutPickerHtml());
+    if (!el) return;
+    el.innerHTML += hangOutPanelHtml();
   };
 })();
