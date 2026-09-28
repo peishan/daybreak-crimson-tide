@@ -409,7 +409,11 @@
     return bs.lastSpentDay !== game.day;
   };
 
-  window.spendTimeWithBond = function(trackKey){
+  // overrideFlavor lets a caller show its own toast text instead of the
+  // track's generic one (see scripts/hang-out-san-joel.js, which picks
+  // from several activity flavors for San & Joel specifically) without
+  // duplicating any of the point/daily-cap/save logic below.
+  window.spendTimeWithBond = function(trackKey, overrideFlavor){
     const track = BOND_TRACKS[trackKey];
     if (!track) return;
     if (!window.canSpendTimeOnBond(trackKey)) { toast('Already spent time on this today.'); return; }
@@ -417,7 +421,7 @@
     bs.points += BOND_POINTS_PER_ACTION;
     bs.lastSpentDay = game.day;
     const newTier = window.bondTier(trackKey);
-    toast('💞 ' + track.flavor, 3200);
+    toast('💞 ' + (overrideFlavor || track.flavor), 3200);
     logEvent('💞 ' + track.label + ': +' + BOND_POINTS_PER_ACTION + ' bond points.', 'good');
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
