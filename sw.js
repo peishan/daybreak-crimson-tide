@@ -4,9 +4,24 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v47';
+const CACHE_VERSION = 'crimson-tide-v48';
 const PRECACHE = `${CACHE_VERSION}-precache`;
-const RUNTIME = `${CACHE_VERSION}-runtime`;
+// BUG FIX (San's report — "images loading very slowly with this
+// refresh"): RUNTIME used to be derived from CACHE_VERSION too
+// (`${CACHE_VERSION}-runtime`), same as PRECACHE. Every one of this
+// session's near-constant feature deploys bumps CACHE_VERSION, and
+// activate() below deletes any cache whose name isn't the CURRENT
+// PRECACHE or RUNTIME — so every single deploy was also silently
+// wiping the entire runtime cache of already-downloaded portraits,
+// comics, and audio, forcing every image back to a slow first-time
+// network fetch right after each update. None of that was ever the
+// point: RUNTIME already self-updates per-file via stale-while-
+// revalidate (see the fetch handler below), so it never needed to be
+// tied to app-shell versioning at all. Giving it a fixed name instead
+// means it now survives every future CACHE_VERSION bump — a portrait
+// only has to be fetched over the network once, ever, not once per
+// deploy.
+const RUNTIME = 'crimson-tide-runtime';
 
 // Only the app shell + icons are precached at install time. Comics,
 // portraits, and audio are numerous and heavy, so those are cached
