@@ -2615,11 +2615,31 @@ function dateDiffDays(aKey, bKey) {
   const b = new Date(bKey + 'T00:00:00');
   return Math.round((b - a) / 86400000);
 }
+const MAX_STREAK_SHIELDS = 3;
 function prepareLoginRewards() {
   const today = realDateKey();
   if (game.lastLoginDate === today) return;
   const gap = dateDiffDays(game.lastLoginDate, today);
-  game.loginStreak = gap === 1 ? Number(game.loginStreak || 0) + 1 : 1;
+  game.streakShields = Number(game.streakShields || 0);
+  game.streakShieldUsedOn = null;
+  if (gap === 1) {
+    game.loginStreak = Number(game.loginStreak || 0) + 1;
+  } else if (game.lastLoginDate && gap > 1 && game.streakShields >= gap - 1) {
+    // Streak Shield: fully bridges the missed days rather than resetting
+    // to 1, same as a Duolingo-style streak freeze — but only when there
+    // are enough banked shields to cover EVERY missed day (gap - 1),
+    // never a partial save. One shield covers exactly one missed day
+    // (a single day off), so a longer gap just needs more shields
+    // already stockpiled.
+    const missedDays = gap - 1;
+    game.streakShields -= missedDays;
+    game.loginStreak = Number(game.loginStreak || 0) + 1;
+    game.streakShieldUsedOn = today;
+    logEvent('🛡️ A Streak Shield protected your ' + game.loginStreak + '-day streak through ' + missedDays + ' missed day' + (missedDays === 1 ? '' : 's') + '. ' + game.streakShields + ' left.', 'gold');
+    if (typeof toast === 'function') toast('🛡️ Streak Shield used — your login streak is safe!', 4200);
+  } else {
+    game.loginStreak = 1;
+  }
   game.lastLoginDate = today;
   game.dailyRewardClaimed = false;
   // Weekly reward becomes available on each 7th consecutive login.
@@ -2645,8 +2665,11 @@ function claimDailyReward() {
     game.gold += weeklyGold;
     gainXP(weeklyXP);
     game.weeklyRewardClaimedStreak = streak;
-    logEvent(`🏆 Weekly login reward: +${weeklyGold}g and +${weeklyXP} XP!`, 'gold');
-    toast(`🏆 Weekly reward! +${weeklyGold}g · +${weeklyXP} XP`);
+    game.streakShields = Number(game.streakShields || 0);
+    const gotShield = game.streakShields < MAX_STREAK_SHIELDS;
+    if (gotShield) game.streakShields += 1;
+    logEvent(`🏆 Weekly login reward: +${weeklyGold}g and +${weeklyXP} XP!` + (gotShield ? ' +1 🛡️ Streak Shield!' : ''), 'gold');
+    toast(`🏆 Weekly reward! +${weeklyGold}g · +${weeklyXP} XP` + (gotShield ? ' · +1 🛡️ Shield' : ''));
   } else {
     toast(`🎁 Daily reward claimed! +${goldReward}g · +${xpReward} XP`);
   }
@@ -2655,27 +2678,36 @@ function claimDailyReward() {
   updateUI();
   renderLandingV24(); renderAFKWelcome();
 }
-function renderLoginRewards() {
-  const el = document.getElementById('loginRewards');
-  if (!el) return;
+// Pulled out of renderLoginRewards() so any container can show the same
+// claim UI, not just the Tavern's #loginRewards panel — reused by the
+// Quest Tracker widget so claiming no longer requires a trip to the
+// Tavern at all (San's request).
+function loginRewardsHTML() {
   prepareLoginRewards();
   const streak = Math.max(1, Number(game.loginStreak || 1));
   const dailyReady = !game.dailyRewardClaimed;
   const weeklyReady = streak % 7 === 0 && game.weeklyRewardClaimedStreak !== streak;
   const dailyGold = 50 + Math.min(250, (streak - 1) * 10);
   const dailyXP = 75 + Math.min(500, (streak - 1) * 20);
+  const shields = Number(game.streakShields || 0);
 
-  el.innerHTML = `
+  return `
     <div style="font-size:.82rem;line-height:1.5;">
       <strong>🔥 Login streak: ${streak} day${streak === 1 ? '' : 's'}</strong><br>
       <span style="opacity:.78;">Daily: +${dailyGold}g · +${dailyXP} XP</span>
       ${weeklyReady ? '<br><span style="color:var(--gold);">🏆 7-day reward ready!</span>' : ''}
+      <br><span style="opacity:.78;">🛡️ Streak Shields: ${shields}/${MAX_STREAK_SHIELDS} <span style="opacity:.7;">— auto-protects your streak if you miss a day. +1 every 7-day streak.</span></span>
     </div>
     <button class="btn btn-success btn-small" style="margin-top:8px;" onclick="claimDailyReward()" ${dailyReady ? '' : 'disabled'}>
       ${dailyReady ? '🎁 Claim Daily Reward' : '✓ Claimed Today'}
     </button>
     ${weeklyReady ? '<div style="font-size:.72rem;opacity:.75;margin-top:6px;">Claiming today also grants the weekly bonus.</div>' : ''}
   `;
+}
+function renderLoginRewards() {
+  const el = document.getElementById('loginRewards');
+  if (!el) return;
+  el.innerHTML = loginRewardsHTML();
 }
 function processAFKRewards() {
   const now = Date.now();
