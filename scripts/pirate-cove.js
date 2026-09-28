@@ -71,6 +71,36 @@
   }
   window.pirateCoveUnlocked = pirateCoveUnlocked;
 
+  // -------------------------------------------------------------------
+  // SEARCH THE WATERS (San's report: "I still can't capture pirates...
+  // the pirate cove has no rival pirates"). Turns out the capture roll
+  // itself was never broken — it just had almost no reachable entry
+  // point. The ONLY way to fight a capturable named rival was a random
+  // "Pirates off the port bow!" voyage event, one flavor out of ten,
+  // itself only rolled on a fraction of voyage days — so getting even
+  // ONE shot at capturing anyone could take a long time of ordinary
+  // sailing. And the Cove's own "Still At Large" list only ever shows
+  // rivals who've ALREADY escaped you once elsewhere, so with no prior
+  // encounters to show, it looked — correctly — completely empty.
+  //
+  // This gives the Cove an actual, reliable way to trigger that same
+  // encounter on demand: reuses the exact same scaledEnemyForExplore
+  // ('rival_frigate','sea') call the random voyage event already makes,
+  // which auto-assigns whichever not-yet-captured rival is up next
+  // (fixed-pool captains first, falling back to the endless generated
+  // pool once those run out — see arc9-and-systems.js) — so this is
+  // just making the EXISTING mechanism reachable on demand, not a new
+  // one. Combat kind stays 'sea', exactly like the voyage version, since
+  // that's what handleVictory's capture-roll wrap checks for.
+  // -------------------------------------------------------------------
+  window.searchWatersAtPirateCove = function(){
+    if (!pirateCoveUnlocked()) { toast('🔒 Opens at Level 270.'); return; }
+    const enemy = (typeof scaledEnemyForExplore === 'function') ? scaledEnemyForExplore('rival_frigate', 'sea') : null;
+    if (!enemy || !enemy.captainKey) { toast('The waters are quiet — nobody worth chasing right now.'); return; }
+    toast('🌊 A frigate breaks from the fog, flying colors you recognize...', 2600);
+    startCombat({kind:'sea', key:'rival_frigate', enemy: enemy, portId:null});
+  };
+
   function renderPirateCoveAtLargeSection(){
     const rivalKeys = (typeof window.KNOWN_RIVAL_KEYS !== 'undefined') ? window.KNOWN_RIVAL_KEYS : [];
     const escapes = (typeof window.rivalEscapeCounts === 'function') ? window.rivalEscapeCounts() : {};
@@ -107,6 +137,10 @@
     }
     let html = '<div class="panel"><div class="panel-title">🏴‍☠️ Pirate Cove</div>'+
       '<p style="font-size:.85rem;opacity:.85;">Where the ones still running go to ground. No flag flies here that anyone would recognize, and nobody asks a name twice.</p>'+
+      '</div>';
+    html += '<div class="panel"><div class="panel-title">🌊 Search the Waters</div>'+
+      '<p style="font-size:.82rem;opacity:.85;margin-bottom:8px;">Word travels through the Cove faster than anywhere honest. Push off and see who\'s still out there.</p>'+
+      '<button class="btn btn-danger" onclick="searchWatersAtPirateCove()">🌊 Search for a Rival Captain</button>'+
       '</div>';
     html += '<div class="panel">'+renderPirateCoveAtLargeSection()+'</div>';
     html += '<div class="panel"><div class="panel-title">🧭 Explore the Cove</div>';
