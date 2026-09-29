@@ -145,7 +145,7 @@
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(120,200,100,.5);border-style:dashed;" onclick="sailToForestCoast()">'+
       '<div style="font-size:1.6rem;">🌲</div><div style="font-weight:600;">'+(fs.nameKnown?fs.name:'Forest Coast')+'</div>'+
-      '<div style="font-size:.72rem;opacity:.7;">Where the forest meets the sea.</div></div>');
+      '<div style="font-size:.72rem;opacity:.7;">Where the forest meets the sea. Only reachable from Fair Tide.</div></div>');
   };
 
   const oldGoScreenForForestCoast = window.goScreen;

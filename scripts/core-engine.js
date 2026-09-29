@@ -5221,52 +5221,52 @@ function handleVictory() {
     postBattleMessage = 'Whatever ' + enemy.name + ' was, it\'s staying on that side of the door. The crew holds their ground.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitInterworldBattleToDestination()">🌌 Stay and Explore</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'harbour_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the harbour is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitHarbourBattleToDestination()">⚓ Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'forestcoast_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitForestCoastBattleToDestination()">🌲 Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'dragoncoast_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitDragonCoastBattleToDestination()">🐉 Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'mountainport_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the mountain is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitMountainPortBattleToDestination()">🏔️ Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'crystalcoast_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the coast is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitCrystalCoastBattleToDestination()">💎 Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'oldharbour_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The rest of the harbour is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitOldHarbourBattleToDestination()">⚓ Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'tidenetwork_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitTideNetworkBattleToDestination()">🌊 Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'clansettlement_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The settlement is still out there.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitClanSettlementBattleToDestination()">🌕 Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'piratecove_explore') {
     postBattleMessage = enemy.name + ' is dealt with. The Cove doesn\'t stay quiet for long.';
     postBattleButtonsHtml =
       '<button class="btn btn-success" onclick="exitPirateCoveBattleToDestination()">🏴‍☠️ Continue Exploring</button>' +
-      '<button class="btn btn-danger" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+      '<button class="btn btn-danger" onclick="exitBattleToPort()">⚓ Return to Harbour</button>';
   } else if (enemy.kind === 'harbour_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'harbour\')">⚓ Continue to the Harbour</button>';

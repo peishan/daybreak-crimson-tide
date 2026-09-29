@@ -167,7 +167,7 @@
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(180,50,50,.5);border-style:dashed;" onclick="sailToPirateCove()">'+
       '<div style="font-size:1.6rem;">🏴‍☠️</div><div style="font-weight:600;">Pirate Cove</div>'+
-      '<div style="font-size:.72rem;opacity:.7;">Where the ones still running go to ground.</div></div>');
+      '<div style="font-size:.72rem;opacity:.7;">Where the ones still running go to ground. Only reachable from Fair Tide.</div></div>');
   };
 
   const oldGoScreenForPirateCove = window.goScreen;

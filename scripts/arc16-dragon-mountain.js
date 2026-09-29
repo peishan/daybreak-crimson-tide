@@ -128,7 +128,7 @@
       grid.insertAdjacentHTML('beforeend',
         '<div class="port-card" style="cursor:pointer;border-color:'+cfg.cardBorderColor+';border-style:dashed;" onclick="'+cfg.sailFn+'()">'+
         '<div style="font-size:1.6rem;">'+cfg.icon+'</div><div style="font-weight:600;">'+(s.nameKnown?s.name:cfg.displayName)+'</div>'+
-        '<div style="font-size:.72rem;opacity:.7;">'+cfg.navBlurb+'</div></div>');
+        '<div style="font-size:.72rem;opacity:.7;">'+cfg.navBlurb+' Only reachable from Fair Tide.</div></div>');
     };
 
     const oldGoScreen = window.goScreen;

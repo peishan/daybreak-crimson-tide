@@ -233,7 +233,7 @@
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(100,220,220,.5);border-style:dashed;" onclick="goScreen(\'tidenetwork\')">'+
       '<div style="font-size:1.6rem;">🌊</div><div style="font-weight:600;">'+(ts.nameKnown?ts.name:'Unknown Tide Settlement')+'</div>'+
-      '<div style="font-size:.72rem;opacity:.7;">Something beneath the water.</div></div>');
+      '<div style="font-size:.72rem;opacity:.7;">Something beneath the water. Only reachable from Fair Tide.</div></div>');
   };
 
   const oldGoScreenForTideNetwork = window.goScreen;
@@ -291,8 +291,23 @@
   // overall, without being combat on every tick. Now exposed on window so
   // Clan Settlement's own sail function can share this exact logic
   // instead of maintaining a second, drifting copy of it.
+  // Every one of these crossings (Harbour, Tide Network, Clan Settlement,
+  // Forest Coast, Dragon Coast, Mountain Port, Crystal Coast, Old Harbour,
+  // Pirate Cove, Inter-World) is a non-regular voyage in the same sense —
+  // San's own framing: these should only ever launch from Fair Tide, not
+  // from wherever the crew happens to be currently docked, since Fair Tide
+  // is the crew's actual home port and every one of these destinations is
+  // a real, separate voyage away from it. Gating it once here, centrally,
+  // covers every caller automatically instead of repeating the same check
+  // in 7 separate files (one per destination, since Dragon Coast/Mountain
+  // Port/Crystal Coast/Old Harbour already share one factory function).
+  window.canLaunchFairTideVoyage = function(){
+    return game.location === 'fair_tide';
+  };
+
   function runDestinationVoyage(config){
     if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
+    if (!window.canLaunchFairTideVoyage()) { toast('🔒 Only launches from Fair Tide — sail home first.', 3200); return; }
     const overlay = document.getElementById('voyageScreen');
     if (!overlay) { goScreen(config.screenName); return; }
     game.voyageInProgress = true;

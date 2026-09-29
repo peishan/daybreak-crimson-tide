@@ -237,7 +237,7 @@
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(200,180,100,.5);border-style:dashed;" onclick="sailToClanSettlement()">'+
       '<div style="font-size:1.6rem;">🌕</div><div style="font-weight:600;">'+(cs.nameKnown?cs.name:'Unknown Settlement')+'</div>'+
-      '<div style="font-size:.72rem;opacity:.7;">Tracks leading somewhere new.</div></div>');
+      '<div style="font-size:.72rem;opacity:.7;">Tracks leading somewhere new. Only reachable from Fair Tide.</div></div>');
   };
 
   const oldGoScreenForClan = window.goScreen;

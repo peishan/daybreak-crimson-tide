@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V299 · Arc XXI-XXIII Covers Pre-Wired to Naming Convention';
+window.__CT_BUILD__='V300 · Fair Tide-Only Voyages, Every Special Location';

@@ -149,7 +149,7 @@
     grid.insertAdjacentHTML('beforeend',
       '<div class="port-card" style="cursor:pointer;border-color:rgba(120,200,255,.5);border-style:dashed;" onclick="goScreen(\'harbour\')">'+
       '<div style="font-size:1.6rem;">⚓</div><div style="font-weight:600;">'+(hs.nameKnown?hs.name:'Unknown Harbour')+'</div>'+
-      '<div style="font-size:.72rem;opacity:.7;">Not one of the known ports.</div></div>');
+      '<div style="font-size:.72rem;opacity:.7;">Not one of the known ports. Only reachable from Fair Tide.</div></div>');
   };
 
   const oldGoScreenForHarbour = window.goScreen;
