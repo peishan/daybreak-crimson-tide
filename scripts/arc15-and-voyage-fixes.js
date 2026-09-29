@@ -211,23 +211,29 @@
 
 (function(){
   // -------------------------------------------------------------------
-  // "BEYOND THE HORIZON" VOYAGE TRANSITION + GENERAL VOYAGE LOCK.
-  //
-  // Part 1: gives the original Inter-World Expeditions system (V162,
-  // "Beyond the Horizon" specifically) the same real voyage-screen
-  // treatment the Harbour and Tide Network already got — a progress bar
-  // instead of an instant resolve. Reuses the existing battle-or-
-  // discovery outcome exactly as built; this just adds the trip there.
-  //
-  // Part 2: a general game.voyageInProgress lock so normal port voyages
+  // GENERAL VOYAGE LOCK. game.voyageInProgress so normal port voyages
   // (doVoyage) can't start while ANY voyage-style transition is already
-  // running — Harbour, Tide Network, or this one. All of these share
-  // the same #voyageScreen UI, so overlapping them would actually
-  // corrupt each other's progress bars/timers, not just be confusing.
-  // Cleared the moment any voyage genuinely arrives somewhere (port,
-  // harbour, tidenetwork, interworld), via a goScreen wrap, so it's
-  // correctly released whether the trip resolved calmly or through
+  // running — Harbour, Tide Network, Inter-World, or any other
+  // destination sharing the #voyageScreen UI. Overlapping them would
+  // actually corrupt each other's progress bars/timers, not just be
+  // confusing. Cleared the moment any voyage genuinely arrives somewhere
+  // (port, harbour, tidenetwork, interworld), via a goScreen wrap, so
+  // it's correctly released whether the trip resolved calmly or through
   // combat that had to be fought first.
+  //
+  // This file used to ALSO carry its own duplicate launchInterworldExpedition
+  // (V162/V178, "Beyond the Horizon" specifically) — a 2-day, instant-
+  // resolve reimplementation that predated interworld-expeditions.js's own
+  // proper version (the one built on the shared runDestinationVoyage(),
+  // same mechanism as every other special-location destination, spending
+  // real game.day like the rest and taking the actual configured
+  // totalDays). Because this file loads AFTER interworld-expeditions.js,
+  // that duplicate's bare `window.launchInterworldExpedition = ...`
+  // (no oldX() call, a straight overwrite) was silently winning every
+  // time — interworld-expeditions.js's real implementation was dead code,
+  // and every expedition crossing was actually taking a free, un-timed
+  // 2 days instead of the totalDays it was supposed to. Removed here;
+  // interworld-expeditions.js is now the only launchInterworldExpedition.
   // -------------------------------------------------------------------
   const oldDoVoyageForLock = window.doVoyage;
   window.doVoyage = function(portId, days, dangerLevel){
@@ -244,68 +250,4 @@
     return oldGoScreenForVoyageLock(name);
   };
 
-  window.launchInterworldExpedition = function(destId){
-    if (!window.interWorldTravelUnlocked()) { toast('🔒 Not yet — the way isn\'t open.'); return; }
-    if (game.voyageInProgress) { toast('⛵ Already underway — finish this crossing first.'); return; }
-    const dest = window.INTERWORLD_DESTINATIONS.find(d => d.id === destId);
-    if (!dest) return;
-    if (!window.canAffordInterworldTrip(destId)) { toast('Not enough supplies for the crossing.'); return; }
-    game.gold -= (dest.supplyCost.gold||0);
-    game.fairTideResources = game.fairTideResources || {};
-    Object.entries(dest.supplyCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
-
-    game.voyageInProgress = true;
-    const overlay = document.getElementById('voyageScreen');
-    if (!overlay) { resolveInterworldOutcome(dest); return; }
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('voyageScreen').classList.add('active');
-    document.getElementById('voyageDest').textContent = 'Toward ' + dest.name;
-    document.getElementById('voyageProgress').style.width = '0%';
-    document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">Crossing over...</span>';
-    const totalDays = 2;
-    let currentDay = 0;
-    const interval = setInterval(function(){
-      currentDay++;
-      document.getElementById('voyageProgress').style.width = (currentDay / totalDays * 100) + '%';
-      if (currentDay >= totalDays) {
-        clearInterval(interval);
-        setTimeout(function(){ resolveInterworldOutcome(dest); }, 800);
-      }
-    }, 900);
-  };
-
-  function resolveInterworldOutcome(dest){
-    if (Math.random() < 0.5) {
-      const enemyBase = dest.enemies[Math.floor(Math.random() * dest.enemies.length)];
-      const enemy = (typeof scaleCrimsonEnemy === 'function') ? scaleCrimsonEnemy(enemyBase, 'harbor') : Object.assign({}, enemyBase);
-      toast('🌌 Something\'s waiting on the other side.', 2600);
-      startCombat({kind:'interworld', key: dest.id, enemy: enemy, portId:null});
-    } else {
-      const disc = dest.discoveries[Math.floor(Math.random() * dest.discoveries.length)];
-      // BUG FIX: this called a bare interworldState() — but that function
-      // is a private local defined inside the separate V162 script block,
-      // only ever exposed globally as window.interworldDiscoveryState.
-      // Calling it by its unexported name threw a ReferenceError here in
-      // the V178 block's own closure, and that error fired before the
-      // code ever switched away from the sailing/voyage screen — so every
-      // "peaceful discovery" outcome (the non-combat ~50% roll) froze the
-      // game on "Crossing over..." at 100% forever. Combat outcomes were
-      // unaffected since they never reached this line.
-      const state = window.interworldDiscoveryState();
-      const firstEver = state[disc.name] === undefined;
-      state[disc.name] = (state[disc.name]||0) + 1;
-      logEvent('🌌 ' + dest.name + ': the crew brings back ' + disc.icon + ' ' + disc.name + '.', 'gold');
-      if (firstEver) {
-        setTimeout(function(){
-          if (typeof showStoryModal === 'function') showStoryModal({title: disc.icon + ' ' + disc.name, blurb: disc.flavor});
-        }, 500);
-      } else {
-        toast('🌌 The crew brings back another ' + disc.icon + ' ' + disc.name + '.', 3600);
-      }
-      game.voyageInProgress = false;
-      if (typeof goScreen === 'function') goScreen('interworld');
-    }
-    if (typeof saveGameQuiet === 'function') saveGameQuiet();
-  }
-  window.__ctResolveInterworldOutcome = resolveInterworldOutcome;
 })();
