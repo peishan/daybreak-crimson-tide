@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V294 · Ate Joy & Caelan Signature Gear';
+window.__CT_BUILD__='V295 · Crafting: Trophies Into Gear';
