@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V288 · Robin\'s Disposition Choice';
+window.__CT_BUILD__='V289 · Robin Reserved for His Own Arc';

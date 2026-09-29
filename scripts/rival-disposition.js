@@ -10,22 +10,19 @@
   // what happens to them next: fine and release them, or take them in
   // for good.
   //
-  // Covers the generic pool (both the fixed 52 names and the now-
-  // actually-working endless generated pool — see the recent captainKey
-  // closure-bug fix in arc9-and-systems.js) AND Robin, gated specially:
-  // Ch.15 ("Robin's Last Day") never actually answers what happens to
-  // him next — "No redemption speech. He simply finishes what he was
-  // ordered to do, and moves on," ending on San and Joel's own "What do
-  // we do now?" / "Keep building Fair Tide." That's a deliberate
-  // non-answer in the story itself, not a gap this system needs to work
-  // around — so Robin's own disposition choice waits for that chapter to
-  // actually be read (game.comicProgress6[15]) before it appears, rather
-  // than firing the moment his service completes (which unlocks that
-  // chapter in the first place — see robinServiceDone()/
-  // completeArc6Chapter15) and beating the scene to the punch. Jeff's
-  // service has no end date (totalDays: null) — his arc isn't about
-  // service ending, per this file's own existing comment, so he never
-  // reaches "completed" at all and never shows up here.
+  // Scoped to the generic pool only — both the fixed 52 names and the
+  // now-actually-working endless generated pool (see the recent
+  // captainKey closure-bug fix in arc9-and-systems.js).
+  //
+  // Robin is deliberately excluded, permanently (briefly tried gating his
+  // own version of this choice on Ch.15/"Robin's Last Day" being read —
+  // reverted on San's direction: he has a real story beat planned much
+  // later, post-Arc 50, that will resolve his fate properly. This
+  // mechanical fine/retain choice would preempt that, so this system
+  // stays hands-off him entirely; don't re-add him without checking
+  // where that later beat has landed). Jeff's service has no end date
+  // (totalDays: null) — his arc isn't about service ending at all, so he
+  // never reaches "completed" and never shows up here either.
   //
   // "Take Them In" reuses the exact same window.fairTideRoster +
   // FT_ROSTER_BONUSES pattern already used for Maera/Jovie/every other
@@ -50,12 +47,9 @@
     const cs = (typeof window.communityServiceState === 'function') ? window.communityServiceState() : {};
     const disposition = rivalDispositionState();
     return captured.filter(function(key){
+      if (key === 'robin') return false; // his own future story beat handles this, not this system — see the file-level comment above
       const record = cs[key];
-      if (!record || record.active !== false || record.completedDay == null || disposition[key]) return false;
-      // Robin's own story chapter has to actually be read first — see
-      // the file-level comment above for why.
-      if (key === 'robin') return !!(game.comicProgress6 && game.comicProgress6[15]);
-      return true;
+      return !!(record && record.active === false && record.completedDay != null && !disposition[key]);
     });
   }
   window.pendingRivalDispositions = pendingRivalDispositions;
@@ -71,20 +65,16 @@
     if (choice === 'fine') {
       disposition[key] = 'fined';
       game.gold = (game.gold || 0) + RIVAL_FINE_GOLD;
-      const fineMsg = key === 'robin'
-        ? '💰 Robin pays what he owes and leaves the same way he arrived — quietly, no speech, no fuss. (+' + RIVAL_FINE_GOLD + 'g)'
-        : '💰 ' + name + ' pays a fine and leaves Fair Tide for good. (+' + RIVAL_FINE_GOLD + 'g)';
-      toast(fineMsg, 3600);
+      toast('💰 ' + name + ' pays a fine and leaves Fair Tide for good. (+' + RIVAL_FINE_GOLD + 'g)', 3600);
       logEvent('💰 ' + name + ' is fined and released.', 'gold');
     } else if (choice === 'retain') {
       disposition[key] = 'retained';
       game.fairTideRoster = game.fairTideRoster || {};
       if (!game.fairTideRoster[key]) {
-        game.fairTideRoster[key] = key === 'robin'
-          ? { name: name, role: 'Reformed Captain', icon: '🏴',
-              desc: "No redemption speech, no announcement. He just never left, and after a while nobody thought to ask why." }
-          : { name: name, role: 'Reformed Captain', icon: '🏴',
-              desc: 'Once captured, now choosing to stay — working off more than just a sentence.' };
+        game.fairTideRoster[key] = {
+          name: name, role: 'Reformed Captain', icon: '🏴',
+          desc: 'Once captured, now choosing to stay — working off more than just a sentence.'
+        };
       }
       window.FT_ROSTER_BONUSES = window.FT_ROSTER_BONUSES || {};
       window.FT_ROSTER_BONUSES[key] = {goldBonus: RIVAL_RETAIN_GOLD_BONUS};
@@ -106,13 +96,10 @@
       '<p style="font-size:.78rem;opacity:.65;margin-bottom:8px;">Their term is served. What happens to them now is San\'s call.</p>';
     pending.forEach(function(key){
       const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(key) : key;
-      const desc = key === 'robin'
-        ? "Robin's service is over, and the story never actually answered what happens next. Nobody's told him yet — including San."
-        : 'Their community service is complete. Fine them and send them on their way, or take them in for good.';
       html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;">'+
         '<div style="font-size:1.4rem;">⚖️</div><div style="flex:1;">'+
         '<strong>'+esc(name)+'</strong><br>'+
-        '<span style="font-size:.8rem;opacity:.85;">'+esc(desc)+'</span>'+
+        '<span style="font-size:.8rem;opacity:.85;">Their community service is complete. Fine them and send them on their way, or take them in for good.</span>'+
         '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">'+
         '<button class="btn btn-small" onclick="resolveRivalDisposition(\''+key+'\',\'fine\')">💰 Fine & Release (+'+RIVAL_FINE_GOLD+'g)</button>'+
         '<button class="btn btn-small" onclick="resolveRivalDisposition(\''+key+'\',\'retain\')">🤝 Take Them In</button>'+
