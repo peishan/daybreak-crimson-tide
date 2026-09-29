@@ -1068,8 +1068,9 @@
     const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(rivalKey) : rivalKey;
     const chance = window.getRivalCaptureChance(rivalKey);
     const chancePct = Math.round(chance * 100);
-    let modalTitle, modalBlurb;
-    if (Math.random() < chance) {
+    const captured = Math.random() < chance;
+    let modalTitle, modalBlurb, outcomeLine;
+    if (captured) {
       if (typeof window.captureRival === 'function') window.captureRival(rivalKey, 20);
       game.inheritedShips = game.inheritedShips || [];
       const shipId = rivalKey + 's_ship';
@@ -1081,6 +1082,7 @@
       toast('⛓️ ' + name + ' is captured! (' + chancePct + '% chance) No more running from this one.', 4200);
       modalTitle = '⛓️ ' + name + ' Captured!';
       modalBlurb = 'The odds were ' + chancePct + '% this time — and they landed. ' + name + ' is captured. Community service begins, and his ship is now at dock, Fair Tide, waiting to be designated.';
+      outcomeLine = '⛓️ ' + name + ' is captured! (' + chancePct + '% chance)';
     } else {
       const ec = rivalEscapeCounts();
       ec[rivalKey] = (ec[rivalKey] || 0) + 1;
@@ -1089,12 +1091,23 @@
       toast('💨 ' + name + ' escapes (' + chancePct + '% chance) — ' + nextChancePct + '% chance next time.', 4000);
       modalTitle = '💨 ' + name + ' Slips Away';
       modalBlurb = 'It was ' + chancePct + '% this time, and the odds didn\'t land. ' + name + ' gets away — but only barely. Next encounter, the odds shift to ' + nextChancePct + '%.';
+      outcomeLine = '💨 ' + name + ' escapes! (' + chancePct + '% chance — ' + nextChancePct + '% next time)';
     }
-    // BUG FIX: this used to only ever show as a toast + log entry — both
-    // easy to miss, especially with the post-battle victory screen also
-    // showing at the same moment. Pushing a proper modal instead, same
-    // mechanism already used for story scenes, so the outcome can't be
-    // missed the way a toast can.
+    // BUG FIX (San's report — "just completes the bounty without any
+    // capture or not"): a toast plus a modal that only appears 600ms
+    // later were the ONLY places this outcome ever showed up — both easy
+    // to miss next to the post-battle screen's own persistent message,
+    // which (traced separately, see core-engine.js's handleVictory) said
+    // nothing about the rival at all for this exact fight kind, just a
+    // generic "Victory! Battle complete." Baking the outcome directly
+    // into that already-visible, non-expiring message — not replacing
+    // the toast/modal, which stay as extra reinforcement, but no longer
+    // the ONLY signal — means it can't be missed just by not noticing a
+    // toast or glancing away for half a second.
+    if (game.pendingPostBattle) {
+      game.pendingPostBattle.message = outcomeLine + ' ' + game.pendingPostBattle.message;
+      if (typeof showPostBattleAction === 'function') showPostBattleAction(game.pendingPostBattle.message);
+    }
     setTimeout(function(){ if (typeof showStoryModal === 'function') showStoryModal({title: modalTitle, blurb: modalBlurb}); }, 600);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
