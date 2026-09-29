@@ -1485,7 +1485,31 @@
   window.scaledEnemyForExplore = function(key, kind){
     const enemy = oldScaledEnemyForExploreForCaptains.apply(this, arguments);
     if (key === 'rival_frigate' && enemy) {
-      const captainKey = randomAtLargeCaptainKey();
+      // BUG FIX (San's report — "the waters are quiet, nobody worth
+      // chasing," on a long-lived, high-level save where every one of the
+      // fixed 52 named captains is already captured): calling the bare
+      // randomAtLargeCaptainKey() here resolves to THIS file's own local
+      // function declaration (same enclosing scope), not
+      // window.randomAtLargeCaptainKey — even after the "ENDLESS CAPTAIN
+      // POOL" block further down this same file reassigns
+      // window.randomAtLargeCaptainKey to fall back to a freshly
+      // generated captain once the fixed pool is exhausted. A closure
+      // over a local function declaration never sees a later
+      // window.X = ... reassignment made from code in the SAME lexical
+      // scope, the same way every other safe-wrap in this codebase only
+      // works because it lives in a genuinely SEPARATE file/IIFE. Since
+      // this call site is in the SAME IIFE as the original declaration,
+      // it silently kept calling the original, pool-exhaustible version
+      // forever, regardless of the endless pool existing at all — once
+      // every fixed captain was captured, EVERY future rival_frigate
+      // encounter (Search the Waters and the random voyage "Pirates off
+      // the port bow!" event alike) got captainKey=undefined, which both
+      // read as "nobody left to capture." Going through window.
+      // explicitly forces a fresh property lookup instead of the stale
+      // closure-captured original, so this now picks up the endless
+      // pool's fallback exactly like every direct window.
+      // randomAtLargeCaptainKey() caller already correctly does.
+      const captainKey = window.randomAtLargeCaptainKey();
       if (captainKey) {
         const name = (typeof rivalDisplayName === 'function') ? rivalDisplayName(captainKey) : captainKey;
         const fullName = (HARBOR_ENEMIES[captainKey] && HARBOR_ENEMIES[captainKey].name) ? HARBOR_ENEMIES[captainKey].name.replace("'s Crew", '') : name;

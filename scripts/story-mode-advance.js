@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V285 · Pregnancy Stages + Maera\'s Supplement';
+window.__CT_BUILD__='V286 · Endless Captain Pool Fixed';
