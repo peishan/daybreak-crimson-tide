@@ -95,8 +95,12 @@
   // existing combat-or-discovery roll fires on arrival.
   const EXPEDITION_TOTAL_DAYS = 18;
 
+  // canLaunchFairTideVoyage (tide-network.js) is the single shared "must
+  // be docked at Fair Tide" check every non-regular voyage now uses —
+  // kept as its own named function here too since callers elsewhere
+  // already reference canLaunchInterworldExpeditionHere by name.
   window.canLaunchInterworldExpeditionHere = function(){
-    return game.location === 'fair_tide';
+    return typeof window.canLaunchFairTideVoyage === 'function' ? window.canLaunchFairTideVoyage() : game.location === 'fair_tide';
   };
 
   window.launchInterworldExpedition = function(destId){
