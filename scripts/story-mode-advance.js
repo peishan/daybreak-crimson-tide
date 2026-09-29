@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V293 · Interlude Ch.2/3 Reordered';
+window.__CT_BUILD__='V294 · Ate Joy & Caelan Signature Gear';

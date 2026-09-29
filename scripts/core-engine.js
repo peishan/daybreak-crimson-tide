@@ -462,6 +462,17 @@ const EQUIPMENT_CATALOG = [
   // not a glass-cannon nuker's.
   {id:'farseers_astrolabe', name:"The Farseer's Astrolabe", icon:'🧭', slot:'weapon', family:'astrolabe', atk:10, magic:14, hp:20, price:4200, tier:5, trader:'Vessa', forCompanion:'Erynn', desc:"Erynn's brass astrolabe, passed down through five generations of Farseers. +10 ATK, +14 MAG, +20 HP."}
 ,
+  // Same gap, same fix, for Fair Tide's own two Arc XX recruits — checked
+  // GEAR_ROLE_RULES first: ate_joy lists weapon:['mace','shield','any'],
+  // caelan lists weapon:['staff','mace','any'], and neither had a single
+  // non-'any' item anywhere in this catalog, so both had been silently
+  // falling back to generic gear since they joined. Tier 5/Vessa, same
+  // reasoning as Erynn's astrolabe above — both join even later than she
+  // does (Arc XX), so this is if anything a stronger case for that tier,
+  // not a weaker one.
+  {id:'joy_wardens_hammer', name:"The Last Wall", icon:'🔨', slot:'weapon', family:'mace', atk:6, defense:18, hp:35, price:3400, tier:5, trader:'Vessa', forCompanion:'Ate Joy', desc:"Ate Joy's own warhammer — heavier than it looks, built for exactly one purpose. +6 ATK, +18 DEF, +35 HP."},
+  {id:'caelan_steadying_rod', name:'The Steadying Rod', icon:'🔧', slot:'weapon', family:'staff', atk:8, magic:12, hp:25, price:3800, tier:5, trader:'Vessa', forCompanion:'Caelan', desc:"Caelan's own calibrated instrument — not built to win a fight outright, just to keep everything else standing while one's being fought. +8 ATK, +12 MAG, +25 HP."}
+,
   {id:'aldric_oath_ring', name:"The Other Kind of Found's Oath Ring", icon:'💍', slot:'ring1', family:'any', defense:14, hp:20, price:650, tier:3, trader:'Ferris', forCompanion:'Ser Aldric', desc:'Ring for Ser Aldric. +14 DEF, +20 HP.'},
   {id:'mimi_dreamsight_locket', name:'Dreamsight Locket', icon:'🔮', slot:'amulet', family:'any', atk:12, spd:6, price:650, tier:3, trader:'Ferris', forCompanion:'Mimi', desc:'Amulet for Mimi. +12 ATK, +6 SPD.'},
   {id:'brada_resonance_charm', name:'Resonance Charm', icon:'🎼', slot:'amulet', family:'any', atk:8, defense:6, hp:15, price:700, tier:3, trader:'Ferris', forCompanion:'Brada Shah', desc:'Amulet for Brada Shah. +8 ATK, +6 DEF, +15 HP.'},
@@ -605,7 +616,7 @@ const EQUIPMENT_TRADERS = [
    greeting:'Ferris keeps a ledger for the crew members who never seem to get a full rack of gear. He finally has something for the wider roster.',
    stock:['aldric_oath_ring','mimi_dreamsight_locket','brada_resonance_charm','brada_moonlit_pipa','brada_performers_coat','dr_aa_steady_gloves','wren_circlet','kw_quick_boots','iris_ash_claw','renn_spectacles','renn_tidereaders_wand']},
   {id:'vessa', name:'Vessa', title:'The Hoardkeeper', zone:"The Architect's Chamber", minLevel:43,
-   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken','farseers_astrolabe']}
+   greeting:"Vessa deals in nothing less than legendary. A hoard this size doesn't build itself from common finds.", stock:['last_word','vessas_ward','crown_hoardkeeper','gauntlets_unshaken','striders_last_mile','hoarders_signet','heart_hoard','joels_aegis_eternal','robe_of_vecna','platemail_unbroken','farseers_astrolabe','joy_wardens_hammer','caelan_steadying_rod']}
 ];
 
 function normalizeGearItem(item) {
