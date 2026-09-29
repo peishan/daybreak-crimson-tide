@@ -31,6 +31,14 @@
     {
       id: 'guardian_trial', name: "The Guardian's Trial", icon: '⏳', unlockLevel: 300,
       onComplete: 'fountain',
+      // Chapter-gated, not just level-gated (San's design update): reaching
+      // Level 300 alone shouldn't hand the crew the Fountain — Arc XIX Ch.13
+      // has to reveal the Guardian first, same as every other arc's own
+      // chapter-by-chapter unlock. Level 300 and Ch.13 are independent
+      // requirements; whichever the player hits second is what actually
+      // unlocks this.
+      chapterGate: function(){ return !!(game.comicProgress19 && game.comicProgress19[13]); },
+      lockedHint: "Reach Level 300 and finish Arc XIX's Ch.13 (\"The Guardian's Challenge\") first.",
       desc: "An ancient keeper stands between the crew and the Fountain of Youth — not to punish them, but to find out whether they're capable of carrying what it offers.",
       stages: [
         { id: 1, type: 'elite', key: 'guardians_ward', name: "The Guardian's Ward", art: '🌫️',
@@ -50,7 +58,11 @@
   function getRaidById(id){ return RAIDS.find(function(r){ return r.id === id; }); }
   window.getRaidById = getRaidById;
 
-  function isRaidUnlocked(raid){ return level() >= raid.unlockLevel; }
+  function isRaidUnlocked(raid){
+    if (level() < raid.unlockLevel) return false;
+    if (typeof raid.chapterGate === 'function' && !raid.chapterGate()) return false;
+    return true;
+  }
   window.isRaidUnlocked = isRaidUnlocked;
 
   const RAID_STAGE_RECOVERY_PCT = 0.25; // partial, not full — matches Raid Mode's own shape
@@ -89,6 +101,21 @@
     game.raid = { active: false, raidId: null, stageIndex: 0, participants: [] };
   }
   window.exitRaid = exitRaid;
+
+  // BUG FIX (design doc's own "Guardian Failure" rule — no permanent
+  // Fountain punishment, normal combat failure rules apply): nothing was
+  // resetting game.raid on a lost stage fight. handleDefeat() already
+  // clears game.uncharted.active the same way on a lost Reach wave — this
+  // is that same pattern for raids. Without it, game.raid.active would
+  // stay stuck true forever after any raid defeat, silently corrupting
+  // every future raid entry/stage-progress check.
+  const oldHandleDefeatForRaidMode = window.handleDefeat;
+  window.handleDefeat = function(){
+    const enemy = game.combatEnemy;
+    const wasRaid = !!(enemy && enemy.kind === 'raid' && game.raid && game.raid.active);
+    if (oldHandleDefeatForRaidMode) oldHandleDefeatForRaidMode();
+    if (wasRaid) exitRaid();
+  };
 
   // Hooked into handleVictory the same accumulation-safe way every other
   // system in this codebase wraps it — checks enemy.kind so it only ever
@@ -159,7 +186,7 @@
         '<span style="font-size:.72rem;opacity:.55;">'+raid.stages.length+' stages · unlocks Level '+raid.unlockLevel+'</span>'+
         '</div></div>'+
         (unlocked ? '<button class="btn btn-small" onclick="enterRaid(\''+raid.id+'\')" style="margin-top:6px;">'+(cleared ? '🔁 Re-enter (Training)' : '⚔️ Enter Raid')+'</button>'
-                   : '<div style="font-size:.72rem;opacity:.55;margin-top:6px;">🔒 Locked</div>')+
+                   : '<div style="font-size:.72rem;opacity:.55;margin-top:6px;">🔒 '+esc(raid.lockedHint || 'Locked')+'</div>')+
         '</article>';
     });
     return html;
@@ -205,16 +232,26 @@
     return base + rejuvenationMpBonus(m.id, base);
   };
 
-  // Future hook — restoration for permanent negative effects. Deliberately
-  // empty; add {flag, label} entries here once such an effect exists.
-  const CURABLE_NEGATIVE_EFFECTS = [];
+  // Restoration for permanent negative effects the Fountain clears.
+  // `affects` scopes each effect to who actually has it — San's PCOS is
+  // hers alone, not something Joel or anyone else in the crew carries, so
+  // clearing it never touches another character's state. Each flag starts
+  // undefined and is lazily treated as "has the condition" the first time
+  // it's checked for someone on that effect's affects list — no separate
+  // save-file initializer needed, and nobody not on the list is ever
+  // affected at all.
+  const CURABLE_NEGATIVE_EFFECTS = [
+    { flag: 'sanPCOS', label: 'PCOS', affects: ['san'] }
+  ];
   window.CURABLE_NEGATIVE_EFFECTS = CURABLE_NEGATIVE_EFFECTS;
 
   function clearCurableNegativeEffects(memberIds){
     const cleared = [];
     CURABLE_NEGATIVE_EFFECTS.forEach(function(effect){
+      game[effect.flag] = game[effect.flag] || {};
       memberIds.forEach(function(id){
-        game[effect.flag] = game[effect.flag] || {};
+        if (effect.affects.indexOf(id) === -1) return;
+        if (game[effect.flag][id] === undefined) game[effect.flag][id] = true;
         if (game[effect.flag][id]) {
           game[effect.flag][id] = false;
           cleared.push(effect.label);
