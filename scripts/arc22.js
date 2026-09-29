@@ -144,13 +144,28 @@
     }
   };
 
+  window.__ctShowArc22Splash = function(){
+    const overlay = document.getElementById('arc22SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc22Splash = function(){
+    const overlay = document.getElementById('arc22SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc22SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc22 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc22) oldRenderStoryForArc22();
     const container = document.getElementById('storyContent');
     if (!container) return;
     const arc22Ready = window.arc22ObjectiveState() !== null;
+    if (arc22Ready && !game.arc22SplashSeen && typeof window.__ctShowArc22Splash === 'function') {
+      window.__ctShowArc22Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc22/arc22-cover-the-child-of-fair-tide.png" alt="Arc XXII — The Child of Fair Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXII</div><div class="story-act-title">The Child of Fair Tide</div>'+
       '<div class="story-act-tagline">Something new is growing.</div></div>';
     if (!arc22Ready) {
