@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V282 · Arc XXII Complete + Maera Mechanics';
+window.__CT_BUILD__='V283 · Arc XXIII Story + Mechanics';
