@@ -5286,16 +5286,27 @@ function handleVictory() {
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     // "Challenge Again" (San's request): scoped strictly to this default
-    // branch — regular port explore-tab monster/thief fights. Everything
-    // else (uncharted, the three unknown-location _explore/_voyage kinds,
-    // guardians, sea-voyage pirate encounters) has its own branch above
-    // and never reaches here, so none of those pick this up. Re-uses
-    // startHarborFight(enemy.key) with no returnKind, exactly matching
-    // how the original fight was started — this also means the enemy is
-    // freshly re-scaled to the player's current level via
-    // scaledEnemyForExplore, not the same now-stale enemy object.
+    // branch — regular port explore-tab monster/thief fights. The comment
+    // this replaced claimed sea-voyage pirate encounters had their own
+    // branch above and never reached here — they don't; there is no
+    // enemy.kind==='sea' branch anywhere above, so a random-voyage "Pirates
+    // off the port bow!" win fell through to this exact default too.
+    // BUG FIX (San's report — "just completes the bounty without any
+    // capture or not"): startHarborFight(enemy.key) with no returnKind
+    // always re-fights as kind:'harbor', regardless of what kind the
+    // original fight actually was. For an ordinary kind:'harbor' fight
+    // that's a no-op (already the default), but for a kind:'sea' rival
+    // encounter (the only way to reach handleVictory's rival-capture
+    // roll — see arc9-and-systems.js) it silently downgraded every
+    // "Challenge Again" rematch to kind:'harbor', which that roll
+    // explicitly ignores (`enemy.kind !== 'sea'`) — so once a player used
+    // this button even once against a rival frigate, every future rematch
+    // through it could never capture or even acknowledge the rival again.
+    // Passing the CURRENT fight's own kind through instead preserves
+    // whatever eligibility the original fight had, for any kind that ends
+    // up here now or in the future — not just 'sea'.
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button> '+
-      '<button class="btn btn-combat" onclick="startHarborFight(\''+enemy.key+'\')">⚔️ Challenge Again</button>';
+      '<button class="btn btn-combat" onclick="startHarborFight(\''+enemy.key+'\',\''+enemy.kind+'\')">⚔️ Challenge Again</button>';
   }
   // BUG FIX: this used to write the post-battle message/buttons straight
   // into the DOM and nowhere else. goScreen('combat') never calls
