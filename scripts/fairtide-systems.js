@@ -187,20 +187,29 @@
 
   // NPC MEMORY LAYER: previously every board slot got a genuinely random
   // name with zero memory — nobody who asked for help today was
-  // trackable tomorrow. This is the fix. 40% chance of bringing back
-  // someone already known (if anyone below 'resident' status exists —
-  // once someone's fully settled at Fair Tide they stop showing up with
-  // new requests of their own), otherwise prefers introducing a
-  // genuinely new name from the pool before ever repeating one blind.
+  // trackable tomorrow. This is the fix.
+  //
+  // PACING FIX (San's report: population "isn't going beyond 57" —
+  // traced to this system essentially never converting anyone to
+  // resident in practice): raised the revisit chance from 40% to 60%,
+  // and revisits now prefer whichever known NPC is CLOSEST to Resident
+  // (highest current trust) instead of a uniform-random pick among all
+  // known names. With 18 possible names and only a uniform-random
+  // revisit, effort spread so thin across everyone that no single
+  // person realistically ever reached the 100-trust threshold within
+  // normal play — concentrating repeat visits on whoever's furthest
+  // along actually finishes people instead of just topping up everyone
+  // a little. Still prefers introducing a genuinely new name from the
+  // pool before ever repeating one blind, same as before.
   function pickRequesterForBoard(){
     const rs = requesterState();
     const known = Object.keys(rs).filter(name => rs[name].status !== 'resident');
-    if (known.length && Math.random() < 0.4) {
-      return known[Math.floor(Math.random() * known.length)];
+    if (known.length && Math.random() < 0.6) {
+      return known.slice().sort((a,b) => (rs[b].trust||0) - (rs[a].trust||0))[0];
     }
     const unmet = REQUESTER_NAMES.filter(name => !rs[name]);
     if (unmet.length) return unmet[Math.floor(Math.random() * unmet.length)];
-    return known.length ? known[Math.floor(Math.random() * known.length)] : randomRequesterName();
+    return known.length ? known.slice().sort((a,b) => (rs[b].trust||0) - (rs[a].trust||0))[0] : randomRequesterName();
   }
 
   function ensureRequesterRegistered(name){
@@ -815,7 +824,15 @@
   // Status tiers: visitor (0-24 trust) -> familiar_face (25-59) ->
   // trusted (60-99) -> resident (100+, one-time graduation).
   // -------------------------------------------------------------------
-  const TRUST_BY_TIER = {quick: 8, standard: 15, major: 25};
+  // PACING FIX (see pickRequesterForBoard's note above): raised
+  // alongside the revisit-concentration change. At the old rates
+  // (8/15/25), reaching 100 trust took 4-13 resolved requests for the
+  // SAME person even once repeat visits were happening reliably — these
+  // are the "quick"/"standard"/"major" duration tiers too, so that's a
+  // lot of real waiting on top of the grind. Still a genuine investment
+  // (3-9 requests now), just no longer long enough to feel like nothing
+  // is happening.
+  const TRUST_BY_TIER = {quick: 12, standard: 22, major: 35};
   const STATUS_LABELS = {visitor: 'Visitor', familiar_face: 'A Familiar Face', trusted: 'Trusted', resident: 'Fair Tide Resident'};
 
   function statusForTrust(trust){
