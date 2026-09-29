@@ -137,13 +137,28 @@
     }
   };
 
+  window.__ctShowArc23Splash = function(){
+    const overlay = document.getElementById('arc23SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc23Splash = function(){
+    const overlay = document.getElementById('arc23SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc23SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc23 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc23) oldRenderStoryForArc23();
     const container = document.getElementById('storyContent');
     if (!container) return;
     const arc23Ready = window.arc23ObjectiveState() !== null;
+    if (arc23Ready && !game.arc23SplashSeen && typeof window.__ctShowArc23Splash === 'function') {
+      window.__ctShowArc23Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc23/arc23-cover-the-wider-tide.png" alt="Arc XXIII — The Wider Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXIII</div><div class="story-act-title">The Wider Tide</div>'+
       '<div class="story-act-tagline">A home becomes important when people beyond its walls begin to depend on it.</div></div>';
     if (!arc23Ready) {

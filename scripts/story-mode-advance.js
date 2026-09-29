@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V298 · Achievements, Expedition Rules & Arc XX Cover';
+window.__CT_BUILD__='V299 · Arc XXI-XXIII Covers Pre-Wired to Naming Convention';

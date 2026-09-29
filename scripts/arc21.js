@@ -134,13 +134,28 @@
     }
   };
 
+  window.__ctShowArc21Splash = function(){
+    const overlay = document.getElementById('arc21SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc21Splash = function(){
+    const overlay = document.getElementById('arc21SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc21SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc21 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc21) oldRenderStoryForArc21();
     const container = document.getElementById('storyContent');
     if (!container) return;
     const arc21Ready = window.arc21ObjectiveState() !== null;
+    if (arc21Ready && !game.arc21SplashSeen && typeof window.__ctShowArc21Splash === 'function') {
+      window.__ctShowArc21Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc21/arc21-cover-the-life-we-build.png" alt="Arc XXI — The Life We Build" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXI</div><div class="story-act-title">The Life We Build</div>'+
       '<div class="story-act-tagline">A home isn\'t just a place you return to. It\'s a place that can keep going when you leave.</div></div>';
     if (!arc21Ready) {
