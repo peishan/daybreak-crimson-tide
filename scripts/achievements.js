@@ -59,7 +59,134 @@
     {id:'the_last_ship_shell_need', name:"The Last Ship She'll Ever Need", icon:'⭐', desc:'The Aethon\'s Pride. By the time San sails this one, her name is already legend.',
       check: function(){ return !!(typeof currentVessel === 'function' && currentVessel().id === 'aethons_pride'); }},
     {id:'someone_belonging', name:'Someone Belonging', icon:'👤', desc:'Not a chosen hero — just someone the Archive finally recognized as its own.',
-      check: function(){ return !!(game.comicProgress17 && game.comicProgress17[23]); }}
+      check: function(){ return !!(game.comicProgress17 && game.comicProgress17[23]); }},
+
+    // -------------------------------------------------------------------
+    // EXPANSION PASS — arc completions, individual companion recruits,
+    // world discoveries, bond ladders, and the systems built since the
+    // original 15 (rival disposition, crafting, bestiary, inter-world
+    // expeditions). Every check below reads state that's already
+    // maintained elsewhere for its own reason (arcNComplete flags,
+    // discovery flags, bondTier, etc.) — nothing new is tracked purely
+    // for achievement purposes except game.interworldExpeditionsCompleted
+    // (added alongside this, in interworld-expeditions.js), since there
+    // was no existing signal at all for "completed at least one crossing"
+    // that survives either possible 50/50 arrival outcome.
+    // -------------------------------------------------------------------
+
+    // --- Individual companion recruits (crew_assembled above is the
+    // all-nine aggregate; these are the same foundCompanions flags, one
+    // at a time, matching first_mate's own treatment of Joel) ---
+    {id:'recruit_aisyah', name:'The Quartermaster', icon:'🗡️', desc:'Aisyah joined the crew — she knows every port, and every bad deal in it.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.aisyah); }},
+    {id:'recruit_eliz', name:'The Ship Healer', icon:'💚', desc:'Eliz joined the crew — mends wounds with light and stubbornness.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.eliz); }},
+    {id:'recruit_mezstorm', name:'The Storm Caller', icon:'🌀', desc:'Mezstorm joined the crew, storm-bound bargain broken at last.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.mezstorm); }},
+    {id:'recruit_senedra', name:'The Lookout', icon:'🎯', desc:"Senedra joined the crew — her eye spots trouble before it spots you.",
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.senedra); }},
+    {id:'recruit_zaki', name:'The Boarding Fighter', icon:'💥', desc:'Zaki joined the crew, out of the prison hulk and fearless as ever.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.zaki); }},
+    {id:'recruit_renn', name:'The Arcane Trickster', icon:'🔮', desc:'Renn joined the crew, treating sailing as one enormous magical experiment.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.renn); }},
+    {id:'recruit_erynn', name:'The Farseer Descendant', icon:'🧭', desc:'Erynn joined the crew — generations of documented weaknesses mean he rarely has to guess.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.erynn); }},
+    {id:'recruit_mimi', name:'The Diviner', icon:'🔮', desc:'Mimi joined the crew, reading the tide for what it remembers and what it hides.',
+      check: function(){ return !!(game.foundCompanions && game.foundCompanions.mimi); }},
+    {id:'recruit_soel', name:'The Spirit Cat', icon:'🐾', desc:"Soel chose San, and can't be unchosen.",
+      check: function(){ return (typeof level === 'function' ? level() : 0) >= 10; }},
+
+    // --- World discoveries not yet covered above (Arc XVI's four
+    // harbours plus the Forest Coast world they all branch from) ---
+    {id:'forest_coast_found', name:'A World Worth Exploring', icon:'🌲', desc:'The Forest Coast — the world the Horizon Engine\'s next material came from.',
+      check: function(){ return !!game.forestCoastDiscovered; }},
+    {id:'dragon_coast_found', name:'What the Dragons Guard', icon:'🐉', desc:'The Dragon Coast — the dragons here are not what the stories say.',
+      check: function(){ return !!game.dragonCoastDiscovered; }},
+    {id:'mountain_port_found', name:'A Different Kind of Guardian', icon:'🏔️', desc:'The Mountain Port — where the mountain and the sea do business.',
+      check: function(){ return !!game.mountainPortDiscovered; }},
+    {id:'crystal_coast_found', name:'Another Way', icon:'💎', desc:'The Crystal Coast — where the resource finally surfaces.',
+      check: function(){ return !!game.crystalCoastDiscovered; }},
+    {id:'old_harbour_found', name:'The Engine Changes', icon:'⚓', desc:'The Old Harbour — the oldest settlement in the region.',
+      check: function(){ return !!game.oldHarbourDiscovered; }},
+
+    // --- Bond ladders at their highest tier (san_joel's own first-tier
+    // unlock is already "Bonded by the Tide" above — this is the deepest
+    // tier of all three tracks, not the first) ---
+    {id:'bond_san_joel_max', name:'Two Hearts, One Ship', icon:'💞', desc:"San and Joel's bond reached its deepest point.",
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_joel') >= 4; }},
+    {id:'bond_san_crew_max', name:'This Is Home', icon:'👥', desc:'The crew stopped feeling like people San works with, and started feeling like people San lives with.',
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_crew') >= 4; }},
+    {id:'bond_san_trio_max', name:'Kindred Curiosity', icon:'🔮', desc:"Mimi, Renn, and Erynn's endless research finally has San genuinely along for the ride.",
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_trio') >= 4; }},
+
+    // --- Rivals & pirates ---
+    {id:'every_captain_named', name:'Every Captain, Named', icon:'🏴‍☠️', desc:'Every fixed rival captain, captured. The waters keep producing more — but these ones are done.',
+      check: function(){ return !!(window.ALL_CAPTAIN_KEYS && window.ALL_CAPTAIN_KEYS.length && game.rivalsCaptured && window.ALL_CAPTAIN_KEYS.every(function(k){ return !!game.rivalsCaptured[k]; })); }},
+    {id:'a_chance_given', name:'A Chance Given', icon:'🤝', desc:'A captured rival, once served, was given a place at Fair Tide instead of just a fine.',
+      check: function(){ return typeof window.rivalDispositionState === 'function' && Object.values(window.rivalDispositionState()).indexOf('retained') !== -1; }},
+
+    // --- Crafting & the bestiary ---
+    {id:'first_craft', name:'Trophies Into Gear', icon:'🔨', desc:"A trophy that used to just sit in the hold became something worth carrying.",
+      check: function(){ return (game.equipmentInventory||[]).some(function(i){ return i && i.crafted; }); }},
+    {id:'bestiary_complete', name:'Every Creature, Recorded', icon:'📖', desc:'Every creature the crew has ever fought, catalogued — no more "???" left in the Bestiary.',
+      check: function(){ return typeof window.bestiaryTotals === 'function' && (function(){ const t = window.bestiaryTotals(); return t.total > 0 && t.discovered >= t.total; })(); }},
+
+    // --- Inter-world expeditions ---
+    {id:'first_crossing', name:'The Door Opens', icon:'🌌', desc:'The first crossing beyond the Horizon Engine\'s door, there and back again.',
+      check: function(){ return (game.interworldExpeditionsCompleted||0) >= 1; }},
+    {id:'cataloguing_the_unknown', name:'Cataloguing the Unknown', icon:'🗿', desc:'Every discovery known to exist beyond the Horizon Engine, brought home at least once.',
+      check: function(){ return !!(window.INTERWORLD_DESTINATIONS && window.interworldDiscoveryState && (function(){ const state = window.interworldDiscoveryState(); return window.INTERWORLD_DESTINATIONS.every(function(dest){ return dest.discoveries.every(function(d){ return state[d.name] !== undefined; }); }); })()); }},
+
+    // --- The Fountain of Youth, well past its first use ---
+    {id:'borrowed_a_lot_of_time', name:"Time Isn't Free, But San Keeps Borrowing It", icon:'⏳', desc:'The Fountain of Youth, called on again and again.',
+      check: function(){ return !!(game.fountainPrestige && game.fountainPrestige.count >= 5); }},
+
+    // --- A level milestone past every arc's own gate (Arc XXIII, the
+    // highest current gate, only asks for 345) ---
+    {id:'past_every_gate', name:'Past Every Gate', icon:'⭐', desc:'Level 400 — further than any story gate has asked San to go.',
+      check: function(){ return (typeof level === 'function' ? level() : 0) >= 400; }},
+
+    // --- Arc completions, VI through XXIII (Arcs I-V predate the
+    // arcNComplete flag convention and don't have a single clean "done"
+    // signal to check, so they're not included here). ---
+    {id:'arc6_complete', name:'The Price of Freedom', icon:'🕊️', desc:'Power gave San the choice to do better, and she took it.',
+      check: function(){ return !!game.arc6Complete; }},
+    {id:'arc7_complete', name:'The Farseer', icon:'🔭', desc:'Some knowledge survives generations.',
+      check: function(){ return !!game.arc7Complete; }},
+    {id:'arc8_complete', name:'Beyond the Known Sea', icon:'🌊', desc:'The world is larger than the map.',
+      check: function(){ return !!game.arc8Complete; }},
+    {id:'arc9_complete', name:'The Cat Who Was Always There', icon:'🐾', desc:'Some mysteries were beside us all along.',
+      check: function(){ return !!game.arc9Complete; }},
+    {id:'arc10_complete', name:'The First Horizon', icon:'🌅', desc:'Some horizons must be built before they can be crossed.',
+      check: function(){ return !!game.arc10Complete; }},
+    {id:'arc11_complete', name:'The World Beyond the Window', icon:'🪟', desc:'Seeing another world is not the same as reaching it.',
+      check: function(){ return !!game.arc11Complete; }},
+    {id:'arc12_complete', name:'The First Crossing', icon:'🌉', desc:'Every new world begins with someone taking the first step.',
+      check: function(){ return !!game.arc12Complete; }},
+    {id:'arc13_complete', name:"A World With Its Own Rules", icon:'🏝️', desc:"A world is not a backdrop. It is someone's home.",
+      check: function(){ return !!game.arc13Complete; }},
+    {id:'arc14_complete', name:'People Beneath the Tide', icon:'🫧', desc:'The sea is not empty. It is home to someone.',
+      check: function(){ return !!game.arc14Complete; }},
+    {id:'arc15_complete', name:'Shape of a People', icon:'🌗', desc:'A people are more than the shape they take.',
+      check: function(){ return !!game.arc15Complete; }},
+    {id:'arc16_complete', name:'The Price of Rare Things', icon:'💎', desc:'Just because we can take something, does that mean we should?',
+      check: function(){ return !!game.arc16Complete; }},
+    {id:'arc17_complete', name:'The Archive Between Worlds', icon:'📜', desc:'Some histories are older than the people who remember them.',
+      check: function(){ return !!game.arc17Complete; }},
+    {id:'arc18_complete', name:'The Routes Others Want', icon:'🧭', desc:'If we discover a way between worlds, who has the right to decide where it leads?',
+      check: function(){ return !!game.arc18Complete; }},
+    {id:'arc19_complete', name:'The Worlds We Know', icon:'🌍', desc:'Before anything new — everything they never finished.',
+      check: function(){ return !!game.arc19Complete; }},
+    {id:'arc20_complete', name:'Forever and Ever', icon:'🏡', desc:'After everything — the people behind the adventures.',
+      check: function(){ return !!game.arc20Complete; }},
+    {id:'arc20_interlude_complete', name:'In Between', icon:'⏳', desc:'Not every chapter needs a horizon to cross.',
+      check: function(){ return !!game.arc20InterludeComplete; }},
+    {id:'arc21_complete', name:'The Life We Build', icon:'🏗️', desc:"A home isn't just a place you return to. It's a place that can keep going when you leave.",
+      check: function(){ return !!game.arc21Complete; }},
+    {id:'arc22_complete', name:'The Child of Fair Tide', icon:'👶', desc:'Something new is growing.',
+      check: function(){ return !!game.arc22Complete; }},
+    {id:'arc23_complete', name:'The Wider Tide', icon:'🌐', desc:"A home becomes important when people beyond its walls begin to depend on it.",
+      check: function(){ return !!game.arc23Complete; }}
   ];
   window.ACHIEVEMENTS = ACHIEVEMENTS;
 
