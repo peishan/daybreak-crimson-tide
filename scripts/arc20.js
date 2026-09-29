@@ -150,13 +150,28 @@
     }
   };
 
+  window.__ctShowArc20Splash = function(){
+    const overlay = document.getElementById('arc20SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc20Splash = function(){
+    const overlay = document.getElementById('arc20SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc20SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc20 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc20) oldRenderStoryForArc20();
     const container = document.getElementById('storyContent');
     if (!container) return;
     const arc20Ready = window.arc20ObjectiveState() !== null;
+    if (arc20Ready && !game.arc20SplashSeen && typeof window.__ctShowArc20Splash === 'function') {
+      window.__ctShowArc20Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc20/arc20-cover-forever-and-ever.png" alt="Arc XX — Forever and Ever" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XX</div><div class="story-act-title">Forever and Ever</div>'+
       '<div class="story-act-tagline">After everything — the people behind the adventures.</div></div>';
     if (!arc20Ready) {

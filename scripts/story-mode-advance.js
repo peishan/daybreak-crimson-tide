@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V297 · Expanded Achievements & Real Expedition Rules';
+window.__CT_BUILD__='V298 · Achievements, Expedition Rules & Arc XX Cover';
