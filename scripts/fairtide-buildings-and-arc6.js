@@ -1869,6 +1869,17 @@
     if (typeof renderStory === 'function') renderStory();
   };
 
+  window.__ctShowArc6Splash = function(){
+    const overlay = document.getElementById('arc6SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc6Splash = function(){
+    const overlay = document.getElementById('arc6SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc6SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc6 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc6) oldRenderStoryForArc6();
@@ -1876,7 +1887,11 @@
     if (!container) return;
     const so = window.arc6ObjectiveState();
     if (so === null) return;
+    if (!game.arc6SplashSeen && typeof window.__ctShowArc6Splash === 'function') {
+      window.__ctShowArc6Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc6/arc6-cover-the-price-of-freedom.png" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc VI</div><div class="story-act-title">The Price of Freedom</div>'+
       '<div class="story-act-tagline">Power gives San the choice to do better.</div></div>';
     ARC6_CHAPTERS.forEach(ch=>{

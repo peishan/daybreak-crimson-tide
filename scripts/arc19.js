@@ -103,13 +103,28 @@
     }
   };
 
+  window.__ctShowArc19Splash = function(){
+    const overlay = document.getElementById('arc19SplashOverlay');
+    if (overlay) overlay.style.display = 'flex';
+  };
+  window.__ctCloseArc19Splash = function(){
+    const overlay = document.getElementById('arc19SplashOverlay');
+    if (overlay) overlay.style.display = 'none';
+    game.arc19SplashSeen = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
   const oldRenderStoryForArc19 = window.renderStory;
   window.renderStory = function(){
     if (oldRenderStoryForArc19) oldRenderStoryForArc19();
     const container = document.getElementById('storyContent');
     if (!container) return;
     const arc19Ready = window.arc19ObjectiveState() !== null;
+    if (arc19Ready && !game.arc19SplashSeen && typeof window.__ctShowArc19Splash === 'function') {
+      window.__ctShowArc19Splash();
+    }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
+      '<img src="assets/comics/arc19/arc19-the-worlds-we-know.png" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XIX</div><div class="story-act-title">The Worlds We Know</div>'+
       '<div class="story-act-tagline">Before anything new — everything they never finished.</div></div>';
     if (!arc19Ready) {
