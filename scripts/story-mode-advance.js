@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V284 · Rival Capture Outcome Fixed';
+window.__CT_BUILD__='V285 · Pregnancy Stages + Maera\'s Supplement';
