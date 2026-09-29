@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V287 · Rival Disposition + Harbour Defence Fix';
+window.__CT_BUILD__='V288 · Robin\'s Disposition Choice';
