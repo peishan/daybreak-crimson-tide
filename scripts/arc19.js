@@ -1,20 +1,30 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XIX — THE WORLDS WE KNOW. Now fully wired, all 12 chapters.
-  // Title confirmed this pass (previously a placeholder). Gated at
-  // arc18Complete + level 285, continuing the established +15-per-arc
-  // ladder (XVI:240, XVII:255, XVIII:270, XIX:285).
+  // ARC XIX — THE WORLDS WE KNOW. 14 chapters. Title confirmed this pass
+  // (previously a placeholder). Gated at arc18Complete + level 285,
+  // continuing the established +15-per-arc ladder (XVI:240, XVII:255,
+  // XVIII:270, XIX:285).
   //
-  // IMPORTANT — this is NOT the Guardian Trial / Rejuvenation arc from
-  // the earlier Fountain of Youth design doc. This Arc XIX is a
-  // "revisit" arc: the crew returns to worlds and people from earlier
-  // in the story (the Harbour, the Underwater World, the Werewolf
-  // World, the Resource World) before anything Fountain-related
-  // happens. Ch.12 ends on discovering the Fountain of Youth's
-  // existence, deliberately without using it yet — the Guardian battle,
-  // the Trial, and Rejuvenation itself belong to whatever arc comes
-  // after this one (presumably Arc XX), not to this file. Nothing here
-  // touches fountain-of-youth.js.
+  // UPDATED per San's consolidated Fountain of Youth design doc: the
+  // Guardian Trial / Rejuvenation payoff belongs to THIS arc's own final
+  // chapters after all, not "whatever arc comes after" (an earlier,
+  // now-superseded assumption from before that doc existed) — Arc XX is
+  // already built and fully illustrated as "Forever and Ever," with no
+  // room or need for Fountain content, and the design doc is explicit
+  // that the Fountain happens BEFORE that quiet arc, not inside it.
+  //
+  // Ch.1-11 are the "revisit" chapters (the crew returns to worlds and
+  // people from earlier in the story). Ch.12 discovers the Fountain of
+  // Youth's existence without using it. Ch.13 reveals the Guardian
+  // standing in the way — this is also the chapter-gate raid-mode.js's
+  // guardian_trial raid checks (in addition to its own Level 300
+  // requirement) before The Guardian's Trial becomes enterable from the
+  // Archive. Ch.14, the true arc finale, only becomes available once
+  // that raid is cleared — see arc19ObjectiveState()'s ch14 special case,
+  // same pattern as arc6.js's Ch.15/robinServiceDone() exception. The
+  // actual Guardian battle, Trial stages, and Rejuvenation reward all
+  // live in raid-mode.js, not here — this file only wires the chapters
+  // that bookend it.
   //
   // Chapters 1-5 are deliberately written without pinning down which
   // specific earlier world/world/people the crew returns to — the
@@ -47,7 +57,9 @@
     {id:9, title:'The Price of Taking', focus:"The crew revisits the Resource World and confronts the consequences of treating rare resources responsibly.", image:'assets/comics/arc19/ch09-the-price-of-taking.png', xp:320, action:'💎 Face the Consequences'},
     {id:10, title:'A Network of Lives', focus:"San realizes the inter-world routes have become relationships rather than simply travel routes.", image:'assets/comics/arc19/ch10-a-network-of-lives.png', xp:300, action:'🕸️ See the Network Differently'},
     {id:11, title:"The Road That Wasn't There", focus:"While following one of these connections, the crew encounters something that wasn't part of their previous understanding of the network.", image:'assets/comics/arc19/ch11-the-road-that-wasnt-there.png', xp:310, action:'🌀 Follow the Unknown Road'},
-    {id:12, title:'The Fountain Beyond the Horizon', focus:"The Fountain of Youth is discovered. The chapter ends on the discovery itself, rather than immediately using it.", image:'assets/comics/arc19/ch12-the-fountain-beyond-the-horizon.png', xp:560, action:'✨ Discover the Fountain'}
+    {id:12, title:'The Fountain Beyond the Horizon', focus:"The Fountain of Youth is discovered. The chapter ends on the discovery itself, rather than immediately using it.", image:'assets/comics/arc19/ch12-the-fountain-beyond-the-horizon.png', xp:560, action:'✨ Discover the Fountain'},
+    {id:13, title:"The Guardian's Challenge", focus:"The crew learns the Fountain isn't simply reachable — something guards it, and reaching the water means proving something to whatever that is first. Unlocks the Guardian's Trial in the Archive once the crew is strong enough.", image:'assets/comics/arc19/ch13-the-guardians-challenge.png', xp:340, action:"🛡️ Face What Guards It"},
+    {id:14, title:'What the Fountain Gave', focus:"With the Guardian's Trial behind them, the crew receives the Fountain's blessing — and reckons with what a second chance at their own bodies actually means, without losing anything they built to get here. Only completes once the Guardian's Trial raid has been cleared.", image:'assets/comics/arc19/ch14-what-the-fountain-gave.png', xp:650, action:"💧 Receive the Fountain's Gift"}
   ];
   window.ARC19_CHAPTERS = ARC19_CHAPTERS;
 
@@ -63,7 +75,9 @@
     9: "The resource world remembers exactly what the crew chose not to take, back in Arc XVI — and exactly what they chose to take instead, carefully, with permission, leaving the rest where it belonged.<br><br>San half-expects a simple thank-you. What she gets is more complicated. The dragons are still here, still part of an ecosystem the crew only partly understands even now. The guardians are still watching, still weighing whether the crew's restraint back then was a one-time decision or something the Crimson Tide actually believes in.<br><br>\"You didn't take everything,\" one of them says. \"That's not the same as never wanting to.\"<br><br>San doesn't argue with that. It's fair.",
     10: "Somewhere between the fourth world and the fifth, San stops thinking of the routes as a map.<br><br>They were never just lines between places — not really, not for a long time now. Every route she's followed this arc connects to a person, a promise, a consequence still working itself out. The Harbour. The reef. The pack. The dragons and their guardians. All of it tangled together, not by geography, but by everything the crew actually did in each place.<br><br>\"We didn't just discover routes,\" San says, half to herself. \"We built relationships. The routes were just how we got there.\"",
     11: "It shouldn't exist. That's the first thing Renn says, and he says it more than once, checking the same readings from three different angles before he'll trust them.<br><br>Every route the crew has followed this arc was already known — charted, however roughly, by something they understood before they set out. This one isn't. It doesn't match the Archive's records. It doesn't match anything Erynn's cross-referenced.<br><br>\"It's not on any map we have,\" Erynn says. \"Which means either the map is wrong, or something built this after we already thought we understood the whole network.\"<br><br>Nobody has an answer yet. San marks the coordinates anyway.",
-    12: "They almost don't follow it. San almost calls it a problem for another day, another arc, another version of the crew with more time to spare.<br><br>She follows it anyway.<br><br>What's waiting at the end isn't a settlement, and it isn't a threat. It's something older than either — a place the readings can't quite explain, guarded, deliberate, humming with something that isn't quite like anything the Horizon Engine has ever detected before.<br><br>Renn doesn't have a name for it yet. Erynn finds one first, buried in a fragment nobody thought to translate until now.<br><br>The Fountain of Youth.<br><br>Nobody moves toward it. Not yet. San looks at it a long time, and doesn't reach for the door."
+    12: "They almost don't follow it. San almost calls it a problem for another day, another arc, another version of the crew with more time to spare.<br><br>She follows it anyway.<br><br>What's waiting at the end isn't a settlement, and it isn't a threat. It's something older than either — a place the readings can't quite explain, guarded, deliberate, humming with something that isn't quite like anything the Horizon Engine has ever detected before.<br><br>Renn doesn't have a name for it yet. Erynn finds one first, buried in a fragment nobody thought to translate until now.<br><br>The Fountain of Youth.<br><br>Nobody moves toward it. Not yet. San looks at it a long time, and doesn't reach for the door.",
+    13: "Nobody reaches for the door. Not yet.<br><br>Erynn's the one who says it first, crouched by the entrance with her instruments spread around her. \"Something's watching this. Not us, specifically. The whole approach.\"<br><br>Renn doesn't argue — he's found the same thing from a different angle, and neither of them likes what it implies. Whatever the Fountain actually is, it isn't undefended. Something stands between the crew and whatever's waiting past that door, and it isn't going to step aside because they asked politely.<br><br>\"So we don't just walk in,\" Joel says. Not really a question.<br><br>\"We earn it,\" Erynn says. \"Same as everything else.\"<br><br>San doesn't argue either. Whatever's guarding this place isn't interested in who the crew used to be — only in whether they're actually ready now, not just willing. That's a different question, and she isn't sure yet how she'd answer it.",
+    14: "The Guardian doesn't fall so much as it stops. Whatever held that shape settles into something quieter, and what's left behind isn't a threat — it's an invitation.<br><br>The Fountain itself is smaller than San expected. Barely a fountain at all, really — just water, moving where water shouldn't be moving, in a place old enough that the readings can't agree on how old.<br><br>She doesn't hesitate as long as she thought she would.<br><br>What changes afterward isn't dramatic, not from the outside. Still San. Still Joel. Still exactly who they were an hour ago, down to the argument they were having on the way in. But something underneath has eased that neither of them realized they'd been carrying so heavily until it wasn't there anymore — a body given back some of what years and a hard decade at sea had quietly taken from it.<br><br>\"I don't feel any different,\" Joel says, which isn't quite true, and they both know it.<br><br>\"You will,\" Erynn says. \"Give it a week.\"<br><br>San doesn't ask the Fountain for a different life. She already has the one she wants. She just gets to keep living it a little longer, a little steadier, in the body that's been doing the actual work all along.<br><br>The Fountain keeps flowing behind them as the crew makes their way back to the ship. It doesn't need them to come back. It'll still be here, doing exactly this, long after they've gone."
   };
   window.ARC19_CHAPTER_SCENES = ARC19_CHAPTER_SCENES;
 
@@ -72,7 +86,15 @@
     if (level() < 285) return null;
     game.comicProgress19 = game.comicProgress19 || {};
     for (const ch of ARC19_CHAPTERS) {
-      if (!game.comicProgress19[ch.id]) return 'complete_arc19_chapter_' + ch.id;
+      if (game.comicProgress19[ch.id]) continue;
+      // Ch.14 doesn't follow the normal "matches the current objective"
+      // rule — same exception class as arc6.js's Ch.15/robinServiceDone():
+      // it's independently gated on the Guardian's Trial raid actually
+      // being cleared, not just on Ch.13 having been read.
+      if (ch.id === 14 && !(typeof window.raidCleared === 'function' && window.raidCleared('guardian_trial'))) {
+        return 'arc19_awaiting_guardian_trial';
+      }
+      return 'complete_arc19_chapter_' + ch.id;
     }
     return 'arc19_part1_complete_for_now';
   };
@@ -83,8 +105,10 @@
     game.comicProgress19 = game.comicProgress19 || {};
     game.comicProgress19[id] = true;
     // Matches every prior arc's own completion flag (arc17/arc18Complete)
-    // — self-contained to this file, no aggregator dependency.
-    if (id === 12) game.arc19Complete = true;
+    // — self-contained to this file, no aggregator dependency. Moved from
+    // Ch.12 to Ch.14: Ch.12 only discovers the Fountain, it doesn't end
+    // the arc anymore now that the Guardian's Trial payoff lives here too.
+    if (id === 14) game.arc19Complete = true;
     const ch = ARC19_CHAPTERS.find(c => c.id === id);
     if (ch) {
       gainXP(ch.xp);
@@ -142,12 +166,16 @@
       if (ready) {
         action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
           '<button class="btn btn-small btn-success" onclick="markArc19ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
+      } else if (ch.id === 14 && so === 'arc19_awaiting_guardian_trial') {
+        action = '<div class="story-chip">🔒 Clear The Guardian\'s Trial (Archive → Raids) first.</div>';
       } else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
         '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
     });
-    if (so==='arc19_part1_complete_for_now'){
+    if (so==='arc19_awaiting_guardian_trial'){
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✨ The Guardian stands between the crew and the Fountain. Find The Guardian\'s Trial in the Archive\'s Raids panel when ready.</div></div>';
+    } else if (so==='arc19_part1_complete_for_now'){
       html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Arc XIX chapters read so far. More chapters are on the way — check back soon.</div></div>';
     }
     html += '</section>';

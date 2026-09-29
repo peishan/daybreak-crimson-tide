@@ -54,8 +54,8 @@
       check: function(){ return !!(game.sanJoelDisagreement && game.sanJoelDisagreement.learnedFlags && game.sanJoelDisagreement.learnedFlags.indexOf('joel_can_challenge_san') !== -1); }},
     {id:'a_trusted_name', name:'A Trusted Name', icon:'🤝', desc:'The Harbour stopped treating the crew like strangers.',
       check: function(){ return !!(typeof window.harbourState === 'function' && window.harbourState().sections && window.harbourState().sections.trade); }},
-    {id:'borrowed_time', name:'Borrowed Time', icon:'⏳', desc:'The Fountain of Youth was used for the first time. San is not quite the age she was.',
-      check: function(){ return !!(game.fountainPrestige && game.fountainPrestige.count >= 1); }},
+    {id:'borrowed_time', name:'Borrowed Time', icon:'⏳', desc:"The Guardian's Trial was cleared, and the Fountain of Youth gave something back.",
+      check: function(){ return !!(game.raidsCleared && game.raidsCleared.guardian_trial); }},
     {id:'the_last_ship_shell_need', name:"The Last Ship She'll Ever Need", icon:'⭐', desc:'The Aethon\'s Pride. By the time San sails this one, her name is already legend.',
       check: function(){ return !!(typeof currentVessel === 'function' && currentVessel().id === 'aethons_pride'); }},
     {id:'someone_belonging', name:'Someone Belonging', icon:'👤', desc:'Not a chosen hero — just someone the Archive finally recognized as its own.',
@@ -137,9 +137,9 @@
     {id:'cataloguing_the_unknown', name:'Cataloguing the Unknown', icon:'🗿', desc:'Every discovery known to exist beyond the Horizon Engine, brought home at least once.',
       check: function(){ return !!(window.INTERWORLD_DESTINATIONS && window.interworldDiscoveryState && (function(){ const state = window.interworldDiscoveryState(); return window.INTERWORLD_DESTINATIONS.every(function(dest){ return dest.discoveries.every(function(d){ return state[d.name] !== undefined; }); }); })()); }},
 
-    // --- The Fountain of Youth, well past its first use ---
-    {id:'borrowed_a_lot_of_time', name:"Time Isn't Free, But San Keeps Borrowing It", icon:'⏳', desc:'The Fountain of Youth, called on again and again.',
-      check: function(){ return !!(game.fountainPrestige && game.fountainPrestige.count >= 5); }},
+    // --- The Fountain of Youth, beyond just San and Joel's own trip ---
+    {id:'a_gift_shared', name:'A Gift Shared', icon:'⏳', desc:"Five of the crew, rejuvenated — the Fountain wasn't just for the two who found it first.",
+      check: function(){ return !!(game.rejuvenated && Object.keys(game.rejuvenated).filter(function(id){ return game.rejuvenated[id]; }).length >= 5); }},
 
     // --- A level milestone past every arc's own gate (Arc XXIII, the
     // highest current gate, only asks for 345) ---

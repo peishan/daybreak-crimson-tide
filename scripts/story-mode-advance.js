@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V300 · Fair Tide-Only Voyages, Every Special Location';
+window.__CT_BUILD__='V301 · Fountain of Youth: Rejuvenation, Not Prestige';
