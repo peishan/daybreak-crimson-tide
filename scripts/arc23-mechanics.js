@@ -475,10 +475,21 @@
   // ===========================================================================
   // 7. HARBOUR DEFENCE / BRADA'S BALLISTA (Ch.18) — reuses the Horizon
   // Chamber's tiered-gold-investment shape exactly, chaining into
-  // getReputationBonus('critChance') instead of xpBonus — "defended
-  // enough to fight well" reads as combat readiness, the same stat key
-  // the Hang Out companion bond tracks already contribute zero-baseline
-  // entries toward.
+  // getReputationBonus('critBonus') instead of xpBonus — "defended
+  // enough to fight well" reads as combat readiness.
+  //
+  // BUG FIX: originally chained into 'critChance' — a key nothing in
+  // this codebase actually reads. The real combat crit-chance
+  // calculation (core-engine.js's own attack roll) calls
+  // getReputationBonus('critBonus') specifically, matching every other
+  // real crit source already in the reputation-rank table
+  // (fairtide-buildings-and-arc6.js's own REPUTATION_RANKS entries) and
+  // the Civilian Roles' 'specialist' role. 'critChance' was a plausible-
+  // looking name that happened to match nothing, so every tier funded
+  // here was silently inert — displayed as "+1% crit chance," genuinely
+  // did nothing in an actual fight. Fixed to the real key; no other
+  // change needed since this file's own internal accounting
+  // (harbourDefenceTier, the gold cost, the panel) was already correct.
   // ===========================================================================
   const HARBOUR_DEFENCE_TIERS = [
     { tier:1, cost:250, critBonus:0.01, label:"Brada's First Battery", desc:'A modest set of ballistae along the main approach — nothing dramatic, just enough that an approaching ship thinks twice.' },
@@ -517,7 +528,7 @@
   const oldGetReputationBonusForHarbourDefence = window.getReputationBonus;
   window.getReputationBonus = function(statKey){
     const base = (typeof oldGetReputationBonusForHarbourDefence === 'function') ? oldGetReputationBonusForHarbourDefence(statKey) : 0;
-    if (statKey === 'critChance') return base + harbourDefenceCritBonus();
+    if (statKey === 'critBonus') return base + harbourDefenceCritBonus();
     return base;
   };
 
