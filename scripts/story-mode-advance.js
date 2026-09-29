@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V290 · Interlude: In Between';
+window.__CT_BUILD__='V291 · Interlude: In Between (Full 7-Chapter Volume)';
