@@ -412,8 +412,24 @@
     });
     toast('🚶 Sent to the Fountain: ' + eligible.length + ' — back in ' + DISPATCH_DURATION_DAYS + ' days.', 3600);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderArchiveScreen === 'function') renderArchiveScreen();
   }
   window.dispatchToFountain = dispatchToFountain;
+
+  // Looks a dispatched id up by name across both places a character can
+  // live — ALL_PARTY for a fieldable companion, game.fairTideRoster for a
+  // civilian (Jorvin and the rest of Arc V's non-combat roster were never
+  // added to ALL_PARTY at all — see arc5-and-objective-chain.js's own
+  // comment on why). Without this, a civilian's return toast/panel entry
+  // would show their bare id instead of their name.
+  function dispatchableMemberName(id){
+    const partyMember = (typeof ALL_PARTY !== 'undefined') ? ALL_PARTY.find(function(m){ return m.id === id; }) : null;
+    if (partyMember) return partyMember.name;
+    const rosterMember = game.fairTideRoster && game.fairTideRoster[id];
+    if (rosterMember) return rosterMember.name;
+    return id;
+  }
+  window.dispatchableMemberName = dispatchableMemberName;
 
   function checkFountainDispatches(){
     if (!game.fountainDispatch) return;
@@ -426,12 +442,52 @@
         d.complete = true;
         game.rejuvenated[id] = true;
         clearCurableNegativeEffects([id]);
-        const member = ALL_PARTY.find(function(m){ return m.id === id; });
-        toast('✨ ' + (member ? member.name : id) + ' returns from the Fountain, rejuvenated.', 3800);
+        toast('✨ ' + dispatchableMemberName(id) + ' returns from the Fountain, rejuvenated.', 3800);
       }
     });
   }
   window.checkFountainDispatches = checkFountainDispatches;
+
+  // Narrative-flavor panel (San's request): Ate Joy and Caelan are full
+  // combat members, so they go to the Fountain the same way Aisyah/Mez/
+  // Eliz did the first time — field them, clear the raid. This panel is
+  // for everyone who CAN'T do that: Fair Tide's civilian roster (Jorvin,
+  // Jovie, Gino, Wahyu, Dudin, Imah, Nurul, Dre, and any later addition
+  // like a retained rival) never has a fielded-party option at all, so
+  // dispatchToFountain() is their only route to Rejuvenation. Reads
+  // game.fairTideRoster directly rather than a hardcoded name list, so
+  // whoever joins the roster later — through any system, not just Arc V —
+  // shows up here automatically with no further wiring.
+  function renderFountainDispatchPanel(){
+    if (!raidCleared('guardian_trial')) return '';
+    const roster = game.fairTideRoster || {};
+    const ids = Object.keys(roster);
+    let html = '<div class="panel" style="margin-top:10px;"><div class="panel-title">💧 Send to the Fountain</div>'+
+      '<p style="font-size:.82rem;opacity:.8;margin-bottom:10px;">Not everyone who calls Fair Tide home fought the Guardian themselves — but the Fountain still works. Send them, and they come back rejuvenated in '+DISPATCH_DURATION_DAYS+' days.</p>';
+    if (!ids.length) {
+      html += '<p style="font-size:.8rem;opacity:.6;">Nobody at Fair Tide to send yet.</p></div>';
+      return html;
+    }
+    ids.forEach(function(id){
+      const member = roster[id];
+      const rejuvenated = isRejuvenated(id);
+      const dispatch = game.fountainDispatch && game.fountainDispatch[id];
+      const inTransit = !!(dispatch && !dispatch.complete);
+      const daysLeft = inTransit ? Math.max(0, dispatch.durationDays - ((game.day||0) - dispatch.startedDay)) : 0;
+      let status = '';
+      if (rejuvenated) status = '<br><span class="story-chip">✨ Rejuvenated</span>';
+      else if (inTransit) status = '<br><span class="story-chip">🚶 At the Fountain — back in '+daysLeft+' day'+(daysLeft===1?'':'s')+'</span>';
+      html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;">'+
+        '<div style="font-size:1.4rem;">'+(member.icon||'👤')+'</div><div style="flex:1;">'+
+        '<strong>'+esc(member.name)+'</strong> <span style="font-size:.78rem;opacity:.7;">'+esc(member.role||'')+'</span>'+status+
+        '</div>'+
+        (!rejuvenated && !inTransit ? '<button class="btn btn-small" onclick="dispatchToFountain([\''+id+'\'])">💧 Send</button>' : '')+
+        '</div></article>';
+    });
+    html += '</div>';
+    return html;
+  }
+  window.renderFountainDispatchPanel = renderFountainDispatchPanel;
 
   const oldSyncArc1ForFountainDispatch = window.syncArc1StoryQuestProgress;
   window.syncArc1StoryQuestProgress = function(){
@@ -449,6 +505,6 @@
     if (!container) return;
     const existing = document.getElementById('raidModePanelWrap');
     if (existing) existing.remove();
-    container.insertAdjacentHTML('beforeend', '<div id="raidModePanelWrap">'+renderRaidSelectPanel()+'</div>');
+    container.insertAdjacentHTML('beforeend', '<div id="raidModePanelWrap">'+renderRaidSelectPanel()+renderFountainDispatchPanel()+'</div>');
   };
 })();

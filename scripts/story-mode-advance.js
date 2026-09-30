@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V305 · Fix: Raid Victory Screen Was Dead-Ended';
+window.__CT_BUILD__='V306 · Send Civilians to the Fountain';
