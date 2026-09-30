@@ -24,6 +24,13 @@
   // raid with no onComplete marker just gets the generic XP/gold reward
   // split and nothing else, which is exactly what a plain raid should
   // do.
+  //
+  // FUTURE HOOK (San's own note): the Fountain is meant to get a reason to
+  // come back later — a future arc visiting an undead world (maybe tombs)
+  // is expected to inflict something a normal cure can't touch, and the
+  // plan is for the crew to return here for restoration rather than that
+  // becoming its own separate system. See CURABLE_NEGATIVE_EFFECTS below,
+  // where this is expanded on.
   // -------------------------------------------------------------------
 
   // === RAIDS ===
@@ -233,6 +240,14 @@
   // it's checked for someone on that effect's affects list — no separate
   // save-file initializer needed, and nobody not on the list is ever
   // affected at all.
+  //
+  // FUTURE HOOK (San's own note): this is also the intended place to hang
+  // restoration from whatever an undead world (and maybe tombs) inflicts,
+  // once a future arc actually visits one — a curse, a lingering undeath
+  // effect, something a normal cure can't touch. Same shape applies: add
+  // an entry here with its own flag/label/affects list, and the Fountain
+  // clears it exactly like it clears PCOS today. No new plumbing needed
+  // when that arc arrives, just a new array entry.
   const CURABLE_NEGATIVE_EFFECTS = [
     { flag: 'sanPCOS', label: 'PCOS', affects: ['san'] }
   ];
