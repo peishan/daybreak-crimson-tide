@@ -545,7 +545,13 @@
   if (typeof oldClaimFairTideRequestForSpirit === 'function') {
     window.claimFairTideRequest = function(slotId){
       const board = (typeof window.fairTideRequestBoard === 'function') ? window.fairTideRequestBoard() : [];
-      const wasActive = board.some(s => s.slotId === slotId && s.status === 'active');
+      // BUG FIX: same root cause as the Familiar Faces trust fix further
+      // down this file — renderRequestsTab() flips a finished slot from
+      // 'active' to 'ready' on every render, which happens before the
+      // player can ever click Claim, so a status check of 'active' alone
+      // never matched at call time and fairTideRequestsResolvedTotal
+      // never incremented.
+      const wasActive = board.some(s => s.slotId === slotId && (s.status === 'active' || s.status === 'ready'));
       oldClaimFairTideRequestForSpirit(slotId);
       if (wasActive) {
         // slot only disappears from the board on a genuine resolution
@@ -851,7 +857,16 @@
     const slot = board.find(s => s.slotId === slotId);
     const npcName = slot ? slot.npcName : null;
     const requestId = slot ? slot.requestId : null;
-    const wasReady = slot && slot.status === 'active' &&
+    // BUG FIX (San's report — "Familiar Faces" stuck at 0/100 for every
+    // NPC despite requests visibly resolving): this only ever accepted
+    // status 'active', but renderRequestsTab() flips a finished slot to
+    // 'ready' on every render — the ONLY status that shows the Claim
+    // button at all (see that function's own bug-fix note). By the time
+    // a real click could ever reach this code, status was always
+    // 'ready', never 'active', so trust silently never recorded. Now
+    // accepts both, matching claimFairTideRequest's own already-fixed
+    // status check just above in this file.
+    const wasReady = slot && (slot.status === 'active' || slot.status === 'ready') &&
       (typeof slot.startedAt === 'number') && (typeof slot.durationMs === 'number') &&
       (Date.now() - slot.startedAt >= slot.durationMs);
 

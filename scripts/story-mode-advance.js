@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V310 · Arc XXV: A Friend\'s Request';
+window.__CT_BUILD__='V311 · Fix: Familiar Faces Trust Never Recorded';
