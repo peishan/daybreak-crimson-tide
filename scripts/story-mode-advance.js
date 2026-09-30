@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V309 · Arc XXIV: The People Without Names';
+window.__CT_BUILD__='V310 · Arc XXV: A Friend\'s Request';
