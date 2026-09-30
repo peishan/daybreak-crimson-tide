@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V313 · Arc XXVI: The Price of Independence';
+window.__CT_BUILD__='V314 · Arc XXVII: The Nameless';
