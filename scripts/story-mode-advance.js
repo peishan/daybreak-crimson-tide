@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V314 · Arc XXVII: The Nameless';
+window.__CT_BUILD__='V315 · Arc XXVIII: N';
