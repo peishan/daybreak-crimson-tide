@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V304 · Full Raid Ladder: 6 Tiers, Level 300-500';
+window.__CT_BUILD__='V305 · Fix: Raid Victory Screen Was Dead-Ended';
