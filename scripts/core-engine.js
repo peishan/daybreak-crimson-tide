@@ -5787,12 +5787,13 @@ function renderPartyScreen() {
       const isSan = m.id === 'san';
       const requiredIds = (typeof window.getRequiredFieldedIds === 'function') ? window.getRequiredFieldedIds() : [];
       const isRequired = requiredIds.includes(m.id);
+      const isTrainingLocked = (typeof window.isTrainingLocked === 'function') && window.isTrainingLocked(m.id);
       const freeSlotHint = (typeof window.isFreeFieldId === 'function' && window.isFreeFieldId(m.id) && m.id !== 'san')
         ? `<div style="font-size:.72rem;opacity:.7;margin-top:4px;">${m.id === 'soel' ? '🐾 A familiar' : '💞 Bonded to San'} — never counts against the fielding cap.</div>`
         : '';
 
       return `<div class="panel" style="${fielded?'':'opacity:.72;'}">
-        <div class="panel-title">${m.portrait} ${m.name} ${fielded ? '<span style="font-size:.7rem;color:var(--success);">⚔️ Fielded</span>' : '<span style="font-size:.7rem;opacity:.7;">⚓ At Fair Tide</span>'}</div>
+        <div class="panel-title">${m.portrait} ${m.name} ${isTrainingLocked ? '<span style="font-size:.7rem;opacity:.7;">🎓 In Training</span>' : fielded ? '<span style="font-size:.7rem;color:var(--success);">⚔️ Fielded</span>' : '<span style="font-size:.7rem;opacity:.7;">⚓ At Fair Tide</span>'}</div>
         <p style="font-size:0.85rem;opacity:0.8;margin-bottom:10px;">${m.desc}</p>
         <div style="display:flex;gap:15px;margin-bottom:10px;">
         <div style="flex:1;"><div style="font-size:0.8rem;color:var(--sand);">HP</div>
@@ -5807,7 +5808,7 @@ function renderPartyScreen() {
         ${spells.length ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Spells:</strong> ${spells.slice(0, 4).map(s => s.icon + ' ' + s.name).join(', ')}${spells.length > 4 ? '...' : ''}</div>` : ''}
         ${affinity.n ? `<div style="font-size:0.85rem;margin-bottom:8px;color:#e8c96a;"><strong>Affinity:</strong> ${affinity.n}</div>` : ''}
         ${trophy ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Equipped:</strong> ${trophy.icon} ${trophy.name} (${(TRINKET_BONUS[trophy.icon] && TRINKET_BONUS[trophy.icon].label) || ''})</div>` : ''}
-        ${isSan ? '' : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' + freeSlotHint : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${freeSlotHint}`}
+        ${isSan ? '' : isTrainingLocked ? `<div style="font-size:.78rem;opacity:.75;">🎓 ${(typeof window.trainingLockLabel === 'function' ? window.trainingLockLabel(m.id) : 'Not fieldable yet.')}</div>` : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' + freeSlotHint : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${freeSlotHint}`}
         </div>`;
     }).join('') + '</div>';
   container.innerHTML = html;

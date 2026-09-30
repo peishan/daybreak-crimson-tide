@@ -629,8 +629,66 @@
   // Joel joins this list too — San and Joel are the emotional core of the
   // story and (from Arc V on, see getRequiredFieldedIds) can't be fielded
   // without each other anyway, so he shouldn't cost a slot either.
-  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel', 'ate_joy']);
+  //
+  // CORRECTION (San's own clarification): Ate Joy does NOT belong here.
+  // She was added as "free" in an earlier pass on the mistaken assumption
+  // she was core cast like San/Joel/Soel — she isn't. She's a normal
+  // fieldable companion once she's actually available at all (see
+  // TRAINING_LOCKED_IDS just below for why she currently isn't), same as
+  // Ser Aldric/Sister Wren/Brada Shah/Caelan: important, but no different
+  // from any other fieldable companion mechanically.
+  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel']);
   window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
+
+  // -------------------------------------------------------------------
+  // TRAINING LOCK — the mirror image of getRequiredFieldedIds() below:
+  // instead of "must be fielded right now," this is "can't be fielded
+  // yet, period." Ate Joy and Caelan are expecting twins and are
+  // narratively sidelined until that resolves — San's own direction, styled
+  // after Daybreak's disciple training/graduation system (game-121.js):
+  // a visible locked/pending status, then a real, one-time "graduation"
+  // moment that unlocks them for good, rather than a silent flag flip.
+  //
+  // graduateFlag is a future-hook, same pattern as CURABLE_NEGATIVE_EFFECTS'
+  // own undead-world note in raid-mode.js: Arc XXXV doesn't exist yet, but
+  // whenever it's built and its finale sets game.arc35Complete = true
+  // (matching every other arc's own gameNNComplete convention), both
+  // companions unlock automatically with no further wiring needed here.
+  const TRAINING_LOCKED_IDS = {
+    ate_joy: { graduateFlag: 'arc35Complete', label: 'Expecting — not fieldable until after the twins arrive.' },
+    caelan:  { graduateFlag: 'arc35Complete', label: "Standing by for the twins' arrival — not fieldable until after." }
+  };
+
+  window.isTrainingLocked = function(id){
+    const lock = TRAINING_LOCKED_IDS[id];
+    return !!lock && !game[lock.graduateFlag];
+  };
+  window.trainingLockLabel = function(id){
+    const lock = TRAINING_LOCKED_IDS[id];
+    return lock ? lock.label : '';
+  };
+
+  // Fires once per character the moment their graduateFlag actually
+  // becomes true — checked from getFieldedIds() itself (called constantly
+  // throughout the game, so this needs no separate day-tick hook the way
+  // the Fountain's dispatch timer does) rather than the arc file that will
+  // eventually set the flag, so this stays correct however that arc ends
+  // up being structured.
+  function checkTrainingGraduations(){
+    game.trainingGraduated = game.trainingGraduated || {};
+    Object.keys(TRAINING_LOCKED_IDS).forEach(function(id){
+      if (game.trainingGraduated[id]) return;
+      const lock = TRAINING_LOCKED_IDS[id];
+      if (!game[lock.graduateFlag]) return;
+      game.trainingGraduated[id] = true;
+      const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
+      const member = party.find(m => m.id === id);
+      const name = member ? member.name : id;
+      toast('🎓 ' + name + ' is fieldable again — welcome back to the crew.', 4000);
+      logEvent('🎓 ' + name + ' has finished training and rejoined the fieldable crew.', 'gold');
+    });
+  }
+  window.checkTrainingGraduations = checkTrainingGraduations;
 
   // Self-healing rather than hooked into every companion-recruitment call
   // site (there are dozens, across every arc) — auto-fills open slots
@@ -668,6 +726,12 @@
   };
 
   window.getFieldedIds = function(){
+    // Checked here rather than a separate day-tick hook — getFieldedIds()
+    // is called constantly throughout the game (combat, the Party screen,
+    // every screen that shows who's aboard), so this always catches the
+    // exact moment a training-locked companion's graduateFlag flips true.
+    if (typeof window.checkTrainingGraduations === 'function') window.checkTrainingGraduations();
+
     game.fieldedIds = game.fieldedIds || ['san'];
     // BUG FIX: tracks who's ever had a fielding decision made for them —
     // fielded OR explicitly benched — separately from who's currently
@@ -682,9 +746,21 @@
     // Drop anyone no longer actually unlocked (defensive — shouldn't
     // normally happen once someone's joined, but keeps this safe).
     game.fieldedIds = game.fieldedIds.filter(id => unlockedIds.has(id));
+    // Evict anyone currently training-locked, retroactively too — covers
+    // a save from before this lock existed (Ate Joy in particular was
+    // briefly auto-fielded for free under the old FREE_FIELD_IDS mistake;
+    // see the correction note above). Also clears their fieldingDecided
+    // entry while locked, so the moment they graduate they get a fresh
+    // auto-fill decision below instead of staying benched forever just
+    // because "decided" was set back when the lock didn't exist yet.
+    if (typeof window.isTrainingLocked === 'function') {
+      game.fieldedIds = game.fieldedIds.filter(id => !window.isTrainingLocked(id));
+      game.fieldingDecided = game.fieldingDecided.filter(id => !window.isTrainingLocked(id));
+    }
     const cap = window.getShipFieldCap();
     const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
     for (const m of party) {
+      if (typeof window.isTrainingLocked === 'function' && window.isTrainingLocked(m.id)) continue; // not eligible for fielding at all yet
       if (game.fieldingDecided.includes(m.id)) continue; // already decided, fielded or not — leave the player's choice alone
       game.fieldingDecided.push(m.id);
       const nonExemptCount = game.fieldedIds.filter(id => !FREE_FIELD_IDS.has(id)).length;
@@ -731,6 +807,13 @@
     // unchosen" — but only San herself was hard-blocked here, so Soel
     // could actually be benched despite that. Blocking him the same way.
     if (id === 'soel') { toast('Soel chose San. He goes wherever she goes.'); return; }
+    if (typeof window.isTrainingLocked === 'function' && window.isTrainingLocked(id)) {
+      const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
+      const member = party.find(m => m.id === id);
+      const name = member ? member.name : id;
+      toast('🎓 ' + name + ' — ' + window.trainingLockLabel(id));
+      return;
+    }
     const required = window.getRequiredFieldedIds();
     if (required.includes(id) && window.isFielded(id)) {
       const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
