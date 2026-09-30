@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V312 · Clinic Re-Skins to Medical House (Arc XXI Ch.9)';
+window.__CT_BUILD__='V313 · Arc XXVI: The Price of Independence';
