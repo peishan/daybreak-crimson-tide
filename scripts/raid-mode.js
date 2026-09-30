@@ -31,14 +31,11 @@
     {
       id: 'guardian_trial', name: "The Guardian's Trial", icon: '⏳', unlockLevel: 300,
       onComplete: 'fountain',
-      // Chapter-gated, not just level-gated (San's design update): reaching
-      // Level 300 alone shouldn't hand the crew the Fountain — Arc XIX Ch.13
-      // has to reveal the Guardian first, same as every other arc's own
-      // chapter-by-chapter unlock. Level 300 and Ch.13 are independent
-      // requirements; whichever the player hits second is what actually
-      // unlocks this.
-      chapterGate: function(){ return !!(game.comicProgress19 && game.comicProgress19[13]); },
-      lockedHint: "Reach Level 300 and finish Arc XIX's Ch.13 (\"The Guardian's Challenge\") first.",
+      // Solely a gameplay mechanic (San's direction): Level 300 alone
+      // unlocks this, with no story-chapter dependency at all. An earlier
+      // pass briefly chapter-gated this against Arc XIX Ch.13, but no
+      // chapter art for that exists — reverted so the Fountain stays
+      // reachable purely by leveling up, same as every other raid here.
       desc: "An ancient keeper stands between the crew and the Fountain of Youth — not to punish them, but to find out whether they're capable of carrying what it offers.",
       stages: [
         { id: 1, type: 'elite', key: 'guardians_ward', name: "The Guardian's Ward", art: '🌫️',
@@ -58,11 +55,7 @@
   function getRaidById(id){ return RAIDS.find(function(r){ return r.id === id; }); }
   window.getRaidById = getRaidById;
 
-  function isRaidUnlocked(raid){
-    if (level() < raid.unlockLevel) return false;
-    if (typeof raid.chapterGate === 'function' && !raid.chapterGate()) return false;
-    return true;
-  }
+  function isRaidUnlocked(raid){ return level() >= raid.unlockLevel; }
   window.isRaidUnlocked = isRaidUnlocked;
 
   const RAID_STAGE_RECOVERY_PCT = 0.25; // partial, not full — matches Raid Mode's own shape
@@ -186,7 +179,7 @@
         '<span style="font-size:.72rem;opacity:.55;">'+raid.stages.length+' stages · unlocks Level '+raid.unlockLevel+'</span>'+
         '</div></div>'+
         (unlocked ? '<button class="btn btn-small" onclick="enterRaid(\''+raid.id+'\')" style="margin-top:6px;">'+(cleared ? '🔁 Re-enter (Training)' : '⚔️ Enter Raid')+'</button>'
-                   : '<div style="font-size:.72rem;opacity:.55;margin-top:6px;">🔒 '+esc(raid.lockedHint || 'Locked')+'</div>')+
+                   : '<div style="font-size:.72rem;opacity:.55;margin-top:6px;">🔒 Locked</div>')+
         '</article>';
     });
     return html;
