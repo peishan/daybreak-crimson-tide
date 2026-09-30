@@ -104,4 +104,35 @@
     if (!panel) return;
     container.insertAdjacentHTML('beforeend', '<div id="medicalHousePanelWrap">'+panel+'</div>');
   };
+
+  // -------------------------------------------------------------------
+  // CLINIC -> MEDICAL HOUSE re-skin (San's own steer, in response to the
+  // Ch.9 naming question): kept as ONE feature in the player's eyes, not
+  // two separate buildings. The Clinic's existing daily free-rest button
+  // (arc4-fairtide.js/fairtide-buildings-and-arc6.js) and this file's own
+  // tiered HP/MP investment stay mechanically exactly as they were -- a
+  // quick daily action and a permanent equipment investment answer two
+  // genuinely different questions, so neither is touched. This purely
+  // re-skins the Fair Tide hub's Clinic tab (button label + its own
+  // flavor text) once Ch.9 is actually read, so the UI reads as the same
+  // room Ch.9 describes rather than a second, unconnected building.
+  // -------------------------------------------------------------------
+  const oldRenderFairTideHubForClinicRename = window.renderFairTideHub;
+  window.renderFairTideHub = function(){
+    if (oldRenderFairTideHubForClinicRename) oldRenderFairTideHubForClinicRename();
+    if (!medicalHouseUnlocked()) return;
+    const btn = document.getElementById('ft-tab-btn-clinic');
+    if (btn) btn.textContent = '🏥 Medical House';
+    const el = document.getElementById('ft-tab-clinic');
+    if (!el || (game.fairTideActiveTab || 'buildings') !== 'clinic') return;
+    const clinicSeen = !!game.fairTideClinicSeen;
+    const jovieHere = !!(game.fairTideRoster && game.fairTideRoster.jovie);
+    let html = '<div class="panel-title">🏥 The Medical House</div><article class="quest-item">';
+    html += clinicSeen
+      ? '<div style="font-size:.85rem;opacity:.85;">Senedra runs the Medical House now, even if she still can\'t say why she knows how.</div>'
+      : '<div style="font-size:.85rem;opacity:.9;">Senedra wanders in to look the place over — and stops dead in the doorway. Her hands are already moving before she\'s decided to move them, checking supplies, straightening equipment like she\'s done it a thousand times. She doesn\'t remember being a paramedic. Her hands clearly do.</div>';
+    if (jovieHere) html += '<div style="font-size:.85rem;opacity:.85;margin-top:6px;">Jovie runs the Medical House day to day now, her own medical box open on the counter beside Senedra\'s.</div>';
+    html += '<div style="margin-top:8px;"><button class="btn btn-small btn-success" onclick="window.__ctOpenFairTideClinic()">Rest &amp; Recover</button></div></article>';
+    el.innerHTML = html;
+  };
 })();

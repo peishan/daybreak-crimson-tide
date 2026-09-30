@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V311 · Fix: Familiar Faces Trust Never Recorded';
+window.__CT_BUILD__='V312 · Clinic Re-Skins to Medical House (Arc XXI Ch.9)';
