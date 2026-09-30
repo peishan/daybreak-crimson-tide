@@ -4374,6 +4374,31 @@ function exitClanSettlementBattleToDestination() {
   goScreen('clansettlement');
   if (typeof renderClanSettlementScreen === 'function') renderClanSettlementScreen();
 }
+// BUG FIX (San's report — "nothing happens after I click continue" on the
+// Fountain of Youth's post-raid story modal): enemy.kind === 'raid' had no
+// branch of its own here at all, unlike every other special combat kind —
+// it fell to the generic default below, which builds a "Challenge Again"
+// button via startHarborFight(enemy.key, enemy.kind). Raid-stage enemies
+// (built in raid-mode.js's startRaidStage from a bare {name,art,hp,dmg,
+// xp,gold,desc} object) never carry a .key property at all — stage.key is
+// only ever passed to startCombat's own config, never copied onto the
+// enemy — so that button silently called startHarborFight('undefined',
+// 'raid'), which can't find any such enemy and does nothing. Combined
+// with "Return to Port" being the wrong destination for something entered
+// from the Archive (not a port), the whole post-battle screen looked and
+// behaved like nothing worked. This mirrors every other destination's own
+// exit function exactly.
+function exitRaidBattleToArchive() {
+  try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch(e) {}
+  try { if (typeof endCombat === 'function') endCombat(); } catch(e) {}
+  if (game.uncharted && game.uncharted.active) { game.uncharted.active = false; }
+  if (game.expedition && game.expedition.active) { game.expedition.active = false; }
+  game.inCombat = false;
+  game.pendingPostBattle = null;
+  hidePostBattleAction();
+  goScreen('archive');
+  if (typeof renderArchiveScreen === 'function') renderArchiveScreen();
+}
 
 // Always-visible "← Leave" control in the combat header — a persistent
 // escape hatch, separate from the dynamically-rendered combatActions
@@ -5294,6 +5319,17 @@ function handleVictory() {
   } else if (enemy.kind === 'piratecove_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'piratecove\')">🏴‍☠️ Continue to the Cove</button>';
+  } else if (enemy.kind === 'raid') {
+    // See exitRaidBattleToArchive()'s own comment for why this branch
+    // exists at all — the generic default below built a broken "Challenge
+    // Again" button for raid stages (enemy.key is always undefined here)
+    // and framed the exit as "Return to Port," which isn't where a raid
+    // was entered from. Covers every stage, not just the final one — mid-
+    // raid stages 1/2 auto-continue into the next fight ~600ms later
+    // (raid-mode.js's own handleVictory wrap), so this only actually
+    // stays on-screen long enough to matter after a raid's last stage.
+    postBattleMessage = 'Victory! Battle complete.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitRaidBattleToArchive()">📜 Return to the Archive</button>';
   } else {
     postBattleMessage = 'Victory! Battle complete.';
     // "Challenge Again" (San's request): scoped strictly to this default
