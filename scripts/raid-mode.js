@@ -9,13 +9,24 @@
   // first-clear-vs-reduced-repeat rewards, exactly matching that
   // template's own shape.
   //
-  // RAIDS below is a real, multi-entry array now (not hardcoded to one
-  // gauntlet) — the Guardian's Trial is currently the only entry, since
-  // it's the only raid-shaped content that exists in this game yet, but
-  // adding a second raid later is just adding a second array entry; the
-  // execution functions (enterRaid/startRaidStage/handleRaidVictory
-  // hook/completeRaid) are fully generic and read whichever raid was
-  // entered.
+  // RAIDS below is a real, multi-entry array — six tiers now, the full
+  // ladder San asked to have built out, each unlocking at a higher level
+  // than the last and drawing its theme from a thread the story's already
+  // pulled on (the endless captain pool, the Archive, the five harbours
+  // Arc XVI built trust with, the inter-world crossings) rather than
+  // anything invented from nothing. Adding a seventh tier later is just
+  // adding a seventh array entry; the execution functions (enterRaid/
+  // startRaidStage/handleRaidVictory hook/completeRaid) are fully generic
+  // and read whichever raid was entered — none of them needed to change
+  // to support this.
+  //
+  // Level curve: every current story arc gates at or below 345 (Arc
+  // XXIII, the highest), so unlockLevel 300-500 here is genuine post-game
+  // content, same relationship Daybreak's own raid ladder (game-121.js)
+  // has to its own story gates. Only guardian_trial carries an
+  // onComplete marker — the other five are plain raids, first-clear
+  // XP/gold reward with no special completion effect, exactly what a
+  // raid with no onComplete should do.
   //
   // The Fountain's own effects (Rejuvenation, permanent stat bonus,
   // negative-effect restoration, dispatch squads) stay specific to that
@@ -54,6 +65,81 @@
         { id: 3, type: 'boss', key: 'the_guardian', name: 'The Guardian', art: '⏳',
           hp: 3400, dmg: 46, xp: 2200, gold: 1300,
           desc: "It doesn't ask if you deserve this. It asks if you're capable of carrying it — and those have never been the same question." }
+      ]
+    },
+    {
+      id: 'captains_unending', name: "The Captains Who Don't Stop Coming", icon: '🏴‍☠️', unlockLevel: 340,
+      desc: "The fixed names ran out a long time ago. Whatever's left isn't organized, exactly — but it keeps finding replacements, and it hasn't run out yet.",
+      stages: [
+        { id: 1, type: 'elite', key: 'unclaimed_flotilla', name: 'An Unclaimed Flotilla', art: '🚩',
+          hp: 2200, dmg: 34, xp: 1300, gold: 700,
+          desc: "No captain's flag flies over this one — just whoever grabbed the wheel when the last one didn't come back." },
+        { id: 2, type: 'elite', key: 'the_replacement_captains', name: 'The Replacement Captains', art: '🗡️',
+          hp: 2900, dmg: 40, xp: 1700, gold: 950,
+          desc: "Three of them, none of them named on any list Aisyah's ever kept. That's rather the point." },
+        { id: 3, type: 'boss', key: 'whatever_holds_the_line', name: 'Whatever Holds the Line', art: '🗺️',
+          hp: 4800, dmg: 52, xp: 3000, gold: 1700,
+          desc: "Not a captain. Just the thing that keeps the endless pool endless — recruiting, replacing, never once running out of names to put behind a wheel." }
+      ]
+    },
+    {
+      id: 'archive_depths', name: 'What the Archive Kept Back', icon: '📜', unlockLevel: 380,
+      desc: "Every record the Archive ever surfaced came from somewhere. Somewhere further down, apparently, is still full.",
+      stages: [
+        { id: 1, type: 'elite', key: 'unfiled_record', name: 'An Unfiled Record', art: '📖',
+          hp: 3400, dmg: 48, xp: 2400, gold: 1400,
+          desc: 'Something that was never catalogued, reacting badly to finally being read.' },
+        { id: 2, type: 'elite', key: 'the_uncrossreferenced', name: 'The Uncross-Referenced', art: '🕸️',
+          hp: 4300, dmg: 55, xp: 3000, gold: 1750,
+          desc: "Erynn's own words, thrown back at the crew: \"It's not on any map we have.\" Neither is this." },
+        { id: 3, type: 'boss', key: 'the_first_archivist', name: 'The First Archivist', art: '🏛️',
+          hp: 7000, dmg: 70, xp: 5200, gold: 3000,
+          desc: "Older than Varel Farseer's own name. It didn't build the Archive to be found. It built it to be kept." }
+      ]
+    },
+    {
+      id: 'five_harbours_reckoning', name: 'The Five Harbours, Together', icon: '🌍', unlockLevel: 420,
+      desc: "Forest Coast, Dragon Coast, Mountain Port, Crystal Coast, Old Harbour — five worlds the crew earned trust in, one honest relationship at a time. This is what happens when all five call in the same favor at once.",
+      stages: [
+        { id: 1, type: 'elite', key: 'the_five_wardens', name: 'The Five Wardens', art: '🐉',
+          hp: 5200, dmg: 62, xp: 4200, gold: 2400,
+          desc: "Not enemies. Not quite allies either — five different kinds of \"we still have to be sure.\"" },
+        { id: 2, type: 'elite', key: 'what_the_harbours_protect', name: 'What the Harbours Protect', art: '💎',
+          hp: 6300, dmg: 68, xp: 5000, gold: 2900,
+          desc: 'The actual reason each of these places is guarded at all, finally standing where the crew can see it.' },
+        { id: 3, type: 'boss', key: 'the_old_moon_beasts_kin', name: "The Old Moon Beast's Kin", art: '🌕',
+          hp: 9500, dmg: 85, xp: 7800, gold: 4500,
+          desc: 'Not the one the crew already met and left in peace. An older relative, from before any of the five harbours had a name.' }
+      ]
+    },
+    {
+      id: 'beyond_every_door', name: 'Beyond Every Door', icon: '🌌', unlockLevel: 460,
+      desc: "Every inter-world crossing so far led somewhere the crew could eventually make sense of. This one doesn't resolve that easily.",
+      stages: [
+        { id: 1, type: 'elite', key: 'something_that_moved_wrong_again', name: 'Something That Moved Wrong, Again', art: '👁️',
+          hp: 7200, dmg: 95, xp: 6600, gold: 3800,
+          desc: "Erynn's read on it: the same kind of wrong as the first thing the crew ever met past the Horizon Engine's door. Just more of it, this time." },
+        { id: 2, type: 'elite', key: 'a_door_with_no_other_side', name: 'A Door With No Other Side', art: '🚪',
+          hp: 8600, dmg: 105, xp: 7900, gold: 4500,
+          desc: 'It opens. Nothing closes behind it. Renn stops trying to explain why.' },
+        { id: 3, type: 'boss', key: 'the_space_between_worlds', name: 'The Space Between Worlds', art: '🌌',
+          hp: 12500, dmg: 130, xp: 11500, gold: 6600,
+          desc: "Not a place. Not exactly a creature either. Whatever it actually is, it noticed the crew long before the crew noticed it." }
+      ]
+    },
+    {
+      id: 'where_every_tide_meets', name: 'Where Every Tide Meets', icon: '🌐', unlockLevel: 500,
+      desc: "Beyond the Horizon, the Archive, the five harbours, the endless pool of captains, the Fountain itself — every thread the crew has ever pulled, converging at once. Nobody built this on purpose. It's just what's left once you've pulled on enough of them.",
+      stages: [
+        { id: 1, type: 'elite', key: 'everything_the_crew_has_faced', name: 'Everything the Crew Has Faced', art: '⚔️',
+          hp: 14000, dmg: 150, xp: 14000, gold: 8000,
+          desc: 'Not new. Old shapes, familiar dangers, arriving together instead of one at a time.' },
+        { id: 2, type: 'elite', key: 'everything_still_arriving', name: 'Everything Still Arriving', art: '🌊',
+          hp: 16500, dmg: 165, xp: 16500, gold: 9500,
+          desc: "What comes after the familiar shapes run out and the unfamiliar ones don't stop." },
+        { id: 3, type: 'boss', key: 'where_every_tide_meets_boss', name: 'Where Every Tide Meets', art: '🌐',
+          hp: 24000, dmg: 210, xp: 24000, gold: 14000,
+          desc: "San doesn't get a clean answer for what this actually is. Just proof that the crew can still stand in front of it." }
       ]
     }
   ];
