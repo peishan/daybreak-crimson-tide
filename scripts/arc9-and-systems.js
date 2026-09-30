@@ -643,49 +643,69 @@
   // -------------------------------------------------------------------
   // TRAINING LOCK — the mirror image of getRequiredFieldedIds() below:
   // instead of "must be fielded right now," this is "can't be fielded
-  // yet, period." Ate Joy and Caelan are expecting twins and are
-  // narratively sidelined until that resolves — San's own direction, styled
-  // after Daybreak's disciple training/graduation system (game-121.js):
-  // a visible locked/pending status, then a real, one-time "graduation"
-  // moment that unlocks them for good, rather than a silent flag flip.
+  // right now, period." Ate Joy and Caelan will be narratively sidelined
+  // once the pregnancy actually starts, until the twins arrive — San's
+  // own direction, styled after Daybreak's disciple training/graduation
+  // system (game-121.js): a visible locked/pending status, then a real,
+  // one-time "graduation" moment that unlocks them for good, rather than
+  // a silent flag flip.
   //
-  // graduateFlag is a future-hook, same pattern as CURABLE_NEGATIVE_EFFECTS'
-  // own undead-world note in raid-mode.js: Arc XXXV doesn't exist yet, but
-  // whenever it's built and its finale sets game.arc35Complete = true
-  // (matching every other arc's own gameNNComplete convention), both
-  // companions unlock automatically with no further wiring needed here.
+  // CLARIFIED (San): both have their own ordinary recruitment chapter —
+  // "once met, they can join right away," same as any other companion —
+  // and the lock only actually applies once the pregnancy itself begins,
+  // not from the moment they're recruited. So this is a two-flag gate,
+  // not one: startFlag turns the lock ON (before it's set, they're just
+  // a normal fieldable companion, full stop), graduateFlag turns it back
+  // OFF. Any chapter that narratively shows them "staying at Fair Tide"
+  // before startFlag is set is just a scene, not a mechanical restriction.
+  //
+  // Both flags are future-hooks, same pattern as CURABLE_NEGATIVE_EFFECTS'
+  // own undead-world note in raid-mode.js: neither the pregnancy-announcement
+  // chapter nor Arc XXXV exist yet, but whenever they're built and set
+  // game.joyCaelanExpecting / game.arc35Complete = true respectively
+  // (the latter matching every other arc's own gameNNComplete convention),
+  // the lock engages and later lifts automatically — no further wiring
+  // needed here either time.
   const TRAINING_LOCKED_IDS = {
-    ate_joy: { graduateFlag: 'arc35Complete', label: 'Expecting — not fieldable until after the twins arrive.' },
-    caelan:  { graduateFlag: 'arc35Complete', label: "Standing by for the twins' arrival — not fieldable until after." }
+    ate_joy: { startFlag: 'joyCaelanExpecting', graduateFlag: 'arc35Complete', label: 'Expecting — not fieldable until after the twins arrive.' },
+    caelan:  { startFlag: 'joyCaelanExpecting', graduateFlag: 'arc35Complete', label: "Standing by for the twins' arrival — not fieldable until after." }
   };
 
   window.isTrainingLocked = function(id){
     const lock = TRAINING_LOCKED_IDS[id];
-    return !!lock && !game[lock.graduateFlag];
+    if (!lock) return false;
+    if (lock.startFlag && !game[lock.startFlag]) return false; // pregnancy hasn't started yet -- ordinary fieldable companion
+    return !game[lock.graduateFlag];
   };
   window.trainingLockLabel = function(id){
     const lock = TRAINING_LOCKED_IDS[id];
     return lock ? lock.label : '';
   };
 
-  // Fires once per character the moment their graduateFlag actually
-  // becomes true — checked from getFieldedIds() itself (called constantly
-  // throughout the game, so this needs no separate day-tick hook the way
-  // the Fountain's dispatch timer does) rather than the arc file that will
-  // eventually set the flag, so this stays correct however that arc ends
-  // up being structured.
+  // Fires once per character the moment they actually enter training
+  // (startFlag flips true) and once more the moment they graduate
+  // (graduateFlag flips true) — both checked from getFieldedIds() itself
+  // (called constantly throughout the game, so this needs no separate
+  // day-tick hook) rather than whichever arc file eventually sets either
+  // flag, so this stays correct however those arcs end up being structured.
   function checkTrainingGraduations(){
+    game.trainingStarted = game.trainingStarted || {};
     game.trainingGraduated = game.trainingGraduated || {};
     Object.keys(TRAINING_LOCKED_IDS).forEach(function(id){
-      if (game.trainingGraduated[id]) return;
       const lock = TRAINING_LOCKED_IDS[id];
-      if (!game[lock.graduateFlag]) return;
-      game.trainingGraduated[id] = true;
       const party = (typeof getActiveParty === 'function' ? getActiveParty() : []);
       const member = party.find(m => m.id === id);
       const name = member ? member.name : id;
-      toast('🎓 ' + name + ' is fieldable again — welcome back to the crew.', 4000);
-      logEvent('🎓 ' + name + ' has finished training and rejoined the fieldable crew.', 'gold');
+      if (lock.startFlag && game[lock.startFlag] && !game.trainingStarted[id]) {
+        game.trainingStarted[id] = true;
+        toast('🎓 ' + name + ' steps back from fieldwork for now — ' + lock.label, 4200);
+        logEvent('🎓 ' + name + ' begins training (unfieldable): ' + lock.label, 'gold');
+      }
+      if (!game.trainingGraduated[id] && game[lock.graduateFlag]) {
+        game.trainingGraduated[id] = true;
+        toast('🎓 ' + name + ' is fieldable again — welcome back to the crew.', 4000);
+        logEvent('🎓 ' + name + ' has finished training and rejoined the fieldable crew.', 'gold');
+      }
     });
   }
   window.checkTrainingGraduations = checkTrainingGraduations;
