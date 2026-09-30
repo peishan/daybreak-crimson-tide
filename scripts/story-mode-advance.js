@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V306 · Send Civilians to the Fountain';
+window.__CT_BUILD__='V307 · Joy & Caelan: Training-Locked Until Arc XXXV';
