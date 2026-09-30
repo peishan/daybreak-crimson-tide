@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V320 · Arc XXXIII: The Family We Become';
+window.__CT_BUILD__='V321 · Arc XXXIV: Two Hearts';
