@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V318 · Arc XXXI: What We Protect';
+window.__CT_BUILD__='V319 · Arc XXXII: The Long Tide';
