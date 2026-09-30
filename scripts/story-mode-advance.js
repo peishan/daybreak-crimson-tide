@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V319 · Arc XXXII: The Long Tide';
+window.__CT_BUILD__='V320 · Arc XXXIII: The Family We Become';
