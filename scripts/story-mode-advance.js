@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V315 · Arc XXVIII: N';
+window.__CT_BUILD__='V316 · Arc XXIX: The Spy';
