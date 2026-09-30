@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V302 · Guardian\'s Trial: Level-Only, No Chapter Gate';
+window.__CT_BUILD__='V303 · Fountain: Future Hook Noted for Undead Worlds';
