@@ -376,7 +376,19 @@
     {name:'Legendary',  repReq:200, goldBonus:0.05, xpBonus:0.05, critBonus:0.03, desc:'Another +5% gold, +5% XP, and +3% crit chance.'},
     {name:'Storied',    repReq:350, goldBonus:0.05, xpBonus:0.05, desc:'Another +5% gold and +5% XP.'},
     {name:'A Name Every Port Knows', repReq:550, goldBonus:0.05, critBonus:0.05, desc:'Another +5% gold and +5% crit chance.'},
-    {name:'The Captain of Fair Tide', repReq:800, goldBonus:0.07, xpBonus:0.07, critBonus:0.05, desc:"Another +7% gold, +7% XP, and +5% crit chance — Fair Tide knows your name for it."}
+    {name:'The Captain of Fair Tide', repReq:800, goldBonus:0.07, xpBonus:0.07, critBonus:0.05, desc:"Another +7% gold, +7% XP, and +5% crit chance — Fair Tide knows your name for it."},
+    // Ranks below added once handleVictory's own flat +5 reputation per
+    // combat victory (core-engine.js) made 800 a ceiling reached well
+    // before the story's own later arcs — a full playthrough racks up
+    // reputation far past what the original 7 ranks (designed around
+    // Arc VI) ever anticipated. Thresholds and bonus increments keep the
+    // same shape and rough scale as the existing ladder, just extended
+    // further out, rather than a new mechanic.
+    {name:'Known Beyond the Tide', repReq:1200, goldBonus:0.03, desc:'Another +3% gold from every victory.'},
+    {name:'A Name Across Worlds', repReq:1800, xpBonus:0.03, desc:'Another +3% XP from every victory — word travels between worlds now too.'},
+    {name:'The Compass Points Here', repReq:2500, goldBonus:0.03, critBonus:0.02, desc:'Another +3% gold and +2% crit chance.'},
+    {name:'Legend of the Horizon', repReq:3500, xpBonus:0.03, critBonus:0.02, desc:'Another +3% XP and +2% crit chance.'},
+    {name:'The Tide Remembers Her Name', repReq:5000, goldBonus:0.05, xpBonus:0.05, critBonus:0.03, desc:'Another +5% gold, +5% XP, and +3% crit chance — this far out, every port already knows exactly who she is.'}
   ];
   window.REPUTATION_RANKS = REPUTATION_RANKS;
 

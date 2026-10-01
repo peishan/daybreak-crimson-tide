@@ -25,11 +25,20 @@
   // ENEMIES'] would silently be undefined even though the bare name
   // HARBOR_ENEMIES works fine. Referencing the pools directly here
   // (not through a string-keyed window[] lookup) avoids that trap.
+  // EXPEDITION_ENEMIES (arc9-and-systems.js, the Horizon Expedition side
+  // mode) is declared inside that file's own IIFE, unlike HARBOR_ENEMIES
+  // etc. above -- it never leaks as a bare global, only window.
+  // EXPEDITION_ENEMIES is ever actually exposed, so it's referenced that
+  // way here rather than bare. It also absorbs WYVERN_ENEMIES
+  // (arc10-12.js) at runtime once dragon blood is discovered (synced in
+  // on every renderFairTideHub call, per that file's own comment), so
+  // one category covers both pools without needing a second one.
   const BESTIARY_CATEGORIES = [
     { key: 'harbor', label: 'Harbor Creatures', icon: '🏘️', pool: HARBOR_ENEMIES },
     { key: 'sea',    label: 'Sea Monsters',     icon: '🌊', pool: SEA_ENEMIES },
     { key: 'guardian', label: 'Guardians',      icon: '👑', pool: GUARDIANS },
-    { key: 'memory', label: 'Memory Fragments', icon: '🕯️', pool: MEMORY_FRAGMENTS }
+    { key: 'memory', label: 'Memory Fragments', icon: '🕯️', pool: MEMORY_FRAGMENTS },
+    { key: 'expedition', label: 'Horizon Expedition', icon: '🌌', pool: (window.EXPEDITION_ENEMIES || {}) }
   ];
 
   function bestiaryState(){
@@ -72,7 +81,10 @@
             '<div style="font-size:1.6rem;">'+(entry.icon||entry.art)+'</div><div style="flex:1;">'+
             '<strong>'+esc(entry.name)+'</strong><br>'+
             '<span style="font-size:.78rem;opacity:.75;">'+esc(entry.desc)+'</span><br>'+
-            '<span style="font-size:.78rem;">'+entry.hp+' HP · '+entry.dmg+' DMG · '+entry.xp+' XP · '+entry.gold+'g</span>'+
+            '<span style="font-size:.78rem;">'+entry.hp+' HP · '+entry.dmg+' DMG · '+entry.xp+' XP'+
+              (entry.gold !== undefined ? ' · '+entry.gold+'g' : '')+
+              (entry.knowledge !== undefined ? ' · '+entry.knowledge+' Knowledge' : '')+
+              (entry.residue !== undefined ? ' · '+entry.residue+' Residue' : '')+'</span>'+
             '</div></div></article>';
         } else {
           html += '<article class="quest-item" style="opacity:.5;"><div style="display:flex;gap:10px;align-items:center;">'+

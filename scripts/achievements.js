@@ -186,7 +186,37 @@
     {id:'arc22_complete', name:'The Child of Fair Tide', icon:'👶', desc:'Something new is growing.',
       check: function(){ return !!game.arc22Complete; }},
     {id:'arc23_complete', name:'The Wider Tide', icon:'🌐', desc:"A home becomes important when people beyond its walls begin to depend on it.",
-      check: function(){ return !!game.arc23Complete; }}
+      check: function(){ return !!game.arc23Complete; }},
+
+    // --- Arc completions, XXIV through XXXVII ---
+    {id:'arc24_complete', name:'The People Without Names', icon:'🎭', desc:'A network wider than Fair Tide ever assumed — and San is just "CAPTAIN" to the hands shaping it from a distance.',
+      check: function(){ return !!game.arc24Complete; }},
+    {id:'arc25_complete', name:"A Friend's Request", icon:'🤝', desc:'Caelan and Joy, a little more willing now to ask each other — and their friends — for help.',
+      check: function(){ return !!game.arc25Complete; }},
+    {id:'arc26_complete', name:'The Price of Independence', icon:'⚖️', desc:'Nobody really won. Fair Tide is still standing, and it belongs to no one else.',
+      check: function(){ return !!game.arc26Complete; }},
+    {id:'arc27_complete', name:'The Nameless', icon:'🌑', desc:'Not quite friends. Not yet enemies. The classification was never meant to be reassuring.',
+      check: function(){ return !!game.arc27Complete; }},
+    {id:'arc28_complete', name:'N', icon:'🔁', desc:'Nobody recognizes the pattern yet. Someone already laid it.',
+      check: function(){ return !!game.arc28Complete; }},
+    {id:'arc29_complete', name:'The Spy', icon:'🕵️', desc:'"Trust him?" "No." "Her?" "...Not yet."',
+      check: function(){ return !!game.arc29Complete; }},
+    {id:'arc30_complete', name:'The Betrayal', icon:'🌑', desc:"No trial, no confirmation, no closure. N's story ends. Fair Tide's doesn't.",
+      check: function(){ return !!game.arc30Complete; }},
+    {id:'arc31_complete', name:'What We Protect', icon:'🏡', desc:'Fair Tide is safe not because nothing can hurt it, but because its people protect each other when something does.',
+      check: function(){ return !!game.arc31Complete; }},
+    {id:'arc32_complete', name:'The Long Tide', icon:'🌊', desc:'"Feels like we\'re waiting." "We\'re living."',
+      check: function(){ return !!game.arc32Complete; }},
+    {id:'arc33_complete', name:'The Family We Become', icon:'👪', desc:"Blood, partnership, and the people life kept placing beside one another. The twins aren't here yet. Their family already is.",
+      check: function(){ return !!game.arc33Complete; }},
+    {id:'arc34_complete', name:'Two Hearts', icon:'💞', desc:"Two children, two distinct signatures, and absolutely no idea when they're coming. Already part of the family.",
+      check: function(){ return !!game.arc34Complete; }},
+    {id:'arc35_complete', name:'The Children of Fair Tide', icon:'🐾', desc:'"You really knew first." Soel purrs. Vaeren and Joelle are home.',
+      check: function(){ return !!game.arc35Complete; }},
+    {id:'arc36_complete', name:'Growing Tides', icon:'🌱', desc:'Not through war, not through politics. Two children are simply growing, and the community grows with them.',
+      check: function(){ return !!game.arc36Complete; }},
+    {id:'arc37_complete', name:'Children of Two Worlds', icon:'🌌', desc:'"Not today." The door stays closed. For now.',
+      check: function(){ return !!game.arc37Complete; }}
   ];
   window.ACHIEVEMENTS = ACHIEVEMENTS;
 
