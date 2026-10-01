@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V339 · Achievements Expansion';
+window.__CT_BUILD__='V340 · Arc I Story Mode Complete';
