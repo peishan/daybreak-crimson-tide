@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V332 · Arc XXXVII: Children of Two Worlds';
+window.__CT_BUILD__='V333 · Fair Tide Food Culture';
