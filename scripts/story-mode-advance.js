@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V326 · Festival Drops';
+window.__CT_BUILD__='V327 · Character Birthdays';
