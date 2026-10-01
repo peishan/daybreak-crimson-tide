@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V330 · Port Visitors';
+window.__CT_BUILD__='V331 · Settlement Memories & Chronicle';
