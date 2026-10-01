@@ -2943,10 +2943,21 @@ function renderComicArchive(){
     ).join('');
   }
 
-  let html = (typeof renderComicArchiveBookmarks === 'function') ? renderComicArchiveBookmarks() : '';
-  if (arc1Read.length) {
-    html += '<section id="comicArchive-comicProgress"><div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section(arc1Read) + '</section>';
-  }
+  // Every piece below is wrapped on its own -- a single bad chapter/arc
+  // (or a helper that hasn't loaded yet) used to throw before el.innerHTML
+  // was ever assigned, leaving this whole screen blank instead of just
+  // missing the one broken section. Each try/catch keeps the rest of the
+  // archive intact and logs the real cause instead of hiding it.
+  let html = '';
+  try {
+    html += (typeof renderComicArchiveBookmarks === 'function') ? renderComicArchiveBookmarks() : '';
+  } catch (e) { console.error('[renderComicArchive] bookmarks failed:', e); }
+
+  try {
+    if (arc1Read.length) {
+      html += '<section id="comicArchive-comicProgress"><div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section(arc1Read) + '</section>';
+    }
+  } catch (e) { console.error('[renderComicArchive] Arc I failed:', e); }
 
   // Arcs II, VI, X-XII have their own small chapter sets with no dedicated
   // append-block elsewhere (Arc III, IV, V, VII, VIII, IX append their own
@@ -2958,15 +2969,20 @@ function renderComicArchive(){
   // through renderGenericComicArchives(), text-first.
   const ARC_NUMERALS = {2:'II',6:'VI',10:'X',11:'XI',12:'XII'};
   [2,6,10,11,12].forEach(function(n){
-    const chapters = window['ARC'+n+'_CHAPTERS'];
-    if (!chapters) return;
-    const progress = game['comicProgress'+n] || {};
-    const read = chapters.filter(ch => !!progress[ch.id] && ch.image).map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
-    if (!read.length) return;
-    html += '<section id="comicArchive-comicProgress'+n+'"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc '+ARC_NUMERALS[n]+'</div>' + section(read) + '</section>';
+    try {
+      const chapters = window['ARC'+n+'_CHAPTERS'];
+      if (!Array.isArray(chapters) || !chapters.length) return;
+      const progress = game['comicProgress'+n] || {};
+      const read = chapters.filter(ch => !!progress[ch.id] && ch.image).map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
+      if (!read.length) return;
+      html += '<section id="comicArchive-comicProgress'+n+'"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc '+ARC_NUMERALS[n]+'</div>' + section(read) + '</section>';
+    } catch (e) { console.error('[renderComicArchive] Arc '+ARC_NUMERALS[n]+' failed:', e); }
   });
 
-  html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
+  try {
+    html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
+  } catch (e) { console.error('[renderComicArchive] generic arcs failed:', e); }
+
   el.innerHTML = html;
 }
 
@@ -3446,17 +3462,19 @@ window.GENERIC_COMIC_ARCHIVE_ARCS = GENERIC_COMIC_ARCHIVE_ARCS;
 function renderGenericComicArchives(){
   let html = '';
   GENERIC_COMIC_ARCHIVE_ARCS.forEach(function(def){
-    const chapters = window[def.chaptersVar];
-    if (!Array.isArray(chapters) || !chapters.length) return; // that arc's own file hasn't loaded this chapter data (shouldn't happen in practice, but never throw over it)
-    const completed = game[def.progressVar] || {};
-    const readChapters = chapters.filter(function(ch){ return !!completed[ch.id]; });
-    if (!readChapters.length) return; // nothing read yet in this arc -- no entry at all, same restraint as every other discovery-gated list in this codebase
-    html += '<section class="story-act" id="comicArchive-'+def.progressVar+'"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
-      readChapters.map(function(ch){
-        return '<article class="arc1-comic-card complete"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div></div><div class="arc1-comic-status">✓ READ</div></div>'+
-          '<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">📖 Read Again</button></div></article>';
-      }).join('') +
-      '</div></section>';
+    try {
+      const chapters = window[def.chaptersVar];
+      if (!Array.isArray(chapters) || !chapters.length) return; // that arc's own file hasn't loaded this chapter data (shouldn't happen in practice, but never throw over it)
+      const completed = game[def.progressVar] || {};
+      const readChapters = chapters.filter(function(ch){ return !!completed[ch.id]; });
+      if (!readChapters.length) return; // nothing read yet in this arc -- no entry at all, same restraint as every other discovery-gated list in this codebase
+      html += '<section class="story-act" id="comicArchive-'+def.progressVar+'"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
+        readChapters.map(function(ch){
+          return '<article class="arc1-comic-card complete"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div></div><div class="arc1-comic-status">✓ READ</div></div>'+
+            '<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">📖 Read Again</button></div></article>';
+        }).join('') +
+        '</div></section>';
+    } catch (e) { console.error('[renderGenericComicArchives] '+def.label+' failed:', e); }
   });
   return html;
 }
@@ -3476,25 +3494,31 @@ function renderComicArchiveBookmarks(){
   }
   const earlyArcNumerals = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII'};
   Object.keys(earlyArcNumerals).forEach(function(key){
-    const n = Number(key);
-    const chapters = window['ARC'+n+'_CHAPTERS'];
-    if (!Array.isArray(chapters) || !chapters.length) return;
-    const completed = game['comicProgress'+n] || {};
-    if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
-    chips.push({ id: 'comicArchive-comicProgress'+n, label: 'Arc '+earlyArcNumerals[n] });
+    try {
+      const n = Number(key);
+      const chapters = window['ARC'+n+'_CHAPTERS'];
+      if (!Array.isArray(chapters) || !chapters.length) return;
+      const completed = game['comicProgress'+n] || {};
+      if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
+      chips.push({ id: 'comicArchive-comicProgress'+n, label: 'Arc '+earlyArcNumerals[n] });
+    } catch (e) { console.error('[renderComicArchiveBookmarks] Arc '+earlyArcNumerals[key]+' failed:', e); }
   });
-  if (typeof MEMORY_ARCHIVE_CHAPTERS !== 'undefined' && Array.isArray(MEMORY_ARCHIVE_CHAPTERS) && MEMORY_ARCHIVE_CHAPTERS.length) {
-    const completedMA = game.comicProgressMemoryArchive || {};
-    if (MEMORY_ARCHIVE_CHAPTERS.some(function(ch){ return !!completedMA[ch.id]; })) {
-      chips.push({ id: 'comicArchive-memoryArchive', label: 'Memory Archive' });
+  try {
+    if (typeof MEMORY_ARCHIVE_CHAPTERS !== 'undefined' && Array.isArray(MEMORY_ARCHIVE_CHAPTERS) && MEMORY_ARCHIVE_CHAPTERS.length) {
+      const completedMA = game.comicProgressMemoryArchive || {};
+      if (MEMORY_ARCHIVE_CHAPTERS.some(function(ch){ return !!completedMA[ch.id]; })) {
+        chips.push({ id: 'comicArchive-memoryArchive', label: 'Memory Archive' });
+      }
     }
-  }
+  } catch (e) { console.error('[renderComicArchiveBookmarks] Memory Archive failed:', e); }
   GENERIC_COMIC_ARCHIVE_ARCS.forEach(function(def){
-    const chapters = window[def.chaptersVar];
-    if (!Array.isArray(chapters) || !chapters.length) return;
-    const completed = game[def.progressVar] || {};
-    if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
-    chips.push({ id: 'comicArchive-'+def.progressVar, label: def.label });
+    try {
+      const chapters = window[def.chaptersVar];
+      if (!Array.isArray(chapters) || !chapters.length) return;
+      const completed = game[def.progressVar] || {};
+      if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
+      chips.push({ id: 'comicArchive-'+def.progressVar, label: def.label });
+    } catch (e) { console.error('[renderComicArchiveBookmarks] '+def.label+' failed:', e); }
   });
   if (!chips.length) return '';
   return '<div class="panel" style="margin-bottom:10px;"><div class="panel-title" style="margin-bottom:8px;">🔖 Jump to an Arc</div>'+
