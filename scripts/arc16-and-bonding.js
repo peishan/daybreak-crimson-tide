@@ -208,10 +208,10 @@
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
       if (ready && gateMsg) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        action = 
           '<div class="story-chip" style="margin-top:6px;">🔒 '+esc(gateMsg)+'</div>';
       } else if (ready) {
-        action = '<a class="btn btn-small" style="text-decoration:none;display:inline-block;" href="'+ch.image+'" target="_blank" rel="noopener">📖 Open Chapter (new tab)</a> '+
+        action = 
           '<button class="btn btn-small btn-success" onclick="markArc16ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
       } else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+

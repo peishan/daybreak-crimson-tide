@@ -2569,6 +2569,23 @@ function showStoryModal(entry) {
   const title = entry.title || (entry.companionName ? `${entry.companionName} joins your crew!` : 'The Drowned Passage');
   showModal(title, entry.postFight || entry.blurb, [{text:'Continue', action:closeModal}]);
 }
+// Replaces every arc's own "Open Chapter (new tab)" link to ch.image --
+// image generation now lags well behind the text (San's own production
+// reality: roughly one arc's worth of art per day), so a chapter can no
+// longer depend on its artwork existing to be readable. Reads the
+// chapter's own title/focus straight off the button via data attributes
+// (populated through esc(), so any apostrophe/quote in the chapter text
+// round-trips safely through the HTML attribute and back) rather than
+// looking up a per-arc chapters array by name -- avoids needing this
+// function to know anything about which arc it was called from. Once art
+// exists for a chapter, it's meant to be slotted in through the Story
+// Replay / read-back feature instead of blocking this popup.
+function readChapterText(el){
+  const title = el.dataset.chTitle || '';
+  const focus = el.dataset.chFocus || '';
+  if (typeof showStoryModal === 'function') showStoryModal({ title: title, blurb: focus });
+}
+window.readChapterText = readChapterText;
 
 // ---------------------------------------------------------------------------
 // CRIMSON TIDE MUSIC — local embedded soundtrack
@@ -3375,6 +3392,69 @@ function renderArc1ComicArchive(){
   return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (STORY_MODE_CHAPTERS[ch.id] ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
+// GENERIC COMIC ARCHIVE — Arc XIII onward (Arc I keeps its own dedicated
+// Story Mode treatment above; Arcs II-XII predate this convention and
+// aren't included here). Per San's own production reality: art now lags
+// well behind the text (roughly one arc's worth of image generation per
+// day), so chapters read via the popup modal below (showStoryModal,
+// through the shared readChapterText() helper) rather than depending on
+// ch.image existing at all. Once art for a given chapter is ready, it's
+// meant to be slotted into that chapter's own `image` field and surfaced
+// through this same archive -- not by reviving the old "open in a new
+// tab" link these arcs used to have.
+//
+// Only chapters actually already read are listed, same restraint Arc I's
+// own archive (just above) exercises everywhere else in this codebase --
+// a read-back feature should never leak what's still locked/unread.
+const GENERIC_COMIC_ARCHIVE_ARCS = [
+  { label: 'Arc XIII',    title: 'A World With Its Own Rules',    chaptersVar: 'ARC13_CHAPTERS',          progressVar: 'comicProgress13' },
+  { label: 'Arc XIV',     title: 'People Beneath the Tide',       chaptersVar: 'ARC14_CHAPTERS',          progressVar: 'comicProgress14' },
+  { label: 'Arc XV',      title: 'Shape of a People',              chaptersVar: 'ARC15_CHAPTERS',          progressVar: 'comicProgress15' },
+  { label: 'Arc XVI',     title: 'The Price of Rare Things',       chaptersVar: 'ARC16_CHAPTERS',          progressVar: 'comicProgress16' },
+  { label: 'Arc XVII',    title: 'The Archive Between Worlds',     chaptersVar: 'ARC17_CHAPTERS',          progressVar: 'comicProgress17' },
+  { label: 'Arc XVIII',   title: 'The Routes Others Want',         chaptersVar: 'ARC18_CHAPTERS',          progressVar: 'comicProgress18' },
+  { label: 'Arc XIX',     title: 'The Worlds We Know',             chaptersVar: 'ARC19_CHAPTERS',          progressVar: 'comicProgress19' },
+  { label: 'Arc XX',      title: 'Forever and Ever',                chaptersVar: 'ARC20_CHAPTERS',          progressVar: 'comicProgress20' },
+  { label: 'Interlude',   title: 'In Between',                      chaptersVar: 'ARC20_INTERLUDE_CHAPTERS',progressVar: 'comicProgress20Interlude' },
+  { label: 'Arc XXI',     title: 'The Life We Build',               chaptersVar: 'ARC21_CHAPTERS',          progressVar: 'comicProgress21' },
+  { label: 'Arc XXII',    title: 'The Child of Fair Tide',          chaptersVar: 'ARC22_CHAPTERS',          progressVar: 'comicProgress22' },
+  { label: 'Arc XXIII',   title: 'The Wider Tide',                  chaptersVar: 'ARC23_CHAPTERS',          progressVar: 'comicProgress23' },
+  { label: 'Arc XXIV',    title: 'The People Without Names',        chaptersVar: 'ARC24_CHAPTERS',          progressVar: 'comicProgress24' },
+  { label: 'Arc XXV',     title: "A Friend's Request",              chaptersVar: 'ARC25_CHAPTERS',          progressVar: 'comicProgress25' },
+  { label: 'Arc XXVI',    title: 'The Price of Independence',       chaptersVar: 'ARC26_CHAPTERS',          progressVar: 'comicProgress26' },
+  { label: 'Arc XXVII',   title: 'The Nameless',                    chaptersVar: 'ARC27_CHAPTERS',          progressVar: 'comicProgress27' },
+  { label: 'Arc XXVIII',  title: 'N',                                chaptersVar: 'ARC28_CHAPTERS',          progressVar: 'comicProgress28' },
+  { label: 'Arc XXIX',    title: 'The Spy',                         chaptersVar: 'ARC29_CHAPTERS',          progressVar: 'comicProgress29' },
+  { label: 'Arc XXX',     title: 'The Betrayal',                    chaptersVar: 'ARC30_CHAPTERS',          progressVar: 'comicProgress30' },
+  { label: 'Arc XXXI',    title: 'What We Protect',                 chaptersVar: 'ARC31_CHAPTERS',          progressVar: 'comicProgress31' },
+  { label: 'Arc XXXII',   title: 'The Long Tide',                   chaptersVar: 'ARC32_CHAPTERS',          progressVar: 'comicProgress32' },
+  { label: 'Arc XXXIII',  title: 'The Family We Become',             chaptersVar: 'ARC33_CHAPTERS',          progressVar: 'comicProgress33' },
+  { label: 'Arc XXXIV',   title: 'Two Hearts',                      chaptersVar: 'ARC34_CHAPTERS',          progressVar: 'comicProgress34' },
+  { label: 'Arc XXXV',    title: 'The Children of Fair Tide',       chaptersVar: 'ARC35_CHAPTERS',          progressVar: 'comicProgress35' },
+  { label: 'Arc XXXVI',   title: 'Growing Tides',                   chaptersVar: 'ARC36_CHAPTERS',          progressVar: 'comicProgress36' },
+  { label: 'Arc XXXVII',  title: 'Children of Two Worlds',          chaptersVar: 'ARC37_CHAPTERS',          progressVar: 'comicProgress37' }
+];
+window.GENERIC_COMIC_ARCHIVE_ARCS = GENERIC_COMIC_ARCHIVE_ARCS;
+
+function renderGenericComicArchives(){
+  let html = '';
+  GENERIC_COMIC_ARCHIVE_ARCS.forEach(function(def){
+    const chapters = window[def.chaptersVar];
+    if (!Array.isArray(chapters) || !chapters.length) return; // that arc's own file hasn't loaded this chapter data (shouldn't happen in practice, but never throw over it)
+    const completed = game[def.progressVar] || {};
+    const readChapters = chapters.filter(function(ch){ return !!completed[ch.id]; });
+    if (!readChapters.length) return; // nothing read yet in this arc -- no entry at all, same restraint as every other discovery-gated list in this codebase
+    html += '<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
+      readChapters.map(function(ch){
+        return '<article class="arc1-comic-card complete"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div></div><div class="arc1-comic-status">✓ READ</div></div>'+
+          '<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">📖 Read Again</button></div></article>';
+      }).join('') +
+      '</div></section>';
+  });
+  return html;
+}
+window.renderGenericComicArchives = renderGenericComicArchives;
+
 function completeSelfEscape(companion){
   const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
   const quest=ARC1_STORY_QUESTS.find(q=>q.companion===companion);
@@ -3441,6 +3521,7 @@ function renderStory() {
   html += `</section>`;
 
   html += renderArc1ComicArchive();
+  html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
 
 
   // The canonical Arc I comics own the narrative presentation. Story Mode is the interactive presentation; the archive remains the reference library.
