@@ -239,12 +239,11 @@
     const el = document.getElementById('comicArchive'); if(!el) return;
     const progress9 = (typeof game!=='undefined' && game.comicProgress9) || {};
     const arc9Read = ARC9_CHAPTERS.filter(ch=>!!progress9[ch.id]);
-    const section = !arc9Read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc IX chapters read yet.</div></div>'
-      : arc9Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!arc9Read.length) return;
+    const section = arc9Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IX — The Cat Who Was Always There</div>' + section);
+      '<section id="comicArchive-comicProgress9"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IX — The Cat Who Was Always There</div>' + section + '</section>');
   };
 })();
 

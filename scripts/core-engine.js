@@ -2915,19 +2915,12 @@ function renderComicArchive(){
   const el=document.getElementById('comicArchive'); if(!el)return;
   // This used to link to a "Legends of Daybreak" PDF that isn't even bundled
   // in this build — leftover from a shared template, not Crimson Tide's own
-  // content. Replaced with a real back-reading archive: every chapter the
-  // player has already completed, across every arc, linking to its full
-  // page image in a new tab. Chapters not yet reached stay hidden rather
-  // than shown locked, since this screen is reachable from the landing page
-  // before the player has necessarily loaded their save.
-  //
-  // BUG FIX: this only ever covered Arc I and Arc II — never extended as
-  // Arc III through XVI were built, so by the time a player reached even
-  // Arc V this screen showed almost nothing relevant, and San (at Arc XVI,
-  // Level 210) correctly flagged it as "nothing usable." Now generic across
-  // every arc from ARCn_CHAPTERS/game.comicProgressN, since that naming
-  // pattern has been consistent since Arc II — Arc I alone predates it and
-  // needs its own small image-lookup table, same as before.
+  // content. Now a real back-reading archive: every chapter the player has
+  // already completed, across every arc, with a "🔖 Jump to an Arc" bar up
+  // top (renderComicArchiveBookmarks) so re-reading an early chapter doesn't
+  // mean scrolling past everything since. Chapters/arcs not yet reached stay
+  // hidden entirely — no "nothing read yet" placeholders — since an empty
+  // arc section was exactly the scrolling clutter this screen used to have.
   const ARC1_IMAGES = {
     1:'ch01-storm-that-remained.png', 2:'ch02-the-first-port.png', 3:'ch03-a-crew-of-choice.png',
     4:'ch04-the-guardians-fortress.png', 5:'ch05-the-voice-behind-the-wall.png', 6:'ch06-the-shield-returns.png',
@@ -2943,23 +2936,37 @@ function renderComicArchive(){
     .filter(ch => !!progress1[ch.id] && ARC1_IMAGES[ch.id])
     .map(ch => ({id:ch.id, title:ch.title, image:'assets/comics/arc1/'+ARC1_IMAGES[ch.id]}));
 
-  function section(label, chapters){
-    if(!chapters.length) return '<div class="comic-archive-card"><div class="comic-archive-sub">No '+label+' chapters read yet.</div></div>';
+  function section(chapters){
     return chapters.map(ch =>
       '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
       '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>'
     ).join('');
   }
 
-  const ARC_NUMERALS = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII',13:'XIII',14:'XIV',15:'XV',16:'XVI',17:'XVII'};
-  let html = '<div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section('Arc I', arc1Read);
-  for (let n = 2; n <= 17; n++) {
+  let html = (typeof renderComicArchiveBookmarks === 'function') ? renderComicArchiveBookmarks() : '';
+  if (arc1Read.length) {
+    html += '<section id="comicArchive-comicProgress"><div class="comic-archive-title" style="font-size:1.05rem;margin-bottom:6px;">Arc I — The First Voyage</div>' + section(arc1Read) + '</section>';
+  }
+
+  // Arcs II, VI, X-XII have their own small chapter sets with no dedicated
+  // append-block elsewhere (Arc III, IV, V, VII, VIII, IX append their own
+  // section further down via their own window.renderComicArchive wrap — each
+  // one used to ALSO get rendered here, since this loop used to run n=2..17;
+  // that was a real duplicate-content bug, independent of today's work, now
+  // fixed by only handling the arcs without their own wrap here. Arc XIII
+  // onward — where art now lags behind the text — render generically below
+  // through renderGenericComicArchives(), text-first.
+  const ARC_NUMERALS = {2:'II',6:'VI',10:'X',11:'XI',12:'XII'};
+  [2,6,10,11,12].forEach(function(n){
     const chapters = window['ARC'+n+'_CHAPTERS'];
-    if (!chapters) continue; // arc not built in this session's file yet — skip rather than show a fake empty section
+    if (!chapters) return;
     const progress = game['comicProgress'+n] || {};
     const read = chapters.filter(ch => !!progress[ch.id] && ch.image).map(ch => ({id:ch.id, title:ch.title, image:ch.image}));
-    html += '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc '+ARC_NUMERALS[n]+'</div>' + section('Arc '+ARC_NUMERALS[n], read);
-  }
+    if (!read.length) return;
+    html += '<section id="comicArchive-comicProgress'+n+'"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc '+ARC_NUMERALS[n]+'</div>' + section(read) + '</section>';
+  });
+
+  html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
   el.innerHTML = html;
 }
 
@@ -3467,6 +3474,21 @@ function renderComicArchiveBookmarks(){
   if (Object.keys(game.comicProgress || {}).length) {
     chips.push({ id: 'comicArchive-comicProgress', label: 'Arc I' });
   }
+  const earlyArcNumerals = {2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII'};
+  Object.keys(earlyArcNumerals).forEach(function(key){
+    const n = Number(key);
+    const chapters = window['ARC'+n+'_CHAPTERS'];
+    if (!Array.isArray(chapters) || !chapters.length) return;
+    const completed = game['comicProgress'+n] || {};
+    if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
+    chips.push({ id: 'comicArchive-comicProgress'+n, label: 'Arc '+earlyArcNumerals[n] });
+  });
+  if (typeof MEMORY_ARCHIVE_CHAPTERS !== 'undefined' && Array.isArray(MEMORY_ARCHIVE_CHAPTERS) && MEMORY_ARCHIVE_CHAPTERS.length) {
+    const completedMA = game.comicProgressMemoryArchive || {};
+    if (MEMORY_ARCHIVE_CHAPTERS.some(function(ch){ return !!completedMA[ch.id]; })) {
+      chips.push({ id: 'comicArchive-memoryArchive', label: 'Memory Archive' });
+    }
+  }
   GENERIC_COMIC_ARCHIVE_ARCS.forEach(function(def){
     const chapters = window[def.chaptersVar];
     if (!Array.isArray(chapters) || !chapters.length) return;
@@ -3553,12 +3575,7 @@ function renderStory() {
 
   html += `</section>`;
 
-  html += (typeof renderComicArchiveBookmarks === 'function') ? renderComicArchiveBookmarks() : '';
   html += renderArc1ComicArchive();
-  html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
-
-
-  // The canonical Arc I comics own the narrative presentation. Story Mode is the interactive presentation; the archive remains the reference library.
 
   // ACT II
   html += `<div class="story-act">

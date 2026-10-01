@@ -171,11 +171,10 @@
     // markArc3ChapterRead — same reasoning as the Story-screen renderer.
     const memoryRead = ACT3_CHAPTERS.filter((ch,i)=>(game.act3Index||0) > i);
     const allRead = arc3Read.concat(memoryRead);
-    const section = !allRead.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc III chapters read yet.</div></div>'
-      : allRead.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!allRead.length) return;
+    const section = allRead.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc III — Origins: Steady Hands</div>' + section);
+      '<section id="comicArchive-comicProgress3"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc III — Origins: Steady Hands</div>' + section + '</section>');
   };
 })();

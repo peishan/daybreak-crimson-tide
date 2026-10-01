@@ -186,11 +186,10 @@
     const el = document.getElementById('comicArchive'); if(!el) return;
     const progress8 = (typeof game!=='undefined' && game.comicProgress8) || {};
     const arc8Read = ARC8_CHAPTERS.filter(ch=>!!progress8[ch.id]);
-    const section = !arc8Read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VIII chapters read yet.</div></div>'
-      : arc8Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!arc8Read.length) return;
+    const section = arc8Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — Beyond the Known Sea</div>' + section);
+      '<section id="comicArchive-comicProgress8"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VIII — Beyond the Known Sea</div>' + section + '</section>');
   };
 })();
