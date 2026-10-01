@@ -3389,7 +3389,7 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (STORY_MODE_CHAPTERS[ch.id] ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act" id="comicArchive-comicProgress"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (STORY_MODE_CHAPTERS[ch.id] ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 // GENERIC COMIC ARCHIVE — Arc XIII onward (Arc I keeps its own dedicated
@@ -3444,7 +3444,7 @@ function renderGenericComicArchives(){
     const completed = game[def.progressVar] || {};
     const readChapters = chapters.filter(function(ch){ return !!completed[ch.id]; });
     if (!readChapters.length) return; // nothing read yet in this arc -- no entry at all, same restraint as every other discovery-gated list in this codebase
-    html += '<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
+    html += '<section class="story-act" id="comicArchive-'+def.progressVar+'"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
       readChapters.map(function(ch){
         return '<article class="arc1-comic-card complete"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div></div><div class="arc1-comic-status">✓ READ</div></div>'+
           '<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">📖 Read Again</button></div></article>';
@@ -3454,6 +3454,39 @@ function renderGenericComicArchives(){
   return html;
 }
 window.renderGenericComicArchives = renderGenericComicArchives;
+
+// Jump-to bookmarks across the whole Comic Archive -- San's own
+// feedback: scrolling all the way down past every other arc just to
+// re-read one chapter doesn't work on a phone screen. One chip per arc
+// that actually has something to show (same "only if read" gate as the
+// sections themselves, so there's never a bookmark pointing at an empty
+// section), each scrolling straight to that arc's own id without a full
+// page navigation or re-render.
+function renderComicArchiveBookmarks(){
+  const chips = [];
+  if (Object.keys(game.comicProgress || {}).length) {
+    chips.push({ id: 'comicArchive-comicProgress', label: 'Arc I' });
+  }
+  GENERIC_COMIC_ARCHIVE_ARCS.forEach(function(def){
+    const chapters = window[def.chaptersVar];
+    if (!Array.isArray(chapters) || !chapters.length) return;
+    const completed = game[def.progressVar] || {};
+    if (!chapters.some(function(ch){ return !!completed[ch.id]; })) return;
+    chips.push({ id: 'comicArchive-'+def.progressVar, label: def.label });
+  });
+  if (!chips.length) return '';
+  return '<div class="panel" style="margin-bottom:10px;"><div class="panel-title" style="margin-bottom:8px;">🔖 Jump to an Arc</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;">'+
+    chips.map(function(c){ return '<button class="btn btn-small" onclick="scrollToComicArchiveSection(\''+c.id+'\')">'+esc(c.label)+'</button>'; }).join('') +
+    '</div></div>';
+}
+window.renderComicArchiveBookmarks = renderComicArchiveBookmarks;
+
+function scrollToComicArchiveSection(id){
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.scrollToComicArchiveSection = scrollToComicArchiveSection;
 
 function completeSelfEscape(companion){
   const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
@@ -3520,6 +3553,7 @@ function renderStory() {
 
   html += `</section>`;
 
+  html += (typeof renderComicArchiveBookmarks === 'function') ? renderComicArchiveBookmarks() : '';
   html += renderArc1ComicArchive();
   html += (typeof renderGenericComicArchives === 'function') ? renderGenericComicArchives() : '';
 
