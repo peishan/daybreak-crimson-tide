@@ -431,11 +431,10 @@
     const el = document.getElementById('comicArchive'); if(!el) return;
     const progress4 = (typeof game!=='undefined' && game.comicProgress4) || {};
     const arc4Read = ARC4_CHAPTERS.filter(ch=>!!progress4[ch.id]);
-    const section = !arc4Read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc IV chapters read yet.</div></div>'
-      : arc4Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!arc4Read.length) return;
+    const section = arc4Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IV — The Gathering Tide</div>' + section);
+      '<section id="comicArchive-comicProgress4"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc IV — The Gathering Tide</div>' + section + '</section>');
   };
 })();

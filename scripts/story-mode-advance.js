@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V342 · Comic Archive Bookmarks';
+window.__CT_BUILD__='V343 · Comic Archive, Fixed for Real';

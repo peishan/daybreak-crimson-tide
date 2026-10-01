@@ -707,13 +707,12 @@
     const el = document.getElementById('comicArchive'); if (!el) return;
     const progress = (typeof game !== 'undefined' && game.comicProgressMemoryArchive) || {};
     const read = MEMORY_ARCHIVE_CHAPTERS.filter(ch => !!progress[ch.id]);
-    const section = !read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Memory Archive chapters read yet.</div></div>'
-      : read.map(ch => '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!read.length) return;
+    const section = read.map(ch => '<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button> '+
           '<button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="challengeMemoryFragment('+ch.id+')">⚔️ Challenge Memory Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Memory Archive — Before the Crimson Tide</div>' + section);
+      '<section id="comicArchive-memoryArchive"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Memory Archive — Before the Crimson Tide</div>' + section + '</section>');
   };
 })();
 

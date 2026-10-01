@@ -188,12 +188,11 @@
     const el = document.getElementById('comicArchive'); if(!el) return;
     const progress5 = (typeof game!=='undefined' && game.comicProgress5) || {};
     const arc5Read = ARC5_CHAPTERS.filter(ch=>!!progress5[ch.id]);
-    const section = !arc5Read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc V chapters read yet.</div></div>'
-      : arc5Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!arc5Read.length) return;
+    const section = arc5Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc V — The Bond</div>' + section);
+      '<section id="comicArchive-comicProgress5"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc V — The Bond</div>' + section + '</section>');
   };
 })();
 

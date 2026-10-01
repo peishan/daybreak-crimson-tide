@@ -170,11 +170,10 @@
     const el = document.getElementById('comicArchive'); if(!el) return;
     const progress7 = (typeof game!=='undefined' && game.comicProgress7) || {};
     const arc7Read = ARC7_CHAPTERS.filter(ch=>!!progress7[ch.id]);
-    const section = !arc7Read.length
-      ? '<div class="comic-archive-card"><div class="comic-archive-sub">No Arc VII chapters read yet.</div></div>'
-      : arc7Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
+    if (!arc7Read.length) return;
+    const section = arc7Read.map(ch=>'<div class="comic-archive-card"><div class="comic-archive-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div>'+
           '<button class="btn btn-small" style="margin-top:6px;" onclick="openComicImage(\''+ch.image+'\')">📖 Read Again</button></div>').join('');
     el.insertAdjacentHTML('beforeend',
-      '<div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VII — The Farseer</div>' + section);
+      '<section id="comicArchive-comicProgress7"><div class="comic-archive-title" style="font-size:1.05rem;margin:18px 0 6px;">Arc VII — The Farseer</div>' + section + '</section>');
   };
 })();
