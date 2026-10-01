@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V341 · Text-First Chapters + Comic Archive';
+window.__CT_BUILD__='V342 · Comic Archive Bookmarks';
