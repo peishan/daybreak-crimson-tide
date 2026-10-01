@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V325 · Fair Tide Living World';
+window.__CT_BUILD__='V326 · Festival Drops';
