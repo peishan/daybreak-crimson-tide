@@ -2,11 +2,15 @@
   // -------------------------------------------------------------------
   // SOEL SIGHTINGS — the tap-interaction item from San's Fair Tide
   // Living World list: "Soel Sightings (eventually Nala too)". Soel is
-  // Vaeren & Joelle's cat (introduced in Arc XXXV, gated the same way
-  // Arc XXXV/XXXVI already gate his presence: window.soelWatchUnlocked()
-  // — see scripts/arc35-mechanics.js). Nala is Senedra's tower cat,
-  // already a Fair Tide roster member (scripts/arc9-and-systems.js,
-  // game.fairTideRoster.nala).
+  // San's own spirit cat, established from Arc I Chapter 1 (core-
+  // engine.js's own ALL_PARTY entry: "The ship's cat. Chose San, and
+  // can't be unchosen.") — not a character introduced later, so he's
+  // sightable from the very start of any save, no unlock gate at all.
+  // Arc XXXV/XXXVI's "Soel Watch"/"Soel Guardian" extends his existing
+  // spirit-sensing ability to the twins; it's an upgrade of something
+  // already established about him, not his introduction. Nala is
+  // Senedra's tower cat, already a Fair Tide roster member (scripts/
+  // arc9-and-systems.js, game.fairTideRoster.nala).
   //
   // Whether each cat is spotted today, and where, is chosen
   // deterministically from the real calendar date -- same reasoning as
@@ -48,13 +52,13 @@
 
   const CREATURES = {
     soel: {
-      id: 'soel', name: 'Soel', icon: '🐈',
-      eligible: function(){ return typeof window.soelWatchUnlocked === 'function' && window.soelWatchUnlocked(); },
+      id: 'soel', name: 'Soel', icon: '🐾',
+      eligible: function(){ return true; }, // San's own cat, present since Arc I Chapter 1 -- never gated
       locations: [
-        'napping in a sunbeam on the workshop windowsill',
-        'perched on top of the twins\' blanket fort, looking far too pleased with himself',
-        'sitting guard outside Vaeren & Joelle\'s door',
-        'watching the harbour from the highest crate stack',
+        'napping in a sunbeam on the ship\'s deck',
+        'curled up in San\'s sea-chest like he owns it, because he does',
+        'perched on the harbour wall, watching the horizon the way he always has',
+        'following Joel around the docks, having apparently decided he\'s acceptable too',
         'draped across a stack of folded laundry that was definitely not his to sleep on'
       ],
       pettingLine: 'Soel allows it, which from him counts as enthusiasm.'
