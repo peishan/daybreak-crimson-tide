@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V327 · Character Birthdays';
+window.__CT_BUILD__='V328 · Tide Stories';
