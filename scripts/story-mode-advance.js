@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V336 · Stories from Other Worlds';
+window.__CT_BUILD__='V337 · Ship Personality';
