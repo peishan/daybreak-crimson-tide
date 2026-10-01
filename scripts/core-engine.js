@@ -1939,6 +1939,87 @@ const STORY_MODE_CHAPTERS = {
   {image:'assets/comics/arc1/story/ch04/13.jpg', text:'San makes the objective clear: they are not here to kill the guardian.', caption:'We are here to bring him home.'},
   {image:'assets/comics/arc1/story/ch04/14.jpg', text:'Hands meet over the table. Whatever happens next, nobody is left behind.', caption:'One team. No one left behind.'},
   {image:'assets/comics/arc1/story/ch04/15.jpg', text:'Tomorrow, the Crimson Tide will enter the ruins. Tomorrow, San will finally meet the person she has been searching for.', caption:'The rescue begins.'}
+],
+5: [
+  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.png', text:'Behind the ruined wall, a voice answers before San even finishes calling out — low, careful, guarded.', caption:'Someone is still in there.'},
+  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.png', text:"She doesn't know his face yet, but something in her settles the moment he speaks, like a door she didn't know was open.", caption:'The First Meeting.'}
+],
+6: [
+  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.png', text:"Midnight. The Crimson Tide's crew moves through the ruins the way soldiers move through ground they've already walked.", caption:'The rescue begins.'},
+  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.png', text:'He falls into step beside her without being told where to stand. Neither of them remembers why fighting together feels this natural. It just does.', caption:'The Rescue of Joel.'}
+],
+7: [
+  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.png', text:"The storm took their names, their histories, the shape of who they used to be to each other. It didn't take everything.", caption:'What the storm left behind.'},
+  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.png', text:"A shield. A promise neither of them can put into words yet. San doesn't have his story back. She has him — for now, that's enough to keep sailing on.", caption:'A piece of him returned.'}
+],
+8: [
+  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.png', text:"The trade routes remember more than the people who sail them. A shield like his doesn't pass through a port without someone noticing.", caption:'A trail, even without a name.'},
+  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.png', text:"San follows the rumors the way she follows everything now — carefully, one unreliable word at a time. Whoever he was, the Tradewinds haven't forgotten him completely.", caption:'A Shield Without Its Owner.'}
+],
+9: [
+  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.png', text:"Between one port and the next, there's nothing to rescue and nobody to find. Just a ship, and people learning how to be a crew again.", caption:'The quiet between voyages.'},
+  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.png', text:'Nobody says it out loud, but everyone notices: the ship feels less empty than it did a week ago.', caption:'Learning to live aboard, again.'}
+],
+10: [
+  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.png', text:"Nobody's memory is coming back whole. What comes back instead are names — in a ledger, in a rumor, in the careful way someone introduces themselves a second time.", caption:'The names we keep.'},
+  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.png', text:"San writes each one down like it might disappear if she doesn't. Some of them already feel like they never really left.", caption:'Not recovered. Kept.'}
+],
+11: [
+  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.png', text:'The Crimson Tide was a place to sleep, once. Somewhere between one chapter and the next, it stopped being that and started being something closer to home.', caption:'Before the next port.'},
+  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.png', text:'Nobody voted on it. It just happened, the way the important things usually do.', caption:'Somewhere to belong.'}
+],
+12: [
+  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.png', text:'The ledger says Aisyah owes someone money. The ledger is wrong, and San decides that before she even finishes reading it.', caption:"The debt that wasn't hers."},
+  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.png', text:"Whatever debt Aisyah's actually carrying, it isn't this one. San's instinct to stand in front of her isn't something she has to think about.", caption:'Impossible to ignore.'}
+],
+13: [
+  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.png', text:"The same mark that follows Aisyah's name turns up again, in a different hand, attached to a different story.", caption:'The debt collector.'},
+  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.png', text:"It's a small thing — a symbol, nothing more. But small things are exactly what San's learned to pay attention to.", caption:'Not entirely random.'}
+],
+14: [
+  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.png', text:"It starts as teasing — Aisyah has opinions about San's decisions, and no interest in keeping them to herself.", caption:'Two sisters, one ship.'},
+  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.png', text:'It becomes something steadier than that without either of them deciding it should. Trust, mostly. The rest neither of them can quite explain.', caption:'The things neither of them can explain.'}
+],
+15: [
+  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.png', text:"Eliz didn't join because someone convinced her to. She joined because she watched them try to get by without a healer, and couldn't stand to watch it anymore.", caption:'The one who stayed.'},
+  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.png', text:"Nobody has to ask her twice. She's already decided, and the crew is better for it.", caption:'Because she chooses to.'}
+],
+16: [
+  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.png', text:"Three pendants. Three people who don't remember choosing to wear them. The same faint, gem-like mark on each.", caption:'The mark we carried.'},
+  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.png', text:"Nobody has an answer yet for what it means. San isn't sure she wants one — not until she's ready to hear it.", caption:'A mystery, not an answer.'}
+],
+17: [
+  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.png', text:"Someone always takes point. Someone always checks the ropes twice. Nobody remembers learning these habits — they're just there, the moment they're needed.", caption:'The things we do without knowing.'},
+  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.png', text:"Whatever they've forgotten, their hands clearly haven't. San's starting to wonder if that's its own kind of memory.", caption:'Some things, the body keeps.'}
+],
+18: [
+  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.png', text:"Mezstorm's rescue doesn't end the way rescues are supposed to. She comes back changed, and not in a way anyone can simply undo.", caption:'The storm that was owed.'},
+  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.png', text:"Regeneration, she calls it — like it's a simple word for something that clearly isn't. What does it mean to come back different, and still be yourself?", caption:'A deeper question.'}
+],
+19: [
+  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.png', text:"Mezstorm doesn't find her place by being told where it is. She finds it the slow way — in small scenes, with people who were already here before her.", caption:'The crew we choose.'},
+  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.png', text:'Nobody assigns her a role. She just starts filling one, the same way everyone else on this ship eventually did.', caption:'Chosen, not assigned.'}
+],
+20: [
+  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.png', text:'The woman at the lighthouse has been watching this coastline longer than anyone else still standing. Nobody had to beat anything to bring her into the story.', caption:'The watchful signal.'},
+  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.png', text:'She joins because she chooses to, the same way Eliz did. Some doors just need someone to actually open them.', caption:'No guardian defeated. Just a door, opened.'}
+],
+21: [
+  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.png', text:"Everyone assumes Zaki survived the prison hulk on strength alone. Strength helped. It wasn't the whole story.", caption:'The planner.'},
+  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.png', text:"Underneath the fighter is someone who counted every exit, memorized every guard's schedule, and waited for exactly the right moment. San's only now starting to see it.", caption:'The careful part of him.'}
+],
+22: [
+  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.png', text:"The regeneration isn't something Mezstorm can explain to anyone else, because she's still working out how to explain it to herself.", caption:'The regeneration.'},
+  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.png', text:"Whatever she's becoming, she's decided it's still going to be her doing it. That much, at least, she's sure of.", caption:'Still herself, differently.'}
+],
+23: [
+  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.png', text:"Senedra looks at Zaki and remembers something nobody else on this ship can confirm: they're siblings. She's sure of it.", caption:'The two who remembered.'},
+  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.png', text:"She doesn't remember San. She doesn't remember Aisyah, or Mezstorm, or Eliz. Just him. For now, that's the one thread the storm didn't cut.", caption:'One thread, intact.'}
+],
+24: [
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:"The Drowned Admiral has guarded this passage long after anyone still living remembers why. The crew doesn't come to fight him for sport — they come because there's no other way through.", caption:'The way beyond the charts.'},
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:'On the other side, two more names step aboard: Ser Aldric, Knight of the Waves. Sister Wren, Tide Priestess. The crew San set out to find is finally whole.', caption:'The reunited crew.'},
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:"She still doesn't have her old life back. She has something else instead — a ship full of people who are, somehow, already hers.", caption:'The Drowned Passage.'}
 ]
 };
 let storyModeChapter = null;
@@ -2065,6 +2146,7 @@ function finishStoryModeChapter(id){
   const overlay=document.getElementById('storyModeOverlay');
   const ch=ARC1_COMICS.find(x=>x.id===id);
   game.comicProgress=game.comicProgress||{};
+  const wasAlreadyComplete=!!game.comicProgress[id];
   if(!game.comicProgress[id]){
     game.comicProgress[id]=true;
     gainXP(ch?.xp || (id===1?150:150));
@@ -2087,7 +2169,10 @@ function finishStoryModeChapter(id){
       const nextChapter = null;
       const canContinueStory = false;
       const continueLabel = 'CONTINUE';
-      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">Chapter Complete</div><h2>${esc(title)}</h2><p>The chapter is complete. Your current Objective is now updated.</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div><button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="continueStoryFlow(${id}); return false;">${continueLabel}</button></div>`;
+      const rewardLine = wasAlreadyComplete
+        ? `<p style="opacity:.75;margin-bottom:18px;">You've reached the end of this chapter again.</p>`
+        : `<p>The chapter is complete. Your current Objective is now updated.</p><div style="color:var(--gold);font-family:Cinzel;margin-bottom:18px;">📖 Story XP +${ch?.xp || 150}</div>`;
+      shell.innerHTML=`<div class="story-mode-end"><div class="story-mode-kicker">${wasAlreadyComplete?'Replay Complete':'Chapter Complete'}</div><h2>${esc(title)}</h2>${rewardLine}<button id="storyModeCloseBtn" type="button" class="btn btn-success" onclick="continueStoryFlow(${id}); return false;">${continueLabel}</button></div>`;
       if(autoNext){
         clearTimeout(storyModeTransitionTimer);
         let count=2;
@@ -3287,7 +3372,7 @@ function completeArc1Comic(id){
 }
 function renderArc1ComicArchive(){
   const completed=game.comicProgress||{};
-  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? ((ch.id>=1 && ch.id<=4) ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
+  return `<section class="story-act"><div class="story-act-header"><div class="story-act-kicker">Arc I</div><div class="story-act-title">The First Voyage</div><div class="story-act-tagline">Comic chapters — narrative progression alongside the playable voyage.</div></div><div class="arc1-comic-grid">${ARC1_COMICS.map(ch=>{const unlocked=!!ch.unlock();const done=!!completed[ch.id];const img=ARC1_ART[ch.id];return `<article class="arc1-comic-card ${done?'complete':''} ${!unlocked?'locked':''}"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter ${ch.id} — ${esc(ch.title)}</div><div style="font-size:.76rem;opacity:.72;margin-top:3px;">${esc(ch.tag)}</div></div><div class="arc1-comic-status">${done?'✓ READ':unlocked?'AVAILABLE':'🔒 LOCKED'}</div></div><div class="story-chapter-text" style="margin-top:8px;">${esc(ch.summary)}</div>${unlocked ? (STORY_MODE_CHAPTERS[ch.id] ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="${done?`openStoryModeReplay(${ch.id})`:`openStoryMode(${ch.id})`}">📖 ${done?'Replay Story Mode':'Play Story Mode'}</button></div>` : (img ? `<div class="story-actions"><button class="btn btn-small btn-magic" onclick="openComicImage('${img}')">📖 Read Chapter</button></div>` : `<div class="arc1-comic-placeholder">Comic artwork will be added here.</div>`)) : ''}<div class="arc1-comic-xp">📖 Story XP: +${ch.xp}</div>${unlocked&&!done?`<div class="story-actions"><button class="btn btn-small btn-success" onclick="completeArc1Comic(${ch.id})">✓ Mark Chapter Read</button></div>`:''}</article>`}).join('')}</div></section>`;
 }
 
 function completeSelfEscape(companion){
