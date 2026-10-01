@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V323 · San & Joy Bond';
+window.__CT_BUILD__='V324 · Arc XXXVI: Growing Tides';
