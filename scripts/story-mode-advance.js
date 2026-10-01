@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V322 · Arc XXXV: The Children of Fair Tide';
+window.__CT_BUILD__='V323 · San & Joy Bond';
