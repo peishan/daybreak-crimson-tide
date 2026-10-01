@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V344 · Comic Archive, Crash-Isolated';
+window.__CT_BUILD__='V345 · Comic Archive Shows Real Art';

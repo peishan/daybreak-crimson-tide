@@ -2548,6 +2548,15 @@ function openComicImage(url) {
   const overlay = document.getElementById('comicImageOverlay');
   const img = document.getElementById('comicImageOverlayImg');
   if (!overlay || !img) return;
+  // Several chapters already carry a planned image path before the art
+  // itself has actually been drawn (art lags the text by design -- see the
+  // Comic Archive). Without this, a chapter like that shows a broken-image
+  // icon instead of a clear "not ready yet" message.
+  img.onerror = function(){
+    img.onerror = null;
+    closeComicImage();
+    toast("📖 This chapter's artwork isn't ready yet.");
+  };
   img.src = url;
   overlay.style.display = 'block';
 }
@@ -3470,8 +3479,17 @@ function renderGenericComicArchives(){
       if (!readChapters.length) return; // nothing read yet in this arc -- no entry at all, same restraint as every other discovery-gated list in this codebase
       html += '<section class="story-act" id="comicArchive-'+def.progressVar+'"><div class="story-act-header"><div class="story-act-kicker">'+esc(def.label)+'</div><div class="story-act-title">'+esc(def.title)+'</div></div><div class="arc1-comic-grid">'+
         readChapters.map(function(ch){
+          // Several of these arcs already have their real comic pages drawn
+          // (ch.image set and the file actually in assets/comics/) even
+          // though this archive was first built assuming art always lagged
+          // the text here. Whenever a chapter does have art, show it as the
+          // primary action -- that's the actual artwork San is reading this
+          // screen for -- and keep the text recap as a secondary option.
+          // Chapters with no image yet fall back to text-only, same as before.
+          const artBtn = ch.image ? '<button class="btn btn-small btn-magic" onclick="openComicImage(\''+ch.image+'\')">📖 Read Chapter</button> ' : '';
+          const textBtn = '<button class="btn btn-small'+(ch.image ? '' : ' btn-magic')+'" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">'+(ch.image ? '📝 Read Text' : '📖 Read Again')+'</button>';
           return '<article class="arc1-comic-card complete"><div class="arc1-comic-head"><div><div class="arc1-comic-title">Chapter '+ch.id+' — '+esc(ch.title)+'</div></div><div class="arc1-comic-status">✓ READ</div></div>'+
-            '<div class="story-actions"><button class="btn btn-small btn-magic" onclick="readChapterText(this)" data-ch-title="'+esc(ch.title)+'" data-ch-focus="'+esc(ch.focus)+'">📖 Read Again</button></div></article>';
+            '<div class="story-actions">'+artBtn+textBtn+'</div></article>';
         }).join('') +
         '</div></section>';
     } catch (e) { console.error('[renderGenericComicArchives] '+def.label+' failed:', e); }
