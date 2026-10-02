@@ -2547,7 +2547,14 @@ function showModal(title, text, buttons) {
 function openComicImage(url) {
   const overlay = document.getElementById('comicImageOverlay');
   const img = document.getElementById('comicImageOverlayImg');
+  const loading = document.getElementById('comicImageLoading');
   if (!overlay || !img) return;
+  // On a slow connection a full comic page can take a few seconds to fetch
+  // -- without this the overlay just looked blank/frozen while it loaded.
+  // Hide the (possibly still-visible, now stale) image and show a loading
+  // message until this one actually arrives.
+  img.style.display = 'none';
+  if (loading) loading.style.display = 'block';
   // Several chapters already carry a planned image path before the art
   // itself has actually been drawn (art lags the text by design -- see the
   // Comic Archive). Without this, a chapter like that shows a broken-image
@@ -2557,14 +2564,20 @@ function openComicImage(url) {
     closeComicImage();
     toast("📖 This chapter's artwork isn't ready yet.");
   };
-  img.onload = function(){ img.onerror = null; };
+  img.onload = function(){
+    img.onerror = null;
+    if (loading) loading.style.display = 'none';
+    img.style.display = 'block';
+  };
   img.src = url;
   overlay.style.display = 'block';
 }
 function closeComicImage() {
   const overlay = document.getElementById('comicImageOverlay');
   const img = document.getElementById('comicImageOverlayImg');
+  const loading = document.getElementById('comicImageLoading');
   if (overlay) overlay.style.display = 'none';
+  if (loading) loading.style.display = 'none';
   // Clear onerror before blanking src -- setting an <img>'s src to '' fires
   // its own 'error' event in most browsers, which would otherwise re-trigger
   // whatever handler is still attached from the last (possibly successful)

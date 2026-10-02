@@ -1917,6 +1917,7 @@ body{
      nothing for the back button to break. -->
 <div id="comicImageOverlay" onclick="if(event.target===this) closeComicImage()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(3,9,14,.94);padding:16px;box-sizing:border-box;overflow:auto;text-align:center;">
   <button onclick="closeComicImage()" style="position:sticky;top:0;float:right;background:var(--gold,#e8c96a);color:#0d1f2d;border:none;border-radius:6px;padding:8px 14px;font-weight:bold;cursor:pointer;">✕ Close</button>
+  <div id="comicImageLoading" style="display:none;color:var(--gold,#e8c96a);padding:60px 0;font-size:1.05rem;">📖 Loading chapter…</div>
   <img id="comicImageOverlayImg" src="" alt="Comic chapter" style="max-width:100%;height:auto;border-radius:8px;margin-top:44px;display:block;margin-left:auto;margin-right:auto;">
 </div>
 
