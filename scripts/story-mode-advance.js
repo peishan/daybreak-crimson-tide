@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V345 · Comic Archive Shows Real Art';
+window.__CT_BUILD__='V346 · Fix False "Art Not Ready" Toast';
