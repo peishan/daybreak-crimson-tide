@@ -2557,6 +2557,7 @@ function openComicImage(url) {
     closeComicImage();
     toast("📖 This chapter's artwork isn't ready yet.");
   };
+  img.onload = function(){ img.onerror = null; };
   img.src = url;
   overlay.style.display = 'block';
 }
@@ -2564,7 +2565,11 @@ function closeComicImage() {
   const overlay = document.getElementById('comicImageOverlay');
   const img = document.getElementById('comicImageOverlayImg');
   if (overlay) overlay.style.display = 'none';
-  if (img) img.src = '';
+  // Clear onerror before blanking src -- setting an <img>'s src to '' fires
+  // its own 'error' event in most browsers, which would otherwise re-trigger
+  // whatever handler is still attached from the last (possibly successful)
+  // load and show a bogus "artwork isn't ready yet" toast on every close.
+  if (img) { img.onerror = null; img.src = ''; }
 }
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('active');
