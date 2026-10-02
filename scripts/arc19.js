@@ -37,18 +37,18 @@
   // -------------------------------------------------------------------
 
   const ARC19_CHAPTERS = [
-    {id:1, title:'The Way Back', focus:"The Crimson Tide decides which previously visited world to revisit first.", image:'assets/comics/arc19/ch01-the-way-back.png', xp:290, action:'🧭 Choose the Way Back'},
-    {id:2, title:'Old Shores, Changed Places', focus:"The crew returns to an earlier world and sees what changed after they left.", image:'assets/comics/arc19/ch02-old-shores-changed-places.png', xp:300, action:'⚓ Return to the Shore'},
-    {id:3, title:'Promises We Made', focus:"The crew follows up on an old agreement or commitment.", image:'assets/comics/arc19/ch03-promises-we-made.png', xp:300, action:'🤝 Follow Up on the Promise'},
-    {id:4, title:'The People We Left Behind', focus:"The crew reconnects with people who became important to them.", image:'assets/comics/arc19/ch04-the-people-we-left-behind.png', xp:310, action:'👋 Reconnect'},
-    {id:5, title:'What Our Choices Changed', focus:"Consequences of an earlier decision surface.", image:'assets/comics/arc19/ch05-what-our-choices-changed.png', xp:300, action:'🔍 See What Changed'},
-    {id:6, title:'The Harbour Remembers', focus:"The crew returns to the Unknown Harbour and deals with the relationship they've built there.", image:'assets/comics/arc19/ch06-the-harbour-remembers.png', xp:320, action:'⚓ Return to the Harbour'},
-    {id:7, title:'Beneath Familiar Waters', focus:"The crew revisits the Underwater World, now approaching it differently because of what they've learned.", image:'assets/comics/arc19/ch07-beneath-familiar-waters.png', xp:310, action:'🌊 Dive Back In'},
-    {id:8, title:'The Pack We Know', focus:"The crew returns to the Werewolf World and explores how their previous intervention affected the people there.", image:'assets/comics/arc19/ch08-the-pack-we-know.png', xp:310, action:'🐾 Return to the Pack'},
-    {id:9, title:'The Price of Taking', focus:"The crew revisits the Resource World and confronts the consequences of treating rare resources responsibly.", image:'assets/comics/arc19/ch09-the-price-of-taking.png', xp:320, action:'💎 Face the Consequences'},
-    {id:10, title:'A Network of Lives', focus:"San realizes the inter-world routes have become relationships rather than simply travel routes.", image:'assets/comics/arc19/ch10-a-network-of-lives.png', xp:300, action:'🕸️ See the Network Differently'},
-    {id:11, title:"The Road That Wasn't There", focus:"While following one of these connections, the crew encounters something that wasn't part of their previous understanding of the network.", image:'assets/comics/arc19/ch11-the-road-that-wasnt-there.png', xp:310, action:'🌀 Follow the Unknown Road'},
-    {id:12, title:'The Fountain Beyond the Horizon', focus:"The Fountain of Youth is discovered. The chapter ends on the discovery itself, rather than immediately using it.", image:'assets/comics/arc19/ch12-the-fountain-beyond-the-horizon.png', xp:560, action:'✨ Discover the Fountain'}
+    {id:1, title:'The Way Back', focus:"The Crimson Tide decides which previously visited world to revisit first.", image:'assets/comics/arc19/ch01-the-way-back.webp', xp:290, action:'🧭 Choose the Way Back'},
+    {id:2, title:'Old Shores, Changed Places', focus:"The crew returns to an earlier world and sees what changed after they left.", image:'assets/comics/arc19/ch02-old-shores-changed-places.webp', xp:300, action:'⚓ Return to the Shore'},
+    {id:3, title:'Promises We Made', focus:"The crew follows up on an old agreement or commitment.", image:'assets/comics/arc19/ch03-promises-we-made.webp', xp:300, action:'🤝 Follow Up on the Promise'},
+    {id:4, title:'The People We Left Behind', focus:"The crew reconnects with people who became important to them.", image:'assets/comics/arc19/ch04-the-people-we-left-behind.webp', xp:310, action:'👋 Reconnect'},
+    {id:5, title:'What Our Choices Changed', focus:"Consequences of an earlier decision surface.", image:'assets/comics/arc19/ch05-what-our-choices-changed.webp', xp:300, action:'🔍 See What Changed'},
+    {id:6, title:'The Harbour Remembers', focus:"The crew returns to the Unknown Harbour and deals with the relationship they've built there.", image:'assets/comics/arc19/ch06-the-harbour-remembers.webp', xp:320, action:'⚓ Return to the Harbour'},
+    {id:7, title:'Beneath Familiar Waters', focus:"The crew revisits the Underwater World, now approaching it differently because of what they've learned.", image:'assets/comics/arc19/ch07-beneath-familiar-waters.webp', xp:310, action:'🌊 Dive Back In'},
+    {id:8, title:'The Pack We Know', focus:"The crew returns to the Werewolf World and explores how their previous intervention affected the people there.", image:'assets/comics/arc19/ch08-the-pack-we-know.webp', xp:310, action:'🐾 Return to the Pack'},
+    {id:9, title:'The Price of Taking', focus:"The crew revisits the Resource World and confronts the consequences of treating rare resources responsibly.", image:'assets/comics/arc19/ch09-the-price-of-taking.webp', xp:320, action:'💎 Face the Consequences'},
+    {id:10, title:'A Network of Lives', focus:"San realizes the inter-world routes have become relationships rather than simply travel routes.", image:'assets/comics/arc19/ch10-a-network-of-lives.webp', xp:300, action:'🕸️ See the Network Differently'},
+    {id:11, title:"The Road That Wasn't There", focus:"While following one of these connections, the crew encounters something that wasn't part of their previous understanding of the network.", image:'assets/comics/arc19/ch11-the-road-that-wasnt-there.webp', xp:310, action:'🌀 Follow the Unknown Road'},
+    {id:12, title:'The Fountain Beyond the Horizon', focus:"The Fountain of Youth is discovered. The chapter ends on the discovery itself, rather than immediately using it.", image:'assets/comics/arc19/ch12-the-fountain-beyond-the-horizon.webp', xp:560, action:'✨ Discover the Fountain'}
   ];
   window.ARC19_CHAPTERS = ARC19_CHAPTERS;
 
@@ -125,7 +125,7 @@
       window.__ctShowArc19Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc19/arc19-the-worlds-we-know.png" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc19/arc19-the-worlds-we-know.webp" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XIX</div><div class="story-act-title">The Worlds We Know</div>'+
       '<div class="story-act-tagline">Before anything new — everything they never finished.</div></div>';
     if (!arc19Ready) {

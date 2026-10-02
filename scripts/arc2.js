@@ -7,21 +7,21 @@
   // sidesteps the mobile-zoom tradeoff entirely: the browser's own tab
   // handles pinch-zoom/pan on the full-resolution image natively.
   const ARC2_CHAPTERS = [
-    {id:1,  title:'The First Quiet Sea',              focus:'Leaving the events of Arc 1 behind',                    image:'assets/comics/arc2/ch01-the-first-quiet-sea.png',              xp:150},
-    {id:2,  title:'Something Beneath Us',              focus:'First hint of something following the ship',            image:'assets/comics/arc2/ch02-something-beneath-us.png',             xp:150},
-    {id:3,  title:"The Lookout's Warning",             focus:'Senedra spots the mysterious vessel',                    image:'assets/comics/arc2/ch03-the-lookouts-warning.png',             xp:150},
-    {id:4,  title:"The Ship That Shouldn't Be There",  focus:'The ghost ship approaches',                              image:'assets/comics/arc2/ch04-the-ship-that-shouldnt-be-there.png',  xp:150},
-    {id:5,  title:'The Ghost Ship',                    focus:'Crew investigates the abandoned vessel',                 image:'assets/comics/arc2/ch05-the-ghost-ship.png',                    xp:150},
-    {id:6,  title:'Names in the Ledger',                focus:"Aisyah discovers the old records",                       image:'assets/comics/arc2/ch06-names-in-the-ledger.png',              xp:150},
-    {id:7,  title:'Soel Hears the Dead',                focus:"Soel's spiritual abilities become important",           image:'assets/comics/arc2/ch07-soel-hears-the-dead.png',              xp:150},
-    {id:8,  title:'The Storm That Answers',             focus:'Mezstorm senses something within the storm',            image:'assets/comics/arc2/ch08-the-storm-that-answers.png',           xp:150},
-    {id:9,  title:'Two Forms, One Storm',               focus:"Mezstorm learns to work with her transformation",       image:'assets/comics/arc2/ch09-two-forms-one-storm.png',              xp:150},
-    {id:10, title:'The Sea Monster',                    focus:'First major Arc 2 battle',                               image:'assets/comics/arc2/ch10-the-sea-monster.png',                  xp:200,
+    {id:1,  title:'The First Quiet Sea',              focus:'Leaving the events of Arc 1 behind',                    image:'assets/comics/arc2/ch01-the-first-quiet-sea.webp',              xp:150},
+    {id:2,  title:'Something Beneath Us',              focus:'First hint of something following the ship',            image:'assets/comics/arc2/ch02-something-beneath-us.webp',             xp:150},
+    {id:3,  title:"The Lookout's Warning",             focus:'Senedra spots the mysterious vessel',                    image:'assets/comics/arc2/ch03-the-lookouts-warning.webp',             xp:150},
+    {id:4,  title:"The Ship That Shouldn't Be There",  focus:'The ghost ship approaches',                              image:'assets/comics/arc2/ch04-the-ship-that-shouldnt-be-there.webp',  xp:150},
+    {id:5,  title:'The Ghost Ship',                    focus:'Crew investigates the abandoned vessel',                 image:'assets/comics/arc2/ch05-the-ghost-ship.webp',                    xp:150},
+    {id:6,  title:'Names in the Ledger',                focus:"Aisyah discovers the old records",                       image:'assets/comics/arc2/ch06-names-in-the-ledger.webp',              xp:150},
+    {id:7,  title:'Soel Hears the Dead',                focus:"Soel's spiritual abilities become important",           image:'assets/comics/arc2/ch07-soel-hears-the-dead.webp',              xp:150},
+    {id:8,  title:'The Storm That Answers',             focus:'Mezstorm senses something within the storm',            image:'assets/comics/arc2/ch08-the-storm-that-answers.webp',           xp:150},
+    {id:9,  title:'Two Forms, One Storm',               focus:"Mezstorm learns to work with her transformation",       image:'assets/comics/arc2/ch09-two-forms-one-storm.webp',              xp:150},
+    {id:10, title:'The Sea Monster',                    focus:'First major Arc 2 battle',                               image:'assets/comics/arc2/ch10-the-sea-monster.webp',                  xp:200,
      gate:{type:'sail', label:'Set sail — the monster rises somewhere out there.'}},
-    {id:11, title:'The Thing It Was Guarding',          focus:'The crew discovers what the monster protected',         image:'assets/comics/arc2/ch11-the-thing-it-was-guarding.png',       xp:175},
-    {id:12, title:'A Map Without a Destination',        focus:'A mysterious maritime map is found',                     image:'assets/comics/arc2/ch12-a-map-without-a-destination.png',    xp:150},
-    {id:13, title:"A Captain's Decision",               focus:'San decides whether to follow it',                       image:'assets/comics/arc2/ch13-a-captains-decision.png',            xp:150},
-    {id:14, title:'A Quiet Milestone',                  focus:'Fifty levels past the beginning',                        image:'assets/comics/arc2/ch14-a-quiet-milestone.png',               xp:250,
+    {id:11, title:'The Thing It Was Guarding',          focus:'The crew discovers what the monster protected',         image:'assets/comics/arc2/ch11-the-thing-it-was-guarding.webp',       xp:175},
+    {id:12, title:'A Map Without a Destination',        focus:'A mysterious maritime map is found',                     image:'assets/comics/arc2/ch12-a-map-without-a-destination.webp',    xp:150},
+    {id:13, title:"A Captain's Decision",               focus:'San decides whether to follow it',                       image:'assets/comics/arc2/ch13-a-captains-decision.webp',            xp:150},
+    {id:14, title:'A Quiet Milestone',                  focus:'Fifty levels past the beginning',                        image:'assets/comics/arc2/ch14-a-quiet-milestone.webp',               xp:250,
      gate:{type:'level', value:50, label:'Reach level 50 to reflect on how far the crew has come.'}}
   ];
   window.ARC2_CHAPTERS = ARC2_CHAPTERS;
@@ -118,7 +118,7 @@
       window.__ctShowArc2Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc2/arc2-cover-new-shores.png" alt="Arc II — New Shores" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc2/arc2-cover-new-shores.webp" alt="Arc II — New Shores" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc II</div><div class="story-act-title">A Voyage to Remember</div>'+
       '<div class="story-act-tagline">14 story chapters. New horizons, familiar hearts.</div></div>';
     if(!arc1Done){

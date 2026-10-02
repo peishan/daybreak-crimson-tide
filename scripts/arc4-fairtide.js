@@ -216,27 +216,27 @@
   // content becomes available, rather than unlocking simultaneously.
   // -------------------------------------------------------------------
   const ARC4_CHAPTERS = [
-    {id:1,  title:'A Port Between Horizons',   focus:'The crew reaches Fair Tide and begins to make it their own.',                    image:'assets/comics/arc4/ch01-a-port-between-horizons.png',   xp:150},
-    {id:2,  title:'New Faces, Old Familiarity', focus:'Some people feel like a memory before the memory returns.',                      image:'assets/comics/arc4/ch02-new-faces-old-familiarity.png', xp:150},
-    {id:3,  title:'The Scout and the Fox',      focus:'Iris and Ash join the crew.',                                                    image:'assets/comics/arc4/ch03-the-scout-and-the-fox.png',     xp:175},
-    {id:4,  title:'The Rabbit at the Lookout',  focus:'KW Liang and Snowball join the crew.',                                           image:'assets/comics/arc4/ch04-the-rabbit-at-the-lookout.png', xp:175},
-    {id:5,  title:'A Familiar Kind of Trouble', focus:'Fragments of recognition, without the memories to explain them.',                image:'assets/comics/arc4/ch05-a-familiar-kind-of-trouble.png',xp:150},
-    {id:6,  title:'The Ship Worth Taking',      focus:'Robin C. of R&C notices Crimson Tide — and starts watching.',                    image:'assets/comics/arc4/ch06-the-ship-worth-taking.png',     xp:175},
-    {id:7,  title:'Terms of Capture',           focus:"Robin's first move against the crew.",                                          image:'assets/comics/arc4/ch07-terms-of-capture.png',          xp:200},
-    {id:8,  title:'The Contract',               focus:'Robin is defeated — but escapes.',                                              image:'assets/comics/arc4/ch08-the-contract.png',               xp:225},
-    {id:9,  title:'The Doctor on Shore',        focus:'Dr AA joins the crew.',                                                          image:'assets/comics/arc4/ch09-the-doctor-on-shore.png',       xp:175},
-    {id:10, title:"The Diviner's Path",         focus:'Mimi joins the crew.',                                                           image:'assets/comics/arc4/ch10-the-diviners-path.png',         xp:175},
-    {id:11, title:'Two Who Choose Each Other',  focus:'Brada Shah joins the crew, alongside Mimi.',                                     image:'assets/comics/arc4/ch11-two-who-choose-each-other.png', xp:175},
-    {id:12, title:'A Better Offer',             focus:'Jeff approaches Joel with an offer.',                                            image:'assets/comics/arc4/ch12-a-better-offer.png',             xp:150},
-    {id:13, title:"The First Mate's Answer",    focus:'Joel refuses Jeff.',                                                             image:'assets/comics/arc4/ch13-the-first-mates-answer.png',    xp:175},
-    {id:14, title:'The Night Raid',             focus:"Jeff attacks. A shore battle, not a sea battle.",                                image:'assets/comics/arc4/ch14-the-night-raid.png',             xp:225},
-    {id:15, title:"Stand With Who's Right",     focus:'Another captain makes Joel an offer. He turns it down.',                         image:'assets/comics/arc4/ch15-stand-with-whos-right.png',     xp:175},
-    {id:16, title:'The Tide Gathers',           focus:'More allies arrive at Fair Tide.',                                               image:'assets/comics/arc4/ch16-the-tide-gathers.png',           xp:150},
-    {id:17, title:'What We Recognise',          focus:'The recurring sense of familiarity, confronted directly.',                       image:'assets/comics/arc4/ch17-what-we-recognise.png',          xp:150},
-    {id:18, title:'The Port Becomes Ours',      focus:'Fair Tide, now a true home port.',                                               image:'assets/comics/arc4/ch18-the-port-becomes-ours.png',      xp:150},
-    {id:19, title:'The Rivals Return',          focus:'Robin and Jeff are both rebuilding. Defeated, not gone.',                         image:'assets/comics/arc4/ch19-the-rivals-return.png',          xp:200},
-    {id:20, title:'A Crew Worth Following',     focus:'Every ally confirms why they stay.',                                             image:'assets/comics/arc4/ch20-a-crew-worth-following.png',     xp:175},
-    {id:21, title:'Beyond the Next Horizon',    focus:'Arc IV closes. Larger crew, wider world.',                                        image:'assets/comics/arc4/ch21-beyond-the-next-horizon.png',    xp:250}
+    {id:1,  title:'A Port Between Horizons',   focus:'The crew reaches Fair Tide and begins to make it their own.',                    image:'assets/comics/arc4/ch01-a-port-between-horizons.webp',   xp:150},
+    {id:2,  title:'New Faces, Old Familiarity', focus:'Some people feel like a memory before the memory returns.',                      image:'assets/comics/arc4/ch02-new-faces-old-familiarity.webp', xp:150},
+    {id:3,  title:'The Scout and the Fox',      focus:'Iris and Ash join the crew.',                                                    image:'assets/comics/arc4/ch03-the-scout-and-the-fox.webp',     xp:175},
+    {id:4,  title:'The Rabbit at the Lookout',  focus:'KW Liang and Snowball join the crew.',                                           image:'assets/comics/arc4/ch04-the-rabbit-at-the-lookout.webp', xp:175},
+    {id:5,  title:'A Familiar Kind of Trouble', focus:'Fragments of recognition, without the memories to explain them.',                image:'assets/comics/arc4/ch05-a-familiar-kind-of-trouble.webp',xp:150},
+    {id:6,  title:'The Ship Worth Taking',      focus:'Robin C. of R&C notices Crimson Tide — and starts watching.',                    image:'assets/comics/arc4/ch06-the-ship-worth-taking.webp',     xp:175},
+    {id:7,  title:'Terms of Capture',           focus:"Robin's first move against the crew.",                                          image:'assets/comics/arc4/ch07-terms-of-capture.webp',          xp:200},
+    {id:8,  title:'The Contract',               focus:'Robin is defeated — but escapes.',                                              image:'assets/comics/arc4/ch08-the-contract.webp',               xp:225},
+    {id:9,  title:'The Doctor on Shore',        focus:'Dr AA joins the crew.',                                                          image:'assets/comics/arc4/ch09-the-doctor-on-shore.webp',       xp:175},
+    {id:10, title:"The Diviner's Path",         focus:'Mimi joins the crew.',                                                           image:'assets/comics/arc4/ch10-the-diviners-path.webp',         xp:175},
+    {id:11, title:'Two Who Choose Each Other',  focus:'Brada Shah joins the crew, alongside Mimi.',                                     image:'assets/comics/arc4/ch11-two-who-choose-each-other.webp', xp:175},
+    {id:12, title:'A Better Offer',             focus:'Jeff approaches Joel with an offer.',                                            image:'assets/comics/arc4/ch12-a-better-offer.webp',             xp:150},
+    {id:13, title:"The First Mate's Answer",    focus:'Joel refuses Jeff.',                                                             image:'assets/comics/arc4/ch13-the-first-mates-answer.webp',    xp:175},
+    {id:14, title:'The Night Raid',             focus:"Jeff attacks. A shore battle, not a sea battle.",                                image:'assets/comics/arc4/ch14-the-night-raid.webp',             xp:225},
+    {id:15, title:"Stand With Who's Right",     focus:'Another captain makes Joel an offer. He turns it down.',                         image:'assets/comics/arc4/ch15-stand-with-whos-right.webp',     xp:175},
+    {id:16, title:'The Tide Gathers',           focus:'More allies arrive at Fair Tide.',                                               image:'assets/comics/arc4/ch16-the-tide-gathers.webp',           xp:150},
+    {id:17, title:'What We Recognise',          focus:'The recurring sense of familiarity, confronted directly.',                       image:'assets/comics/arc4/ch17-what-we-recognise.webp',          xp:150},
+    {id:18, title:'The Port Becomes Ours',      focus:'Fair Tide, now a true home port.',                                               image:'assets/comics/arc4/ch18-the-port-becomes-ours.webp',      xp:150},
+    {id:19, title:'The Rivals Return',          focus:'Robin and Jeff are both rebuilding. Defeated, not gone.',                         image:'assets/comics/arc4/ch19-the-rivals-return.webp',          xp:200},
+    {id:20, title:'A Crew Worth Following',     focus:'Every ally confirms why they stay.',                                             image:'assets/comics/arc4/ch20-a-crew-worth-following.webp',     xp:175},
+    {id:21, title:'Beyond the Next Horizon',    focus:'Arc IV closes. Larger crew, wider world.',                                        image:'assets/comics/arc4/ch21-beyond-the-next-horizon.webp',    xp:250}
   ];
   window.ARC4_CHAPTERS = ARC4_CHAPTERS;
 
@@ -379,7 +379,7 @@
       window.__ctShowArc4Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc4/arc4-cover-gathering-tide.png" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc4/arc4-cover-gathering-tide.webp" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc IV</div><div class="story-act-title">The Gathering Tide</div>'+
       '<div class="story-act-tagline">1 chapter so far. New people, new horizons.</div></div>';
     if(!arc4Ready){

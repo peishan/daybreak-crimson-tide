@@ -9,27 +9,27 @@
   // character-focused arc ("Origins"), unlike Arc 2's one real battle
   // chapter, so pure sequential reads fit its tone.
   const ARC3_CHAPTERS = [
-    {id:1,  title:'The Night at the Tavern',   focus:'Sometimes the journey brings you exactly where you\'re meant to be.', image:'assets/comics/arc3/ch01-the-night-at-the-tavern.png',   xp:150},
-    {id:2,  title:'What Are We?',               focus:'Same crew. A different kind of conversation.',                       image:'assets/comics/arc3/ch02-what-are-we.png',                xp:150},
-    {id:3,  title:'Familiar',                    focus:'Some feelings don\'t need a memory to be real.',                     image:'assets/comics/arc3/ch03-familiar.png',                   xp:150},
-    {id:4,  title:'The First Encounter',         focus:'Not every battle is against the world.',                            image:'assets/comics/arc3/ch04-the-first-encounter.png',       xp:150},
-    {id:5,  title:'Together in Battle',          focus:'Different strengths. The same direction.',                          image:'assets/comics/arc3/ch05-together-in-battle.png',        xp:150},
-    {id:6,  title:'First Mate',                  focus:'Different roles. The same direction.',                              image:'assets/comics/arc3/ch06-first-mate.png',                 xp:150},
-    {id:7,  title:'The Middle Sister',           focus:'Some distances can be crossed. If both sides are willing.',         image:'assets/comics/arc3/ch07-the-middle-sister.png',          xp:150},
-    {id:8,  title:'What We Don\'t Remember',     focus:'Some things are lost, but we\'re still here.',                       image:'assets/comics/arc3/ch08-what-we-dont-remember.png',      xp:150},
-    {id:9,  title:'The Men at the Port',         focus:'Some attention is easy to ignore. Some are not.',                   image:'assets/comics/arc3/ch09-the-men-at-the-port.png',        xp:150},
-    {id:10, title:'Closer',                      focus:'Sometimes the quietest feelings bring us the closest.',             image:'assets/comics/arc3/ch10-closer.png',                     xp:150},
-    {id:11, title:'You Said I Could',            focus:'Some promises don\'t need to be loud. They just need to be real.',   image:'assets/comics/arc3/ch11-you-said-i-could.png',           xp:150},
-    {id:12, title:'Us',                          focus:'Now we know what we are. And that\'s enough.',                      image:'assets/comics/arc3/ch12-us.png',                         xp:150},
-    {id:13, title:'Steady Hands',                focus:'Calmer days. Rougher days. It doesn\'t matter. Same crew.',          image:'assets/comics/arc3/ch13-steady-hands.png',               xp:175},
-    {id:14, title:'The Things We Don\'t Say',    focus:'Some things are understood. Some are chosen.',                      image:'assets/comics/arc3/ch14-the-things-we-dont-say.png',    xp:150},
-    {id:15, title:'What We Carry',               focus:'Different burdens. The same crew.',                                 image:'assets/comics/arc3/ch15-what-we-carry.png',             xp:175},
-    {id:16, title:'The Fight We Remember',       focus:'Not because we lost — but because we remember.',                    image:'assets/comics/arc3/ch16-the-fight-we-remember.png',    xp:175},
-    {id:17, title:'Captain and First Mate',      focus:'A captain to choose the path. A first mate to stand beside it.',    image:'assets/comics/arc3/ch17-captain-and-first-mate.png',   xp:150},
-    {id:18, title:'The Memory We Leave Behind',  focus:'It\'s also about what we leave in the places we\'ve been.',          image:'assets/comics/arc3/ch18-the-memory-we-leave-behind.png', xp:150},
-    {id:19, title:'Something Beneath the Familiar', focus:'Sometimes the unknown lies beneath the places we thought we knew.', image:'assets/comics/arc3/ch19-something-beneath-the-familiar.png', xp:175},
-    {id:20, title:'Neither Without the Other',   focus:'We are strong because we are different. Neither without the other.', image:'assets/comics/arc3/ch20-neither-without-the-other.png', xp:175},
-    {id:21, title:'The Choice We Made',          focus:'Not by chance. But by choice.',                                      image:'assets/comics/arc3/ch21-the-choice-we-made.png',        xp:175}
+    {id:1,  title:'The Night at the Tavern',   focus:'Sometimes the journey brings you exactly where you\'re meant to be.', image:'assets/comics/arc3/ch01-the-night-at-the-tavern.webp',   xp:150},
+    {id:2,  title:'What Are We?',               focus:'Same crew. A different kind of conversation.',                       image:'assets/comics/arc3/ch02-what-are-we.webp',                xp:150},
+    {id:3,  title:'Familiar',                    focus:'Some feelings don\'t need a memory to be real.',                     image:'assets/comics/arc3/ch03-familiar.webp',                   xp:150},
+    {id:4,  title:'The First Encounter',         focus:'Not every battle is against the world.',                            image:'assets/comics/arc3/ch04-the-first-encounter.webp',       xp:150},
+    {id:5,  title:'Together in Battle',          focus:'Different strengths. The same direction.',                          image:'assets/comics/arc3/ch05-together-in-battle.webp',        xp:150},
+    {id:6,  title:'First Mate',                  focus:'Different roles. The same direction.',                              image:'assets/comics/arc3/ch06-first-mate.webp',                 xp:150},
+    {id:7,  title:'The Middle Sister',           focus:'Some distances can be crossed. If both sides are willing.',         image:'assets/comics/arc3/ch07-the-middle-sister.webp',          xp:150},
+    {id:8,  title:'What We Don\'t Remember',     focus:'Some things are lost, but we\'re still here.',                       image:'assets/comics/arc3/ch08-what-we-dont-remember.webp',      xp:150},
+    {id:9,  title:'The Men at the Port',         focus:'Some attention is easy to ignore. Some are not.',                   image:'assets/comics/arc3/ch09-the-men-at-the-port.webp',        xp:150},
+    {id:10, title:'Closer',                      focus:'Sometimes the quietest feelings bring us the closest.',             image:'assets/comics/arc3/ch10-closer.webp',                     xp:150},
+    {id:11, title:'You Said I Could',            focus:'Some promises don\'t need to be loud. They just need to be real.',   image:'assets/comics/arc3/ch11-you-said-i-could.webp',           xp:150},
+    {id:12, title:'Us',                          focus:'Now we know what we are. And that\'s enough.',                      image:'assets/comics/arc3/ch12-us.webp',                         xp:150},
+    {id:13, title:'Steady Hands',                focus:'Calmer days. Rougher days. It doesn\'t matter. Same crew.',          image:'assets/comics/arc3/ch13-steady-hands.webp',               xp:175},
+    {id:14, title:'The Things We Don\'t Say',    focus:'Some things are understood. Some are chosen.',                      image:'assets/comics/arc3/ch14-the-things-we-dont-say.webp',    xp:150},
+    {id:15, title:'What We Carry',               focus:'Different burdens. The same crew.',                                 image:'assets/comics/arc3/ch15-what-we-carry.webp',             xp:175},
+    {id:16, title:'The Fight We Remember',       focus:'Not because we lost — but because we remember.',                    image:'assets/comics/arc3/ch16-the-fight-we-remember.webp',    xp:175},
+    {id:17, title:'Captain and First Mate',      focus:'A captain to choose the path. A first mate to stand beside it.',    image:'assets/comics/arc3/ch17-captain-and-first-mate.webp',   xp:150},
+    {id:18, title:'The Memory We Leave Behind',  focus:'It\'s also about what we leave in the places we\'ve been.',          image:'assets/comics/arc3/ch18-the-memory-we-leave-behind.webp', xp:150},
+    {id:19, title:'Something Beneath the Familiar', focus:'Sometimes the unknown lies beneath the places we thought we knew.', image:'assets/comics/arc3/ch19-something-beneath-the-familiar.webp', xp:175},
+    {id:20, title:'Neither Without the Other',   focus:'We are strong because we are different. Neither without the other.', image:'assets/comics/arc3/ch20-neither-without-the-other.webp', xp:175},
+    {id:21, title:'The Choice We Made',          focus:'Not by chance. But by choice.',                                      image:'assets/comics/arc3/ch21-the-choice-we-made.webp',        xp:175}
   ];
   window.ARC3_CHAPTERS = ARC3_CHAPTERS;
 
@@ -110,7 +110,7 @@
       window.__ctShowArc3Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc3/arc3-cover-steady-hands.png" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc3/arc3-cover-steady-hands.webp" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc III — Origins</div><div class="story-act-title">Steady Hands</div>'+
       '<div class="story-act-tagline">26 chapters so far. Calmer days, rougher days — the same crew.</div></div>';
     if(!arc2Done){
