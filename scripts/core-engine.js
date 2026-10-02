@@ -4082,13 +4082,19 @@ function restoreAllAboardCrew() {
     game.partyMp[m.id] = Number(m.maxMp || m.mp || 0);
   });
 }
-// Shares game.freeRestDay with freeRestAtPort — one rest per day between
-// the two of them, matching "the free site and the paid tavern are both
-// still just resting somewhere out in the world" versus Captain's Quarters
-// (see restInCaptainsQuarters), which is deliberately unlimited since it's
-// the one place meant to always be safe and available.
+// At Fair Tide, shares game.freeRestDay with freeRestAtPort -- one rest per
+// day between the two of them, matching "the free site and the paid tavern
+// are both still just resting somewhere out in the world" versus Captain's
+// Quarters (see restInCaptainsQuarters), which is deliberately unlimited
+// since it's the one place meant to always be safe and available.
+//
+// Away from Fair Tide there's no Captain's Quarters to fall back on, so the
+// daily cap doesn't apply out there -- the tavern is simply pay-15g-each-
+// time, as many times as needed, and doesn't touch freeRestDay at all (so
+// it never blocks, and is never blocked by, that port's own free rest).
 function restAtTavern() {
-  if (game.freeRestDay === game.day) {
+  const atFairTide = game.location === 'fair_tide';
+  if (atFairTide && game.freeRestDay === game.day) {
     toast('Already rested today. Come back tomorrow — or head home to the Captain\'s Quarters, which is always free.');
     return;
   }
@@ -4099,7 +4105,7 @@ function restAtTavern() {
   }
 
   game.gold -= cost;
-  game.freeRestDay = game.day;
+  if (atFairTide) game.freeRestDay = game.day;
   game.partyHp = game.partyHp || {};
   game.partyMp = game.partyMp || {};
 

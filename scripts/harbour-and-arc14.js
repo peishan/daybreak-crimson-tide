@@ -357,6 +357,17 @@
     if (game.fairTideEnteringRemotely) {
       game.fairTideRemoteAccessMode = true;
       game.fairTideEnteringRemotely = false;
+      // switchFairTideTab() below only blocks a tab SWITCH -- it was never
+      // enough on its own. If an earlier in-person visit left
+      // fairTideActiveTab on something like 'quarters', entering remotely
+      // would render that tab's content on this very first paint (every
+      // per-tab renderFairTideHub wrap reads fairTideActiveTab directly,
+      // not remote mode), handing out a free full heal with nobody ever
+      // clicking a blocked tab button. Force a safe tab before that first
+      // render happens.
+      if (REMOTE_RESTRICTED_TABS.includes(game.fairTideActiveTab)) {
+        game.fairTideActiveTab = 'buildings';
+      }
     } else {
       game.fairTideRemoteAccessMode = false;
     }
