@@ -761,20 +761,20 @@
   // the fight IS the chapter's climax, not a separate checkbox after.
   // -------------------------------------------------------------------
   const ARC6_CHAPTERS = [
-    {id:1, title:'The Captives', focus:"The Crimson Tide intercepts Robin's and Jeff's ships — something's controlling their crews, and Renn moves to shut it down before anyone gets hurt.", image:'assets/comics/arc6/ch01-the-captives.png', xp:300},
-    {id:2, title:'The Ships We Inherit', focus:"San decides what to do with two captured ships and their crews — not everyone here chose to be. Freedom isn't given to the strongest. It's given to the right people.", image:'assets/comics/arc6/ch02-the-ships-we-inherit.png', xp:300},
-    {id:3, title:"Didn't Have Rice?", focus:"Joel finds Jeff doing his community service and finally says what he never got to say. The crowd Jeff spent years dismissing has its own answer.", image:'assets/comics/arc6/ch03-didnt-have-rice.png', xp:300},
-    {id:4, title:'The People We Keep', focus:"Too many people, too many ships. San gives everyone a real choice instead of a new set of orders — and Fair Tide grows because of it.", image:'assets/comics/arc6/ch04-the-people-we-keep.png', xp:325},
-    {id:5, title:'A Ship of Our Own', focus:"San inspects the inherited ships and decides what each one becomes — fleet, trade, transport, or let go. Renn finds something unusual in the rigging of one of them.", image:'assets/comics/arc6/ch05-a-ship-of-our-own.png', xp:325},
-    {id:6, title:'What They Were Good At', focus:"Former workers start revealing skills Robin never saw — a cook, a carpenter, a navigator, a trader. He saw job titles. San sees people.", image:'assets/comics/arc6/ch06-what-they-were-good-at.png', xp:325},
-    {id:7, title:'The Empty Office', focus:"Robin watches Fair Tide laugh together, unafraid, uninterested in his approval. No dramatic redemption. Just the quiet realization that his old authority is simply gone.", image:'assets/comics/arc6/ch07-the-empty-office.png', xp:300},
-    {id:8, title:"Joel's Rest", focus:"After everything with Jeff, Joel finally talks about the strangeness of watching the old hierarchy reverse. San doesn't give him a speech. She just stays beside him.", image:'assets/comics/arc6/ch08-joels-rest.png', xp:300},
-    {id:9, title:'The Crew That Chose Us', focus:"The people who voluntarily stayed formally become part of the Crimson Tide network. They aren't indentured anymore. They chose to stay.", image:'assets/comics/arc6/ch09-the-crew-that-chose-us.png', xp:350},
-    {id:10, title:'The First Voyage', focus:"San takes some of the newly recruited crew on their first voyage. They aren't Robin's workers anymore. They're sailors aboard their own chosen future.", image:'assets/comics/arc6/ch10-the-first-voyage.png', xp:300},
-    {id:11, title:'Something in the Cargo', focus:"Renn digs deeper into the artifact from the captured cargo — the first real bridge back toward the larger magical-world storyline.", image:'assets/comics/arc6/ch11-something-in-the-cargo.png', xp:325},
-    {id:12, title:'The Price of a Ship', focus:"Taking possession of Robin's fleet has consequences — other merchants and authorities notice. San has to negotiate rather than simply fight.", image:'assets/comics/arc6/ch12-the-price-of-a-ship.png', xp:350},
-    {id:13, title:'The People Who Left', focus:"Some freed workers return briefly — one reunited with parents, one found work, one just wanted to leave the sea. Freedom doesn't mean everyone should join San.", image:'assets/comics/arc6/ch13-the-people-who-left.png', xp:300},
-    {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.png', xp:300},
+    {id:1, title:'The Captives', focus:"The Crimson Tide intercepts Robin's and Jeff's ships — something's controlling their crews, and Renn moves to shut it down before anyone gets hurt.", image:'assets/comics/arc6/ch01-the-captives.webp', xp:300},
+    {id:2, title:'The Ships We Inherit', focus:"San decides what to do with two captured ships and their crews — not everyone here chose to be. Freedom isn't given to the strongest. It's given to the right people.", image:'assets/comics/arc6/ch02-the-ships-we-inherit.webp', xp:300},
+    {id:3, title:"Didn't Have Rice?", focus:"Joel finds Jeff doing his community service and finally says what he never got to say. The crowd Jeff spent years dismissing has its own answer.", image:'assets/comics/arc6/ch03-didnt-have-rice.webp', xp:300},
+    {id:4, title:'The People We Keep', focus:"Too many people, too many ships. San gives everyone a real choice instead of a new set of orders — and Fair Tide grows because of it.", image:'assets/comics/arc6/ch04-the-people-we-keep.webp', xp:325},
+    {id:5, title:'A Ship of Our Own', focus:"San inspects the inherited ships and decides what each one becomes — fleet, trade, transport, or let go. Renn finds something unusual in the rigging of one of them.", image:'assets/comics/arc6/ch05-a-ship-of-our-own.webp', xp:325},
+    {id:6, title:'What They Were Good At', focus:"Former workers start revealing skills Robin never saw — a cook, a carpenter, a navigator, a trader. He saw job titles. San sees people.", image:'assets/comics/arc6/ch06-what-they-were-good-at.webp', xp:325},
+    {id:7, title:'The Empty Office', focus:"Robin watches Fair Tide laugh together, unafraid, uninterested in his approval. No dramatic redemption. Just the quiet realization that his old authority is simply gone.", image:'assets/comics/arc6/ch07-the-empty-office.webp', xp:300},
+    {id:8, title:"Joel's Rest", focus:"After everything with Jeff, Joel finally talks about the strangeness of watching the old hierarchy reverse. San doesn't give him a speech. She just stays beside him.", image:'assets/comics/arc6/ch08-joels-rest.webp', xp:300},
+    {id:9, title:'The Crew That Chose Us', focus:"The people who voluntarily stayed formally become part of the Crimson Tide network. They aren't indentured anymore. They chose to stay.", image:'assets/comics/arc6/ch09-the-crew-that-chose-us.webp', xp:350},
+    {id:10, title:'The First Voyage', focus:"San takes some of the newly recruited crew on their first voyage. They aren't Robin's workers anymore. They're sailors aboard their own chosen future.", image:'assets/comics/arc6/ch10-the-first-voyage.webp', xp:300},
+    {id:11, title:'Something in the Cargo', focus:"Renn digs deeper into the artifact from the captured cargo — the first real bridge back toward the larger magical-world storyline.", image:'assets/comics/arc6/ch11-something-in-the-cargo.webp', xp:325},
+    {id:12, title:'The Price of a Ship', focus:"Taking possession of Robin's fleet has consequences — other merchants and authorities notice. San has to negotiate rather than simply fight.", image:'assets/comics/arc6/ch12-the-price-of-a-ship.webp', xp:350},
+    {id:13, title:'The People Who Left', focus:"Some freed workers return briefly — one reunited with parents, one found work, one just wanted to leave the sea. Freedom doesn't mean everyone should join San.", image:'assets/comics/arc6/ch13-the-people-who-left.webp', xp:300},
+    {id:14, title:'The People Who Stayed', focus:"The people who chose Fair Tide explain why. Not because San owns them. Because they believe in what she's building.", image:'assets/comics/arc6/ch14-the-people-who-stayed.webp', xp:300},
     // Ch.15 is special: it only becomes readable once Robin's real
     // 20-day community service term actually finishes (see
     // robinServiceDone() below), not just when story progress reaches
@@ -782,16 +782,16 @@
     // never blocks Ch.16+ — and the Story tab renders it as
     // independently available the moment his term completes, even if
     // the player's already well past it in the main sequence.
-    {id:15, title:"Robin's Last Day", focus:"Robin reaches the end of his community service. No redemption speech. He simply finishes what he was ordered to do, and moves on.", image:'assets/comics/arc6/ch15-robins-last-day.png', xp:300},
-    {id:16, title:"Jeff's Last Excuse", focus:"Jeff finally runs out of excuses — no powerful in-law, no employees to blame, no authority. Just himself. His labor stays exactly as permanent as it was.", image:'assets/comics/arc6/ch16-jeffs-last-excuse.png', xp:300},
-    {id:17, title:'The Fair Tide Grows', focus:"The settlement expands significantly — new stalls, workshops, storage, a community taking shape. Fair Tide has room to grow further now.", image:'assets/comics/arc6/ch17-the-fair-tide-grows.png', xp:350},
-    {id:18, title:'The Strange Cargo', focus:"Renn finally identifies the artifact from the captured cargo. It's a kind of magic none of them have ever encountered. He still can't explain where it came from.", image:'assets/comics/arc6/ch18-the-strange-cargo.png', xp:325},
-    {id:19, title:'Beyond the Map', focus:"The Crimson Tide follows the clue and finds something that shouldn't exist on their charts at all.", image:'assets/comics/arc6/ch19-beyond-the-map.png', xp:325},
-    {id:20, title:'The Door Renn Found', focus:"Renn finally understands what he's looking at. It's a passage — not one they can safely cross yet, but real.", image:'assets/comics/arc6/ch20-the-door-renn-found.png', xp:350},
-    {id:21, title:"Captain's Choice", focus:"San decides they won't rush through. She wants the Crimson Tide ready first — ships, crew, supplies, magic, family. Joel agrees: \"Then we'll be ready when you are.\"", image:'assets/comics/arc6/ch21-the-captains-choice.png', xp:325},
-    {id:22, title:'The Sea Is Bigger Now', focus:"The crew sails home. The historical world hasn't disappeared — Fair Tide is still there, their people are still there. But the horizon has changed.", image:'assets/comics/arc6/ch22-the-sea-is-bigger-now.png', xp:300},
-    {id:23, title:'Everyone Has a Place', focus:"A celebration at Fair Tide — former workers, new crew, old crew, friends. What began as a ship has become something much larger.", image:'assets/comics/arc6/ch23-everyone-has-a-place.png', xp:325},
-    {id:24, title:'The Next Horizon', focus:"San stands at the bow. Renn studies the artifact. Joel joins her. The next journey won't be another port. It might be another world.", image:'assets/comics/arc6/ch24-the-next-horizon.png', xp:500}
+    {id:15, title:"Robin's Last Day", focus:"Robin reaches the end of his community service. No redemption speech. He simply finishes what he was ordered to do, and moves on.", image:'assets/comics/arc6/ch15-robins-last-day.webp', xp:300},
+    {id:16, title:"Jeff's Last Excuse", focus:"Jeff finally runs out of excuses — no powerful in-law, no employees to blame, no authority. Just himself. His labor stays exactly as permanent as it was.", image:'assets/comics/arc6/ch16-jeffs-last-excuse.webp', xp:300},
+    {id:17, title:'The Fair Tide Grows', focus:"The settlement expands significantly — new stalls, workshops, storage, a community taking shape. Fair Tide has room to grow further now.", image:'assets/comics/arc6/ch17-the-fair-tide-grows.webp', xp:350},
+    {id:18, title:'The Strange Cargo', focus:"Renn finally identifies the artifact from the captured cargo. It's a kind of magic none of them have ever encountered. He still can't explain where it came from.", image:'assets/comics/arc6/ch18-the-strange-cargo.webp', xp:325},
+    {id:19, title:'Beyond the Map', focus:"The Crimson Tide follows the clue and finds something that shouldn't exist on their charts at all.", image:'assets/comics/arc6/ch19-beyond-the-map.webp', xp:325},
+    {id:20, title:'The Door Renn Found', focus:"Renn finally understands what he's looking at. It's a passage — not one they can safely cross yet, but real.", image:'assets/comics/arc6/ch20-the-door-renn-found.webp', xp:350},
+    {id:21, title:"Captain's Choice", focus:"San decides they won't rush through. She wants the Crimson Tide ready first — ships, crew, supplies, magic, family. Joel agrees: \"Then we'll be ready when you are.\"", image:'assets/comics/arc6/ch21-the-captains-choice.webp', xp:325},
+    {id:22, title:'The Sea Is Bigger Now', focus:"The crew sails home. The historical world hasn't disappeared — Fair Tide is still there, their people are still there. But the horizon has changed.", image:'assets/comics/arc6/ch22-the-sea-is-bigger-now.webp', xp:300},
+    {id:23, title:'Everyone Has a Place', focus:"A celebration at Fair Tide — former workers, new crew, old crew, friends. What began as a ship has become something much larger.", image:'assets/comics/arc6/ch23-everyone-has-a-place.webp', xp:325},
+    {id:24, title:'The Next Horizon', focus:"San stands at the bow. Renn studies the artifact. Joel joins her. The next journey won't be another port. It might be another world.", image:'assets/comics/arc6/ch24-the-next-horizon.webp', xp:500}
   ];
   window.ARC6_CHAPTERS = ARC6_CHAPTERS;
 
@@ -1903,7 +1903,7 @@
       window.__ctShowArc6Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc6/arc6-cover-the-price-of-freedom.png" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc6/arc6-cover-the-price-of-freedom.webp" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc VI</div><div class="story-act-title">The Price of Freedom</div>'+
       '<div class="story-act-tagline">Power gives San the choice to do better.</div></div>';
     ARC6_CHAPTERS.forEach(ch=>{

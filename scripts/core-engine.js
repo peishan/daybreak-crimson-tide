@@ -18,10 +18,10 @@ const PORTS = [
     specialties: ['spices', 'silk', 'tea'], distances: { malacca: 1, batavia: 3, manila: 4, bangkok: 2, hanoi: 3, palembang: 2, kota_batu: 6, fair_tide: 5 }, danger: 1,
     chapterId: 1, companion: null, guardian: null,
     comic: [
-      {image:'assets/comics/act1/ch02/panel01.png', caption:'The storm took everything.'},
-      {image:'assets/comics/act1/ch02/panel02.png', caption:'But I’m still here. So I won’t stop.'},
-      {image:'assets/comics/act1/ch02/panel03.png', caption:'A lead in Singapore. A name on someone’s lips.'},
-      {image:'assets/comics/act1/ch02/panel04.png', caption:'Malacca. That’s where I’ll start.'}
+      {image:'assets/comics/act1/ch02/panel01.webp', caption:'The storm took everything.'},
+      {image:'assets/comics/act1/ch02/panel02.webp', caption:'But I’m still here. So I won’t stop.'},
+      {image:'assets/comics/act1/ch02/panel03.webp', caption:'A lead in Singapore. A name on someone’s lips.'},
+      {image:'assets/comics/act1/ch02/panel04.webp', caption:'Malacca. That’s where I’ll start.'}
     ],
     blurb: "San's home port, or what's left of one. Three months since the Daybreak went down in a squall that shouldn't have existed. She surfaced with Soel's collar around her wrist, a compass that points toward people instead of north, and nothing else. One by one, it's led her to a port. One by one, she means to get her crew back.",
     harbor: ['bilge_rat','dock_thief'] },
@@ -29,10 +29,10 @@ const PORTS = [
     specialties: ['spices', 'pepper', 'antiquities'], distances: { singapore: 1, batavia: 3, manila: 5, bangkok: 3, hanoi: 4, palembang: 3, kota_batu: 6, fair_tide: 5 }, danger: 2,
     chapterId: 2, companion: 'joel', guardian: 'wreck_warden',
     comic: [
-      {image:'assets/comics/act1/ch03/panel01.png', caption:'A port of crossroads. Merchants from far and wide.'},
-      {image:'assets/comics/act1/ch03/panel02.png', caption:'Joel was seen here. Three nights ago. Fighting. Alone.'},
-      {image:'assets/comics/act1/ch03/panel03.png', caption:'The harbourmaster remembers — but he’ll only speak for a favor.'},
-      {image:'assets/comics/act1/ch03/panel04.png', caption:'Joel protects the innocent, even in a city that doesn’t know his name.'}
+      {image:'assets/comics/act1/ch03/panel01.webp', caption:'A port of crossroads. Merchants from far and wide.'},
+      {image:'assets/comics/act1/ch03/panel02.webp', caption:'Joel was seen here. Three nights ago. Fighting. Alone.'},
+      {image:'assets/comics/act1/ch03/panel03.webp', caption:'The harbourmaster remembers — but he’ll only speak for a favor.'},
+      {image:'assets/comics/act1/ch03/panel04.webp', caption:'Joel protects the innocent, even in a city that doesn’t know his name.'}
     ],
     blurb: "Joel washed up indentured to the very wreck he first served on, held below decks by something wearing the shape of every captain who ever drowned there. He hasn't stopped guarding the door since. Someone has to make him put it down.",
     preFight: "The wreck groans as San picks her way below decks, lantern catching on rot and old rope. A voice comes from the dark that almost sounds like Joel's — flatter, colder, giving orders to a crew that isn't there anymore. Whatever's wearing his captain's face down here, it isn't going to let him go without an argument first.",
@@ -123,31 +123,31 @@ function deliverAid() {
 // ---------------------------------------------------------------------------
 const ACT3_CHAPTERS = [
   { id: 22, companion: 'joel', title: 'Familiar Streets', location: 'Bandar Seri Begawan Illusion',
-    image: 'assets/comics/arc3/ch22-joel-familiar-streets.png',
+    image: 'assets/comics/arc3/ch22-joel-familiar-streets.webp',
     setupBlurb: "San finds Joel alone checking the rigging, no crisis pulling either of them away for once. \"I never actually got to talk to you,\" she says. \"Not properly. Not since whatever this is.\" Joel doesn't pretend not to understand. Neither of them remembers much from before the storm — but something about the other feels less like a stranger than it should. Bandar Seri Begawan keeps surfacing in both their heads, unprompted, familiar in a way neither can explain. If they were from anywhere, it was there. They decide to go find out, together.",
     enemy: { name: 'Portside Rogues', art: '🗡️', hp: 260, dmg: 14, xp: 220, gold: 90, desc: 'A gang working the alleys behind the harbor, testing whether two strangers are worth robbing.' },
     victoryScene: "The last rogue never gets the swing off — Joel's already moving, closing the space between him and San before the blade does, pulling her in against his chest with one arm braced across her back like he's done it a hundred times before. For a second neither of them breathes.<br><br>And then it isn't the alley anymore. It's a room with the windows shut against a storm that shouldn't exist, raised voices, a door closing too hard, $200 that was never hers to lend. The memory doesn't come back all at once — just enough to hurt.<br><br>San pulls back first, breathing harder from the memory than the fight. \"It seems... we were arguing. But I can't remember why.\"<br><br>Joel is quiet for a few seconds. Then: \"Maybe some things are best left in the past.\"<br><br>But San leans closer instead of letting it go. \"And some things we live in the present with.\" She kisses him, and this time he doesn't pull away.<br><br>They don't talk about the argument again that night. They don't need to.",
     rw: {xp:500, gold:150, rep:10} },
   { id: 23, companion: 'aisyah', title: 'The House at Bandar Seri Begawan', location: 'Bandar Seri Begawan Illusion',
-    image: 'assets/comics/arc3/ch23-aisyah-the-house.png',
+    image: 'assets/comics/arc3/ch23-aisyah-the-house.webp',
     setupBlurb: "San can't explain it, but Aisyah feels less like a crewmate and more like something owed — a lifetime of favors she never got to pay back. She says as much, half-joking, expecting it to be shrugged off. Aisyah doesn't laugh it off. \"Feels like you're the little sister who never calls first,\" she says, and it lands harder than either of them expects. Neither remembers a house, or a name for what they were to each other — just Bandar Seri Begawan, surfacing the same unprompted way it did for Joel. They go looking.",
     enemy: { name: 'Market Row Toughs', art: '🥊', hp: 300, dmg: 15, xp: 240, gold: 100, desc: "Small-time muscle leaning on stallholders who can't afford to say no." },
     victoryScene: "The last of them drops his knife and bolts the second Aisyah's boot connects with his shin — the fight was never close. She doesn't even look winded, already scanning the alley like she's cataloguing what's worth taking. \"Habit,\" she says, when she catches San staring.<br><br>And the memory comes with the word: a house that never stopped being loud, seven cats underfoot and two dogs at the door, a woman at the kitchen table doing sums in her head faster than San could reach for a calculator — thirty-some years of teaching mathematics to children who never once thought to thank her for it. Money going out to San more times than either of them ever bothered to count, and never once with a lecture attached.<br><br>\"You used to just... give me things,\" San says. \"Money. Advice. Never asked for it back.\"<br><br>Aisyah shrugs like it costs her nothing, same as it always did. \"That's what oldest sisters are for.\"<br><br>San doesn't know what to say to that, so she just puts her head on Aisyah's shoulder for a second, the way she must have done a hundred times in a life she can't remember yet. Aisyah lets her.<br><br>There are two more voices in that memory-house San can't place yet — grown, maybe grown enough by now to have their own name for the woman standing next to her. Aisyah goes quiet for a moment too long, like she's chasing the same thread.<br><br>\"There's more of us out there,\" she says eventually. \"I can feel it. Might be closer than you think.\"",
     rw: {xp:500, gold:150, rep:10} },
   { id: 24, companion: 'mezstorm', title: 'The Weather Between Them', location: 'Singapore Illusion',
-    image: 'assets/comics/arc3/ch24-mezstorm-the-weather-between-them.png',
+    image: 'assets/comics/arc3/ch24-mezstorm-the-weather-between-them.webp',
     setupBlurb: "San's tried to talk to Mez properly twice already and lost her nerve both times. There's something braced in the way Mez watches her — not unkind, just guarded, like she's already expecting to be let down before San's said a word. San doesn't know why that stings the way it does. She only knows Mez keeps looking toward Singapore like she's homesick for a place she's never once admitted to missing. Eliz wants to go. That's reason enough for Mez to finally agree — and reason enough for San to come along.",
     enemy: { name: 'Quay Row Debt Runners', art: '🧾', hp: 320, dmg: 16, xp: 260, gold: 110, desc: "Leaning on shopkeepers over a debt that was never really theirs to collect." },
     victoryScene: "Eliz freezes the second a runner grabs for her sleeve — and Mez is already moving, but so is San, faster, putting herself calmly between him and both of them, talking him down instead of swinging first, the way she never used to. It's over in a minute. Nobody's hurt.<br><br>Mez looks at her like she's looking at a stranger wearing her sister's face. \"That's not how I remember you handling things,\" she says slowly.<br><br>And with the words comes the shape of what San doesn't have language for yet: being the one who always got in trouble, whose relationships never worked out, the one Mez stopped expecting anything different from long before any storm ever hit. Somewhere in it, unspoken, is a man named Lim, and everything Mez never understood about why San finally left him — the kind of thing that's easy to mistake for just another San mess, from the outside.<br><br>\"Joel's not like that,\" San says quietly, before Mez even asks. \"I don't expect you to just believe me. I know what you think of me.\"<br><br>Mez doesn't answer right away. She watches Eliz, safe, already chattering about something else entirely — then looks back at San like she's recalculating something she'd stopped bothering to check.<br><br>\"Maybe,\" is all she says.<br><br>It isn't forgiveness. It isn't even trust yet. But it's more than San's gotten from her in longer than she can remember — and for now, it's enough to build on.",
     rw: {xp:500, gold:150, rep:10} },
   { id: 25, companions: ['senedra','zaki'], title: 'Grown Before Their Time', location: 'Bandar Seri Begawan Illusion',
-    image: 'assets/comics/arc3/ch25-senedra-zaki-grown-before-their-time.png',
+    image: 'assets/comics/arc3/ch25-senedra-zaki-grown-before-their-time.webp',
     setupBlurb: "San watches Senedra and Zaki move through the harbor crowd like they've been doing it their whole lives — Senedra already reading the rooftops, Zaki already between San and anyone who looks twice at her. She's the aunt here. It shouldn't feel like the other way around. Bandar Seri Begawan surfaces in her head before she can place why — just a name, the shape of a house. She doesn't ask if they remember it. Some part of her isn't sure she wants the answer badly enough to make either of them dig for it. They go anyway, because it's on the way to somewhere else, and because none of them mind the company.",
     enemy: { name: 'Old Quarter Runners', art: '🔪', hp: 310, dmg: 16, xp: 250, gold: 105, desc: 'Small-time toughs who\'ve learned the back alleys better than the watch ever will.' },
     victoryScene: "Zaki barely breaks a sweat clearing the last of them out — he never does. Senedra's already scanning the rooftops before San's even caught her breath, same as always.<br><br>\"You always did that,\" San says. \"Watch every exit before anyone asked you to.\"<br><br>\"Somebody had to,\" Senedra says. Not unkind. Just true.<br><br>Something flickers at the edge of San's memory — a house, quieter some years than others. It doesn't come all the way back. Zaki doesn't reach for it at all; he was too young when most of it happened to have kept much of it in the first place. Senedra's expression doesn't change either — whatever she remembers, she'd already decided a long time before any storm that it wasn't worth carrying forward.<br><br>San almost says something. Almost. But she looks at the two of them, steady, unbothered, already arguing over who gets first pick of the spoils — and decides the memory can stay exactly where it's been all this time.<br><br>Some things are better left forgotten. Whatever came before, 2026 was good between them. That's the version she'd rather keep.",
     rw: {xp:520, gold:160, rep:12} },
   { id: 26, companion: 'eliz', title: 'Small Hands, Long Memory', location: 'Singapore Illusion',
-    image: 'assets/comics/arc3/ch26-eliz-small-hands-long-memory.png',
+    image: 'assets/comics/arc3/ch26-eliz-small-hands-long-memory.webp',
     setupBlurb: "San's spent longer avoiding Eliz's eyes than anyone else's on this ship, and she knows it. There's a version of her Eliz still remembers that isn't the one standing here now — someone who used to show up on weekends and then, one day, just didn't, the same way the others eventually didn't either. Eliz doesn't say any of that out loud. She just watches San carefully, deciding, like she's always done, whether this one's worth trusting with anything that matters. Neither of them mentions it outright, but they end up walking Singapore's old streets together anyway — the ones San used to cut through on her way to class, a lifetime ago.",
     enemy: { name: 'Back Lane Toughs', art: '🥋', hp: 330, dmg: 16, xp: 270, gold: 115, desc: "Small-time trouble that knows exactly which streets the watch doesn't bother with." },
     victoryScene: "One of them lands a solid hit before Eliz can even raise her hands — square into San's shoulder, hard enough to put her down on one knee. For once it's San who needs the help, and Eliz who's already there, palms glowing, steady in a way that has nothing rushed about it. She's done this before. She's good at it.<br><br>The memory comes in with the warmth of the healing — a baby in a house in Singapore that wasn't quite home yet for anyone in it, San dropping out of one university to chase a fresh start in another, her mother beside her, easy and unbothered in a house that was slowly running out of the kind of easy San could afford to be. Money trouble at the company, doors closing quieter than they should have. Then two men leaving Eliz's life within a few years of each other — her father first, and after him the one she'd cautiously started letting herself call something like a second dad — and San graduating and going home not long after, the way people who aren't stuck do.<br><br>Then San again, older, a man beside her that Eliz disliked on sight and never once reconsidered — a small, sharp instinct, the kind adults are usually too polite to trust in themselves. Nobody asked Eliz what she thought of Lim. She was right anyway.<br><br>San remembers all of it landing on Eliz at once, over the years — losing two fathers, then losing the aunt who used to actually show up, watching that aunt vanish into the same kind of marriage her own mother had barely survived. San wasn't paying attention by then. She was drowning in her own version of the same story.<br><br>\"I wasn't there,\" San says, once the ache in her shoulder fades to nothing. \"For any of it. I know that.\"<br><br>Eliz doesn't answer right away — that's just how she works through things, taking whatever time she actually needs instead of whatever time a conversation is supposed to allow. When she does answer, it isn't forgiveness dressed up as something bigger. It's smaller than that, and more honest.<br><br>\"You're here now,\" she says. \"That's the part I can work with.\"<br><br>It isn't everything undone. But San takes her hand anyway, and this time, neither of them lets go first.",
@@ -183,9 +183,9 @@ const ACT4_CHAPTERS = [
     tagline: "The old crew begins to answer.",
     status: "FIRST ALLY",
     comic: [
-      {caption: "Panel 1 — The Farseer stirs. A signal appears where no signal should be.", text: "The signal comes through for only a heartbeat.", image: "assets/comics/act1/ch02/panel01.png"},
-      {caption: "Panel 2 — San recognizes something she cannot explain.", text: "For three seconds, another world is visible.", image: "assets/comics/act1/ch02/panel02.png"},
-      {caption: "Panel 3 — A familiar name reaches the crew.", text: "A name from the old Daybreak reaches the crew.", image: "assets/comics/act1/ch03/panel01.png"}
+      {caption: "Panel 1 — The Farseer stirs. A signal appears where no signal should be.", text: "The signal comes through for only a heartbeat.", image: "assets/comics/act1/ch02/panel01.webp"},
+      {caption: "Panel 2 — San recognizes something she cannot explain.", text: "For three seconds, another world is visible.", image: "assets/comics/act1/ch02/panel02.webp"},
+      {caption: "Panel 3 — A familiar name reaches the crew.", text: "A name from the old Daybreak reaches the crew.", image: "assets/comics/act1/ch03/panel01.webp"}
     ]
   },
   {
@@ -1879,15 +1879,15 @@ function showSettings() {
 // ---------------------------------------------------------------------------
 const STORY_MODE_CHAPTERS = {
 1: [
-  {image:'assets/comics/arc1/story/ch01/01-opening.png', text:'Three months after the storm, San wakes with the sea around her and a silence where familiar names should be.', caption:'Survival is the first memory.'},
-  {image:'assets/comics/arc1/story/ch01/02-storm-ship.png', text:'The Crimson Tide survived the wreck. San did too. But the storm scattered more than wood and cargo.', caption:'The ship remains. The crew does not.'},
-  {image:'assets/comics/arc1/story/ch01/03-eyes.png', text:'She looks out across the water, searching faces that should mean something to her.', caption:'Every face is a stranger.'},
-  {image:'assets/comics/arc1/story/ch01/04-what-san-knows.png', text:'There is only one certainty left: the people beside her are her crew. The rest must be remembered — or found.', caption:'What San knows.'},
-  {image:'assets/comics/arc1/story/ch01/05-soel.png', text:'Soel stays close. The strange little spirit cat seems to understand the weight of what has been lost.', caption:'Some bonds survive without names.'},
-  {image:'assets/comics/arc1/story/ch01/06-ship.png', text:'San returns to the deck. There are no answers here yet, only a ship, an open sea, and somewhere else to go.', caption:'The voyage begins.'},
-  {image:'assets/comics/arc1/story/ch01/07-crew.png', text:'She looks at the empty places where familiar people should stand.', caption:'The crew is scattered.'},
-  {image:'assets/comics/arc1/story/ch01/08-san.png', text:'San tightens her grip and makes the only decision that matters.', caption:'If they are out there, I will find them.'},
-  {image:'assets/comics/arc1/story/ch01/09-ending.png', text:'The Crimson Tide turns toward the horizon. Somewhere beyond the charts, the first trail is waiting.', caption:'And so the search begins.'}
+  {image:'assets/comics/arc1/story/ch01/01-opening.webp', text:'Three months after the storm, San wakes with the sea around her and a silence where familiar names should be.', caption:'Survival is the first memory.'},
+  {image:'assets/comics/arc1/story/ch01/02-storm-ship.webp', text:'The Crimson Tide survived the wreck. San did too. But the storm scattered more than wood and cargo.', caption:'The ship remains. The crew does not.'},
+  {image:'assets/comics/arc1/story/ch01/03-eyes.webp', text:'She looks out across the water, searching faces that should mean something to her.', caption:'Every face is a stranger.'},
+  {image:'assets/comics/arc1/story/ch01/04-what-san-knows.webp', text:'There is only one certainty left: the people beside her are her crew. The rest must be remembered — or found.', caption:'What San knows.'},
+  {image:'assets/comics/arc1/story/ch01/05-soel.webp', text:'Soel stays close. The strange little spirit cat seems to understand the weight of what has been lost.', caption:'Some bonds survive without names.'},
+  {image:'assets/comics/arc1/story/ch01/06-ship.webp', text:'San returns to the deck. There are no answers here yet, only a ship, an open sea, and somewhere else to go.', caption:'The voyage begins.'},
+  {image:'assets/comics/arc1/story/ch01/07-crew.webp', text:'She looks at the empty places where familiar people should stand.', caption:'The crew is scattered.'},
+  {image:'assets/comics/arc1/story/ch01/08-san.webp', text:'San tightens her grip and makes the only decision that matters.', caption:'If they are out there, I will find them.'},
+  {image:'assets/comics/arc1/story/ch01/09-ending.webp', text:'The Crimson Tide turns toward the horizon. Somewhere beyond the charts, the first trail is waiting.', caption:'And so the search begins.'}
 ],
 2: [
   {image:'assets/comics/arc1/story/ch02/01.jpg', text:'Three days at sea. Three days without land. At last, the Crimson Tide reaches Malacca, the first great port of the new world.', caption:'The First Port.'},
@@ -1941,85 +1941,85 @@ const STORY_MODE_CHAPTERS = {
   {image:'assets/comics/arc1/story/ch04/15.jpg', text:'Tomorrow, the Crimson Tide will enter the ruins. Tomorrow, San will finally meet the person she has been searching for.', caption:'The rescue begins.'}
 ],
 5: [
-  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.png', text:'Behind the ruined wall, a voice answers before San even finishes calling out — low, careful, guarded.', caption:'Someone is still in there.'},
-  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.png', text:"She doesn't know his face yet, but something in her settles the moment he speaks, like a door she didn't know was open.", caption:'The First Meeting.'}
+  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.webp', text:'Behind the ruined wall, a voice answers before San even finishes calling out — low, careful, guarded.', caption:'Someone is still in there.'},
+  {image:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.webp', text:"She doesn't know his face yet, but something in her settles the moment he speaks, like a door she didn't know was open.", caption:'The First Meeting.'}
 ],
 6: [
-  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.png', text:"Midnight. The Crimson Tide's crew moves through the ruins the way soldiers move through ground they've already walked.", caption:'The rescue begins.'},
-  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.png', text:'He falls into step beside her without being told where to stand. Neither of them remembers why fighting together feels this natural. It just does.', caption:'The Rescue of Joel.'}
+  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.webp', text:"Midnight. The Crimson Tide's crew moves through the ruins the way soldiers move through ground they've already walked.", caption:'The rescue begins.'},
+  {image:'assets/comics/arc1-readback/ch06-the-shield-returns.webp', text:'He falls into step beside her without being told where to stand. Neither of them remembers why fighting together feels this natural. It just does.', caption:'The Rescue of Joel.'}
 ],
 7: [
-  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.png', text:"The storm took their names, their histories, the shape of who they used to be to each other. It didn't take everything.", caption:'What the storm left behind.'},
-  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.png', text:"A shield. A promise neither of them can put into words yet. San doesn't have his story back. She has him — for now, that's enough to keep sailing on.", caption:'A piece of him returned.'}
+  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.webp', text:"The storm took their names, their histories, the shape of who they used to be to each other. It didn't take everything.", caption:'What the storm left behind.'},
+  {image:'assets/comics/arc1-readback/ch07-the-shield-that-remained.webp', text:"A shield. A promise neither of them can put into words yet. San doesn't have his story back. She has him — for now, that's enough to keep sailing on.", caption:'A piece of him returned.'}
 ],
 8: [
-  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.png', text:"The trade routes remember more than the people who sail them. A shield like his doesn't pass through a port without someone noticing.", caption:'A trail, even without a name.'},
-  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.png', text:"San follows the rumors the way she follows everything now — carefully, one unreliable word at a time. Whoever he was, the Tradewinds haven't forgotten him completely.", caption:'A Shield Without Its Owner.'}
+  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.webp', text:"The trade routes remember more than the people who sail them. A shield like his doesn't pass through a port without someone noticing.", caption:'A trail, even without a name.'},
+  {image:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.webp', text:"San follows the rumors the way she follows everything now — carefully, one unreliable word at a time. Whoever he was, the Tradewinds haven't forgotten him completely.", caption:'A Shield Without Its Owner.'}
 ],
 9: [
-  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.png', text:"Between one port and the next, there's nothing to rescue and nobody to find. Just a ship, and people learning how to be a crew again.", caption:'The quiet between voyages.'},
-  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.png', text:'Nobody says it out loud, but everyone notices: the ship feels less empty than it did a week ago.', caption:'Learning to live aboard, again.'}
+  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.webp', text:"Between one port and the next, there's nothing to rescue and nobody to find. Just a ship, and people learning how to be a crew again.", caption:'The quiet between voyages.'},
+  {image:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.webp', text:'Nobody says it out loud, but everyone notices: the ship feels less empty than it did a week ago.', caption:'Learning to live aboard, again.'}
 ],
 10: [
-  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.png', text:"Nobody's memory is coming back whole. What comes back instead are names — in a ledger, in a rumor, in the careful way someone introduces themselves a second time.", caption:'The names we keep.'},
-  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.png', text:"San writes each one down like it might disappear if she doesn't. Some of them already feel like they never really left.", caption:'Not recovered. Kept.'}
+  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.webp', text:"Nobody's memory is coming back whole. What comes back instead are names — in a ledger, in a rumor, in the careful way someone introduces themselves a second time.", caption:'The names we keep.'},
+  {image:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.webp', text:"San writes each one down like it might disappear if she doesn't. Some of them already feel like they never really left.", caption:'Not recovered. Kept.'}
 ],
 11: [
-  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.png', text:'The Crimson Tide was a place to sleep, once. Somewhere between one chapter and the next, it stopped being that and started being something closer to home.', caption:'Before the next port.'},
-  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.png', text:'Nobody voted on it. It just happened, the way the important things usually do.', caption:'Somewhere to belong.'}
+  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.webp', text:'The Crimson Tide was a place to sleep, once. Somewhere between one chapter and the next, it stopped being that and started being something closer to home.', caption:'Before the next port.'},
+  {image:'assets/comics/arc1-readback/ch11-the-day-we-chose.webp', text:'Nobody voted on it. It just happened, the way the important things usually do.', caption:'Somewhere to belong.'}
 ],
 12: [
-  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.png', text:'The ledger says Aisyah owes someone money. The ledger is wrong, and San decides that before she even finishes reading it.', caption:"The debt that wasn't hers."},
-  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.png', text:"Whatever debt Aisyah's actually carrying, it isn't this one. San's instinct to stand in front of her isn't something she has to think about.", caption:'Impossible to ignore.'}
+  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.webp', text:'The ledger says Aisyah owes someone money. The ledger is wrong, and San decides that before she even finishes reading it.', caption:"The debt that wasn't hers."},
+  {image:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.webp', text:"Whatever debt Aisyah's actually carrying, it isn't this one. San's instinct to stand in front of her isn't something she has to think about.", caption:'Impossible to ignore.'}
 ],
 13: [
-  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.png', text:"The same mark that follows Aisyah's name turns up again, in a different hand, attached to a different story.", caption:'The debt collector.'},
-  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.png', text:"It's a small thing — a symbol, nothing more. But small things are exactly what San's learned to pay attention to.", caption:'Not entirely random.'}
+  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.webp', text:"The same mark that follows Aisyah's name turns up again, in a different hand, attached to a different story.", caption:'The debt collector.'},
+  {image:'assets/comics/arc1-readback/ch13-the-debt-collector.webp', text:"It's a small thing — a symbol, nothing more. But small things are exactly what San's learned to pay attention to.", caption:'Not entirely random.'}
 ],
 14: [
-  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.png', text:"It starts as teasing — Aisyah has opinions about San's decisions, and no interest in keeping them to herself.", caption:'Two sisters, one ship.'},
-  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.png', text:'It becomes something steadier than that without either of them deciding it should. Trust, mostly. The rest neither of them can quite explain.', caption:'The things neither of them can explain.'}
+  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.webp', text:"It starts as teasing — Aisyah has opinions about San's decisions, and no interest in keeping them to herself.", caption:'Two sisters, one ship.'},
+  {image:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.webp', text:'It becomes something steadier than that without either of them deciding it should. Trust, mostly. The rest neither of them can quite explain.', caption:'The things neither of them can explain.'}
 ],
 15: [
-  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.png', text:"Eliz didn't join because someone convinced her to. She joined because she watched them try to get by without a healer, and couldn't stand to watch it anymore.", caption:'The one who stayed.'},
-  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.png', text:"Nobody has to ask her twice. She's already decided, and the crew is better for it.", caption:'Because she chooses to.'}
+  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.webp', text:"Eliz didn't join because someone convinced her to. She joined because she watched them try to get by without a healer, and couldn't stand to watch it anymore.", caption:'The one who stayed.'},
+  {image:'assets/comics/arc1-readback/ch15-the-one-who-stayed.webp', text:"Nobody has to ask her twice. She's already decided, and the crew is better for it.", caption:'Because she chooses to.'}
 ],
 16: [
-  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.png', text:"Three pendants. Three people who don't remember choosing to wear them. The same faint, gem-like mark on each.", caption:'The mark we carried.'},
-  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.png', text:"Nobody has an answer yet for what it means. San isn't sure she wants one — not until she's ready to hear it.", caption:'A mystery, not an answer.'}
+  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.webp', text:"Three pendants. Three people who don't remember choosing to wear them. The same faint, gem-like mark on each.", caption:'The mark we carried.'},
+  {image:'assets/comics/arc1-readback/ch16-the-mark-we-carried.webp', text:"Nobody has an answer yet for what it means. San isn't sure she wants one — not until she's ready to hear it.", caption:'A mystery, not an answer.'}
 ],
 17: [
-  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.png', text:"Someone always takes point. Someone always checks the ropes twice. Nobody remembers learning these habits — they're just there, the moment they're needed.", caption:'The things we do without knowing.'},
-  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.png', text:"Whatever they've forgotten, their hands clearly haven't. San's starting to wonder if that's its own kind of memory.", caption:'Some things, the body keeps.'}
+  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.webp', text:"Someone always takes point. Someone always checks the ropes twice. Nobody remembers learning these habits — they're just there, the moment they're needed.", caption:'The things we do without knowing.'},
+  {image:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.webp', text:"Whatever they've forgotten, their hands clearly haven't. San's starting to wonder if that's its own kind of memory.", caption:'Some things, the body keeps.'}
 ],
 18: [
-  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.png', text:"Mezstorm's rescue doesn't end the way rescues are supposed to. She comes back changed, and not in a way anyone can simply undo.", caption:'The storm that was owed.'},
-  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.png', text:"Regeneration, she calls it — like it's a simple word for something that clearly isn't. What does it mean to come back different, and still be yourself?", caption:'A deeper question.'}
+  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.webp', text:"Mezstorm's rescue doesn't end the way rescues are supposed to. She comes back changed, and not in a way anyone can simply undo.", caption:'The storm that was owed.'},
+  {image:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.webp', text:"Regeneration, she calls it — like it's a simple word for something that clearly isn't. What does it mean to come back different, and still be yourself?", caption:'A deeper question.'}
 ],
 19: [
-  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.png', text:"Mezstorm doesn't find her place by being told where it is. She finds it the slow way — in small scenes, with people who were already here before her.", caption:'The crew we choose.'},
-  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.png', text:'Nobody assigns her a role. She just starts filling one, the same way everyone else on this ship eventually did.', caption:'Chosen, not assigned.'}
+  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.webp', text:"Mezstorm doesn't find her place by being told where it is. She finds it the slow way — in small scenes, with people who were already here before her.", caption:'The crew we choose.'},
+  {image:'assets/comics/arc1-readback/ch19-the-crew-we-choose.webp', text:'Nobody assigns her a role. She just starts filling one, the same way everyone else on this ship eventually did.', caption:'Chosen, not assigned.'}
 ],
 20: [
-  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.png', text:'The woman at the lighthouse has been watching this coastline longer than anyone else still standing. Nobody had to beat anything to bring her into the story.', caption:'The watchful signal.'},
-  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.png', text:'She joins because she chooses to, the same way Eliz did. Some doors just need someone to actually open them.', caption:'No guardian defeated. Just a door, opened.'}
+  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.webp', text:'The woman at the lighthouse has been watching this coastline longer than anyone else still standing. Nobody had to beat anything to bring her into the story.', caption:'The watchful signal.'},
+  {image:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.webp', text:'She joins because she chooses to, the same way Eliz did. Some doors just need someone to actually open them.', caption:'No guardian defeated. Just a door, opened.'}
 ],
 21: [
-  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.png', text:"Everyone assumes Zaki survived the prison hulk on strength alone. Strength helped. It wasn't the whole story.", caption:'The planner.'},
-  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.png', text:"Underneath the fighter is someone who counted every exit, memorized every guard's schedule, and waited for exactly the right moment. San's only now starting to see it.", caption:'The careful part of him.'}
+  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.webp', text:"Everyone assumes Zaki survived the prison hulk on strength alone. Strength helped. It wasn't the whole story.", caption:'The planner.'},
+  {image:'assets/comics/arc1-readback/ch21-zaki-the-planner.webp', text:"Underneath the fighter is someone who counted every exit, memorized every guard's schedule, and waited for exactly the right moment. San's only now starting to see it.", caption:'The careful part of him.'}
 ],
 22: [
-  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.png', text:"The regeneration isn't something Mezstorm can explain to anyone else, because she's still working out how to explain it to herself.", caption:'The regeneration.'},
-  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.png', text:"Whatever she's becoming, she's decided it's still going to be her doing it. That much, at least, she's sure of.", caption:'Still herself, differently.'}
+  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.webp', text:"The regeneration isn't something Mezstorm can explain to anyone else, because she's still working out how to explain it to herself.", caption:'The regeneration.'},
+  {image:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.webp', text:"Whatever she's becoming, she's decided it's still going to be her doing it. That much, at least, she's sure of.", caption:'Still herself, differently.'}
 ],
 23: [
-  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.png', text:"Senedra looks at Zaki and remembers something nobody else on this ship can confirm: they're siblings. She's sure of it.", caption:'The two who remembered.'},
-  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.png', text:"She doesn't remember San. She doesn't remember Aisyah, or Mezstorm, or Eliz. Just him. For now, that's the one thread the storm didn't cut.", caption:'One thread, intact.'}
+  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.webp', text:"Senedra looks at Zaki and remembers something nobody else on this ship can confirm: they're siblings. She's sure of it.", caption:'The two who remembered.'},
+  {image:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.webp', text:"She doesn't remember San. She doesn't remember Aisyah, or Mezstorm, or Eliz. Just him. For now, that's the one thread the storm didn't cut.", caption:'One thread, intact.'}
 ],
 24: [
-  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:"The Drowned Admiral has guarded this passage long after anyone still living remembers why. The crew doesn't come to fight him for sport — they come because there's no other way through.", caption:'The way beyond the charts.'},
-  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:'On the other side, two more names step aboard: Ser Aldric, Knight of the Waves. Sister Wren, Tide Priestess. The crew San set out to find is finally whole.', caption:'The reunited crew.'},
-  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.png', text:"She still doesn't have her old life back. She has something else instead — a ship full of people who are, somehow, already hers.", caption:'The Drowned Passage.'}
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.webp', text:"The Drowned Admiral has guarded this passage long after anyone still living remembers why. The crew doesn't come to fight him for sport — they come because there's no other way through.", caption:'The way beyond the charts.'},
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.webp', text:'On the other side, two more names step aboard: Ser Aldric, Knight of the Waves. Sister Wren, Tide Priestess. The crew San set out to find is finally whole.', caption:'The reunited crew.'},
+  {image:'assets/comics/arc1-readback/ch24-the-drowned-passage.webp', text:"She still doesn't have her old life back. She has something else instead — a ship full of people who are, somehow, already hers.", caption:'The Drowned Passage.'}
 ]
 };
 let storyModeChapter = null;
@@ -3411,21 +3411,21 @@ const ARC1_COMICS = [
   {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.comicProgress?.[23] && !!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
 ];
 const ARC1_ART = {
-  1:'assets/comics/arc1/ch01-storm-that-remained.png',
-  2:'assets/comics/arc1/ch02-the-first-port.png',
-  3:'assets/comics/arc1/ch03-a-crew-of-choice.png',
-  4:'assets/comics/arc1/ch04-the-guardians-fortress.png',
-  5:'assets/comics/arc1/ch05-the-voice-behind-the-wall.png',
-  6:'assets/comics/arc1/ch06-the-shield-returns.png',
-  7:'assets/comics/arc1/ch07-the-shield-that-remained.png',
-  8:'assets/comics/arc1/ch08-the-tradewinds-remember.png',
-  18:'assets/comics/arc1/ch18-mezstorm-rescue.png',
-  19:'assets/comics/arc1/ch19-crew-we-choose.png',
-  20:'assets/comics/arc1/ch20-senedra.png',
-  21:'assets/comics/arc1/ch21-zaki.png',
-  22:'assets/comics/arc1/ch22-mezstorm.png',
-  23:'assets/comics/arc1/ch23-siblings.png',
-  24:'assets/comics/arc1/ch24-drowned-passage.png'
+  1:'assets/comics/arc1/ch01-storm-that-remained.webp',
+  2:'assets/comics/arc1/ch02-the-first-port.webp',
+  3:'assets/comics/arc1/ch03-a-crew-of-choice.webp',
+  4:'assets/comics/arc1/ch04-the-guardians-fortress.webp',
+  5:'assets/comics/arc1/ch05-the-voice-behind-the-wall.webp',
+  6:'assets/comics/arc1/ch06-the-shield-returns.webp',
+  7:'assets/comics/arc1/ch07-the-shield-that-remained.webp',
+  8:'assets/comics/arc1/ch08-the-tradewinds-remember.webp',
+  18:'assets/comics/arc1/ch18-mezstorm-rescue.webp',
+  19:'assets/comics/arc1/ch19-crew-we-choose.webp',
+  20:'assets/comics/arc1/ch20-senedra.webp',
+  21:'assets/comics/arc1/ch21-zaki.webp',
+  22:'assets/comics/arc1/ch22-mezstorm.webp',
+  23:'assets/comics/arc1/ch23-siblings.webp',
+  24:'assets/comics/arc1/ch24-drowned-passage.webp'
 };
 function completeArc1Comic(id){
   const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;

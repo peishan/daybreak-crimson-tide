@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V347 · Comic Loading Indicator';
+window.__CT_BUILD__='V348 · Comic Art → WebP (86% Smaller)';

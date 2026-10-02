@@ -10,42 +10,42 @@
   // extension points, never speculate beyond current content.
   // -------------------------------------------------------------------
   const ARC5_CHAPTERS = [
-    {id:1, title:'The Hidden Cove',       focus:"San and Joel find an ancient rune in a sea cove. Nothing is explained yet.",                 image:'assets/comics/arc5/ch01-the-hidden-cove.png',       xp:175},
-    {id:2, title:'Something Changed',     focus:'They notice faster recovery and unusually good coordination together — and no reason why.',  image:'assets/comics/arc5/ch02-something-changed.png',     xp:150},
-    {id:3, title:'Shield Wall',           focus:"A hard battle. San's magic grows stronger while Joel shields her — the bond's first sign.",   image:'assets/comics/arc5/ch03-shield-wall.png',           xp:200},
-    {id:4, title:'The Mark',              focus:'Joel pushes Shield Wall past its limit. A tattoo appears on his skin, tied to the bond.',      image:'assets/comics/arc5/ch04-the-mark.png',              xp:200},
-    {id:5, title:"First Mate's Aegis",    focus:'Joel learns the mark can be deliberately channelled to protect San from a powerful attack.',   image:'assets/comics/arc5/ch05-first-mates-aegis.png',     xp:225},
+    {id:1, title:'The Hidden Cove',       focus:"San and Joel find an ancient rune in a sea cove. Nothing is explained yet.",                 image:'assets/comics/arc5/ch01-the-hidden-cove.webp',       xp:175},
+    {id:2, title:'Something Changed',     focus:'They notice faster recovery and unusually good coordination together — and no reason why.',  image:'assets/comics/arc5/ch02-something-changed.webp',     xp:150},
+    {id:3, title:'Shield Wall',           focus:"A hard battle. San's magic grows stronger while Joel shields her — the bond's first sign.",   image:'assets/comics/arc5/ch03-shield-wall.webp',           xp:200},
+    {id:4, title:'The Mark',              focus:'Joel pushes Shield Wall past its limit. A tattoo appears on his skin, tied to the bond.',      image:'assets/comics/arc5/ch04-the-mark.webp',              xp:200},
+    {id:5, title:"First Mate's Aegis",    focus:'Joel learns the mark can be deliberately channelled to protect San from a powerful attack.',   image:'assets/comics/arc5/ch05-first-mates-aegis.webp',     xp:225},
     // Part II — Renn (Ch.6-9). Recruited into full combat at Ch.8 — see
     // ARC5_RECRUITS below.
-    {id:6, title:'The Mage Who Stole the Wind', focus:'An unnatural wind fills the sails, then vanishes — the crew finds Renn, an arcane trickster, nearby.', image:'assets/comics/arc5/ch06-the-mage-who-stole-the-wind.png', xp:175},
-    {id:7, title:'Tricks of the Trade',         focus:'Renn demonstrates his brand of magical mischief — false lights, phantom ships, illusory cargo.',       image:'assets/comics/arc5/ch07-tricks-of-the-trade.png',         xp:150},
-    {id:8, title:'Aboard the Crimson Tide',     focus:'Renn joins the crew, at least for now — and immediately causes a stir.',                              image:'assets/comics/arc5/ch08-aboard-the-crimson-tide.png',     xp:200},
-    {id:9, title:'Why Renn Stays',              focus:"He has other options. He chooses the Crimson Tide anyway — a genuine choice, not destiny.",           image:'assets/comics/arc5/ch09-why-renn-stays.png',               xp:200},
+    {id:6, title:'The Mage Who Stole the Wind', focus:'An unnatural wind fills the sails, then vanishes — the crew finds Renn, an arcane trickster, nearby.', image:'assets/comics/arc5/ch06-the-mage-who-stole-the-wind.webp', xp:175},
+    {id:7, title:'Tricks of the Trade',         focus:'Renn demonstrates his brand of magical mischief — false lights, phantom ships, illusory cargo.',       image:'assets/comics/arc5/ch07-tricks-of-the-trade.webp',         xp:150},
+    {id:8, title:'Aboard the Crimson Tide',     focus:'Renn joins the crew, at least for now — and immediately causes a stir.',                              image:'assets/comics/arc5/ch08-aboard-the-crimson-tide.webp',     xp:200},
+    {id:9, title:'Why Renn Stays',              focus:"He has other options. He chooses the Crimson Tide anyway — a genuine choice, not destiny.",           image:'assets/comics/arc5/ch09-why-renn-stays.webp',               xp:200},
     // Part III — Jovie (Ch.10-13). Non-combat — joins the Fair Tide
     // roster, not the fielded party, per San's explicit call. Recruited
     // at Ch.13 ("Here, Now") — see ARC5_RECRUITS below.
-    {id:10, title:'The Woman Behind the Counter', focus:'A young woman named Jovie seeks San and Joel out, certain she knows them — fragments of a supermarket, medical supplies, a medical centre.', image:'assets/comics/arc5/ch10-the-woman-behind-the-counter.png', xp:175},
-    {id:11, title:'Something Joel Remembers',     focus:'Seeing Jovie triggers a stronger memory in Joel than in San — proof memory isn\'t a universal switch.',                                          image:'assets/comics/arc5/ch11-something-joel-remembers.png',      xp:175},
-    {id:12, title:'The Medical Box',              focus:'Jovie has been surviving on whatever medical knowledge she can remember. Dr AA sees real value in it.',                                          image:'assets/comics/arc5/ch12-the-medical-box.png',                xp:200},
-    {id:13, title:'Here, Now',                    focus:"Jovie decides she doesn't need her whole past back. She chooses the present — and a place with this crew.",                                      image:'assets/comics/arc5/ch13-here-now.png',                       xp:225},
+    {id:10, title:'The Woman Behind the Counter', focus:'A young woman named Jovie seeks San and Joel out, certain she knows them — fragments of a supermarket, medical supplies, a medical centre.', image:'assets/comics/arc5/ch10-the-woman-behind-the-counter.webp', xp:175},
+    {id:11, title:'Something Joel Remembers',     focus:'Seeing Jovie triggers a stronger memory in Joel than in San — proof memory isn\'t a universal switch.',                                          image:'assets/comics/arc5/ch11-something-joel-remembers.webp',      xp:175},
+    {id:12, title:'The Medical Box',              focus:'Jovie has been surviving on whatever medical knowledge she can remember. Dr AA sees real value in it.',                                          image:'assets/comics/arc5/ch12-the-medical-box.webp',                xp:200},
+    {id:13, title:'Here, Now',                    focus:"Jovie decides she doesn't need her whole past back. She chooses the present — and a place with this crew.",                                      image:'assets/comics/arc5/ch13-here-now.webp',                       xp:225},
     // Part IV — Fair Tide (Ch.14-20). San starts thinking of Fair Tide as
     // permanent, not a stop between voyages. Gino, Wahyu, Dudin, Imah,
     // Nurul, and Dre all join the roster — see ARC5_RECRUITS below.
-    {id:14, title:'A Port Worth Keeping',  focus:'San starts thinking about Fair Tide differently — not just somewhere they stop, but somewhere worth building.',        image:'assets/comics/arc5/ch14-a-port-worth-keeping.png', xp:200},
-    {id:15, title:"Gino's Galley",         focus:'Gino joins as an assistant cook — a small work-related memory fragment surfaces with Joel, then they move on.',        image:'assets/comics/arc5/ch15-ginos-galley.png',          xp:200},
-    {id:16, title:'Cloth and Cargo',       focus:'Wahyu sets up a trading stall. Dudin arrives soon after. Practical skills, useful to the growing settlement.',           image:'assets/comics/arc5/ch16-cloth-and-cargo.png',       xp:200},
-    {id:17, title:'The Supply Quarter',    focus:"Dudin's own business takes root — army-style supplies, gear people trust, a stronger Fair Tide.",                       image:'assets/comics/arc5/ch17-the-supply-quarter.png',    xp:200},
-    {id:18, title:'Imah',                  focus:'Imah arrives — San taught her the job from the ground up, once. A warm reunion, not a fraught one.',                    image:'assets/comics/arc5/ch18-imah.png',                  xp:225},
-    {id:19, title:'Nurul',                 focus:"Nurul remembers more — including Robin's sarcasm. San doesn't defend herself, just acknowledges it. They move forward.", image:'assets/comics/arc5/ch19-nurul.png',                 xp:225},
-    {id:20, title:'Coffee Before the Storm', focus:'Dre remembers San through something mundane and wonderful: coffee. A lighter, funnier reunion.',                      image:'assets/comics/arc5/ch20-coffee-before-the-storm.png', xp:225},
+    {id:14, title:'A Port Worth Keeping',  focus:'San starts thinking about Fair Tide differently — not just somewhere they stop, but somewhere worth building.',        image:'assets/comics/arc5/ch14-a-port-worth-keeping.webp', xp:200},
+    {id:15, title:"Gino's Galley",         focus:'Gino joins as an assistant cook — a small work-related memory fragment surfaces with Joel, then they move on.',        image:'assets/comics/arc5/ch15-ginos-galley.webp',          xp:200},
+    {id:16, title:'Cloth and Cargo',       focus:'Wahyu sets up a trading stall. Dudin arrives soon after. Practical skills, useful to the growing settlement.',           image:'assets/comics/arc5/ch16-cloth-and-cargo.webp',       xp:200},
+    {id:17, title:'The Supply Quarter',    focus:"Dudin's own business takes root — army-style supplies, gear people trust, a stronger Fair Tide.",                       image:'assets/comics/arc5/ch17-the-supply-quarter.webp',    xp:200},
+    {id:18, title:'Imah',                  focus:'Imah arrives — San taught her the job from the ground up, once. A warm reunion, not a fraught one.',                    image:'assets/comics/arc5/ch18-imah.webp',                  xp:225},
+    {id:19, title:'Nurul',                 focus:"Nurul remembers more — including Robin's sarcasm. San doesn't defend herself, just acknowledges it. They move forward.", image:'assets/comics/arc5/ch19-nurul.webp',                 xp:225},
+    {id:20, title:'Coffee Before the Storm', focus:'Dre remembers San through something mundane and wonderful: coffee. A lighter, funnier reunion.',                      image:'assets/comics/arc5/ch20-coffee-before-the-storm.webp', xp:225},
     // Part V — The Mechanic and the Wider Network (Ch.21-24). Jorvin joins;
     // the people he mentions (Aisy, Zul, Lewis, Jonathan) stay narrative
     // color per the brief ("this should not become four separate reunion
     // chapters") — no roster entries for them this batch.
-    {id:21, title:'The Tinkerer',          focus:"Jorvin arrives — a former colleague fascinated by the ship. He remembers almost nothing, but enough to recognise San.", image:'assets/comics/arc5/ch21-the-tinkerer.png',          xp:225},
-    {id:22, title:'The People Jorvin Knows', focus:"Jorvin's memories connect to a wider network — Aisy, Zul, Lewis, Jonathan. Fair Tide is becoming a meeting point.",    image:'assets/comics/arc5/ch22-the-people-jorvin-knows.png', xp:225},
-    {id:23, title:'Everyone Has a Place',  focus:'The new arrivals settle into their roles. Fair Tide is no longer just a port — it\'s a home base.',                      image:'assets/comics/arc5/ch23-everyone-has-a-place.png',  xp:250},
-    {id:24, title:'The Tide We Build',     focus:'The Crimson Tide sails again — but this time, it isn\'t leaving an empty port behind. Arc V ends here.',                image:'assets/comics/arc5/ch24-the-tide-we-build.png',     xp:300}
+    {id:21, title:'The Tinkerer',          focus:"Jorvin arrives — a former colleague fascinated by the ship. He remembers almost nothing, but enough to recognise San.", image:'assets/comics/arc5/ch21-the-tinkerer.webp',          xp:225},
+    {id:22, title:'The People Jorvin Knows', focus:"Jorvin's memories connect to a wider network — Aisy, Zul, Lewis, Jonathan. Fair Tide is becoming a meeting point.",    image:'assets/comics/arc5/ch22-the-people-jorvin-knows.webp', xp:225},
+    {id:23, title:'Everyone Has a Place',  focus:'The new arrivals settle into their roles. Fair Tide is no longer just a port — it\'s a home base.',                      image:'assets/comics/arc5/ch23-everyone-has-a-place.webp',  xp:250},
+    {id:24, title:'The Tide We Build',     focus:'The Crimson Tide sails again — but this time, it isn\'t leaving an empty port behind. Arc V ends here.',                image:'assets/comics/arc5/ch24-the-tide-we-build.webp',     xp:300}
   ];
   window.ARC5_CHAPTERS = ARC5_CHAPTERS;
 
@@ -152,7 +152,7 @@
       window.__ctShowArc5Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc5/arc5-cover-the-bond.png" alt="Arc V — The Bond" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img src="assets/comics/arc5/arc5-cover-the-bond.webp" alt="Arc V — The Bond" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc V</div><div class="story-act-title">The Bond</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC5_CHAPTERS.length+' of 24. What we build now becomes its own history.</div></div>';
     if(!arc5Ready){
