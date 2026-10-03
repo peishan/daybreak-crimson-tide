@@ -340,7 +340,7 @@
   // the screen was reached, so this needs no changes to how the Hub is
   // normally entered.
   // -------------------------------------------------------------------
-  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'uncharted', 'bonds', 'expedition'];
+  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'grooming', 'uncharted', 'bonds', 'expedition'];
 
   window.remoteAccessUnlocked = function(){
     return typeof window.arc13ObjectiveState === 'function' && window.arc13ObjectiveState() !== null;
