@@ -46,11 +46,12 @@
       actionLabel: 'Spend sisterly time with Aisyah',
       flavor: 'Teasing, trust, and the things neither of them can fully explain.',
       tiers: [
-        {threshold:0,   name:'Just Crew',             bonus:0},
-        {threshold:50,  name:'Sisters at Sea',        bonus:0},
-        {threshold:150, name:'Two Sisters, One Ship', bonus:0},
-        {threshold:300, name:'Nothing Left Unsaid',   bonus:0},
-        {threshold:600, name:'Sisters, Full Stop',    bonus:0}
+        {threshold:0,    name:'Just Crew',             bonus:0},
+        {threshold:50,   name:'Sisters at Sea',        bonus:0},
+        {threshold:150,  name:'Two Sisters, One Ship', bonus:0},
+        {threshold:300,  name:'Nothing Left Unsaid',   bonus:0},
+        {threshold:600,  name:'Sisters, Full Stop',    bonus:0},
+        {threshold:1000, name:'No Separating Them Now', bonus:0}
       ],
       unlockedFn: function(){ return !!(game.comicProgress && game.comicProgress[14]); },
       handlerName: 'hangOutWithAisyah',
@@ -70,11 +71,12 @@
       actionLabel: 'Spend time with Mez',
       flavor: 'Whatever it is, it\'s louder and more chaotic than San planned for.',
       tiers: [
-        {threshold:0,   name:'Still Sizing Each Other Up', bonus:0},
-        {threshold:50,  name:'Reluctantly Fond',           bonus:0},
-        {threshold:150, name:'The Crew We Choose',         bonus:0},
-        {threshold:300, name:'Partners in Chaos',          bonus:0},
-        {threshold:600, name:'Never a Dull Moment',        bonus:0}
+        {threshold:0,    name:'Still Sizing Each Other Up', bonus:0},
+        {threshold:50,   name:'Reluctantly Fond',           bonus:0},
+        {threshold:150,  name:'The Crew We Choose',         bonus:0},
+        {threshold:300,  name:'Partners in Chaos',          bonus:0},
+        {threshold:600,  name:'Never a Dull Moment',        bonus:0},
+        {threshold:1000, name:'Exactly as Loud as She Needs to Be', bonus:0}
       ],
       unlockedFn: function(){ return !!(game.comicProgress && game.comicProgress[19]); },
       handlerName: 'hangOutWithMez',
@@ -94,11 +96,12 @@
       actionLabel: 'Spend a quiet moment with Eliz',
       flavor: 'Not much needs to be said. That\'s rather the point.',
       tiers: [
-        {threshold:0,   name:'The One Who Stayed',   bonus:0},
-        {threshold:50,  name:'Comfortable Quiet',    bonus:0},
-        {threshold:150, name:'Trusted With the Truth', bonus:0},
-        {threshold:300, name:'Steady Company',       bonus:0},
-        {threshold:600, name:'Never Really Alone',   bonus:0}
+        {threshold:0,    name:'The One Who Stayed',   bonus:0},
+        {threshold:50,   name:'Comfortable Quiet',    bonus:0},
+        {threshold:150,  name:'Trusted With the Truth', bonus:0},
+        {threshold:300,  name:'Steady Company',       bonus:0},
+        {threshold:600,  name:'Never Really Alone',   bonus:0},
+        {threshold:1000, name:'The Quiet She Chose',  bonus:0}
       ],
       unlockedFn: function(){ return !!(game.comicProgress && game.comicProgress[15]); },
       handlerName: 'hangOutWithEliz',
@@ -118,11 +121,12 @@
       actionLabel: 'Spend time with Senedra',
       flavor: 'She notices things San never would have on her own.',
       tiers: [
-        {threshold:0,   name:'The Watchful Signal', bonus:0},
-        {threshold:50,  name:'Learning to See It Too', bonus:0},
-        {threshold:150, name:'Trusted Eyes',         bonus:0},
-        {threshold:300, name:'Nothing Gets Past Either of Them', bonus:0},
-        {threshold:600, name:'Watching the Same Horizon', bonus:0}
+        {threshold:0,    name:'The Watchful Signal', bonus:0},
+        {threshold:50,   name:'Learning to See It Too', bonus:0},
+        {threshold:150,  name:'Trusted Eyes',         bonus:0},
+        {threshold:300,  name:'Nothing Gets Past Either of Them', bonus:0},
+        {threshold:600,  name:'Watching the Same Horizon', bonus:0},
+        {threshold:1000, name:'Nothing Left Unseen',  bonus:0}
       ],
       unlockedFn: function(){ return !!(game.comicProgress && game.comicProgress[20]); },
       handlerName: 'hangOutWithSenedra',

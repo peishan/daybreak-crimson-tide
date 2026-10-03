@@ -111,13 +111,16 @@
 
     // --- Bond ladders at their highest tier (san_joel's own first-tier
     // unlock is already "Bonded by the Tide" above — this is the deepest
-    // tier of all three tracks, not the first) ---
+    // tier of all three tracks, not the first). Checks read
+    // window.BOND_TRACKS[key].tiers.length dynamically rather than a
+    // hardcoded index, so a future tier addition (like the one that added
+    // tier 5 here) never leaves these firing one tier too early again. ---
     {id:'bond_san_joel_max', name:'Two Hearts, One Ship', icon:'💞', desc:"San and Joel's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_joel') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_joel') >= window.BOND_TRACKS.san_joel.tiers.length - 1; }},
     {id:'bond_san_crew_max', name:'This Is Home', icon:'👥', desc:'The crew stopped feeling like people San works with, and started feeling like people San lives with.',
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_crew') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_crew') >= window.BOND_TRACKS.san_crew.tiers.length - 1; }},
     {id:'bond_san_trio_max', name:'Kindred Curiosity', icon:'🔮', desc:"Mimi, Renn, and Erynn's endless research finally has San genuinely along for the ride.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_trio') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_trio') >= window.BOND_TRACKS.san_trio.tiers.length - 1; }},
 
     // --- Rivals & pirates ---
     {id:'every_captain_named', name:'Every Captain, Named', icon:'🏴‍☠️', desc:'Every fixed rival captain, captured. The waters keep producing more — but these ones are done.',
@@ -222,23 +225,23 @@
     {id:'bond_san_joy_started', name:'Getting to Know Joy', icon:'🌸', desc:'San and Joy started building something real.',
       check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_joy') >= 1; }},
     {id:'bond_san_joy_max', name:'Ate Joy', icon:'🌸', desc:"San and Joy's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_joy') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_joy') >= window.BOND_TRACKS.san_joy.tiers.length - 1; }},
     {id:'bond_san_aisyah_started', name:'Getting to Know Aisyah', icon:'👭', desc:'San and Aisyah started building something real.',
       check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_aisyah') >= 1; }},
     {id:'bond_san_aisyah_max', name:'Two Sisters, One Ship', icon:'👭', desc:"San and Aisyah's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_aisyah') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_aisyah') >= window.BOND_TRACKS.san_aisyah.tiers.length - 1; }},
     {id:'bond_san_mez_started', name:'Getting to Know Mezstorm', icon:'⛈️', desc:'San and Mezstorm started building something real.',
       check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_mez') >= 1; }},
     {id:'bond_san_mez_max', name:'Pure Chaos Underfoot', icon:'⛈️', desc:"San and Mezstorm's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_mez') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_mez') >= window.BOND_TRACKS.san_mez.tiers.length - 1; }},
     {id:'bond_san_eliz_started', name:'Getting to Know Eliz', icon:'💚', desc:'San and Eliz started building something real.',
       check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_eliz') >= 1; }},
     {id:'bond_san_eliz_max', name:'No Complications', icon:'💚', desc:"San and Eliz's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_eliz') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_eliz') >= window.BOND_TRACKS.san_eliz.tiers.length - 1; }},
     {id:'bond_san_senedra_started', name:'Getting to Know Senedra', icon:'🎯', desc:'San and Senedra started building something real.',
       check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_senedra') >= 1; }},
     {id:'bond_san_senedra_max', name:'Practiced Patience', icon:'🎯', desc:"San and Senedra's bond reached its deepest point.",
-      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_senedra') >= 4; }},
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_senedra') >= window.BOND_TRACKS.san_senedra.tiers.length - 1; }},
 
     // --- Vessel tiers -- every hull between the Sloop and the Aethon's Pride ---
     {id:'vessel_brigantine', name:'Real Cannon Ports', icon:'🚤', desc:'Two masts and real cannon ports. The crew stops flinching at storms.',
@@ -450,21 +453,26 @@
     {id:'ship_50_upgrades', name:'A Well-Worked Ship', icon:'🔧', desc:'Fifty upgrades made to San’s own ship over the whole voyage.',
       check: function(){ return !!(game.shipHistory && (game.shipHistory.totalUpgrades||0) >= 50); }},
 
-    // --- Fair Tide buildings, fully built up ---
+    // --- Fair Tide buildings, fully built up. Checks read
+    // window.fairTideBuildingCap(key) dynamically rather than a hardcoded
+    // 5 -- that cap already grows to 8 once Arc VI Ch.17 fires (see
+    // fairtide-buildings-and-arc6.js), so a hardcoded number here would
+    // fire these achievements three levels before a building was actually
+    // at ITS real ceiling. ---
     {id:'building_port_hq_max', name:'The Heart of Fair Tide', icon:'🏮', desc:"Fair Tide's Port HQ reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['port_hq']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['port_hq']||0) >= window.fairTideBuildingCap('port_hq')); }},
     {id:'building_warehouse_max', name:"Dudin's Domain", icon:'📦', desc:"Fair Tide's warehouse reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['warehouse']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['warehouse']||0) >= window.fairTideBuildingCap('warehouse')); }},
     {id:'building_trading_post_max', name:"Wahyu's Trading Post", icon:'🏪', desc:"Fair Tide's trading post reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['trading_post']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['trading_post']||0) >= window.fairTideBuildingCap('trading_post')); }},
     {id:'building_galley_max', name:"Gino's Galley", icon:'🍲', desc:"Fair Tide's galley reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['galley']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['galley']||0) >= window.fairTideBuildingCap('galley')); }},
     {id:'building_workshop_max', name:"Jorvin's Workshop", icon:'🔧', desc:"Fair Tide's workshop reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['workshop']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['workshop']||0) >= window.fairTideBuildingCap('workshop')); }},
     {id:'building_watchtower_max', name:"Imah's Watch", icon:'🔭', desc:"Fair Tide's watchtower reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['watchtower']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['watchtower']||0) >= window.fairTideBuildingCap('watchtower')); }},
     {id:'building_archive_max', name:'Archive Institute', icon:'🏛️', desc:"Fair Tide's archive reached its highest level.",
-      check: function(){ return !!(game.fairTideBuildings && (game.fairTideBuildings['archive']||0) >= 5); }},
+      check: function(){ return !!(game.fairTideBuildings && typeof window.fairTideBuildingCap === 'function' && (game.fairTideBuildings['archive']||0) >= window.fairTideBuildingCap('archive')); }},
 
     // --- Horizon Engine development ---
     {id:'horizon_engine_25pct', name:'Horizon Engine: 25%', icon:'🌌', desc:"The Horizon Engine's own development reached 25%.",
