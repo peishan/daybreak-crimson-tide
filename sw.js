@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v125';
+const CACHE_VERSION = 'crimson-tide-v126';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -234,18 +234,37 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Page navigations AND app-shell files (scripts, index.html, manifest):
-  // network-first, so players always get the latest build while online —
-  // this is the fix. Falls back to the cached shell if offline. See the
-  // BUG FIX note above for why this now covers script files too, not
-  // just the navigation itself.
+  // BUG FIX (San's report — app wouldn't open after a phone reboot, no
+  // error, just flashed and closed): found by diffing against Legends of
+  // Daybreak's own sw.js, which never has this problem. That game has
+  // exactly one game.js and its network-first fetch has NO timeout at all
+  // — it just waits for the real result. This file's own network-first
+  // rule below used to apply a 3-second timeout to EVERY individual
+  // app-shell request, and isAppShellRequest() matches each of this
+  // game's ~120 separate script files, not just the page itself. Right
+  // after a reboot the network is often slow to stabilize but not
+  // actually dead — and a request that took, say, 4 seconds would get
+  // silently abandoned at the 3-second mark (Promise.race doesn't cancel
+  // the loser, it just stops waiting for it) and replaced by the
+  // hardcoded "You're offline" HTML fallback below, served AS IF it were
+  // that script's real content. A browser handed HTML where it expected
+  // JavaScript throws immediately — and if that happened to core-
+  // engine.js, loaded first with everything else depending on it, the
+  // whole app fails to initialize. One file with no timeout never hits
+  // this; ~120 files each racing a 3-second clock hits it constantly
+  // under exactly the slow-but-recovering network a reboot produces.
   //
-  // The timeout-race + guaranteed-Response fallback here predates this
-  // change and stays as-is: no timeout on a slow/flaky connection means
-  // the fetch just hangs instead of falling back, and caches.match() can
-  // resolve to undefined (e.g. right after a deploy), and
-  // respondWith(undefined) fails navigations silently in standalone mode.
-  if (req.mode === 'navigate' || isAppShellRequest(new URL(req.url))) {
+  // Fix: keep the navigation itself (the actual HTML document — one
+  // request per load) on network-first with the timeout/fallback, since
+  // genuinely hanging connections still need to time out somewhere. But
+  // script/app-shell files now use stale-while-revalidate instead, same
+  // proven pattern already used for images below: serve the cached copy
+  // instantly (immune to however slow or flaky the network is right
+  // now), and always kick off a background fetch to refresh the cache
+  // for next time. A script is never blocked on fresh network success to
+  // render at all — it just updates a session later instead of this one,
+  // which is a fair trade against the app not opening at all.
+  if (req.mode === 'navigate') {
     event.respondWith(
       Promise.race([
         fetch(req),
@@ -266,6 +285,22 @@ self.addEventListener('fetch', event => {
           )
         )
       )
+    );
+    return;
+  }
+
+  if (isAppShellRequest(new URL(req.url))) {
+    event.respondWith(
+      caches.match(req).then(cached => {
+        const network = fetch(req).then(res => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(PRECACHE).then(cache => cache.put(req, copy));
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || network;
+      })
     );
     return;
   }
