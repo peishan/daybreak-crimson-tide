@@ -318,26 +318,36 @@
   // -------------------------------------------------------------------
   const BOND_POINTS_PER_ACTION = 15;
 
+  // Tier 5 added to all three tracks below (and to San & Joy and the four
+  // individual companion tracks — see hang-out-san-joy.js and hang-out-
+  // companions.js) once points/story progress made tier 4 reachable on a
+  // long-running save with nothing further to work toward. Achievement
+  // checks for "max tier" (achievements.js) read tiers.length dynamically
+  // rather than a hardcoded index, so adding a tier here doesn't also
+  // require hunting down every achievement that cared what "max" meant.
   const SAN_JOEL_TIERS = [
     {threshold:0,   name:'Not Yet Bonded',       hpMpPct:0,  dmgReductionPct:0,  hasteTurns:0, hastePct:0},
     {threshold:0,   name:'Bonded by the Tide',   hpMpPct:5,  dmgReductionPct:8,  hasteTurns:2, hastePct:10}, // tier 1 — unlocked by Arc V Ch.4, not points, matches the original mechanic exactly
     {threshold:100, name:'Steady as the Tide',   hpMpPct:8,  dmgReductionPct:11, hasteTurns:2, hastePct:13},
     {threshold:250, name:'Anchored Together',    hpMpPct:11, dmgReductionPct:14, hasteTurns:3, hastePct:16},
-    {threshold:500, name:'Two Hearts, One Ship', hpMpPct:15, dmgReductionPct:18, hasteTurns:3, hastePct:20}
+    {threshold:500, name:'Two Hearts, One Ship', hpMpPct:15, dmgReductionPct:18, hasteTurns:3, hastePct:20},
+    {threshold:800, name:'One Ship, One Life',   hpMpPct:18, dmgReductionPct:21, hasteTurns:4, hastePct:23}
   ];
   const SAN_CREW_TIERS = [
-    {threshold:0,   name:'Strangers Still',      bonus:0},
-    {threshold:50,  name:'Getting to Know Them', bonus:0.02},
-    {threshold:150, name:'Trusted Hands',        bonus:0.04},
-    {threshold:300, name:'Found Family',         bonus:0.06},
-    {threshold:600, name:'This Is Home',         bonus:0.08}
+    {threshold:0,    name:'Strangers Still',      bonus:0},
+    {threshold:50,   name:'Getting to Know Them', bonus:0.02},
+    {threshold:150,  name:'Trusted Hands',        bonus:0.04},
+    {threshold:300,  name:'Found Family',         bonus:0.06},
+    {threshold:600,  name:'This Is Home',         bonus:0.08},
+    {threshold:1000, name:'Home, No Matter Where We Sail', bonus:0.10}
   ];
   const SAN_TRIO_TIERS = [
-    {threshold:0,   name:'Just Colleagues',        bonus:0},
-    {threshold:50,  name:'Comparing Notes',        bonus:0.02},
-    {threshold:150, name:'Three Minds, One Idea',  bonus:0.04},
-    {threshold:300, name:'The Research Circle',    bonus:0.06},
-    {threshold:600, name:'Kindred Curiosity',      bonus:0.08}
+    {threshold:0,    name:'Just Colleagues',        bonus:0},
+    {threshold:50,   name:'Comparing Notes',        bonus:0.02},
+    {threshold:150,  name:'Three Minds, One Idea',  bonus:0.04},
+    {threshold:300,  name:'The Research Circle',    bonus:0.06},
+    {threshold:600,  name:'Kindred Curiosity',      bonus:0.08},
+    {threshold:1000, name:'Four Minds, San Included', bonus:0.10}
   ];
 
   const BOND_TRACKS = {

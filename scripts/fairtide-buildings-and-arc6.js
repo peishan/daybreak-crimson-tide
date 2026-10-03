@@ -15,19 +15,29 @@
   // simplified to a flat bundle rather than resource-specific tasks —
   // both easy to expand later without breaking saves.
   // -------------------------------------------------------------------
+  // BUG FIX (San's own check-in — buildings about to max out): every
+  // tierNames array below used to stop at 5 entries (levels 1-5), but
+  // window.fairTideBuildingCap() can already push every building to level
+  // 8 once Arc VI Ch.17 ("The Fair Tide Grows") fires its one-time +3
+  // cap bonus (see completeArc6Chapter17 and the cap wrap further down).
+  // A building at level 6-8 had no tierNames[level-1] entry at all —
+  // cfg.tierNames[level-1] silently returned undefined and the UI just
+  // dropped the italic tier-name line with no indication anything was
+  // wrong. Every building now has real names through level 8, matching
+  // the cap the mechanism already allows.
   const FT_BUILDINGS = {
     port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:5,
-      tierNames:['Fair Tide Claimed','A Real Foundation','Port HQ','A Port That Runs Itself','The Heart of Fair Tide']},
+      tierNames:['Fair Tide Claimed','A Real Foundation','Port HQ','A Port That Runs Itself','The Heart of Fair Tide','A Port Worth Returning To','The Capital of Somewhere Real','Fair Tide, Fully Realized']},
     warehouse:    {name:'Warehouse',     icon:'📦', desc:'Bigger hauls from every gathering party, and higher resource storage.', rosterKey:'dudin',  companionName:'Dudin',  cost:{timber:30,stone:20},
-      tierNames:['A Place to Stack Crates','Proper Shelving','The Warehouse','Room for More','Dudin\'s Domain']},
+      tierNames:['A Place to Stack Crates','Proper Shelving','The Warehouse','Room for More','Dudin\'s Domain','Dudin\'s Second Wing','Nothing Goes to Waste Here','The Warehouse That Outgrew Fair Tide']},
     trading_post: {name:'Trading Post',  icon:'🏪', desc:'Better Market prices at Fair Tide, and better rates at the Trade screen.', rosterKey:'wahyu', companionName:'Wahyu', cost:{trade:30,food:15},
-      tierNames:['A Folding Table','A Proper Stall','The Trading Post','Fair Prices, Known Widely','Wahyu\'s Trading Post']},
+      tierNames:['A Folding Table','A Proper Stall','The Trading Post','Fair Prices, Known Widely','Wahyu\'s Trading Post','A Name Traders Trust','The Best Rates on the Coast','Wahyu\'s Exchange']},
     galley:       {name:'Galley',        icon:'🍲', desc:'More Food from every gathering run, and better Trade rates on Food.', rosterKey:'gino',   companionName:'Gino',   cost:{food:30,timber:15},
-      tierNames:['A Cookfire','A Real Kitchen','The Galley','Food Enough for Everyone','Gino\'s Galley']},
+      tierNames:['A Cookfire','A Real Kitchen','The Galley','Food Enough for Everyone','Gino\'s Galley','Gino\'s Second Pot','A Table Always Set','The Galley Everyone Remembers']},
     workshop:     {name:'Workshop',      icon:'🔧', desc:'Cheaper Shipyard hull upgrades.', rosterKey:'jorvin', companionName:'Jorvin', cost:{stone:30,trade:15},
-      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop']},
+      tierNames:['A Toolbox on the Dock','A Proper Bench','The Workshop','Tools for Every Job','Jorvin\'s Workshop','Jorvin\'s Second Bench','Built to Last','The Workshop Ships Are Built In']},
     watchtower:   {name:'Watchtower',    icon:'🔭', desc:'Imah keeps watch over the water. Periodically spots something worth investigating — a lead the Research Expedition team can follow up on.', rosterKey:'imah', companionName:'Imah', cost:{timber:25,stone:35},
-      tierNames:["A Lookout Post","A Proper Watch","The Watchtower","Eyes on Every Horizon","Imah's Watch"]},
+      tierNames:["A Lookout Post","A Proper Watch","The Watchtower","Eyes on Every Horizon","Imah's Watch","Nothing Approaches Unseen","Imah's Second Shift","The Watch That Never Sleeps"]},
     // Ch.25 ("The First Archivist") is the literal narrative origin of
     // this building — Renn establishing a small Archive section at Fair
     // Tide, Erynn contributing Farseer records, Mimi contributing
@@ -39,7 +49,7 @@
     // speed up Research (arc17-research.js's durationDays), tiers 3/5
     // add a story XP bonus, matching "knowledge compounds" as a theme.
     archive:      {name:'Archive',       icon:'🏛️', desc:"Renn's own collection, growing alongside the ancient one. Speeds up research projects and deepens what every chapter teaches.", cost:{timber:35,stone:25,trade:40}, gate: function(){ return !!game.arc17Complete; },
-      tierNames:['Archive Room','Research Desk','Horizon Records','Boundary Observatory','Archive Institute']},
+      tierNames:['Archive Room','Research Desk','Horizon Records','Boundary Observatory','Archive Institute','The Second Collection','A Record of Every World They\'ve Touched','The Archive Between Worlds, Complete']},
   };
   const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
   const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
@@ -55,6 +65,7 @@
   // would be dead code that could never actually fire.
   window.fairTideArchiveStoryXpMult = function(){
     const lvl = ftBuildings().archive || 0;
+    if (lvl >= 8) return 1.30;
     if (lvl >= 5) return 1.20;
     if (lvl >= 3) return 1.10;
     return 1.0;

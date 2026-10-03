@@ -34,7 +34,8 @@
     {threshold:0,   name:'Ate',                     bonus:0.02}, // tier 1 — unlocked by Arc XXXIII Ch.2 ("Ate"), not points, same mechanic as San & Joel's own Ch.4 gate
     {threshold:100, name:'Older Sister',            bonus:0.04},
     {threshold:250, name:'Family By Every Measure', bonus:0.06},
-    {threshold:500, name:'Ate Joy',                 bonus:0.08}
+    {threshold:500, name:'Ate Joy',                 bonus:0.08},
+    {threshold:800, name:'Never Just Joel\'s Sister Again', bonus:0.10}
   ];
   window.SAN_JOY_TIERS = SAN_JOY_TIERS;
 
