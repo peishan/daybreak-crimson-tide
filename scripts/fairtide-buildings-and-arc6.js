@@ -26,7 +26,17 @@
   // wrong. Every building now has real names through level 8, matching
   // the cap the mechanism already allows.
   const FT_BUILDINGS = {
-    port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:5,
+    // Cap raised 5 -> 15 (San's own request: this save is a long journey,
+    // and 8 — the old base-5 cap plus the one-time Ch.17 +3 bonus below —
+    // was getting within reach). Combined with that same +3 bonus, the
+    // real ceiling is now 18. Not extending the hand-authored tierNames
+    // arrays to match: see the tierName fallback in renderFTBuildingsTab()
+    // a little further down, which now covers any level beyond the
+    // curated set with a plain, never-blank label instead of needing 10
+    // more invented tier names per building (same bug class as the last
+    // fix otherwise — a numeric cap that quietly outgrows its tierNames
+    // array).
+    port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:15,
       tierNames:['Fair Tide Claimed','A Real Foundation','Port HQ','A Port That Runs Itself','The Heart of Fair Tide','A Port Worth Returning To','The Capital of Somewhere Real','Fair Tide, Fully Realized']},
     warehouse:    {name:'Warehouse',     icon:'📦', desc:'Bigger hauls from every gathering party, and higher resource storage.', rosterKey:'dudin',  companionName:'Dudin',  cost:{timber:30,stone:20},
       tierNames:['A Place to Stack Crates','Proper Shelving','The Warehouse','Room for More','Dudin\'s Domain','Dudin\'s Second Wing','Nothing Goes to Waste Here','The Warehouse That Outgrew Fair Tide']},
@@ -230,7 +240,12 @@
       const companionTag = cfg.companionName
         ? ' <span style="opacity:.7;font-size:.78rem;">('+esc(cfg.companionName)+(staffed?' — staffed':' — foreshadowed')+')</span>'
         : '';
-      const tierName = (level >= 1 && cfg.tierNames && cfg.tierNames[level-1]) ? cfg.tierNames[level-1] : null;
+      // Falls back to a plain "<Name> — Level N" once a building goes past
+      // its curated tierNames (now 8 entries; the cap itself can reach 18)
+      // instead of silently showing nothing — the same undefined-tier-name
+      // bug already fixed once for levels 6-8 would otherwise just recur
+      // at 9+ every time the cap grows again.
+      const tierName = level < 1 ? null : (cfg.tierNames && cfg.tierNames[level-1]) ? cfg.tierNames[level-1] : (cfg.name + ' — Level ' + level);
       html += '<article class="quest-item"><strong>'+cfg.icon+' '+cfg.name+'</strong> — Level '+level+'/'+cap+
         companionTag+'<br>'+
         (tierName ? '<span style="font-size:.78rem;opacity:.75;font-style:italic;">"'+esc(tierName)+'"</span><br>' : '')+
@@ -330,6 +345,17 @@
     if (game.inheritedShips && game.inheritedShips.length) {
       html += '<div class="panel-title" style="margin-top:14px;">🚢 Inherited Ships</div>'+
         '<p style="font-size:.82rem;opacity:.8;margin-bottom:8px;">Not every ship sails with us. Decide what each one becomes.</p>';
+      // BUG FIX (San's report — upgrading a long-running fleet one captured
+      // captain's ship at a time, one stat button at a time, meant
+      // scrolling to the bottom of this tab and clicking repeatedly for
+      // every ship). One button attempts +1 on every stat of every
+      // fleet-designated ship in one pass, skipping (not stopping on) any
+      // single upgrade that can't currently be afforded, then reports one
+      // combined summary instead of a toast per stat. Only shown once at
+      // least one ship actually has stats to upgrade.
+      if (game.inheritedShips.some(function(s){ return !!s.stats; })) {
+        html += '<div style="margin-bottom:10px;"><button class="btn btn-small btn-success" onclick="upgradeAllFleetShips()">⬆️ Upgrade All Affordable</button></div>';
+      }
       game.inheritedShips.forEach(ship=>{
         const designated = !!ship.designation;
         let extra = '';
@@ -953,17 +979,24 @@
   window.claimCommunityLabor = function(key){
     if (!window.canClaimCommunityLabor(key)) { toast('Already collected today.'); return; }
     const cs = communityServiceState()[key];
+    // A longer voyage can advance game.day by several days between claims,
+    // so a flat single-day amount would silently forfeit every day beyond
+    // the first. Credit every day since the last claim instead, capped at
+    // 6 (per player request) so an enormous gap (or the never-claimed-
+    // before lastClaimDay===-1 sentinel) can't produce a huge windfall.
+    const daysSince = cs.lastClaimDay < 0 ? 1 : Math.max(1, Math.min(6, game.day - cs.lastClaimDay));
     cs.lastClaimDay = game.day;
     game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0};
     const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999;
     const resKeys = ['timber','stone','food','trade'];
     const pick = resKeys[Math.floor(Math.random()*resKeys.length)];
     const before = game.fairTideResources[pick] || 0;
-    game.fairTideResources[pick] = Math.min(cap, before + 3);
+    game.fairTideResources[pick] = Math.min(cap, before + 3 * daysSince);
     const gained = game.fairTideResources[pick] - before;
     const name = rivalDisplayName(key);
     const framing = serviceFraming(key, name);
-    let msg = framing.icon + ' ' + name + "'s labor brings in " + gained + ' ' + pick + '.';
+    let msg = framing.icon + ' ' + name + "'s labor brings in " + gained + ' ' + pick +
+      (daysSince > 1 ? ' (' + daysSince + ' days\' worth).' : '.');
     const served = window.communityServiceDaysServed(key);
     if (cs.totalDays != null && served >= cs.totalDays && cs.active) {
       cs.active = false;
@@ -1264,6 +1297,36 @@
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   };
 
+  // Attempts +1 on every stat of every fleet-designated ship in one pass —
+  // see the "Upgrade All Affordable" button above. Deliberately a single
+  // pass, not "keep upgrading the cheapest thing until broke": a player
+  // clicking this once should get exactly what clicking every visible
+  // button once would have gotten, no more, so a big gold balance can't
+  // get silently drained further than expected by repeated clicks.
+  window.upgradeAllFleetShips = function(){
+    const ships = (game.inheritedShips || []).filter(function(s){ return !!s.stats; });
+    if (!ships.length) { toast('No fleet ships to upgrade yet.'); return; }
+    let upgraded = 0, skipped = 0, totalSpent = 0;
+    ships.forEach(function(ship){
+      Object.keys(ship.stats).forEach(function(stat){
+        if (!FLEET_SHIP_BASE_COST[stat]) return;
+        const cost = fleetShipUpgradeCost(ship, stat);
+        if (game.gold < cost) { skipped++; return; }
+        game.gold -= cost;
+        ship.stats[stat] = (ship.stats[stat] || 1) + 1;
+        if (stat === 'cargo') {
+          game.cargoCapacity = Math.max(Number(game.cargoCapacity||50), Number(game.cargoCapacity||50) + 15);
+        }
+        upgraded++; totalSpent += cost;
+      });
+    });
+    if (!upgraded) { toast('Not enough gold to upgrade anything right now.'); return; }
+    toast('⬆️ Upgraded ' + upgraded + ' stat' + (upgraded === 1 ? '' : 's') + ' across the fleet for ' + totalSpent + 'g.' +
+      (skipped ? (' (' + skipped + ' skipped — not enough gold.)') : ''), 4200);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+  };
+
   window.canClaimTradeIncome = function(shipId){
     const ship = (game.inheritedShips||[]).find(s=>s.id===shipId);
     if (!ship || !ship.tradeIncome) return false;
@@ -1273,10 +1336,14 @@
     const ship = (game.inheritedShips||[]).find(s=>s.id===shipId);
     if (!ship || !ship.tradeIncome) { toast('Not a trade vessel.'); return; }
     if (!window.canClaimTradeIncome(shipId)) { toast('Already collected today.'); return; }
+    // Same day-scaling fix as claimCommunityLabor: a longer voyage can
+    // advance game.day by several days between claims, so credit every
+    // day since the last claim (capped at 6) instead of a flat one day.
+    const daysSince = ship.tradeIncome.lastClaimDay < 0 ? 1 : Math.max(1, Math.min(6, game.day - ship.tradeIncome.lastClaimDay));
     ship.tradeIncome.lastClaimDay = game.day;
-    const amount = 25;
+    const amount = 25 * daysSince;
     game.gold = (game.gold||0) + amount;
-    toast('💰 ' + ship.name + ' brings in ' + amount + 'g from trade.', 3200);
+    toast('💰 ' + ship.name + ' brings in ' + amount + 'g from trade' + (daysSince > 1 ? ' (' + daysSince + ' days\' worth).' : '.'), 3200);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   };
