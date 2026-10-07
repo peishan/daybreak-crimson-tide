@@ -335,9 +335,28 @@
           ? '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">'+Object.entries(window.FT_CIVILIAN_ROLES).map(([key,def])=>
               '<button class="btn btn-small" onclick="assignCivilianRole(\''+id+'\',\''+key+'\')">'+def.icon+' '+def.name+'</button>').join('')+'</div>'
           : '';
+        // Bond levels used to only show on the Bonds tab, for San's core
+        // crew — roster civilians like Dre never showed any bond info at
+        // all, even once one existed for them (see scripts/dre-wedding.js).
+        // Generic by design: any roster id with a matching 'san_'+id entry
+        // in window.BOND_TRACKS gets this line for free, no per-character
+        // wiring needed here.
+        const bondKey = 'san_' + id;
+        const bondText = (typeof window.BOND_TRACKS !== 'undefined' && window.BOND_TRACKS[bondKey] && typeof window.bondTier === 'function')
+          ? (function(){
+              const track = window.BOND_TRACKS[bondKey];
+              const tierIdx = window.bondTier(bondKey);
+              const tierDef = track.tiers[tierIdx];
+              const nextTier = track.tiers[tierIdx+1];
+              const points = (window.bondState ? window.bondState()[bondKey].points : 0);
+              return '<br><span style="font-size:.78rem;opacity:.7;">'+track.icon+' Bond: '+esc(tierDef.name)+
+                (nextTier ? ' ('+points+'/'+nextTier.threshold+')' : ' (Max)')+'</span>';
+            })()
+          : '';
         html += '<article class="quest-item"><strong>'+(m.icon||'👤')+' '+esc(m.name)+'</strong> — <span style="opacity:.8;">'+esc(m.role)+'</span><br>'+
           '<span style="font-size:.8rem;opacity:.8;">'+esc(m.desc||'')+'</span>'+
           (bonusText ? '<br><span style="font-size:.78rem;opacity:.7;">🏮 '+bonusText+' (always active)</span>' : '')+
+          bondText+
           roleButtons+
           '</article>';
       });

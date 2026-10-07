@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V354 · Fleet Upgrade-All & Scaled Daily Collections';
+window.__CT_BUILD__='V355 · Monster Locations, Dre\'s Bond & Wedding';

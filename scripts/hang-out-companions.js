@@ -36,6 +36,16 @@
   //     instead.
   //   - Senedra  -> Ch.20 "Senedra — The Watchful Signal" — likewise
   //     her own introduction chapter.
+  //   - Dre      -> recruited onto the Fair Tide Roster at all
+  //     (game.fairTideRoster.dre) rather than a comicProgress chapter —
+  //     she's a civilian roster member, not a combat party companion, so
+  //     there's no "join the active party" chapter gating her the way
+  //     there is for the other four. members:[] on her track for the
+  //     same reason: bondSynergyActive()'s "must be fielded" check would
+  //     otherwise always read false for someone who never joins combat.
+  //     Her track caps at 100 points (not the usual 1000) on purpose —
+  //     see scripts/dre-wedding.js, which fires a one-time wedding scene
+  //     once this track reaches its max tier.
   // -------------------------------------------------------------------
 
   window.BOND_TRACKS = window.BOND_TRACKS || {};
@@ -139,6 +149,31 @@
         {id: 'night_watch',    icon: '🌌', label: 'Take the Night Watch Together', flavor: 'Quiet hours, good company, nothing to actually watch for.'},
         {id: 'maps',           icon: '🗺️', label: 'Go Over the Maps',        flavor: 'Senedra always finds one more route San hadn\'t considered.'},
         {id: 'tea_at_dawn',    icon: '🌅', label: 'Tea at Dawn',             flavor: 'Up before everyone else, for no reason except that they both already were.'}
+      ]
+    },
+    {
+      key: 'san_dre', label: 'San & Dre', icon: '☕', members: [],
+      actionLabel: 'Catch up with Dre',
+      flavor: "Coffee, paperwork, and whatever San's avoiding this time.",
+      tiers: [
+        {threshold:0,   name:'Just the Coffee Girl',    bonus:0},
+        {threshold:15,  name:'A Familiar Face Again',   bonus:0},
+        {threshold:35,  name:'Catching Up Properly',    bonus:0},
+        {threshold:55,  name:'Old Friends, Picking Up Where They Left Off', bonus:0},
+        {threshold:80,  name:'Family, More or Less',    bonus:0},
+        {threshold:100, name:'Ready to Celebrate',      bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.fairTideRoster && game.fairTideRoster['dre']); },
+      handlerName: 'hangOutWithDre',
+      panelTitle: '☕ Catch Up with Dre',
+      panelBlurb: 'Spend some time with Dre. This still uses today\'s San &amp; Dre time, same as above.',
+      activities: [
+        {id: 'coffee_break',  icon: '☕', label: 'Coffee Break',          flavor: 'Dre already knows the order. She\'s known it for years.'},
+        {id: 'go_over_books', icon: '📒', label: 'Go Over the Books',     flavor: 'Dre catches three mistakes San didn\'t know she\'d made.'},
+        {id: 'dock_gossip',   icon: '🗞️', label: 'Trade Dock Gossip',     flavor: 'Half of it is true. Neither of them cares which half.'},
+        {id: 'draft_contract', icon: '✍️', label: 'Help Draft a Contract', flavor: 'Dre\'s legal head is still sharper than anyone else\'s in Fair Tide.'},
+        {id: 'people_watch',  icon: '👀', label: 'People-Watch at the Docks', flavor: 'Dre has an opinion about absolutely everyone who walks past.'},
+        {id: 'reminisce',     icon: '💭', label: 'Reminisce About C. Adv', flavor: 'Old war stories from a job neither of them misses, exactly.'}
       ]
     }
   ];
