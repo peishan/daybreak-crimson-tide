@@ -1331,6 +1331,62 @@ const MEMORY_FRAGMENTS = {
 };
 function enemyLookup(key){ return HARBOR_ENEMIES[key] || SEA_ENEMIES[key] || GUARDIANS[key] || MEMORY_FRAGMENTS[key] || null; }
 
+// Reverse lookup, enemy key -> array of display location names, built once
+// from every "which enemies live where" source already in the codebase
+// (PORTS[].harbor, the five Arc XVI harbour modules via their key prefix,
+// Unknown Harbour, Tide Network, and Clan Settlement's WILDERNESS_ZONES),
+// so Quest Board / Temple Vows / Bounty Board entries can tell the player
+// where to actually find the thing they're being asked to kill (San's own
+// report: bounties in particular are auto-generated from the entire
+// HARBOR_ENEMIES/SEA_ENEMIES pool with zero location info on the enemy
+// object itself). Built lazily and cached — PORTS must already exist, and
+// this file defines it above, but other files' key arrays (wilderness
+// zones) are assembled inline here from data that's stable at load time.
+let _enemyLocationsCache = null;
+function buildEnemyLocations(){
+  const map = {};
+  function add(key, place){
+    map[key] = map[key] || [];
+    if (map[key].indexOf(place) === -1) map[key].push(place);
+  }
+  PORTS.forEach(function(p){ (p.harbor||[]).forEach(function(key){ add(key, p.name); }); });
+  // Arc XVI's five harbour-module regions use a self-describing key
+  // prefix (forest_coast_*, dragon_coast_*, mountain_port_*,
+  // crystal_coast_*, old_harbour_*) rather than one shared array here —
+  // deriving the display name from the prefix avoids having to import
+  // each module's own enemyKeys list into this file.
+  const REGION_PREFIXES = [
+    ['forest_coast_', 'Forest Coast'],
+    ['dragon_coast_', 'Dragon Coast'],
+    ['mountain_port_', 'Mountain Port'],
+    ['crystal_coast_', 'Crystal Coast'],
+    ['old_harbour_', 'Old Harbour']
+  ];
+  Object.keys(HARBOR_ENEMIES).forEach(function(key){
+    const hit = REGION_PREFIXES.find(function(pair){ return key.indexOf(pair[0]) === 0; });
+    if (hit) add(key, hit[1]);
+  });
+  ['dockside_pickpockets','lantern_smugglers','harbor_floor_scavengers','overzealous_tollkeeper','restless_shrine_guardian']
+    .forEach(function(key){ add(key, 'Unknown Harbour'); });
+  ['confused_shoal','territorial_pufferkin','deepwater_opportunist','tidewrecked_scavenger','unmoored_current_spirit']
+    .forEach(function(key){ add(key, 'Tide Network'); });
+  if (typeof WILDERNESS_ZONES !== 'undefined') {
+    WILDERNESS_ZONES.forEach(function(zone){
+      (zone.enemies||[]).forEach(function(key){ add(key, 'Clan Settlement — ' + zone.name); });
+      if (zone.special === 'mossback') add('mossback', 'Clan Settlement — ' + zone.name);
+      if (zone.special === 'old_moon_beast') add('the_old_moon_beast', 'Clan Settlement — ' + zone.name);
+    });
+  }
+  Object.keys(SEA_ENEMIES).forEach(function(key){ if (!map[key]) add(key, 'Open sea, during voyages'); });
+  return map;
+}
+function enemyLocationText(key){
+  if (!_enemyLocationsCache) _enemyLocationsCache = buildEnemyLocations();
+  const places = _enemyLocationsCache[key];
+  return places && places.length ? places.join(', ') : null;
+}
+window.enemyLocationText = enemyLocationText;
+
 // ---------------------------------------------------------------------------
 // VOYAGE EVENTS
 // ---------------------------------------------------------------------------
@@ -1541,10 +1597,20 @@ function checkQuestProgress(type, target, amount) {
 // (only its Temple counterpart, templeQuestBoardHTML(), existed) — the
 // resulting ReferenceError aborted renderTavern() before it reached the
 // potionShop line right after it, which is why Potions looked broken too.
+// Shared by questBoardHTML/templeQuestBoardHTML/bountyBoardHTML — a
+// "Found at: ..." line for any 'kill' quest/bounty whose target enemy has
+// a known location (see enemyLocationText above), blank for anything else
+// (trade/deliver quests have no target; an enemy with no mapped location
+// just shows nothing rather than a wrong guess).
+function questFoundAtLine(q){
+  if (q.type !== 'kill' || !q.target) return '';
+  const where = (typeof enemyLocationText === 'function') ? enemyLocationText(q.target) : null;
+  return where ? `<br><span style="font-size:0.74rem;opacity:0.65;">📍 Found at: ${where}</span>` : '';
+}
 function questBoardHTML() {
   refreshQuests();
   if (!game.activeQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No contracts posted right now — check back after your next voyage.</p>';
-  return `<div class="chapter-grid">${game.activeQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
+  return `<div class="chapter-grid">${game.activeQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span>${questFoundAtLine(q)}<br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
 }
 function potionShopHTML(filterFn) {
   const items = POTION_CATALOG.filter(filterFn);
@@ -1606,7 +1672,7 @@ function checkTempleQuestProgress(type, target, amount) {
 function templeQuestBoardHTML() {
   refreshTempleQuests();
   if (!game.activeTempleQuests.length) return '<p style="font-size:0.85rem;opacity:0.7;">No vows posted right now — check back after your next voyage.</p>';
-  return `<p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Sacred vows — fewer than the Tavern's contracts, but the shrine remembers who keeps them.</p><div class="chapter-grid">${game.activeTempleQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span><br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
+  return `<p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Sacred vows — fewer than the Tavern's contracts, but the shrine remembers who keeps them.</p><div class="chapter-grid">${game.activeTempleQuests.map(q => `<article class="quest-item"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${q.icon}</div><div><strong>${q.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${q.desc}</span>${questFoundAtLine(q)}<br><b style="font-size:0.8rem;">${q.c}/${q.need} · ${q.rw.xp} XP + ${q.rw.gold}g${q.rw.rep ? ' + ' + q.rw.rep + ' rep' : ''}</b></div></div></article>`).join('')}</div>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -3736,7 +3802,7 @@ function checkBountyProgress(type, target, amount) {
 }
 function bountyBoardHTML() {
   refreshBounties();
-  return `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">💰 Bounty Board</h3><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Refreshes daily. Stack these on top of your normal hunting for bonus pay.</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span><br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
+  return `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">💰 Bounty Board</h3><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Refreshes daily. Stack these on top of your normal hunting for bonus pay.</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span>${questFoundAtLine(b)}<br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
 }
 
 // ---------------------------------------------------------------------------
