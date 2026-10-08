@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V355 · Monster Locations, Dre\'s Bond & Wedding';
+window.__CT_BUILD__='V356 · San\'s Old Office Network & Fair Tide Allies';
