@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V360 · Archive Nav Button & Birthday Consumables';
+window.__CT_BUILD__='V361 · Birthday Loot Window Extended to 7 Days';

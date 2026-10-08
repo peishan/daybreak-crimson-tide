@@ -61,6 +61,35 @@
     return active;
   };
 
+  // Loot drops (rollBirthdayDrop, below) get a wider window than the
+  // single-day celebration claim above -- a full week starting on the
+  // actual birthday, so a 0.18-chance-per-kill drop pool is actually
+  // reachable rather than requiring the player to grind on the one
+  // calendar day. Checks both this year's and last year's occurrence of
+  // each birthday so a late-December birthday's window correctly spans
+  // the new year rather than quietly ending at Dec 31.
+  const LOOT_WINDOW_DAYS = 7;
+  function daysSince(past, now){
+    const MS_PER_DAY = 86400000;
+    const utcPast = Date.UTC(past.getFullYear(), past.getMonth(), past.getDate());
+    const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((utcNow - utcPast) / MS_PER_DAY);
+  }
+  window.birthdaysActiveForLoot = function(){
+    const now = currentRealDate();
+    const active = [];
+    Object.keys(BIRTHDAYS).forEach(function(id){
+      if (!characterRecruited(id)) return;
+      const def = BIRTHDAYS[id];
+      const inWindow = [now.getFullYear(), now.getFullYear() - 1].some(function(y){
+        const diff = daysSince(new Date(y, def.month - 1, def.day), now);
+        return diff >= 0 && diff < LOOT_WINDOW_DAYS;
+      });
+      if (inWindow) active.push({ id: id, name: def.name });
+    });
+    return active;
+  };
+
   function birthdayState(){
     if (!game.characterBirthdays) game.characterBirthdays = { lastClaimedYear: {} };
     return game.characterBirthdays;
@@ -139,7 +168,7 @@
 
   function rollBirthdayDrop(enemy){
     if (!enemy || enemy.kind === 'training') return;
-    if (!window.todaysBirthdays().length) return;
+    if (!window.birthdaysActiveForLoot().length) return;
     if (Math.random() >= BIRTHDAY_DROP_CHANCE) return;
     const item = BIRTHDAY_DROP_ITEMS[Math.floor(Math.random() * BIRTHDAY_DROP_ITEMS.length)];
     if (item.kind === 'consumable') {
