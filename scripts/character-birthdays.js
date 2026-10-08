@@ -106,10 +106,26 @@
   // festival-drops.js's own wrap (chains on top of it, since both wrap
   // window.handleVictory independently -- an already-established
   // pattern in this codebase).
+  //
+  // BUG FIX (San's report — got a Birthday Cake, had nowhere to see or
+  // use it): cake and candle used to BOTH be purely cosmetic counters
+  // in birthdayDropCollection, with no mechanical effect and no actual
+  // inventory to open. Birthday Candle stays that way (kind:'cosmetic',
+  // "someone made a wish" -- there's nothing to do with a candle). Cake
+  // is now a real consumable (kind:'consumable'): it lands in
+  // game.consumables, the SAME bucket a bought potion uses, keyed to a
+  // matching POTION_CATALOG entry (scripts/core-engine.js) -- so it
+  // shows up for free in the Cargo screen's existing "Consumables"
+  // panel and works with the existing in-combat useItem(), no new
+  // inventory system needed. Red Egg and Celebration Punch (HP and MP
+  // respectively -- San's own request for "something liquid for MP")
+  // are new consumable-only additions to the same drop pool.
   // -------------------------------------------------------------------
   const BIRTHDAY_DROP_ITEMS = [
-    { id:'birthday_cake',   icon:'🎂', name:'Birthday Cake',   desc:"Someone's favorite, probably. Nobody's saying no to a slice." },
-    { id:'birthday_candle', icon:'🕯️', name:'Birthday Candle', desc:'Already burned halfway down. Someone clearly made a wish.' }
+    { id:'birthday_candle',  icon:'🕯️', name:'Birthday Candle',   desc:'Already burned halfway down. Someone clearly made a wish.', kind:'cosmetic' },
+    { id:'birthday_cake',    icon:'🎂', name:'Birthday Cake',      desc:'Restores 35 HP. Someone\'s favorite, probably.', kind:'consumable' },
+    { id:'red_egg',          icon:'🥚', name:'Red Egg',            desc:'Restores 25 HP. A birthday tradition from somewhere.', kind:'consumable' },
+    { id:'celebration_punch', icon:'🥤', name:'Celebration Punch', desc:'Restores 25 MP. Something sweet, something fizzy.', kind:'consumable' }
   ];
   window.BIRTHDAY_DROP_ITEMS = BIRTHDAY_DROP_ITEMS;
 
@@ -126,9 +142,15 @@
     if (!window.todaysBirthdays().length) return;
     if (Math.random() >= BIRTHDAY_DROP_CHANCE) return;
     const item = BIRTHDAY_DROP_ITEMS[Math.floor(Math.random() * BIRTHDAY_DROP_ITEMS.length)];
-    const collection = birthdayDropCollection();
-    collection[item.id] = (collection[item.id] || 0) + 1;
-    toast(item.icon + ' Found a ' + item.name + '! (' + collection[item.id] + ' collected)', 3400);
+    if (item.kind === 'consumable') {
+      game.consumables = game.consumables || {};
+      game.consumables[item.id] = (game.consumables[item.id] || 0) + 1;
+      toast(item.icon + ' Found a ' + item.name + '! (+1 — see Consumables on the Cargo screen)', 3800);
+    } else {
+      const collection = birthdayDropCollection();
+      collection[item.id] = (collection[item.id] || 0) + 1;
+      toast(item.icon + ' Found a ' + item.name + '! (' + collection[item.id] + ' collected)', 3400);
+    }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   }
 
