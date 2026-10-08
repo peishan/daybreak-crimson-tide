@@ -1432,7 +1432,16 @@ const POTION_CATALOG = [
   {id:'elixir_of_vitality', name:'Elixir of Vitality', icon:'✨', effect:'heal', value:200, price:150, tier:3, temple:true},
   {id:'elixir_of_focus', name:'Elixir of Focus', icon:'🔮', effect:'mana', value:150, price:130, tier:3, temple:true},
   {id:'shipwrights_blessing', name:"Shipwright's Blessing", icon:'⛩️', effect:'repair', value:100, price:160, tier:3, temple:true},
-  {id:'consecrated_broadside', name:'Consecrated Broadside', icon:'💥', effect:'damage', value:200, price:140, tier:3, temple:true}
+  {id:'consecrated_broadside', name:'Consecrated Broadside', icon:'💥', effect:'damage', value:200, price:140, tier:3, temple:true},
+  // dropOnly: true -- never sold at the Tavern or Temple (see potionShopHTML's
+  // Tavern call site, which filters these out), only ever found via
+  // scripts/character-birthdays.js's birthday-drop roll. They land in the
+  // exact same game.consumables bucket as a bought potion, so they show up
+  // in the Cargo screen's Consumables panel and work with the existing
+  // in-combat useItem() for free -- no separate inventory system needed.
+  {id:'red_egg', name:'Red Egg', icon:'🥚', effect:'heal', value:25, price:0, tier:1, dropOnly:true},
+  {id:'birthday_cake', name:'Birthday Cake', icon:'🎂', effect:'heal', value:35, price:0, tier:1, dropOnly:true},
+  {id:'celebration_punch', name:'Celebration Punch', icon:'🥤', effect:'mana', value:25, price:0, tier:1, dropOnly:true}
 ];
 
 const LOOT_THEMES = [
@@ -4216,7 +4225,7 @@ function renderTavern() {
     (game.rumors.slice(-5).map(r => '<li>' + r + '</li>').join('') || '<li>No rumors heard yet.</li>') +
     '</ul>';
   document.getElementById('questBoard').innerHTML = questBoardHTML();
-  document.getElementById('potionShop').innerHTML = potionShopHTML(p => !p.temple);
+  document.getElementById('potionShop').innerHTML = potionShopHTML(p => !p.temple && !p.dropOnly);
 }
 
 // ---------------------------------------------------------------------------
