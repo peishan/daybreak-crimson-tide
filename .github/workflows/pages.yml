@@ -157,15 +157,23 @@ jobs:
           if not targets:
               print('No new comic PNG/JPG art to convert.')
           for f in targets:
-              im = Image.open(f)
-              if im.mode in ('RGBA', 'LA') or (im.mode == 'P' and 'transparency' in im.info):
-                  im = im.convert('RGBA')
-              else:
-                  im = im.convert('RGB')
-              out = os.path.splitext(f)[0] + '.webp'
-              im.save(out, 'WEBP', quality=82, method=5)
-              os.remove(f)
-              print(f'Converted {f} -> {out}')
+              # A single bad upload (not actually an image, truncated,
+              # wrong format under the extension) must not crash the whole
+              # job -- that would also block every *other* legitimate file
+              # in this same push from converting, committing, and
+              # deploying. Skip just that file and keep going.
+              try:
+                  im = Image.open(f)
+                  if im.mode in ('RGBA', 'LA') or (im.mode == 'P' and 'transparency' in im.info):
+                      im = im.convert('RGBA')
+                  else:
+                      im = im.convert('RGB')
+                  out = os.path.splitext(f)[0] + '.webp'
+                  im.save(out, 'WEBP', quality=82, method=5)
+                  os.remove(f)
+                  print(f'Converted {f} -> {out}')
+              except Exception as e:
+                  print(f'Warning: could not convert {f} ({e}), leaving it as-is.')
           EOF
 
       - name: Commit renamed/converted art, if any
@@ -177,7 +185,28 @@ jobs:
             echo "Nothing to commit."
           else
             git commit -m "Auto-rename and convert new comic art"
-            git push origin HEAD:${{ github.ref_name }}
+            # San can upload several file batches within minutes of each
+            # other, which starts overlapping workflow runs. If another
+            # run's own push-back landed on this branch in between our
+            # checkout and our push, a plain push is rejected as
+            # non-fast-forward and this run's whole conversion is silently
+            # lost (committed locally, never on the remote). Rebase onto
+            # the latest remote tip and retry a few times before giving up.
+            pushed=false
+            for attempt in 1 2 3 4 5; do
+              if git push origin HEAD:${{ github.ref_name }}; then
+                pushed=true
+                break
+              fi
+              echo "Push rejected (attempt $attempt), fetching and rebasing before retrying..."
+              sleep $((attempt * 3))
+              git fetch origin ${{ github.ref_name }}
+              git rebase origin/${{ github.ref_name }}
+            done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::Could not push auto-converted art after 5 attempts -- giving up."
+              exit 1
+            fi
           fi
 
       - name: Setup Pages
