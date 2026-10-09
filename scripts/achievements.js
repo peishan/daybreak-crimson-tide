@@ -610,7 +610,50 @@
 
     // --- Arc I's own finale ---
     {id:'arc1_complete', name:'The Drowned Passage', icon:'🌊', desc:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',
-      check: function(){ return !!(game.comicProgress && game.comicProgress[23] && game.finalCleared); }}
+      check: function(){ return !!(game.comicProgress && game.comicProgress[23] && game.finalCleared); }},
+
+    // --- TM Crew / C. Adv Crew -- the two newest Bond tracks
+    // (arc9-and-systems.js), same started/max convention as every other
+    // companion track above. ---
+    {id:'bond_tm_crew_started', name:'Welcome Aboard', icon:'🚢', desc:'San and the TM Crew started building something real.',
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('tm_crew') >= 1; }},
+    {id:'bond_tm_crew_max', name:'The Steady Reach, and Fair Tide Too', icon:'🚢', desc:"San and the TM Crew's bond reached its deepest point.",
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('tm_crew') >= window.BOND_TRACKS.tm_crew.tiers.length - 1; }},
+    {id:'bond_c_adv_crew_started', name:'Catching Up', icon:'📇', desc:'San and the C. Adv Crew started building something real.',
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('c_adv_crew') >= 1; }},
+    {id:'bond_c_adv_crew_max', name:'Family, Reassigned', icon:'📇', desc:"San and the C. Adv Crew's bond reached its deepest point.",
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('c_adv_crew') >= window.BOND_TRACKS.c_adv_crew.tiers.length - 1; }},
+
+    // --- San & Dre's own bond track (hang-out-companions.js) never had
+    // started/max achievements like Aisyah/Mez/Eliz/Senedra's did,
+    // despite being registered the same way -- closing that gap. Caps
+    // at 100 points, not the usual 1000 (that file's own comment), but
+    // the "max" check below doesn't care what the ceiling actually is. ---
+    {id:'bond_san_dre_started', name:'A Familiar Face Again', icon:'☕', desc:'San and Dre started catching up properly.',
+      check: function(){ return typeof window.bondTier === 'function' && window.bondTier('san_dre') >= 1; }},
+    {id:'bond_san_dre_max', name:'Ready to Celebrate', icon:'☕', desc:"San and Dre's bond reached its deepest point.",
+      check: function(){ return typeof window.bondTier === 'function' && window.BOND_TRACKS && window.bondTier('san_dre') >= window.BOND_TRACKS.san_dre.tiers.length - 1; }},
+
+    // --- San & Joel's disputed anniversary (scripts/san-joel-
+    // anniversary.js) -- two competing dates, tracked independently. ---
+    {id:'anniversary_mets_side', name:"San's Anniversary", icon:'💕', desc:'The day they met, celebrated San\'s way.',
+      check: function(){ return !!(game.sanJoelAnniversary && game.sanJoelAnniversary.lastClaimedYear && game.sanJoelAnniversary.lastClaimedYear['met'] !== undefined); }},
+    {id:'anniversary_contacts_side', name:"Joel's Anniversary", icon:'💕', desc:"What Joel insists was the real start of things, celebrated his way.",
+      check: function(){ return !!(game.sanJoelAnniversary && game.sanJoelAnniversary.lastClaimedYear && game.sanJoelAnniversary.lastClaimedYear['contact'] !== undefined); }},
+    {id:'anniversary_both_sides', name:'Neither of Them Wins', icon:'💕', desc:'Both anniversary dates celebrated in the same year — still no agreement on which one actually counts.',
+      check: function(){ const y = game.sanJoelAnniversary && game.sanJoelAnniversary.lastClaimedYear; return !!(y && y['met'] !== undefined && y['met'] === y['contact']); }},
+
+    // --- Voyage interception streak (scripts/core-engine.js: doVoyage) ---
+    {id:'interception_streak_15', name:'A Quiet Stretch', icon:'🏴‍☠️', desc:'15 days at sea without a single interception.',
+      check: function(){ return (game.daysSinceInterception||0) >= 15; }},
+    {id:'interception_streak_30', name:'Untouchable', icon:'🏴‍☠️', desc:'30 days at sea without a single interception.',
+      check: function(){ return (game.daysSinceInterception||0) >= 30; }},
+
+    // --- Voyage group encounters (scripts/voyage-group-encounters.js) ---
+    {id:'sea_group_first_clear', name:'Divide and Conquer', icon:'⚔️', desc:'A full group of pirates or sirens, fought down to the very last one.',
+      check: function(){ return (game.seaGroupClears||0) >= 1; }},
+    {id:'sea_group_10', name:'The Crew Knows the Drill', icon:'⚔️', desc:'Ten full pirate or siren groups, cleared.',
+      check: function(){ return (game.seaGroupClears||0) >= 10; }}
   ];
   window.ACHIEVEMENTS = ACHIEVEMENTS;
 

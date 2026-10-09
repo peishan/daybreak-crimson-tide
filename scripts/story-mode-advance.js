@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V366 · Bug Fixes: Bond Labels, Interception Streak, Push Retry';
+window.__CT_BUILD__='V367 · Pirate/Siren Group Encounters & 13 New Achievements';
