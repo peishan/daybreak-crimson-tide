@@ -97,6 +97,25 @@
       dossier.relationship = "N's Companion";
       dossier.recruitable = false;
       toast('🕶️ Working classification recorded: SAIREN — Intelligence Operative.', 4200);
+
+      // Fulfills the FUTURE HOOK left in arc28-mechanics.js: this is the
+      // moment Fair Tide -- and the player -- finally has a working name
+      // for him. N's own "Away" card stops saying "Unknown Man", and his
+      // own masked Fair Tide Resident record from Arc XXVIII (the guest
+      // she met before either of them left) is revealed the same way,
+      // same moment. Neither touch exists if he was never actually at
+      // Fair Tide under that record (e.g. an old save from before this
+      // was added) -- both checks are optional-chained on purpose.
+      if (typeof window.fairTideResidentsState === 'function') {
+        const residents = window.fairTideResidentsState();
+        if (residents.n && residents.n.awayCompanion === 'Unknown Man') {
+          residents.n.awayCompanion = 'Sairen';
+        }
+        if (residents.sairen && residents.sairen.nameKnown === false) {
+          residents.sairen.nameKnown = true;
+          residents.sairen.name = 'Sairen';
+        }
+      }
     }
 
     // Ch.23 ("No Place at Fair Tide") -- the boundary terms are the
