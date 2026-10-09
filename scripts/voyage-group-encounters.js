@@ -27,6 +27,12 @@
   // interception genuinely more dangerous than before: the crew no
   // longer gets a free full-HP/MP breather between foes the way a Raid
   // stage does, since this is meant to read as one continuous fight.
+  //
+  // San's own follow-up after the first pass only fought foes one at a
+  // time with no visible sign there were ever several: renderSeaGroupRoster()
+  // (bottom of this file) now shows every foe in the group at once, in
+  // a strip above the usual single-enemy card -- the fight underneath
+  // still only ever targets the current one.
   // -------------------------------------------------------------------
   const SEA_GROUP_SIZES = { rival_frigate: 2, siren_pack: 3 };
   window.SEA_GROUP_SIZES = SEA_GROUP_SIZES;
@@ -120,5 +126,54 @@
       return;
     }
     setTimeout(startNextSeaGroupFoe, 600);
+  };
+
+  // -------------------------------------------------------------------
+  // VISIBLE ROSTER — San's own follow-up: the group needs to actually
+  // LOOK like several foes, not just be mechanically several foes the
+  // player only discovers one at a time. Renders a row above the usual
+  // single-enemy card (#seaGroupRoster, index.html) showing every foe
+  // in the group at once: the current one highlighted, defeated ones
+  // checked off, the rest waiting -- while the main combat screen below
+  // it still only ever fights the current one, same single-target
+  // engine as every other fight in this codebase.
+  // -------------------------------------------------------------------
+  function renderSeaGroupRoster(){
+    const el = document.getElementById('seaGroupRoster');
+    if (!el) return;
+    const g = game.seaGroupEncounter;
+    if (!g || !g.active || !g.queue.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.style.display = 'block';
+    // Strip the "(i/N)" suffix buildSeaGroup() gave each foe for its own
+    // name tag, just for this shared group title.
+    const groupLabel = g.queue[0].name.replace(/\s*\(\d+\/\d+\)$/, '');
+    let html = '<div style="text-align:center;font-size:.78rem;opacity:.75;margin-bottom:6px;">⚔️ '+esc(groupLabel)+' — Foe '+(g.index + 1)+' of '+g.queue.length+'</div>'+
+      '<div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;">';
+    g.queue.forEach(function(foe, i){
+      // The just-defeated foe's own brief "Victory!" screen still has
+      // game.combatEnemy pointed at it with g.index not yet advanced
+      // (that happens in the wrap above, after this render already
+      // ran) -- game.combatResolved is what actually distinguishes
+      // "just won this one" from "still fighting this one".
+      const isDefeated = i < g.index || (i === g.index && !!game.combatResolved);
+      const isCurrent = i === g.index && !game.combatResolved;
+      const style = isCurrent
+        ? 'border:2px solid var(--gold);background:rgba(255,255,255,.14);'
+        : isDefeated
+          ? 'opacity:.4;border:1px solid transparent;'
+          : 'opacity:.6;border:1px solid transparent;';
+      html += '<div style="padding:5px 9px;border-radius:8px;font-size:1.1rem;'+style+'" title="'+esc(foe.name)+'">'+
+        (foe.art || foe.icon || '⚔️')+(isDefeated ? ' ✅' : '')+
+        '</div>';
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  }
+  window.renderSeaGroupRoster = renderSeaGroupRoster;
+
+  const oldRenderCombatForSeaGroup = window.renderCombat;
+  window.renderCombat = function(){
+    if (oldRenderCombatForSeaGroup) oldRenderCombatForSeaGroup();
+    renderSeaGroupRoster();
   };
 })();
