@@ -108,6 +108,9 @@
     // N-specific gate for now (Ch.6); a future resident would gate on
     // its own arc's own chapter the same way.
     if (id === 'n') return !!(game.comicProgress28 && game.comicProgress28[6]);
+    // The masked guest is never work-assignable -- he's passing through
+    // incognito for a handful of chapters, not settling in as a worker.
+    if (id === 'sairen') return false;
     return true;
   }
   window.residentWorkUnlocked = residentWorkUnlocked;
@@ -191,12 +194,19 @@
       if (typeof logEvent === 'function') logEvent('📉 N spends beyond what she\'s earned again, expecting it to be smoothed over. This time it isn\'t.', 'bad');
     }
 
-    // Ch.18 ("Exactly What You Earned") -- the Departing Resident event
-    // and Aisyah's final account, computed automatically and exactly
-    // once. The Brunei debt is explicitly NOT deducted here -- per San's
-    // own spec, that debt was never Fair Tide's to collect.
-    if (cp[18] && n.status !== 'departing' && n.status !== 'departed') {
-      n.status = 'departing';
+    // Ch.18 ("Exactly What You Earned") -- Aisyah's final account,
+    // computed automatically and exactly once. The Brunei debt is
+    // explicitly NOT deducted here -- per San's own spec, that debt was
+    // never Fair Tide's to collect.
+    //
+    // BUG FIX / DESIGN UPDATE (San's own direction): this used to also
+    // flip n.status straight to 'departed' right here, but Ch.19-23 now
+    // narrate her staying a few days longer -- newly freed of her work
+    // assignment, still physically at Fair Tide, which is where she
+    // meets the masked guest below. Settling accounts is her decision to
+    // eventually go, not the goodbye itself; the actual departure (and
+    // status flip) now happens at Ch.23, alongside his own.
+    if (cp[18] && !n.finalAccount) {
       const finalWages = window.residentAvailableWages('n');
       n.finalAccount = {
         earned: n.earnings,
@@ -208,18 +218,69 @@
       n.role = null;
       n.relationship = 'Complicated';
       n.trust = 'Unresolved';
-      n.status = 'departed';
       toast('📋 Final Fair Tide Account — N: earned ' + n.earnings + 'g, paid out ' + finalWages + 'g. Old Brunei debt: not applicable.', 4800);
-      if (typeof logEvent === 'function') logEvent('📋 N leaves Fair Tide, paid in full for every bit she earned — nothing invented, nothing withheld, and her old Brunei debt left off the ledger entirely, exactly where it belongs.', 'gold');
+      if (typeof logEvent === 'function') logEvent('📋 N\'s account is settled in full — nothing invented, nothing withheld, and her old Brunei debt left off the ledger entirely, exactly where it belongs.', 'gold');
     }
 
-    // Ch.23 ("Come With Me") -- her roster entry updates once more,
-    // without ever naming Sairen. FUTURE HOOK: whichever later arc
-    // properly identifies him updates n.awayCompanion from 'Unknown Man'
-    // to his real name -- no other change needed here when that happens.
-    if (cp[23] && !n.awayLocation) {
+    // Ch.23 ("Come With Me") -- N actually leaves Fair Tide now, with
+    // the masked guest (see checkSairenResidentEvents below). FUTURE
+    // HOOK: whichever later arc properly identifies him updates
+    // n.awayCompanion from 'Unknown Man' to his real name -- no other
+    // change needed here when that happens (see arc29-mechanics.js's
+    // Ch.12 classification, which already does exactly this).
+    if (cp[23] && n.status !== 'departed') {
+      n.status = 'departed';
       n.awayLocation = 'Unknown';
       n.awayCompanion = 'Unknown Man';
+    }
+  }
+
+  // ===========================================================================
+  // THE MASKED GUEST (Ch.19-23) — San's own direction: the man N meets
+  // and spends one night with was always meant to be physically at Fair
+  // Tide first, not someone she only meets after she's already gone.
+  // Registered through the exact same generic resident framework N
+  // herself uses, with one addition: nameKnown:false. His identity is
+  // withheld from the PLAYER too, not just narratively from San -- Arc
+  // XXVIII's own chapter text (see arc28.js Ch.19-24) never names him
+  // either, matching the masked display here exactly. Arc XXIX Ch.12
+  // ("The Spy") is where Fair Tide Intelligence -- and the player --
+  // finally learns the working name Sairen (see arc29-mechanics.js).
+  //
+  // Like N, he's a RESIDENT, never a recruited crew member: no role is
+  // ever assignable to him (residentWorkUnlocked special-cases him to
+  // false, below) -- he's a guest passing through, not someone settling
+  // in to work.
+  // ===========================================================================
+  function checkSairenResidentEvents(){
+    const cp = game.comicProgress28;
+    if (!cp) return;
+
+    // Ch.19 ("Beautiful and Free") -- he's already a quiet guest by the
+    // time N's own days open up; this is simply where the story first
+    // gives them a reason to actually cross paths.
+    if (cp[19] && !residentsState().sairen) {
+      window.registerTemporaryResident('sairen', {
+        name: null,
+        nameKnown: false,
+        icon: '🎭',
+        room: 'Guest Quarters',
+        memory: '—',
+        relationship: 'Stranger',
+        trust: 'Unknown',
+        traits: ['charming']
+      });
+    }
+    const sairen = residentsState().sairen;
+    if (!sairen) return;
+
+    // Ch.23 ("Come With Me") -- he leaves Fair Tide, same moment N does,
+    // same masked identity carried into the "Away" record as hers.
+    if (cp[23] && sairen.status !== 'departed') {
+      sairen.status = 'departed';
+      sairen.awayLocation = 'Unknown';
+      sairen.awayCompanion = 'N';
+      if (typeof logEvent === 'function') logEvent('🎭 The masked guest leaves Fair Tide. N goes with him.', 'neutral');
     }
   }
 
@@ -227,6 +288,7 @@
   window.syncArc1StoryQuestProgress = function(){
     if (oldSyncArc1ForArc28Residents) oldSyncArc1ForArc28Residents();
     checkNResidentEvents();
+    checkSairenResidentEvents();
   };
 
   // ===========================================================================
@@ -237,6 +299,17 @@
   // in the same screen rather than a separate Codex view to stay within
   // this arc's own scope.
   // ===========================================================================
+  // nameKnown defaults to true for any resident that doesn't set it
+  // explicitly (every existing one before the masked guest) -- only an
+  // explicit nameKnown:false masks the display, same "???" idiom used
+  // for unknown locations (clan-settlement-and-sw.js etc.) and
+  // undiscovered bestiary/achievement entries elsewhere in this
+  // codebase. Without this guard, esc(null) would literally print the
+  // text "null" to the player instead of staying hidden.
+  function residentDisplayName(r){
+    return r.nameKnown === false ? '???' : esc(r.name);
+  }
+
   function renderResidentCard(r){
     const traitBadges = r.traits.map(function(k){
       const t = RESIDENT_TRAITS[k];
@@ -244,7 +317,7 @@
     }).join(' ');
 
     if (r.status === 'departed') {
-      return '<article class="quest-item"><strong>'+r.icon+' '+esc(r.name)+'</strong> — <span style="opacity:.75;">Away from Fair Tide</span><br>'+
+      return '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span style="opacity:.75;">Away from Fair Tide</span><br>'+
         '<span style="font-size:.8rem;opacity:.8;">Location: '+esc(r.awayLocation || 'Unknown')+' · Companion: '+esc(r.awayCompanion || 'Unknown')+' · Status: Safe (last known)</span><br>'+
         '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span>'+
         (r.finalAccount ? '<div style="font-size:.76rem;opacity:.65;margin-top:4px;">Final account: earned '+r.finalAccount.earned+'g, paid '+r.finalAccount.finalWages+'g · Old debt: '+esc(r.finalAccount.bruneiDebt)+'</div>' : '')+
@@ -253,7 +326,7 @@
 
     const role = RESIDENT_WORK_ROLES.find(function(x){ return x.key === r.role; });
     const wages = window.residentAvailableWages(r.id);
-    let html = '<article class="quest-item"><strong>'+r.icon+' '+esc(r.name)+'</strong> — <span class="story-chip">'+esc(RESIDENT_STATUS_LABELS[r.status] || r.status)+'</span> '+traitBadges+'<br>'+
+    let html = '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span class="story-chip">'+esc(RESIDENT_STATUS_LABELS[r.status] || r.status)+'</span> '+traitBadges+'<br>'+
       '<span style="font-size:.8rem;opacity:.8;">Role: '+(role ? esc(role.name) : 'Unassigned')+' · Room: '+esc(r.room || '—')+' · Memory: '+esc(r.memory || '—')+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.75;">Earnings: '+r.earnings+'g · Available wages: '+wages+'g</span>';

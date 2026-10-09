@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V361 · Birthday Loot Window Extended to 7 Days';
+window.__CT_BUILD__='V362 · The Masked Guest — Arc XXVIII Relocated to Fair Tide';
