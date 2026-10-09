@@ -3928,6 +3928,8 @@ function doVoyage(portId, days, dangerLevel) {
         setTimeout(() => { startCombat({kind:'sea', key: event.combat, enemy: scaledEnemyForExplore(event.combat, 'sea')}); }, 1000);
         return;
       } else if (event.illusion) {
+        game.daysSinceInterception++;
+        renderInterceptionStreak();
         clearInterval(interval);
         setTimeout(() => { if (typeof window.triggerIllusionEncounter === 'function') window.triggerIllusionEncounter(true); }, 1000);
         return;

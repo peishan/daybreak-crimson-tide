@@ -577,7 +577,12 @@
       if (key === 'san_joel') {
         bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + tierDef.hpMpPct + '% HP/MP · -' + tierDef.dmgReductionPct + '% damage taken · haste on Shield Wall');
       } else {
-        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus*100) + '% ' + track.bonusLabel);
+        // Falls back to 'crit chance' for any track registered elsewhere
+        // (hang-out-companions.js's San & Aisyah/Mez/Eliz/Senedra/Dre,
+        // all bonus:0) that doesn't set its own bonusLabel -- matching
+        // the exact old hardcoded default so hang-out-companions.js's own
+        // "+0% crit chance" -> friendly-text replacement still fires.
+        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus*100) + '% ' + (track.bonusLabel || 'crit chance'));
       }
       const activeLabel = track.ambient
         ? (synergyActive ? '✅ Always active once bonded' : '⚪ No bond yet')
