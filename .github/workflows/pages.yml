@@ -19,16 +19,18 @@ jobs:
           fetch-depth: 0
 
       # San generates comic chapter art as PNG/JPG and uploads it straight
-      # into assets/comics/<arc>/ with the same filename the game's own
-      # chapter data already expects (just a different extension) -- no
-      # format conversion on her end. This step auto-converts any such
-      # file this push added or changed into the matching .webp the game
-      # actually references (WebP compresses this painterly/AI-generated
-      # art far better than PNG: ~87% smaller with no visible quality loss
-      # at phone-screen size -- see the Comic Archive loading-speed fix),
-      # removes the original, and commits the result back to this same
-      # branch before the deploy below runs, so the freshly-converted art
-      # ships in this same deploy rather than waiting for a second push.
+      # into assets/comics/<arc>/ -- no format conversion on her end, and
+      # (see the rename step just below) no longer needs to hand-type the
+      # full slugified filename the game's own chapter data expects
+      # either. This step auto-converts any such file this push added or
+      # changed (or the rename step just renamed) into the matching .webp
+      # the game actually references (WebP compresses this painterly/
+      # AI-generated art far better than PNG: ~87% smaller with no
+      # visible quality loss at phone-screen size -- see the Comic
+      # Archive loading-speed fix), removes the original, and commits the
+      # result back to this same branch before the deploy below runs, so
+      # the freshly-converted art ships in this same deploy rather than
+      # waiting for a second push.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -36,6 +38,85 @@ jobs:
 
       - name: Install Pillow
         run: pip install --quiet Pillow
+
+      # San's own request: typing out "ch05-the-ships-that-stop-coming.
+      # webp" by hand for every single piece of art was the actual chore,
+      # not the format conversion above. This lets her drop a file in as
+      # a bare "ch05.png" (just the chapter number she already has to
+      # know) under assets/comics/arc<N>/, and renames it to the exact
+      # filename scripts/arc<N>.js's own chapter list already expects --
+      # read directly from that file's own `image:'...'` fields, so there
+      # is exactly one place that ever has to know the real filename.
+      # Writes what it renamed to a temp file, since the conversion step
+      # above/below only looks at this push's own git diff by default,
+      # and a rename that happens here in the working tree (not yet
+      # committed) wouldn't otherwise show up in that diff at all.
+      - name: Rename bare chapter art to its expected filename
+        run: |
+          python3 - <<'EOF'
+          import os, re, glob
+
+          def load_chapter_map(arc_num):
+              path = f'scripts/arc{arc_num}.js'
+              if not os.path.isfile(path):
+                  return None
+              with open(path, 'r', encoding='utf-8') as f:
+                  src = f.read()
+              mapping = {}
+              for m in re.finditer(r"image:\s*'assets/comics/arc" + re.escape(arc_num) + r"/(ch(\d{2})-[^']+\.\w+)'", src):
+                  filename, chnum = m.group(1), m.group(2)
+                  mapping[chnum] = filename
+              return mapping
+
+          renamed = []
+          warnings = []
+          chapter_map_cache = {}
+          bare_pattern = re.compile(r'^ch(\d{2})\.(png|jpg|jpeg|webp)$', re.IGNORECASE)
+
+          for filepath in glob.glob('assets/comics/arc*/*'):
+              if not os.path.isfile(filepath):
+                  continue
+              dirpath, basename = os.path.split(filepath)
+              m = bare_pattern.match(basename)
+              if not m:
+                  continue
+              chnum, ext = m.group(1), m.group(2).lower()
+              arc_dir = os.path.basename(dirpath)
+              arc_match = re.match(r'^arc(\d+)$', arc_dir)
+              if not arc_match:
+                  warnings.append(f'{filepath}: parent folder "{arc_dir}" doesn\'t match the expected arcNN pattern, skipped.')
+                  continue
+              arc_num = arc_match.group(1)
+
+              if arc_num not in chapter_map_cache:
+                  chapter_map_cache[arc_num] = load_chapter_map(arc_num)
+              chapter_map = chapter_map_cache[arc_num]
+
+              if chapter_map is None:
+                  warnings.append(f'{filepath}: no scripts/arc{arc_num}.js found to look up chapter names, skipped.')
+                  continue
+              if chnum not in chapter_map:
+                  warnings.append(f'{filepath}: no chapter {chnum} found in scripts/arc{arc_num}.js\'s own chapter list, skipped.')
+                  continue
+
+              full_filename = chapter_map[chnum]
+              target_filename = os.path.splitext(full_filename)[0] + '.' + ext
+              target_path = os.path.join(dirpath, target_filename)
+              if os.path.exists(target_path):
+                  warnings.append(f'{filepath}: target {target_path} already exists, not overwriting.')
+                  continue
+              os.rename(filepath, target_path)
+              renamed.append(target_path)
+              print(f'Renamed {filepath} -> {target_path}')
+
+          if not renamed:
+              print('No bare chNN.ext files found to rename.')
+          for w in warnings:
+              print('Warning: ' + w)
+
+          with open('/tmp/ct_renamed_art.txt', 'w') as f:
+              f.write('\n'.join(renamed))
+          EOF
 
       - name: Convert new/changed comic art to WebP
         env:
@@ -59,12 +140,20 @@ jobs:
                   capture_output=True, text=True
               ).stdout.splitlines()
 
-          targets = [
-              f for f in diff
+          # Files the rename step just created in the working tree (not
+          # yet part of any commit, so absent from the diff above) --
+          # add them in explicitly so they still get converted this run.
+          renamed = []
+          if os.path.isfile('/tmp/ct_renamed_art.txt'):
+              with open('/tmp/ct_renamed_art.txt') as f:
+                  renamed = [line.strip() for line in f if line.strip()]
+
+          targets = sorted(set([
+              f for f in (diff + renamed)
               if f.startswith('assets/comics/')
               and f.lower().endswith(('.png', '.jpg', '.jpeg'))
               and os.path.isfile(f)
-          ]
+          ]))
           if not targets:
               print('No new comic PNG/JPG art to convert.')
           for f in targets:
@@ -79,7 +168,7 @@ jobs:
               print(f'Converted {f} -> {out}')
           EOF
 
-      - name: Commit converted art, if any
+      - name: Commit renamed/converted art, if any
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -87,7 +176,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nothing to commit."
           else
-            git commit -m "Auto-convert new comic art to WebP"
+            git commit -m "Auto-rename and convert new comic art"
             git push origin HEAD:${{ github.ref_name }}
           fi
 
