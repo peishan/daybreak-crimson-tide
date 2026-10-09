@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V362 · The Masked Guest — Arc XXVIII Relocated to Fair Tide';
+window.__CT_BUILD__='V363 · Mez\'s Birthday Fix, Week-Long Celebrations, Interception Streak';

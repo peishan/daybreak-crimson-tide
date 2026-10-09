@@ -3888,10 +3888,28 @@ function sailTo(portId) {
     [{text: '⚓ Set Sail', action: () => { closeModal(); doVoyage(portId, travelDays, targetPort.danger); }},
      {text: 'Stay in Port', action: closeModal}]);
 }
+// San's own request: a running counter, visible while sailing, of how
+// many days it's been since the ship was last intercepted by a hostile
+// (pirates, sea serpent, octopus, kraken, ghost galleon, siren pack --
+// any EVENTS entry with its own `combat` key). Persists across voyages
+// in game.daysSinceInterception (lazy-initialized, same pattern as every
+// other save-state counter in this codebase) rather than resetting to 0
+// each time a new voyage starts, since "how long has it been" is more
+// useful as a running total than a per-trip count. Deliberately doesn't
+// count illusion encounters (arc10-12.js's own EVENTS entry) -- those
+// aren't a hostile interception, just a narrative beat.
+function renderInterceptionStreak() {
+  const el = document.getElementById('voyageInterceptionStreak');
+  if (!el) return;
+  const days = game.daysSinceInterception || 0;
+  el.textContent = '🏴‍☠️ ' + days + ' day' + (days === 1 ? '' : 's') + ' since last interception';
+}
 function doVoyage(portId, days, dangerLevel) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('voyageScreen').classList.add('active');
   document.getElementById('voyageDest').textContent = 'To ' + PORTS.find(p => p.id === portId).name;
+  game.daysSinceInterception = game.daysSinceInterception || 0;
+  renderInterceptionStreak();
 
   let currentDay = 0;
   const interval = setInterval(() => {
@@ -3904,6 +3922,8 @@ function doVoyage(portId, days, dangerLevel) {
       document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
 
       if (event.combat) {
+        game.daysSinceInterception = 0;
+        renderInterceptionStreak();
         clearInterval(interval);
         setTimeout(() => { startCombat({kind:'sea', key: event.combat, enemy: scaledEnemyForExplore(event.combat, 'sea')}); }, 1000);
         return;
@@ -3912,9 +3932,13 @@ function doVoyage(portId, days, dangerLevel) {
         setTimeout(() => { if (typeof window.triggerIllusionEncounter === 'function') window.triggerIllusionEncounter(true); }, 1000);
         return;
       } else {
+        game.daysSinceInterception++;
+        renderInterceptionStreak();
         handleVoyageEvent(event);
       }
     } else {
+      game.daysSinceInterception++;
+      renderInterceptionStreak();
       document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--success);">The voyage continues peacefully.</span>';
       logEvent('Day ' + game.day + ': Calm seas.', 'neutral');
     }
