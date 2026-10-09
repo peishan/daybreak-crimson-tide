@@ -349,14 +349,53 @@
     {threshold:600,  name:'Kindred Curiosity',      bonus:0.08},
     {threshold:1000, name:'Four Minds, San Included', bonus:0.10}
   ];
+  // TM Crew (Mimi + Lewis's crew off The Steady Reach -- Aisy, Elva,
+  // Selina, Zul, Jonathan, see fair-tide-ally-network.js) and C. Adv
+  // Crew (San's old office -- Dre, Erma, Erna, Nurul, Jeh, etc., see
+  // fairtide-office-network.js) share the same tier/bonus SHAPE as San &
+  // Crew above (San's own request: "just like San bonds with the
+  // crew" -- one daily action, no individually-tracked members). Both
+  // marked `ambient` below since, unlike every existing track, almost
+  // none of either group is a real combat companion with HP to field --
+  // they're Fair Tide roster/ally-network characters, not party members,
+  // so there's no "fielded in the active party" condition that could
+  // ever apply to them.
+  const TM_CREW_TIERS = [
+    {threshold:0,    name:'Just Passengers',          bonus:0},
+    {threshold:50,   name:'Getting Acquainted',       bonus:0.02},
+    {threshold:150,  name:'Welcome Aboard',           bonus:0.04},
+    {threshold:300,  name:'One of the Crew',          bonus:0.06},
+    {threshold:600,  name:'Steady Hands',             bonus:0.08},
+    {threshold:1000, name:'The Steady Reach, and Fair Tide Too', bonus:0.10}
+  ];
+  const C_ADV_CREW_TIERS = [
+    {threshold:0,    name:'Old Colleagues',    bonus:0},
+    {threshold:50,   name:'Catching Up',       bonus:0.02},
+    {threshold:150,  name:'Back in Step',      bonus:0.04},
+    {threshold:300,  name:'Old Office, New Tide', bonus:0.06},
+    {threshold:600,  name:'Still Her People',  bonus:0.08},
+    {threshold:1000, name:'Family, Reassigned', bonus:0.10}
+  ];
 
   const BOND_TRACKS = {
     san_joel: {label:'San & Joel', icon:'⚓', tiers:SAN_JOEL_TIERS, members:['san','joel'],
-      actionLabel:'Spend a quiet evening with Joel', flavor:'A quiet moment together, away from the crew.'},
+      actionLabel:'Spend a quiet evening with Joel', flavor:'A quiet moment together, away from the crew.',
+      unlockedFn: function(){ return !!(game.comicProgress5 && game.comicProgress5[4]); },
+      lockedMessage:'Continue Arc V to unlock.'},
     san_crew: {label:'San & Crew', icon:'👥', tiers:SAN_CREW_TIERS, minCrewCount:3,
-      actionLabel:'Spend time with the crew', flavor:'An evening on deck with whoever\'s around.'},
+      actionLabel:'Spend time with the crew', flavor:'An evening on deck with whoever\'s around.',
+      bonusLabel:'gold & XP'},
     san_trio: {label:'San & The Later Trio', icon:'🔮', tiers:SAN_TRIO_TIERS, members:['mimi','renn','erynn'],
-      actionLabel:'Sit in on their research', flavor:'Mimi, Renn, and Erynn, deep in an argument about something San only half-understands.'}
+      actionLabel:'Sit in on their research', flavor:'Mimi, Renn, and Erynn, deep in an argument about something San only half-understands.',
+      bonusLabel:'crit chance'},
+    tm_crew: {label:'TM Crew', icon:'🚢', tiers:TM_CREW_TIERS, ambient:true, bonusLabel:'gold & XP',
+      actionLabel:'Spend time with the TM Crew', flavor:'An afternoon aboard The Steady Reach, swapping stories with Mimi and Lewis\' crew.',
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.mimi) && !!game.lewisAllyCaptain; },
+      lockedMessage:'Needs Mimi recruited and Lewis to have his own ship.'},
+    c_adv_crew: {label:'C. Adv Crew', icon:'📇', tiers:C_ADV_CREW_TIERS, ambient:true, bonusLabel:'gold & XP',
+      actionLabel:'Catch up with the old office', flavor:'An evening catching up with the familiar faces from San\'s old office.',
+      unlockedFn: function(){ return !!game.officeNetworkRevealed; },
+      lockedMessage:'Needs San\'s old office to have found its way to Fair Tide.'}
   };
   window.BOND_TRACKS = BOND_TRACKS;
 
@@ -367,10 +406,11 @@
   }
   window.bondState = bondState;
 
-  // Tier index for a track, given its raw points. San & Joel additionally
-  // needs Ch.4 read to unlock tier 1 at all (see bondTier below) — the
-  // other two tracks have no chapter gate, tier 1 is just the first
-  // point threshold like any normal tier ladder.
+  // Tier index for a track, given its raw points. A track with its own
+  // unlockedFn (San & Joel's Ch.4 read, TM Crew's and C. Adv Crew's own
+  // reveal flags) stays at tier 0 until that condition is met — every
+  // other track has no such gate, tier 1 is just the first point
+  // threshold like any normal tier ladder.
   function tierIndexForPoints(tiers, points){
     let idx = 0;
     for (let i=0;i<tiers.length;i++){ if (points >= tiers[i].threshold) idx = i; }
@@ -380,7 +420,7 @@
   window.bondTier = function(trackKey){
     const track = BOND_TRACKS[trackKey];
     if (!track) return 0;
-    if (trackKey === 'san_joel' && !(game.comicProgress5 && game.comicProgress5[4])) return 0;
+    if (track.unlockedFn && !track.unlockedFn()) return 0;
     const points = bondState()[trackKey].points;
     return tierIndexForPoints(track.tiers, points);
   };
@@ -393,12 +433,18 @@
 
   // Whether the bonded character(s) are actually fielded right now — the
   // synergy condition. San & Crew uses a headcount instead of named
-  // members (any 3+ non-San crew in the active party); the other two
-  // need their specific named members all present.
+  // members (any 3+ non-San crew in the active party); San & The Later
+  // Trio needs its specific named members all present. TM Crew and C.
+  // Adv Crew are `ambient`: almost none of either group is a combat
+  // companion with HP to field in the first place (Lewis's crew and
+  // San's old office are Fair Tide roster/ally-network characters, not
+  // party members), so their bonus simply stays on any time the bond
+  // itself is active, with no "fielded right now" condition to check.
   window.bondSynergyActive = function(trackKey){
     const track = BOND_TRACKS[trackKey];
     if (!track) return false;
     if (window.bondTier(trackKey) < 1) return false;
+    if (track.ambient) return true;
     const party = (typeof getActiveParty === 'function') ? getActiveParty() : [];
     const activeIds = new Set(party.map(m=>m.id));
     if (track.minCrewCount) {
@@ -478,6 +524,14 @@
       const def = SAN_TRIO_TIERS[window.bondTier('san_trio')];
       if (def && statKey === 'critBonus') total += def.bonus;
     }
+    if (window.bondSynergyActive('tm_crew')) {
+      const def = TM_CREW_TIERS[window.bondTier('tm_crew')];
+      if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
+    }
+    if (window.bondSynergyActive('c_adv_crew')) {
+      const def = C_ADV_CREW_TIERS[window.bondTier('c_adv_crew')];
+      if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
+    }
     return total;
   };
 
@@ -518,19 +572,22 @@
       const points = bondState()[key].points;
       const synergyActive = window.bondSynergyActive(key);
       const canSpend = window.canSpendTimeOnBond(key);
-      const gatedOut = key==='san_joel' && !(game.comicProgress5 && game.comicProgress5[4]);
+      const gatedOut = !!(track.unlockedFn && !track.unlockedFn());
       let bonusText;
       if (key === 'san_joel') {
         bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + tierDef.hpMpPct + '% HP/MP · -' + tierDef.dmgReductionPct + '% damage taken · haste on Shield Wall');
       } else {
-        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus*100) + '% ' + (key==='san_crew' ? 'gold & XP' : 'crit chance'));
+        bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus*100) + '% ' + track.bonusLabel);
       }
+      const activeLabel = track.ambient
+        ? (synergyActive ? '✅ Always active once bonded' : '⚪ No bond yet')
+        : (synergyActive ? '✅ Active right now' : '⚪ Not active — bonded members must be fielded');
       html += '<article class="quest-item"><strong>'+track.icon+' '+esc(track.label)+'</strong> — <span style="opacity:.8;">'+esc(tierDef.name)+'</span><br>'+
         '<span style="font-size:.78rem;opacity:.75;">'+bonusText+'</span><br>'+
-        '<span style="font-size:.76rem;opacity:.7;">'+(synergyActive?'✅ Active right now':'⚪ Not active — bonded members must be fielded')+'</span>'+
+        '<span style="font-size:.76rem;opacity:.7;">'+activeLabel+'</span>'+
         (nextTier ? '<br><span style="font-size:.74rem;opacity:.6;">'+points+' / '+nextTier.threshold+' to next tier</span>' : '<br><span style="font-size:.74rem;opacity:.6;">Max tier reached</span>')+
         (gatedOut
-          ? '<br><span style="font-size:.76rem;opacity:.65;">🔒 Continue Arc V to unlock.</span>'
+          ? '<br><span style="font-size:.76rem;opacity:.65;">🔒 '+esc(track.lockedMessage || 'Not available yet.')+'</span>'
           : '<div style="margin-top:6px;"><button class="btn btn-small btn-success" '+(canSpend?'':'disabled')+' onclick="spendTimeWithBond(\''+key+'\')">💞 '+esc(track.actionLabel)+'</button></div>')+
         '</article>';
     });
