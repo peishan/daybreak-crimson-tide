@@ -31,7 +31,7 @@
     san:      { name:'San',      month:9,  day:18 },
     joel:     { name:'Joel',     month:10, day:8 },
     aisyah:   { name:'Aisyah',   month:12, day:21 },
-    mezstorm: { name:'Mez',      month:10, day:10 },
+    mezstorm: { name:'Mez',      month:10, day:6 },
     eliz:     { name:'Eliz',     month:1,  day:3 },
     senedra:  { name:'Senedra',  month:1,  day:24 },
     zaki:     { name:'Zaki',     month:3,  day:22 }
@@ -48,46 +48,52 @@
     return !!(game.foundCompanions && game.foundCompanions[id]);
   }
 
-  window.todaysBirthdays = function(){
-    const now = currentRealDate();
-    const month = now.getMonth() + 1, day = now.getDate(), year = now.getFullYear();
-    const active = [];
-    Object.keys(BIRTHDAYS).forEach(function(id){
-      const def = BIRTHDAYS[id];
-      if (def.month === month && def.day === day && characterRecruited(id)) {
-        active.push({ id: id, name: def.name, claimYear: year });
-      }
-    });
-    return active;
-  };
-
-  // Loot drops (rollBirthdayDrop, below) get a wider window than the
-  // single-day celebration claim above -- a full week starting on the
-  // actual birthday, so a 0.18-chance-per-kill drop pool is actually
-  // reachable rather than requiring the player to grind on the one
-  // calendar day. Checks both this year's and last year's occurrence of
-  // each birthday so a late-December birthday's window correctly spans
-  // the new year rather than quietly ending at Dec 31.
-  const LOOT_WINDOW_DAYS = 7;
+  // Celebration window -- San's own request: the Archive's "Today's
+  // Birthday" panel used to only show on the exact calendar day, so
+  // blinking and missing it (or just not opening the app that day) meant
+  // the whole celebration quietly vanished. Shares the same full-week
+  // window as the loot drops below, via the same activeBirthdaysInWindow()
+  // helper, so both are driven by one definition of "how long is a
+  // birthday still active" rather than two that could drift apart.
+  // claimYear is the YEAR THE BIRTHDAY ITSELF FELL ON (not necessarily
+  // today's year) so a late-December birthday whose window crosses into
+  // January is still tracked against the year it actually happened --
+  // claiming it on Jan 2nd correctly marks THAT december's occurrence as
+  // celebrated, not a phantom "next year" one.
+  const BIRTHDAY_WINDOW_DAYS = 7;
   function daysSince(past, now){
     const MS_PER_DAY = 86400000;
     const utcPast = Date.UTC(past.getFullYear(), past.getMonth(), past.getDate());
     const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
     return Math.round((utcNow - utcPast) / MS_PER_DAY);
   }
-  window.birthdaysActiveForLoot = function(){
+  function activeBirthdaysInWindow(windowDays){
     const now = currentRealDate();
     const active = [];
     Object.keys(BIRTHDAYS).forEach(function(id){
       if (!characterRecruited(id)) return;
       const def = BIRTHDAYS[id];
-      const inWindow = [now.getFullYear(), now.getFullYear() - 1].some(function(y){
+      [now.getFullYear(), now.getFullYear() - 1].forEach(function(y){
         const diff = daysSince(new Date(y, def.month - 1, def.day), now);
-        return diff >= 0 && diff < LOOT_WINDOW_DAYS;
+        if (diff >= 0 && diff < windowDays) {
+          active.push({ id: id, name: def.name, claimYear: y });
+        }
       });
-      if (inWindow) active.push({ id: id, name: def.name });
     });
     return active;
+  }
+
+  window.todaysBirthdays = function(){
+    return activeBirthdaysInWindow(BIRTHDAY_WINDOW_DAYS);
+  };
+
+  // Loot drops (rollBirthdayDrop, below) use the same week-long window --
+  // a 0.18-chance-per-kill drop pool needs more than one calendar day to
+  // actually be reachable.
+  window.birthdaysActiveForLoot = function(){
+    return activeBirthdaysInWindow(BIRTHDAY_WINDOW_DAYS).map(function(b){
+      return { id: b.id, name: b.name };
+    });
   };
 
   function birthdayState(){
@@ -117,7 +123,7 @@
   function renderCharacterBirthdaysPanel(){
     const active = window.todaysBirthdays();
     if (!active.length) return '';
-    let html = '<div class="panel-title" style="margin-top:16px;">🎂 Today\'s Birthday</div>';
+    let html = '<div class="panel-title" style="margin-top:16px;">🎂 Birthday Celebration</div>';
     active.forEach(function(b){
       const claimed = window.birthdayAlreadyClaimedThisYear(b.id, b.claimYear);
       html += '<article class="quest-item"><strong>🎉 '+esc(b.name)+'</strong>'+
