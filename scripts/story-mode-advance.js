@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V369 · Fix Roster Showing the Wrong Foe as Defeated Mid-Transition';
+window.__CT_BUILD__='V370 · Arc XXV Requires Caelan Recruited';
