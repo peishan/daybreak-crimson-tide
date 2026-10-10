@@ -62,7 +62,15 @@
       startCombat({ kind: 'sea', key: baseKey, enemy: scaledEnemyForExplore(baseKey, 'sea') });
       return;
     }
-    game.seaGroupEncounter = { active: true, baseKey: baseKey, queue: buildSeaGroup(baseKey, count), index: 0 };
+    // index starts at -1, not 0 -- startNextSeaGroupFoe() is the ONE
+    // place that ever advances it, for the first foe exactly the same
+    // way as every later one. Advancing it separately here AND in the
+    // handleVictory wrap below used to leave index pointing at the next
+    // foe during the ~600ms gap before that foe's own startCombat() had
+    // actually run, which made renderSeaGroupRoster() briefly render it
+    // as already-defeated too (game.combatResolved was still true from
+    // the PREVIOUS foe, and the render only keys off index + resolved).
+    game.seaGroupEncounter = { active: true, baseKey: baseKey, queue: buildSeaGroup(baseKey, count), index: -1 };
     startNextSeaGroupFoe();
   }
   window.startSeaGroupEncounter = startSeaGroupEncounter;
@@ -70,6 +78,7 @@
   function startNextSeaGroupFoe(){
     const g = game.seaGroupEncounter;
     if (!g || !g.active) return;
+    g.index++;
     const enemy = g.queue[g.index];
     if (!enemy) { exitSeaGroupEncounter(); return; }
     toast('⚔️ ' + enemy.name + ' closes in!', 2600);
@@ -116,8 +125,10 @@
     if (oldHandleVictoryForSeaGroup) oldHandleVictoryForSeaGroup();
     const g = game.seaGroupEncounter;
     if (!g || !g.active) return;
-    g.index++;
-    if (g.index >= g.queue.length) {
+    // g.index itself is left untouched here -- startNextSeaGroupFoe()
+    // is the only place that advances it, and only once the next foe
+    // actually starts. This just decides WHETHER there's a next one.
+    if (g.index + 1 >= g.queue.length) {
       // Full clear, as opposed to a loss or a flee (neither of which
       // reach this branch) -- tracked purely for achievements.js's own
       // "Divide and Conquer"/"The Crew Knows the Drill".
