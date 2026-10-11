@@ -29,6 +29,25 @@
   // ("Two Hearts, One Ship") — a relationship-progression reward
   // that already exists and fits a warm, established-couple image far
   // better than a recruitment check ever would.
+  //
+  // N and Sairen are the same kind of exception, for the opposite
+  // reason: neither is ever a recruitable party member (arc28-mechanics.js
+  // explicitly keeps N out of ALL_PARTY; Sairen never enters it either),
+  // so the ids/memberUnlocked path can never apply to them. Both use
+  // customUnlocked tied to the same arc-completion flags achievements.js
+  // already reads (game.arc28Complete / game.arc29Complete, set by each
+  // arc's own closing chapter) — her Fair Tide stay has to actually be
+  // over, and his identity actually confirmed, before either bio reveals
+  // who they really were underneath it.
+  //
+  // Vaeren & Joelle (the twins) are a forward placeholder — San supplied
+  // the art ahead of the arc that will actually introduce them, which
+  // doesn't exist yet. customUnlocked reads game.twinsChildStageReached,
+  // a flag nothing in this codebase sets yet; until that future arc's
+  // closing chapter sets it (matching the same arc28Complete/arc29Complete
+  // pattern above), this entry stays permanently locked and invisible —
+  // not commented out, so it never has to be rediscovered and re-added,
+  // just switched on by one flag the moment that arc is written.
   // -------------------------------------------------------------------
 
   const CHARACTER_BIOS = [
@@ -42,7 +61,14 @@
     { key: 'aldric_wren',        label: 'Ser Aldric & Sister Wren',  ids: ['ser_aldric', 'sister_wren'],   image: 'assets/bios/aldric-wren.png' },
     { key: 'liang_iris',         label: 'KW Liang & Iris',           ids: ['kw_liang', 'iris'],            image: 'assets/bios/liang-iris.png' },
     { key: 'aa_bradashah',       label: 'Dr. AA & Brada Shah',       ids: ['dr_aa', 'brada_shah'],         image: 'assets/bios/aa-brada-shah.png' },
-    { key: 'joy_caelan',         label: 'Ate Joy & Caelan',          ids: ['ate_joy', 'caelan'],           image: 'assets/bios/joy-caelan.png' }
+    { key: 'joy_caelan',         label: 'Ate Joy & Caelan',          ids: ['ate_joy', 'caelan'],           image: 'assets/bios/joy-caelan.png' },
+    { key: 'n',                  label: 'N',                         image: 'assets/bios/n.png',
+      customUnlocked: function(){ return !!game.arc28Complete; } },
+    { key: 'sairen',             label: 'Sairen',                    image: 'assets/bios/sairen.png',
+      customUnlocked: function(){ return !!game.arc29Complete; } },
+    // Placeholder for a future arc -- see header comment above.
+    { key: 'vaeren_joelle',      label: 'Vaeren & Joelle',           image: 'assets/bios/vaeren-joelle.png',
+      customUnlocked: function(){ return !!game.twinsChildStageReached; } }
   ];
   window.CHARACTER_BIOS = CHARACTER_BIOS;
 
