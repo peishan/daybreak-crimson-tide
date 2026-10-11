@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V371 · Fix PWA Not Opening After Phone Reboot';
+window.__CT_BUILD__='V372 · Arc XXX Ch.25 "Before Veyren" — N Was Nadia';

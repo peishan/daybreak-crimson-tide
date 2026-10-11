@@ -345,9 +345,22 @@
     return html;
   }
 
+  // BUG FIX (San's report — N kept showing up here as "Away from Fair
+  // Tide... Status: Safe (last known)" even after Arc XXX resolves her as
+  // Missing/Access Revoked, flatly contradicting the separate "N — Case
+  // Closed" panel that arc30-mechanics.js renders elsewhere in this same
+  // Archive screen): a resident whose own later story has moved them out
+  // of "just away for now" doesn't belong in a list whose entire premise
+  // is "guests who might still come back." Rather than hardcoding
+  // Arc XXX's own logic into this file, this reads an optional, generic
+  // hook any later arc can register (residentHiddenFromRosterPanel) — so
+  // whichever arc actually knows a resident's story has concluded is the
+  // one deciding to hide them, not this one guessing at arc numbers.
   function renderFairTideResidentsPanel(){
     const residents = residentsState();
-    const ids = Object.keys(residents);
+    const ids = Object.keys(residents).filter(function(id){
+      return !(typeof window.residentHiddenFromRosterPanel === 'function' && window.residentHiddenFromRosterPanel(id));
+    });
     if (!ids.length) return '';
     let html = '<div class="panel-title" style="margin-top:16px;">🏘️ Fair Tide Residents</div>'+
       '<p style="font-size:.78rem;opacity:.65;margin-bottom:8px;">Guests of Fair Tide who haven\'t joined the crew — not everyone who stays here becomes part of San\'s expedition.</p>';

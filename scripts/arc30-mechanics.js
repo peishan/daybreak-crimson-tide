@@ -74,6 +74,18 @@
       n.arc30CurrentLocation = 'Unknown';
       toast('🌑 N is gone. Her story ends here, unresolved.', 4200);
     }
+
+    // Ch.25 ("Before Veyren") -- the one fact San herself never got: her
+    // real name, surfaced only once Fair Tide Intelligence closes the
+    // file for good, never by N herself. Deliberately a separate field
+    // from everything else here rather than overwriting her displayed
+    // name anywhere -- the point (per the chapter itself) is that San
+    // never hears it from her directly, not that the game quietly
+    // retcons every earlier "N" into "Nadia."
+    if (cp[25] && !n.arc30RealName) {
+      n.arc30RealName = 'Nadia';
+      toast('📇 Intelligence closes the file. Her real name was Nadia.', 4200);
+    }
   }
 
   const oldSyncArc1ForNFinalStatus = window.syncArc1StoryQuestProgress;
@@ -82,10 +94,23 @@
     checkNFinalStatusEvents();
   };
 
+  // Hides N from the ordinary "Fair Tide Residents" roster (arc28-
+  // mechanics.js's own renderFairTideResidentsPanel()) once her story
+  // here has actually concluded -- that panel's whole premise is "guests
+  // who might still come back," which stops being true the moment her
+  // access is revoked, let alone once she's gone missing. The Case
+  // Closed panel below is her real, accurate record from this point on.
+  window.residentHiddenFromRosterPanel = function(id){
+    if (id !== 'n') return false;
+    const n = nRecord();
+    return !!(n && (n.arc30AccessStage === 'revoked' || n.arc30AccessStage === 'missing'));
+  };
+
   function renderNCaseClosedPanel(){
     const n = nRecord();
     if (!n || !n.arc30AccessStage) return '';
-    let html = '<div class="panel-title" style="margin-top:16px;">🌑 N — Case Closed</div>';
+    const title = n.arc30RealName ? '🌑 N (' + esc(n.arc30RealName) + ') — Case Closed' : '🌑 N — Case Closed';
+    let html = '<div class="panel-title" style="margin-top:16px;">'+title+'</div>';
     const stageLine = {
       visitor: 'Status: Visitor · Fair Tide Access: Ordinary visitor restrictions',
       revoked: 'Status: Access Revoked · Fair Tide Access: None',
@@ -96,6 +121,9 @@
       html += '<br><span style="font-size:.78rem;opacity:.75;">Last Known Connection: '+esc(n.arc30LastKnownConnection||'Unknown')+
         ' · Current Location: '+esc(n.arc30CurrentLocation||'Unknown')+
         ' · Fate: '+esc(n.arc30Fate||'Unknown')+'</span>';
+    }
+    if (n.arc30RealName) {
+      html += '<br><span style="font-size:.76rem;opacity:.65;font-style:italic;">Real name, confirmed by Intelligence after the fact: '+esc(n.arc30RealName)+'. San never heard it from her directly.</span>';
     }
     html += '</article>';
     return html;
