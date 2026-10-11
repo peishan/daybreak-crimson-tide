@@ -350,19 +350,27 @@
   }
 
   // 1-100, lowest to highest -- never death, never sexual-exploitation
-  // framing (San's own note: reusable constraint from the reformed-rival
-  // work), even at the worst tier.
+  // framing (San's note: reusable constraint from the reformed-rival
+  // work), even at the worst tier. Content and probability bands per
+  // San's own "Nameless Judgment Fate Table" (the Nameless see her as a
+  // compromised civilian asset, not a criminal -- their real question is
+  // "contain the mistake, or remove the risk?"). Replaces the original
+  // 5-tier table; same modifier engine above, unchanged.
   const N_FATE_OUTCOMES = [
-    { key:'permanent_assignment', max:15,  icon:'⚫', label:'Permanent Assignment',
-      note:'"Useful assets are not wasted." The Nameless decide she\'s still valuable — assigned to a vessel, intelligence work, something that keeps her useful to them. She survives. She no longer controls her own life.' },
-    { key:'exile',                max:35,  icon:'🕯️', label:'Exile',
-      note:'"Remove the problem." Sent somewhere she can\'t return from — a restricted port, an isolated settlement, Nameless-controlled territory. Alive, but cut off from everything familiar.' },
-    { key:'containment',          max:60,  icon:'🔒', label:'Containment',
-      note:'"Unknown risk." Not torture, not revenge — a security decision. Held, for now. Escape, release, rescue, or a negotiated freedom all stay possible later.' },
-    { key:'identity_stripping',   max:85,  icon:'🌫️', label:'Identity Stripping',
-      note:'"You are no longer one of us." Access, contacts, resources, identity — all removed. Released into the world with nothing. Alive, and arguably worse off for it.' },
-    { key:'quiet_severance',      max:100, icon:'🕊️', label:'Quiet Severance',
-      note:'"The mistake is forgiven. The trust is not." Cut loose, alive, with no contacts, no protection, and no place left in their world.' }
+    { key:'ship_assignment',       max:5,   icon:'⚓', label:'Ship Assignment',
+      note:'"A person without a place can be placed anywhere." Moved into a travelling operation — not named for what she is, only for what she can do: attendant, interpreter, social operative, support personnel. Her gift for connecting with people is exactly what makes her useful to them now, and exactly how she becomes part of the machine she tried to escape.' },
+    { key:'asset_conversion',      max:10,  icon:'🪙', label:'Asset Conversion',
+      note:'"You proved you have value." Not punished — put to work. Information courier, social contact, translator, observer. Unlike Sairen, she never chose this.' },
+    { key:'indentured_service',    max:25,  icon:'⛓️', label:'Indentured Service',
+      note:'"Your mistake has a price." Not out of malice — their organization simply believes every breach creates a debt. She serves until it\'s considered repaid: years of assignments, restricted freedom.' },
+    { key:'containment',           max:45,  icon:'🔒', label:'Containment',
+      note:'"We cannot trust you outside." They believe she knows too much, and that releasing her creates consequences nobody can predict. A hidden facility, a safehouse, a controlled residence. Treated well. No freedom at all.' },
+    { key:'restricted_port_exile', max:65,  icon:'🏝️', label:'Exile to a Restricted Port',
+      note:'"Some places are too far to return from." Sent to an isolated port, a barrier-protected settlement, a remote island city. She cannot leave, cannot contact Fair Tide, cannot contact anyone she used to know. She survives. Her old world is simply gone.' },
+    { key:'identity_erasure',      max:85,  icon:'🌫️', label:'Identity Erasure',
+      note:'"The person disappears. The risk disappears." A new name, a new location, new records, no contact with anyone from before. Not imprisoned — reborn, in a life she never asked for. She wanted a new start. This isn\'t the one she chose.' },
+    { key:'quiet_release',         max:100, icon:'🕊️', label:'Quiet Release',
+      note:'"The connection is severed." The Nameless decide she was manipulated, not a true traitor — every contact cut, every access removed, a warning never to come near their world again. She loses her status, her connections, her protection. But she keeps her life, and she is free.' }
   ];
 
   function nFateOutcomeFor(score){
@@ -381,16 +389,19 @@
 
     let outcome, critical = null, finalScore = naturalRoll;
     if (naturalRoll === 100) {
-      // "The Nameless Remember" -- overrides modifiers entirely. She was
-      // never truly one of them, just a civilian caught in their world.
-      critical = 'nameless_remember';
-      outcome = { key:'nameless_remember', icon:'🕊️', label:'The Nameless Remember',
-        note:'Someone inside the Nameless intervenes — she was never truly one of them, just a civilian caught in their world. She disappears safely, a new identity, no contact with anyone ever again. Bittersweet, but she\'s free.' };
+      // "Permanent Disappearance" -- overrides modifiers entirely. The
+      // Nameless's own safest option: remove her from every known
+      // network. A faked death, a new identity, an unknown location --
+      // even Fair Tide never learns where she went. The most mysterious
+      // ending available, and still, by construction, a safe one.
+      critical = 'permanent_disappearance';
+      outcome = { key:'permanent_disappearance', icon:'🌑', label:'Permanent Disappearance',
+        note:'"No one finds her again." The Nameless decide the safest outcome is removing her from every known network entirely — a faked death, a new identity, an unknown location. Even Fair Tide can\'t find her. Nobody, not even San, ever really learns what became of her.' };
     } else if (naturalRoll === 1) {
-      // "The System Wins" -- also overrides modifiers, but reuses the
-      // existing worst tier rather than inventing anything beneath it;
-      // nothing in this system is allowed to be worse than Permanent
-      // Assignment, modifiers or no modifiers.
+      // Also overrides modifiers, but reuses the existing worst tier
+      // rather than inventing anything beneath it; nothing in this
+      // system is allowed to be worse than Ship Assignment, modifiers
+      // or no modifiers.
       critical = 'system_wins';
       const worst = N_FATE_OUTCOMES[0];
       outcome = Object.assign({}, worst, {
