@@ -53,7 +53,10 @@
   // the risk window, nothing further ever checks them again.
   // -------------------------------------------------------------------
 
-  if (window.RESIDENT_STATUS_LABELS) window.RESIDENT_STATUS_LABELS.reformed = 'Reformed';
+  if (window.RESIDENT_STATUS_LABELS) {
+    window.RESIDENT_STATUS_LABELS.reformed = 'Reformed';
+    window.RESIDENT_STATUS_LABELS.expelled = 'Expelled';
+  }
 
   const BETRAYAL_CHECK_INTERVAL_DAYS = 7;
   const BETRAYAL_RISK_HAPPINESS_THRESHOLD = 55;
@@ -61,21 +64,67 @@
   const BETRAYAL_CHANCE = 0.08;
   const TRUST_DRIFT_PER_CHECK = 2;
 
+  // BETRAYAL OUTCOME — reveals where they actually went, rather than the
+  // old generic "pays a fine and leaves." Reuses N's own idea (a fate
+  // tier computed from happiness+bond) but explicitly NOT her Ch.23
+  // tiers: those were written around her own specific backstory (San's
+  // direction: remove any possibility of servitude/exploitation framing
+  // here — reformed rivals can be men as well, and this isn't their
+  // story to begin with). These four tiers are their own, scaled to
+  // where a reformed rival's score actually lands: the betrayal roll
+  // above only ever fires while both happiness and bond are still under
+  // their risk thresholds (55/45), so the realistic range at the moment
+  // of betrayal tops out well under those — never death, same rule as
+  // every other outcome in this system.
+  //
+  // The worst tier names the Nameless specifically only once they've
+  // actually been introduced (Arc XVIII Ch.22, "The Nameless Question");
+  // before that it stays deliberately vague rather than naming a faction
+  // the player hasn't met yet.
+  const REFORMED_BETRAYAL_OUTCOMES = [
+    { key:'walked_away_clean',    threshold:36, icon:'🌫️', label:'Walked Away Clean',
+      note: function(name){ return name + ' slips away quietly after being caught — no faction claims them, no trail left behind.'; } },
+    { key:'back_to_old_waters',   threshold:24, icon:'🏴', label:'Back to the Old Waters',
+      note: function(name){ return name + ' is caught slipping back to old habits, and returns to small-time piracy — no deeper allegiance to speak of.'; } },
+    { key:'joined_rival_faction', threshold:12, icon:'⚔️', label:'Joined a Rival Faction',
+      note: function(name){ return name + ' is caught — and this time there\'s a name attached: they\'ve thrown in with a rival faction.'; } },
+    { key:'joined_nameless',      threshold:0,  icon:'🌑', label:'Recruited by the Nameless',
+      note: function(name){
+        const namelessKnown = !!(game.comicProgress18 && game.comicProgress18[22]);
+        return name + ' is caught — and worse, ' + (namelessKnown
+          ? 'Fair Tide Intelligence traces them straight to the Nameless.'
+          : 'they\'ve vanished into a network far more dangerous than anything Fair Tide has faced yet.');
+      } }
+  ];
+
+  function reformedBetrayalOutcome(score){
+    for (let i = 0; i < REFORMED_BETRAYAL_OUTCOMES.length; i++) {
+      if (score >= REFORMED_BETRAYAL_OUTCOMES[i].threshold) return REFORMED_BETRAYAL_OUTCOMES[i];
+    }
+    return REFORMED_BETRAYAL_OUTCOMES[REFORMED_BETRAYAL_OUTCOMES.length - 1];
+  }
+
   function resolveReformedBetrayal(id){
     if (typeof window.fairTideResidentsState !== 'function') return;
     const r = window.fairTideResidentsState()[id];
-    if (!r || r.status === 'departed') return;
+    if (!r || r.status === 'expelled') return;
     const name = r.name || id;
-    r.status = 'departed';
-    r.awayLocation = 'Unknown';
-    r.awayCompanion = null;
+    const happiness = (typeof r.happiness === 'number') ? r.happiness : 50;
+    const bond = (typeof r.bond === 'number') ? r.bond : 35;
+    const score = Math.round((happiness + bond) / 2);
+    const outcome = reformedBetrayalOutcome(score);
+
+    r.status = 'expelled'; // deliberately NOT 'departed' -- that status belongs to N's own temporary-guest ladder (arc28-mechanics.js), and this isn't it
+    r.betrayalOutcome = { key: outcome.key, label: outcome.label, score: score };
     if (game.fairTideRoster) delete game.fairTideRoster[id];
     if (window.FT_ROSTER_BONUSES) delete window.FT_ROSTER_BONUSES[id];
+
+    const note = outcome.note(name);
     if (typeof window.logResidentArrivalDeparture === 'function') {
-      window.logResidentArrivalDeparture(r, 'leave', 'Caught slipping back to old habits — expelled from Fair Tide for good.');
+      window.logResidentArrivalDeparture(r, 'leave', note);
     }
-    toast('⚖️ ' + name + ' is caught slipping back to old habits and is expelled from Fair Tide, for good this time.', 4200);
-    logEvent('⚖️ ' + name + ' betrays Fair Tide\'s trust and is cast out.', 'bad');
+    toast(outcome.icon + ' ' + note + ' Expelled from Fair Tide, for good.', 4400);
+    logEvent(outcome.icon + ' ' + name + ' betrays Fair Tide\'s trust — ' + outcome.label + '.', 'bad');
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   }

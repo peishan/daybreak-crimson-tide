@@ -357,12 +357,19 @@
         // matching Fair Tide resident record (scripts/fair-tide-wider-
         // residents.js registers these for everyone except Dre/Jovie,
         // who get the deeper bondText track above instead) gets a
-        // Happiness line for free.
+        // Happiness + Bond-with-San line, and a Check In button, for free.
         const residentRecord = (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState()[id] : null;
-        const happinessText = (residentRecord && typeof window.residentHappinessTier === 'function')
+        const happinessText = (residentRecord && typeof window.residentHappinessTier === 'function' && typeof window.residentBondTier === 'function')
           ? (function(){
-              const tier = window.residentHappinessTier(residentRecord);
-              return '<br><span style="font-size:.78rem;opacity:.7;">'+tier.icon+' Happiness: '+esc(tier.label)+'</span>';
+              const hTier = window.residentHappinessTier(residentRecord);
+              const bTier = window.residentBondTier(residentRecord);
+              return '<br><span style="font-size:.78rem;opacity:.7;">'+hTier.icon+' Happiness: '+esc(hTier.label)+' · '+bTier.icon+' Bond with San: '+esc(bTier.label)+'</span>';
+            })()
+          : '';
+        const checkInButton = (residentRecord && typeof window.canCheckInOnResident === 'function')
+          ? (function(){
+              const canCheckIn = window.canCheckInOnResident(id);
+              return '<div style="margin-top:6px;"><button class="btn btn-small" onclick="checkInOnResident(\''+id+'\')" '+(canCheckIn?'':'disabled')+'>💬 '+(canCheckIn ? 'Check In' : 'Checked In Today')+'</button></div>';
             })()
           : '';
         html += '<article class="quest-item"><strong>'+(m.icon||'👤')+' '+esc(m.name)+'</strong> — <span style="opacity:.8;">'+esc(m.role)+'</span><br>'+
@@ -371,6 +378,7 @@
           bondText+
           happinessText+
           roleButtons+
+          checkInButton+
           '</article>';
       });
     }

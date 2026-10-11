@@ -78,14 +78,21 @@
       '<p style="font-size:.8rem;opacity:.75;margin-bottom:8px;">Not on the roster, not living in Fair Tide — but not strangers either.</p>';
     visible.forEach(function(a){
       const record = (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState()[a.id] : null;
-      const happinessText = (record && typeof window.residentHappinessTier === 'function')
+      const happinessText = (record && typeof window.residentHappinessTier === 'function' && typeof window.residentBondTier === 'function')
         ? (function(){
-            const tier = window.residentHappinessTier(record);
-            return '<br><span style="font-size:.76rem;opacity:.65;">'+tier.icon+' Happiness: '+esc(tier.label)+'</span>';
+            const hTier = window.residentHappinessTier(record);
+            const bTier = window.residentBondTier(record);
+            return '<br><span style="font-size:.76rem;opacity:.65;">'+hTier.icon+' Happiness: '+esc(hTier.label)+' · '+bTier.icon+' Bond with San: '+esc(bTier.label)+'</span>';
+          })()
+        : '';
+      const checkInButton = (record && typeof window.canCheckInOnResident === 'function')
+        ? (function(){
+            const canCheckIn = window.canCheckInOnResident(a.id);
+            return '<div style="margin-top:6px;"><button class="btn btn-small" onclick="checkInOnResident(\''+a.id+'\')" '+(canCheckIn?'':'disabled')+'>💬 '+(canCheckIn ? 'Check In' : 'Checked In Today')+'</button></div>';
           })()
         : '';
       html += '<article class="quest-item"><strong>'+a.icon+' '+esc(a.name)+'</strong> — <span style="opacity:.8;">'+esc(a.connection)+'</span><br>'+
-        '<span style="font-size:.8rem;opacity:.8;">'+esc(a.desc)+'</span>'+happinessText+'</article>';
+        '<span style="font-size:.8rem;opacity:.8;">'+esc(a.desc)+'</span>'+happinessText+checkInButton+'</article>';
     });
     return html;
   }

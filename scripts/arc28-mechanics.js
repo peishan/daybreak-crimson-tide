@@ -41,14 +41,19 @@
   //   - r.happiness (0-100, visible on the card, Whiteout-style mood
   //     icon) moves only from specific events below (story beats, a work
   //     assignment, a wage collection) — never a free-standing grind.
-  //   - r.bond (0-100) is a NEW hidden numeric, deliberately never
-  //     rendered anywhere, that sits alongside the narrative "trust"
-  //     string rule #2 above still governs. It exists for exactly one
-  //     purpose: combined with happiness, it decides N's actual Ch.23
-  //     fate (stored in n.trueFateKey/trueFateLabel, both hidden from the
-  //     player) per her bond with San and how she was treated at Fair
-  //     Tide — the mechanical answer to "what really happened to her,"
-  //     left for a future arc to reveal rather than written here.
+  //   - r.bond (0-100) started as a hidden numeric feeding N's Ch.23 fate
+  //     calculation alone. Per later direction (San wanted "Bond with
+  //     San" visible, not just Happiness), it's now ALSO rendered —
+  //     tiered (Estranged/Distant/Familiar/Trusted/Close), same as
+  //     Happiness, never a raw number. Rule #2 above still holds for the
+  //     separate narrative "trust" STRING field ("Broken" -> "Unresolved"
+  //     stays fixed, chapter-driven prose); this is the newer, numeric,
+  //     now-visible companion to it, not a replacement.
+  //   - window.checkInOnResident(id) (below) is the one generic, once-a-
+  //     day player action that nudges both Happiness and Bond for ANY
+  //     tracked resident — the actual lever that makes a reformed rival's
+  //     betrayal risk (rival-disposition.js) something the player can act
+  //     on, not just watch happen.
   //   - Every arrival and departure (any resident, not just N) is
   //     recorded to a small dedicated log (fairTideResidentLogState),
   //     rendered as its own "Arrivals & Departures" panel.
@@ -101,13 +106,70 @@
     r.happiness = Math.max(0, Math.min(100, r.happiness + delta));
   };
 
-  // BOND — hidden numeric, never rendered. See the header comment above:
-  // this is what Ch.23's fate calculation reads, alongside happiness.
+  // BOND — "Bond with San," now visible (tiered, never a raw number —
+  // see the header comment above). Still what Ch.23's fate calculation
+  // and the reformed-rival betrayal check (rival-disposition.js) read
+  // underneath, alongside happiness.
+  const RESIDENT_BOND_TIERS = [
+    { threshold:0,  icon:'💔', label:'Estranged' },
+    { threshold:20, icon:'🙁', label:'Distant'    },
+    { threshold:40, icon:'🤝', label:'Familiar'   },
+    { threshold:60, icon:'💛', label:'Trusted'    },
+    { threshold:80, icon:'💗', label:'Close'      }
+  ];
+  window.RESIDENT_BOND_TIERS = RESIDENT_BOND_TIERS;
+
+  function residentBondTier(r){
+    const b = (typeof r.bond === 'number') ? r.bond : 50;
+    let tier = RESIDENT_BOND_TIERS[0];
+    for (let i = 0; i < RESIDENT_BOND_TIERS.length; i++) {
+      if (b >= RESIDENT_BOND_TIERS[i].threshold) tier = RESIDENT_BOND_TIERS[i];
+    }
+    return tier;
+  }
+  window.residentBondTier = residentBondTier;
+
   window.adjustResidentBond = function(id, delta){
     const r = residentsState()[id];
     if (!r) return;
     if (typeof r.bond !== 'number') r.bond = 50;
     r.bond = Math.max(0, Math.min(100, r.bond + delta));
+  };
+
+  // CHECK IN — the one generic, once-a-day player action on this whole
+  // framework. Small and deliberately unglamorous (a few rotating flavor
+  // lines, no bespoke per-character writing) so it scales to every
+  // tracked resident — temporary guest, crew, ally, or reformed rival —
+  // without demanding new prose for each one. This is also the direct
+  // lever against a reformed rival's betrayal risk: check in enough and
+  // nobody ever rolls against them in the first place.
+  const CHECK_IN_HAPPINESS_GAIN = 3;
+  const CHECK_IN_BOND_GAIN = 2;
+  const CHECK_IN_FLAVOR = [
+    'A few minutes, nothing more — but it\'s the kind of small thing that adds up.',
+    'San makes a point of actually asking how things are going, and means it.',
+    'Nothing urgent. Just checking in, the way San tries to with everyone here.',
+    'A short conversation, easy and unhurried.'
+  ];
+
+  window.canCheckInOnResident = function(id){
+    const r = residentsState()[id];
+    if (!r) return false;
+    if (r.status === 'departed' || r.status === 'departing' || r.status === 'expelled') return false;
+    return r.lastCheckInDay !== (game.day || 0);
+  };
+
+  window.checkInOnResident = function(id){
+    const r = residentsState()[id];
+    if (!r || !window.canCheckInOnResident(id)) return;
+    r.lastCheckInDay = game.day || 0;
+    window.adjustResidentHappiness(id, CHECK_IN_HAPPINESS_GAIN);
+    window.adjustResidentBond(id, CHECK_IN_BOND_GAIN);
+    const flavor = CHECK_IN_FLAVOR[Math.floor(Math.random() * CHECK_IN_FLAVOR.length)];
+    toast('💬 San checks in with ' + (r.name || id) + '. ' + flavor, 3600);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   };
 
   // ARRIVAL / DEPARTURE LOG — Whiteout Survival's join/leave log as the
@@ -455,10 +517,11 @@
     const role = RESIDENT_WORK_ROLES.find(function(x){ return x.key === r.role; });
     const wages = window.residentAvailableWages(r.id);
     const happinessTier = residentHappinessTier(r);
+    const bondTier = residentBondTier(r);
     let html = '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span class="story-chip">'+esc(RESIDENT_STATUS_LABELS[r.status] || r.status)+'</span> '+traitBadges+'<br>'+
       '<span style="font-size:.8rem;opacity:.8;">Role: '+(role ? esc(role.name) : 'Unassigned')+' · Room: '+esc(r.room || '—')+' · Memory: '+esc(r.memory || '—')+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span><br>'+
-      '<span style="font-size:.78rem;opacity:.75;">Happiness: '+happinessTier.icon+' '+esc(happinessTier.label)+'</span><br>'+
+      '<span style="font-size:.78rem;opacity:.75;">Happiness: '+happinessTier.icon+' '+esc(happinessTier.label)+' · Bond with San: '+bondTier.icon+' '+esc(bondTier.label)+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.75;">Earnings: '+r.earnings+'g · Available wages: '+wages+'g</span>';
 
     if (residentWorkUnlocked(r.id)) {
@@ -471,6 +534,8 @@
         html += '<div style="margin-top:6px;"><button class="btn btn-small btn-success" onclick="collectResidentWages(\''+r.id+'\')" '+(canCollect?'':'disabled')+'>💰 '+(canCollect ? 'Collect Wages' : 'Collected Today')+'</button></div>';
       }
     }
+    const canCheckIn = window.canCheckInOnResident(r.id);
+    html += '<div style="margin-top:6px;"><button class="btn btn-small" onclick="checkInOnResident(\''+r.id+'\')" '+(canCheckIn?'':'disabled')+'>💬 '+(canCheckIn ? 'Check In' : 'Checked In Today')+'</button></div>';
     html += '</article>';
     return html;
   }
