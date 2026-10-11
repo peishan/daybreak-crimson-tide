@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V375 · N, Sairen & Twins Character Bios';
+window.__CT_BUILD__='V376 · Jovie Bond Track & Fair Tide Wider Happiness';

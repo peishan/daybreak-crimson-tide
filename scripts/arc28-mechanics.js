@@ -189,7 +189,12 @@
     // The masked guest is never work-assignable -- he's passing through
     // incognito for a handful of chapters, not settling in as a worker.
     if (id === 'sairen') return false;
-    return true;
+    // Default FALSE (not true -- see fair-tide-wider-residents.js, which
+    // registers every established Fair Tide Roster member and ally
+    // through this same framework for their Happiness meter alone).
+    // Those already have a real, established role elsewhere; they were
+    // never meant to pick up N's flat-wage work-assignment buttons too.
+    return false;
   }
   window.residentWorkUnlocked = residentWorkUnlocked;
 
@@ -497,9 +502,18 @@
   }
   window.renderResidentArrivalLog = renderResidentArrivalLog;
 
+  // Scoped to the temporary-guest ladder only (resident/working_resident/
+  // departing/departed) -- 'crew' and 'ally' (fair-tide-wider-
+  // residents.js) are established Fair Tide people with their own
+  // existing displays (the Fair Tide Roster tab, the Wider Ally Network
+  // panel) and showing them here too would flatly contradict this
+  // panel's own "haven't joined the crew" premise below.
+  const TEMPORARY_RESIDENT_STATUSES = ['resident', 'working_resident', 'departing', 'departed'];
+
   function renderFairTideResidentsPanel(){
     const residents = residentsState();
     const ids = Object.keys(residents).filter(function(id){
+      if (TEMPORARY_RESIDENT_STATUSES.indexOf(residents[id].status) === -1) return false;
       return !(typeof window.residentHiddenFromRosterPanel === 'function' && window.residentHiddenFromRosterPanel(id));
     });
     let html = '';

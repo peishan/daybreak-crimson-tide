@@ -353,10 +353,23 @@
                 (nextTier ? ' ('+points+'/'+nextTier.threshold+')' : ' (Max)')+'</span>';
             })()
           : '';
+        // Generic, same idiom as bondText above: any roster id with a
+        // matching Fair Tide resident record (scripts/fair-tide-wider-
+        // residents.js registers these for everyone except Dre/Jovie,
+        // who get the deeper bondText track above instead) gets a
+        // Happiness line for free.
+        const residentRecord = (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState()[id] : null;
+        const happinessText = (residentRecord && typeof window.residentHappinessTier === 'function')
+          ? (function(){
+              const tier = window.residentHappinessTier(residentRecord);
+              return '<br><span style="font-size:.78rem;opacity:.7;">'+tier.icon+' Happiness: '+esc(tier.label)+'</span>';
+            })()
+          : '';
         html += '<article class="quest-item"><strong>'+(m.icon||'👤')+' '+esc(m.name)+'</strong> — <span style="opacity:.8;">'+esc(m.role)+'</span><br>'+
           '<span style="font-size:.8rem;opacity:.8;">'+esc(m.desc||'')+'</span>'+
           (bonusText ? '<br><span style="font-size:.78rem;opacity:.7;">🏮 '+bonusText+' (always active)</span>' : '')+
           bondText+
+          happinessText+
           roleButtons+
           '</article>';
       });

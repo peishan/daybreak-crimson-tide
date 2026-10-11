@@ -16,14 +16,19 @@
   // day) and these two don't need bond points, tiers, or a daily-cap
   // button to make narrative sense of "sees them now and then."
   //
-  // Lewis's crew (Aisy, Elva, Selina, Zul, Jonathan) belong here too —
-  // San's own correction: they were always meant to be part of this
-  // network, not left as the one-time story-modal prose that's all they
-  // got in grantLewisAllyCaptainIfDue() (scripts/fairtide-systems.js).
-  // Each entry's desc is pulled straight from that same scene's own
-  // characterization so nothing new is invented, just finally given a
-  // data layer. Gated on game.lewisAllyCaptain so they don't appear
-  // before that scene has actually introduced them.
+  // Lewis himself and his crew (Aisy, Elva, Selina, Zul, Jonathan) belong
+  // here too — San's own correction: they were always meant to be part
+  // of this network, not left as the one-time story-modal prose that's
+  // all they got in grantLewisAllyCaptainIfDue() (scripts/fairtide-
+  // systems.js). Each entry's desc is pulled straight from that same
+  // scene's own characterization so nothing new is invented, just
+  // finally given a data layer. Gated on game.lewisAllyCaptain so they
+  // don't appear before that scene has actually introduced them.
+  //
+  // Every entry here also gets a Happiness line once registered through
+  // the generic Fair Tide resident sweep (scripts/fair-tide-wider-
+  // residents.js, loaded after this file) -- that's what actually backs
+  // the happiness meter; this file only renders it.
   // -------------------------------------------------------------------
 
   const FAIR_TIDE_ALLY_NETWORK = [
@@ -39,6 +44,10 @@
     {id:'syafiqah', name:'Syafiqah', icon:'🌿',
       connection:"Part of Fair Tide's wider network of allies.",
       desc:"Always has a story from somewhere San hasn't been."},
+    {id:'lewis', name:'Lewis', icon:'⚓',
+      connection:"Ally captain, The Steady Reach.",
+      desc:"Competitive about absolutely everything, and would rather owe San one than admit he actually needed the help.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
     {id:'aisy', name:'Aisy', icon:'🗝️',
       connection:"Lewis's crew, aboard The Steady Reach.",
       desc:"Sharp-eyed — already sizing up the dock like she's deciding what's worth stealing and what isn't.",
@@ -68,8 +77,15 @@
     let html = '<div class="panel-title" style="margin-top:16px;">🤝 Wider Ally Network</div>'+
       '<p style="font-size:.8rem;opacity:.75;margin-bottom:8px;">Not on the roster, not living in Fair Tide — but not strangers either.</p>';
     visible.forEach(function(a){
+      const record = (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState()[a.id] : null;
+      const happinessText = (record && typeof window.residentHappinessTier === 'function')
+        ? (function(){
+            const tier = window.residentHappinessTier(record);
+            return '<br><span style="font-size:.76rem;opacity:.65;">'+tier.icon+' Happiness: '+esc(tier.label)+'</span>';
+          })()
+        : '';
       html += '<article class="quest-item"><strong>'+a.icon+' '+esc(a.name)+'</strong> — <span style="opacity:.8;">'+esc(a.connection)+'</span><br>'+
-        '<span style="font-size:.8rem;opacity:.8;">'+esc(a.desc)+'</span></article>';
+        '<span style="font-size:.8rem;opacity:.8;">'+esc(a.desc)+'</span>'+happinessText+'</article>';
     });
     return html;
   }
