@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V376 · Jovie Bond Track & Fair Tide Wider Happiness';
+window.__CT_BUILD__='V377 · Reformed Rival Betrayal Risk';
