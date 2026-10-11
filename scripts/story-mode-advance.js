@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V378 · Visible Bond, Check In & Betrayal Reveals';
+window.__CT_BUILD__='V379 · N\'s Fate — Dice Roll Consequence System';

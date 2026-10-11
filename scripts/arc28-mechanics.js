@@ -307,6 +307,113 @@
   };
 
   // ===========================================================================
+  // N'S FATE — a dice-roll consequence system, not a fixed canon event.
+  // Per San's later direction: Arc XXX's "Missing" ending is final as
+  // written, but what actually happened to her underneath that should
+  // depend on each player's own choices, not be the same for everyone.
+  // San Bond and her Happiness at Fair Tide (both already tracked above)
+  // set hidden modifiers; a 1d100 roll against those modifiers decides
+  // the real outcome, computed once at Ch.23 and kept hidden (see
+  // checkNResidentEvents below) for a future arc to reveal.
+  //
+  // Deliberately NOT included: a third "N's Personal Choices" modifier
+  // (cooperated willingly / resisted manipulation / etc.) — Arc XXVIII-XXX
+  // are linear, story-decides chapters with no actual branching choice
+  // points for her to make, so there's nothing to read a modifier from
+  // without retrofitting real choices into already-shipped chapters.
+  // Flagged rather than faked: no invented modifier stands in for it.
+  //
+  // Every outcome tier is non-lethal and gender-neutral by construction,
+  // same constraint as the reformed-rival system (rival-disposition.js):
+  // N survives every single branch, including both critical rolls.
+  // ===========================================================================
+  const N_FATE_BOND_MODIFIERS = [
+    { max:19,  label:'Broken',      modifier:-30 },
+    { max:39,  label:'Low',         modifier:-15 },
+    { max:59,  label:'Neutral',     modifier:0   },
+    { max:79,  label:'Good',        modifier:15  },
+    { max:100, label:'Sister-Level',modifier:30  }
+  ];
+  const N_FATE_HAPPINESS_MODIFIERS = [
+    { max:19,  label:'Collapse',    modifier:-20 },
+    { max:39,  label:'Unstable',    modifier:-10 },
+    { max:59,  label:'Normal',      modifier:0   },
+    { max:79,  label:'Happy',       modifier:10  },
+    { max:100, label:'Flourishing', modifier:20  }
+  ];
+
+  function fateModifierFor(value, table){
+    for (let i = 0; i < table.length; i++) {
+      if (value <= table[i].max) return table[i];
+    }
+    return table[table.length - 1];
+  }
+
+  // 1-100, lowest to highest -- never death, never sexual-exploitation
+  // framing (San's own note: reusable constraint from the reformed-rival
+  // work), even at the worst tier.
+  const N_FATE_OUTCOMES = [
+    { key:'permanent_assignment', max:15,  icon:'⚫', label:'Permanent Assignment',
+      note:'"Useful assets are not wasted." The Nameless decide she\'s still valuable — assigned to a vessel, intelligence work, something that keeps her useful to them. She survives. She no longer controls her own life.' },
+    { key:'exile',                max:35,  icon:'🕯️', label:'Exile',
+      note:'"Remove the problem." Sent somewhere she can\'t return from — a restricted port, an isolated settlement, Nameless-controlled territory. Alive, but cut off from everything familiar.' },
+    { key:'containment',          max:60,  icon:'🔒', label:'Containment',
+      note:'"Unknown risk." Not torture, not revenge — a security decision. Held, for now. Escape, release, rescue, or a negotiated freedom all stay possible later.' },
+    { key:'identity_stripping',   max:85,  icon:'🌫️', label:'Identity Stripping',
+      note:'"You are no longer one of us." Access, contacts, resources, identity — all removed. Released into the world with nothing. Alive, and arguably worse off for it.' },
+    { key:'quiet_severance',      max:100, icon:'🕊️', label:'Quiet Severance',
+      note:'"The mistake is forgiven. The trust is not." Cut loose, alive, with no contacts, no protection, and no place left in their world.' }
+  ];
+
+  function nFateOutcomeFor(score){
+    for (let i = 0; i < N_FATE_OUTCOMES.length; i++) {
+      if (score <= N_FATE_OUTCOMES[i].max) return N_FATE_OUTCOMES[i];
+    }
+    return N_FATE_OUTCOMES[N_FATE_OUTCOMES.length - 1];
+  }
+
+  function rollNFate(n){
+    const happiness = (typeof n.happiness === 'number') ? n.happiness : 60;
+    const bond = (typeof n.bond === 'number') ? n.bond : 50;
+    const bondMod = fateModifierFor(bond, N_FATE_BOND_MODIFIERS);
+    const happinessMod = fateModifierFor(happiness, N_FATE_HAPPINESS_MODIFIERS);
+    const naturalRoll = 1 + Math.floor(Math.random() * 100);
+
+    let outcome, critical = null, finalScore = naturalRoll;
+    if (naturalRoll === 100) {
+      // "The Nameless Remember" -- overrides modifiers entirely. She was
+      // never truly one of them, just a civilian caught in their world.
+      critical = 'nameless_remember';
+      outcome = { key:'nameless_remember', icon:'🕊️', label:'The Nameless Remember',
+        note:'Someone inside the Nameless intervenes — she was never truly one of them, just a civilian caught in their world. She disappears safely, a new identity, no contact with anyone ever again. Bittersweet, but she\'s free.' };
+    } else if (naturalRoll === 1) {
+      // "The System Wins" -- also overrides modifiers, but reuses the
+      // existing worst tier rather than inventing anything beneath it;
+      // nothing in this system is allowed to be worse than Permanent
+      // Assignment, modifiers or no modifiers.
+      critical = 'system_wins';
+      const worst = N_FATE_OUTCOMES[0];
+      outcome = Object.assign({}, worst, {
+        label: worst.label + ' (The System Wins)',
+        note: 'A faction inside the Nameless decides the risk is unacceptable, regardless of anything in her favor. ' + worst.note
+      });
+    } else {
+      finalScore = Math.max(1, Math.min(100, naturalRoll + bondMod.modifier + happinessMod.modifier));
+      outcome = nFateOutcomeFor(finalScore);
+    }
+
+    return {
+      naturalRoll: naturalRoll,
+      finalScore: finalScore,
+      bondTierLabel: bondMod.label, bondModifier: bondMod.modifier,
+      happinessTierLabel: happinessMod.label, happinessModifier: happinessMod.modifier,
+      critical: critical,
+      outcomeKey: outcome.key, outcomeLabel: outcome.label, outcomeIcon: outcome.icon, outcomeNote: outcome.note
+    };
+  }
+  window.rollNFate = rollNFate;
+
+  // ===========================================================================
   // N — the arc's own resident, registered and evolved automatically as
   // her chapters are read. Every state change here is a direct
   // consequence of a story beat, never a player action.
@@ -397,24 +504,17 @@
     // change needed here when that happens (see arc29-mechanics.js's
     // Ch.12 classification, which already does exactly this).
     //
-    // HIDDEN FATE CALCULATION: her accumulated happiness and bond (see
-    // header comment) decide what actually happened to her -- from safe
-    // passage down to the worst circumstance, mirroring the exploitation
-    // she already survived once at 14. Deliberately NOT surfaced to the
-    // player here or anywhere else in this file: n.trueFateKey/Label are
-    // only written, for whichever future arc decides to reveal them.
+    // HIDDEN FATE ROLL (see the N'S FATE block above): San Bond and
+    // Happiness set the modifiers, a 1d100 decides the actual outcome.
+    // Deliberately NOT surfaced to the player here or anywhere else in
+    // this file: n.trueFateKey/Label/Roll are only written, for whichever
+    // future arc decides to reveal them.
     if (cp[23] && n.status !== 'departed') {
-      const happiness = (typeof n.happiness === 'number') ? n.happiness : 60;
-      const bond = (typeof n.bond === 'number') ? n.bond : 50;
-      const fateScore = Math.round((happiness + bond) / 2);
-      let fateKey, fateLabel;
-      if (fateScore >= 70)      { fateKey = 'safe_passage';          fateLabel = 'Safe Passage'; }
-      else if (fateScore >= 50) { fateKey = 'precarious_but_free';   fateLabel = 'Precarious, But Free'; }
-      else if (fateScore >= 30) { fateKey = 'imprisoned_or_bonded';  fateLabel = 'Imprisoned or Indentured'; }
-      else                      { fateKey = 'sold_into_servitude';   fateLabel = 'Sold Into Servitude'; }
-      n.trueFateScore = fateScore;
-      n.trueFateKey = fateKey;
-      n.trueFateLabel = fateLabel;
+      const fate = rollNFate(n);
+      n.trueFateRoll = fate;
+      n.trueFateScore = fate.finalScore;
+      n.trueFateKey = fate.outcomeKey;
+      n.trueFateLabel = fate.outcomeLabel;
       n.status = 'departed';
       n.awayLocation = 'Unknown';
       n.awayCompanion = 'Unknown Man';
