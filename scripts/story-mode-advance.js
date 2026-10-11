@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V370 · Arc XXV Requires Caelan Recruited';
+window.__CT_BUILD__='V371 · Fix PWA Not Opening After Phone Reboot';
