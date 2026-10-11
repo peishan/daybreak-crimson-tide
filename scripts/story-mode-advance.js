@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V373 · N\'s Final Alert — Temporary Resident System';
+window.__CT_BUILD__='V374 · Resident Happiness, Bond & Arrivals Log';
