@@ -109,8 +109,24 @@
   function renderNCaseClosedPanel(){
     const n = nRecord();
     if (!n || !n.arc30AccessStage) return '';
-    const title = n.arc30RealName ? '🌑 N (' + esc(n.arc30RealName) + ') — Case Closed' : '🌑 N — Case Closed';
-    let html = '<div class="panel-title" style="margin-top:16px;">'+title+'</div>';
+
+    // San's own described "Final scene" (Ch.25's own closing image, once
+    // her real name is actually known): the Temporary Resident system's
+    // own alert entry, name blinking red, exactly the dossier text she
+    // wrote -- this REPLACES the stage-by-stage status below rather than
+    // sitting alongside it, since it's the system's own final word on
+    // her, not one more incremental update.
+    if (n.arc30RealName) {
+      return '<div class="panel-title" style="margin-top:16px;">🌑 Temporary Resident System — Alert</div>'+
+        '<article class="quest-item">'+
+        '<strong class="n-status-blink">'+esc(n.arc30RealName)+' (N) — Missing</strong><br>'+
+        '<span style="font-size:.8rem;opacity:.85;">Former friend of San. Former temporary Fair Tide resident.<br>'+
+        'Fair Tide access revoked. Known to have been punished after the failed operation.<br>'+
+        'Exact punishment unknown. Current whereabouts unknown.</span>'+
+        '</article>';
+    }
+
+    let html = '<div class="panel-title" style="margin-top:16px;">🌑 N — Case Closed</div>';
     const stageLine = {
       visitor: 'Status: Visitor · Fair Tide Access: Ordinary visitor restrictions',
       revoked: 'Status: Access Revoked · Fair Tide Access: None',
@@ -121,9 +137,6 @@
       html += '<br><span style="font-size:.78rem;opacity:.75;">Last Known Connection: '+esc(n.arc30LastKnownConnection||'Unknown')+
         ' · Current Location: '+esc(n.arc30CurrentLocation||'Unknown')+
         ' · Fate: '+esc(n.arc30Fate||'Unknown')+'</span>';
-    }
-    if (n.arc30RealName) {
-      html += '<br><span style="font-size:.76rem;opacity:.65;font-style:italic;">Real name, confirmed by Intelligence after the fact: '+esc(n.arc30RealName)+'. San never heard it from her directly.</span>';
     }
     html += '</article>';
     return html;

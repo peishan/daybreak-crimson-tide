@@ -245,6 +245,11 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .event-gold { color: var(--gold); }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 .animate-float { animation: float 3s ease-in-out infinite; }
+/* Temporary Resident system alert (Arc XXX, N/Nadia's final status) — a
+   slow, soft pulse rather than an old-school hard blink, consistent with
+   this game's generally understated animation style. */
+@keyframes nStatusBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.n-status-blink { color: var(--danger); font-weight: 700; animation: nStatusBlink 1.6s ease-in-out infinite; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
 ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 3px; }

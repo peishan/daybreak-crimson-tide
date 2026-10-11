@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V372 · Arc XXX Ch.25 "Before Veyren" — N Was Nadia';
+window.__CT_BUILD__='V373 · N\'s Final Alert — Temporary Resident System';
