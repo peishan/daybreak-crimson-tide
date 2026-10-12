@@ -35,6 +35,28 @@
   // game.gold — per San's spec, that money is hers, not Fair Tide's, so
   // it was never the player's currency to begin with and doesn't vanish
   // from the player's own economy when she leaves with it.
+  //
+  // HAPPINESS / BOND / ARRIVAL LOG (added per later direction, Whiteout
+  // Survival's survivor-mood + join/leave log as the explicit model):
+  //   - r.happiness (0-100, visible on the card, Whiteout-style mood
+  //     icon) moves only from specific events below (story beats, a work
+  //     assignment, a wage collection) — never a free-standing grind.
+  //   - r.bond (0-100) started as a hidden numeric feeding N's Ch.23 fate
+  //     calculation alone. Per later direction (San wanted "Bond with
+  //     San" visible, not just Happiness), it's now ALSO rendered —
+  //     tiered (Estranged/Distant/Familiar/Trusted/Close), same as
+  //     Happiness, never a raw number. Rule #2 above still holds for the
+  //     separate narrative "trust" STRING field ("Broken" -> "Unresolved"
+  //     stays fixed, chapter-driven prose); this is the newer, numeric,
+  //     now-visible companion to it, not a replacement.
+  //   - window.checkInOnResident(id) (below) is the one generic, once-a-
+  //     day player action that nudges both Happiness and Bond for ANY
+  //     tracked resident — the actual lever that makes a reformed rival's
+  //     betrayal risk (rival-disposition.js) something the player can act
+  //     on, not just watch happen.
+  //   - Every arrival and departure (any resident, not just N) is
+  //     recorded to a small dedicated log (fairTideResidentLogState),
+  //     rendered as its own "Arrivals & Departures" panel.
   // -------------------------------------------------------------------
 
   // ===========================================================================
@@ -54,6 +76,122 @@
     delegator: { icon:'😇', label:'Delegator', desc:'Sometimes someone else quietly finishes part of the assigned task.' }
   };
   window.RESIDENT_TRAITS = RESIDENT_TRAITS;
+
+  // HAPPINESS — visible mood meter, Whiteout Survival's survivor mood as
+  // the explicit model. Moves only from specific events (see below), not
+  // a repeatable grind.
+  const RESIDENT_HAPPINESS_TIERS = [
+    { threshold:0,  icon:'😢', label:'Miserable'  },
+    { threshold:20, icon:'😟', label:'Struggling' },
+    { threshold:40, icon:'😕', label:'Uneasy'      },
+    { threshold:60, icon:'🙂', label:'Content'     },
+    { threshold:80, icon:'🌟', label:'Thriving'    }
+  ];
+  window.RESIDENT_HAPPINESS_TIERS = RESIDENT_HAPPINESS_TIERS;
+
+  function residentHappinessTier(r){
+    const h = (typeof r.happiness === 'number') ? r.happiness : 60;
+    let tier = RESIDENT_HAPPINESS_TIERS[0];
+    for (let i = 0; i < RESIDENT_HAPPINESS_TIERS.length; i++) {
+      if (h >= RESIDENT_HAPPINESS_TIERS[i].threshold) tier = RESIDENT_HAPPINESS_TIERS[i];
+    }
+    return tier;
+  }
+  window.residentHappinessTier = residentHappinessTier;
+
+  window.adjustResidentHappiness = function(id, delta){
+    const r = residentsState()[id];
+    if (!r) return;
+    if (typeof r.happiness !== 'number') r.happiness = 60;
+    r.happiness = Math.max(0, Math.min(100, r.happiness + delta));
+  };
+
+  // BOND — "Bond with San," now visible (tiered, never a raw number —
+  // see the header comment above). Still what Ch.23's fate calculation
+  // and the reformed-rival betrayal check (rival-disposition.js) read
+  // underneath, alongside happiness.
+  const RESIDENT_BOND_TIERS = [
+    { threshold:0,  icon:'💔', label:'Estranged' },
+    { threshold:20, icon:'🙁', label:'Distant'    },
+    { threshold:40, icon:'🤝', label:'Familiar'   },
+    { threshold:60, icon:'💛', label:'Trusted'    },
+    { threshold:80, icon:'💗', label:'Close'      }
+  ];
+  window.RESIDENT_BOND_TIERS = RESIDENT_BOND_TIERS;
+
+  function residentBondTier(r){
+    const b = (typeof r.bond === 'number') ? r.bond : 50;
+    let tier = RESIDENT_BOND_TIERS[0];
+    for (let i = 0; i < RESIDENT_BOND_TIERS.length; i++) {
+      if (b >= RESIDENT_BOND_TIERS[i].threshold) tier = RESIDENT_BOND_TIERS[i];
+    }
+    return tier;
+  }
+  window.residentBondTier = residentBondTier;
+
+  window.adjustResidentBond = function(id, delta){
+    const r = residentsState()[id];
+    if (!r) return;
+    if (typeof r.bond !== 'number') r.bond = 50;
+    r.bond = Math.max(0, Math.min(100, r.bond + delta));
+  };
+
+  // CHECK IN — the one generic, once-a-day player action on this whole
+  // framework. Small and deliberately unglamorous (a few rotating flavor
+  // lines, no bespoke per-character writing) so it scales to every
+  // tracked resident — temporary guest, crew, ally, or reformed rival —
+  // without demanding new prose for each one. This is also the direct
+  // lever against a reformed rival's betrayal risk: check in enough and
+  // nobody ever rolls against them in the first place.
+  const CHECK_IN_HAPPINESS_GAIN = 3;
+  const CHECK_IN_BOND_GAIN = 2;
+  const CHECK_IN_FLAVOR = [
+    'A few minutes, nothing more — but it\'s the kind of small thing that adds up.',
+    'San makes a point of actually asking how things are going, and means it.',
+    'Nothing urgent. Just checking in, the way San tries to with everyone here.',
+    'A short conversation, easy and unhurried.'
+  ];
+
+  window.canCheckInOnResident = function(id){
+    const r = residentsState()[id];
+    if (!r) return false;
+    if (r.status === 'departed' || r.status === 'departing' || r.status === 'expelled') return false;
+    return r.lastCheckInDay !== (game.day || 0);
+  };
+
+  window.checkInOnResident = function(id){
+    const r = residentsState()[id];
+    if (!r || !window.canCheckInOnResident(id)) return;
+    r.lastCheckInDay = game.day || 0;
+    window.adjustResidentHappiness(id, CHECK_IN_HAPPINESS_GAIN);
+    window.adjustResidentBond(id, CHECK_IN_BOND_GAIN);
+    const flavor = CHECK_IN_FLAVOR[Math.floor(Math.random() * CHECK_IN_FLAVOR.length)];
+    toast('💬 San checks in with ' + (r.name || id) + '. ' + flavor, 3600);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+  };
+
+  // ARRIVAL / DEPARTURE LOG — Whiteout Survival's join/leave log as the
+  // explicit model. Generic: any resident's arrival or departure can be
+  // recorded here, not just N's.
+  function residentLogState(){
+    game.fairTideResidentLog = game.fairTideResidentLog || [];
+    return game.fairTideResidentLog;
+  }
+  window.fairTideResidentLogState = residentLogState;
+
+  window.logResidentArrivalDeparture = function(r, type, note){
+    const log = residentLogState();
+    log.push({
+      icon: r.icon || '👤',
+      name: residentDisplayName(r),
+      type: type,
+      note: note || '',
+      day: game.day || 0
+    });
+    if (log.length > 50) log.shift();
+  };
 
   function residentsState(){
     game.fairTideResidents = game.fairTideResidents || {};
@@ -80,7 +218,9 @@
       lastWageDay: -1,
       traits: [],
       awayLocation: null,
-      awayCompanion: null
+      awayCompanion: null,
+      happiness: 60,
+      bond: 50
     }, opts || {});
     return residents[id];
   };
@@ -111,7 +251,12 @@
     // The masked guest is never work-assignable -- he's passing through
     // incognito for a handful of chapters, not settling in as a worker.
     if (id === 'sairen') return false;
-    return true;
+    // Default FALSE (not true -- see fair-tide-wider-residents.js, which
+    // registers every established Fair Tide Roster member and ally
+    // through this same framework for their Happiness meter alone).
+    // Those already have a real, established role elsewhere; they were
+    // never meant to pick up N's flat-wage work-assignment buttons too.
+    return false;
   }
   window.residentWorkUnlocked = residentWorkUnlocked;
 
@@ -123,6 +268,7 @@
     if (!role) return;
     r.role = roleKey;
     if (r.status === 'resident') r.status = 'working_resident';
+    window.adjustResidentHappiness(id, 4);
     toast('🔨 ' + (r.name || id) + ' takes on ' + role.name + '.', 3200);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
@@ -145,6 +291,11 @@
     if (charming && role.social) wage = Math.round(wage * 1.3);
     r.earnings += wage;
     r.lastWageDay = game.day || 0;
+    window.adjustResidentHappiness(id, 2);
+    // Social roles (tavern/market) put her in front of people, actually
+    // talking instead of just working -- that's what nudges bond, not
+    // the wage itself.
+    if (role.social) window.adjustResidentBond(id, 2);
     let msg = '💰 ' + (r.name || id) + ' earns ' + wage + 'g from ' + role.name + '.';
     const delegator = r.traits.indexOf('delegator') !== -1;
     if (delegator && Math.random() < 0.25) {
@@ -154,6 +305,124 @@
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
   };
+
+  // ===========================================================================
+  // N'S FATE — a dice-roll consequence system, not a fixed canon event.
+  // Per San's later direction: Arc XXX's "Missing" ending is final as
+  // written, but what actually happened to her underneath that should
+  // depend on each player's own choices, not be the same for everyone.
+  // San Bond and her Happiness at Fair Tide (both already tracked above)
+  // set hidden modifiers; a 1d100 roll against those modifiers decides
+  // the real outcome, computed once at Ch.23 and kept hidden (see
+  // checkNResidentEvents below) for a future arc to reveal.
+  //
+  // Deliberately NOT included: a third "N's Personal Choices" modifier
+  // (cooperated willingly / resisted manipulation / etc.) — Arc XXVIII-XXX
+  // are linear, story-decides chapters with no actual branching choice
+  // points for her to make, so there's nothing to read a modifier from
+  // without retrofitting real choices into already-shipped chapters.
+  // Flagged rather than faked: no invented modifier stands in for it.
+  //
+  // Every outcome tier is non-lethal and gender-neutral by construction,
+  // same constraint as the reformed-rival system (rival-disposition.js):
+  // N survives every single branch, including both critical rolls.
+  // ===========================================================================
+  const N_FATE_BOND_MODIFIERS = [
+    { max:19,  label:'Broken',      modifier:-30 },
+    { max:39,  label:'Low',         modifier:-15 },
+    { max:59,  label:'Neutral',     modifier:0   },
+    { max:79,  label:'Good',        modifier:15  },
+    { max:100, label:'Sister-Level',modifier:30  }
+  ];
+  const N_FATE_HAPPINESS_MODIFIERS = [
+    { max:19,  label:'Collapse',    modifier:-20 },
+    { max:39,  label:'Unstable',    modifier:-10 },
+    { max:59,  label:'Normal',      modifier:0   },
+    { max:79,  label:'Happy',       modifier:10  },
+    { max:100, label:'Flourishing', modifier:20  }
+  ];
+
+  function fateModifierFor(value, table){
+    for (let i = 0; i < table.length; i++) {
+      if (value <= table[i].max) return table[i];
+    }
+    return table[table.length - 1];
+  }
+
+  // 1-100, lowest to highest -- never death, never sexual-exploitation
+  // framing (San's note: reusable constraint from the reformed-rival
+  // work), even at the worst tier. Content and probability bands per
+  // San's own "Nameless Judgment Fate Table" (the Nameless see her as a
+  // compromised civilian asset, not a criminal -- their real question is
+  // "contain the mistake, or remove the risk?"). Replaces the original
+  // 5-tier table; same modifier engine above, unchanged.
+  const N_FATE_OUTCOMES = [
+    { key:'ship_assignment',       max:5,   icon:'⚓', label:'Ship Assignment',
+      note:'"A person without a place can be placed anywhere." Moved into a travelling operation — not named for what she is, only for what she can do: attendant, interpreter, social operative, support personnel. Her gift for connecting with people is exactly what makes her useful to them now, and exactly how she becomes part of the machine she tried to escape.' },
+    { key:'asset_conversion',      max:10,  icon:'🪙', label:'Asset Conversion',
+      note:'"You proved you have value." Not punished — put to work. Information courier, social contact, translator, observer. Unlike Sairen, she never chose this.' },
+    { key:'indentured_service',    max:25,  icon:'⛓️', label:'Indentured Service',
+      note:'"Your mistake has a price." Not out of malice — their organization simply believes every breach creates a debt. She serves until it\'s considered repaid: years of assignments, restricted freedom.' },
+    { key:'containment',           max:45,  icon:'🔒', label:'Containment',
+      note:'"We cannot trust you outside." They believe she knows too much, and that releasing her creates consequences nobody can predict. A hidden facility, a safehouse, a controlled residence. Treated well. No freedom at all.' },
+    { key:'restricted_port_exile', max:65,  icon:'🏝️', label:'Exile to a Restricted Port',
+      note:'"Some places are too far to return from." Sent to an isolated port, a barrier-protected settlement, a remote island city. She cannot leave, cannot contact Fair Tide, cannot contact anyone she used to know. She survives. Her old world is simply gone.' },
+    { key:'identity_erasure',      max:85,  icon:'🌫️', label:'Identity Erasure',
+      note:'"The person disappears. The risk disappears." A new name, a new location, new records, no contact with anyone from before. Not imprisoned — reborn, in a life she never asked for. She wanted a new start. This isn\'t the one she chose.' },
+    { key:'quiet_release',         max:100, icon:'🕊️', label:'Quiet Release',
+      note:'"The connection is severed." The Nameless decide she was manipulated, not a true traitor — every contact cut, every access removed, a warning never to come near their world again. She loses her status, her connections, her protection. But she keeps her life, and she is free.' }
+  ];
+
+  function nFateOutcomeFor(score){
+    for (let i = 0; i < N_FATE_OUTCOMES.length; i++) {
+      if (score <= N_FATE_OUTCOMES[i].max) return N_FATE_OUTCOMES[i];
+    }
+    return N_FATE_OUTCOMES[N_FATE_OUTCOMES.length - 1];
+  }
+
+  function rollNFate(n){
+    const happiness = (typeof n.happiness === 'number') ? n.happiness : 60;
+    const bond = (typeof n.bond === 'number') ? n.bond : 50;
+    const bondMod = fateModifierFor(bond, N_FATE_BOND_MODIFIERS);
+    const happinessMod = fateModifierFor(happiness, N_FATE_HAPPINESS_MODIFIERS);
+    const naturalRoll = 1 + Math.floor(Math.random() * 100);
+
+    let outcome, critical = null, finalScore = naturalRoll;
+    if (naturalRoll === 100) {
+      // "Permanent Disappearance" -- overrides modifiers entirely. The
+      // Nameless's own safest option: remove her from every known
+      // network. A faked death, a new identity, an unknown location --
+      // even Fair Tide never learns where she went. The most mysterious
+      // ending available, and still, by construction, a safe one.
+      critical = 'permanent_disappearance';
+      outcome = { key:'permanent_disappearance', icon:'🌑', label:'Permanent Disappearance',
+        note:'"No one finds her again." The Nameless decide the safest outcome is removing her from every known network entirely — a faked death, a new identity, an unknown location. Even Fair Tide can\'t find her. Nobody, not even San, ever really learns what became of her.' };
+    } else if (naturalRoll === 1) {
+      // Also overrides modifiers, but reuses the existing worst tier
+      // rather than inventing anything beneath it; nothing in this
+      // system is allowed to be worse than Ship Assignment, modifiers
+      // or no modifiers.
+      critical = 'system_wins';
+      const worst = N_FATE_OUTCOMES[0];
+      outcome = Object.assign({}, worst, {
+        label: worst.label + ' (The System Wins)',
+        note: 'A faction inside the Nameless decides the risk is unacceptable, regardless of anything in her favor. ' + worst.note
+      });
+    } else {
+      finalScore = Math.max(1, Math.min(100, naturalRoll + bondMod.modifier + happinessMod.modifier));
+      outcome = nFateOutcomeFor(finalScore);
+    }
+
+    return {
+      naturalRoll: naturalRoll,
+      finalScore: finalScore,
+      bondTierLabel: bondMod.label, bondModifier: bondMod.modifier,
+      happinessTierLabel: happinessMod.label, happinessModifier: happinessMod.modifier,
+      critical: critical,
+      outcomeKey: outcome.key, outcomeLabel: outcome.label, outcomeIcon: outcome.icon, outcomeNote: outcome.note
+    };
+  }
+  window.rollNFate = rollNFate;
 
   // ===========================================================================
   // N — the arc's own resident, registered and evolved automatically as
@@ -175,22 +444,35 @@
         trust: 'Broken',
         traits: ['charming', 'delegator']
       });
+      window.logResidentArrivalDeparture(residentsState().n, 'join', 'Arrives as a guest, an old friend of San\'s.');
+      if (typeof logEvent === 'function') logEvent('🏠 N arrives at Fair Tide as a guest.', 'neutral');
     }
     const n = residentsState().n;
     if (!n) return;
 
     // Ch.9 ("Old Habits") -- the first small, automatic personal-charge
     // event. Applied once, exactly when the chapter itself narrates it.
+    // Happiness/bond both take a small hit here -- not punitive, just
+    // the first real friction in how she's settling in and in how San
+    // reads it.
     if (cp[9] && !game.arc28Ch9ChargeApplied) {
       game.arc28Ch9ChargeApplied = true;
       n.personalPurchases += 8;
+      window.adjustResidentHappiness('n', -5);
+      window.adjustResidentBond('n', -5);
       if (typeof logEvent === 'function') logEvent('📉 N takes a little more from Fair Tide\'s stores than she\'s earned so far — small, but it adds up.', 'bad');
     }
 
-    // Ch.17 ("This Isn't Brunei") -- a second, larger charge event.
+    // Ch.17 ("This Isn't Brunei") -- a second, larger charge event, and a
+    // real break, not a habit anymore. This is the single biggest hit
+    // either stat takes in the whole arc -- by design, so that total
+    // neglect of her between here and Ch.23 is what actually drives her
+    // toward the worst fate, not this one moment alone.
     if (cp[17] && !game.arc28Ch17ChargeApplied) {
       game.arc28Ch17ChargeApplied = true;
       n.fairTideCharge += 15;
+      window.adjustResidentHappiness('n', -25);
+      window.adjustResidentBond('n', -25);
       if (typeof logEvent === 'function') logEvent('📉 N spends beyond what she\'s earned again, expecting it to be smoothed over. This time it isn\'t.', 'bad');
     }
 
@@ -218,6 +500,10 @@
       n.role = null;
       n.relationship = 'Complicated';
       n.trust = 'Unresolved';
+      // Settled fairly, nothing invented or withheld -- a real gesture
+      // of good faith, so it moves bond more than the small day-to-day
+      // nudges from work and wages do.
+      window.adjustResidentBond('n', 8);
       toast('📋 Final Fair Tide Account — N: earned ' + n.earnings + 'g, paid out ' + finalWages + 'g. Old Brunei debt: not applicable.', 4800);
       if (typeof logEvent === 'function') logEvent('📋 N\'s account is settled in full — nothing invented, nothing withheld, and her old Brunei debt left off the ledger entirely, exactly where it belongs.', 'gold');
     }
@@ -228,10 +514,23 @@
     // n.awayCompanion from 'Unknown Man' to his real name -- no other
     // change needed here when that happens (see arc29-mechanics.js's
     // Ch.12 classification, which already does exactly this).
+    //
+    // HIDDEN FATE ROLL (see the N'S FATE block above): San Bond and
+    // Happiness set the modifiers, a 1d100 decides the actual outcome.
+    // Deliberately NOT surfaced to the player here or anywhere else in
+    // this file: n.trueFateKey/Label/Roll are only written, for whichever
+    // future arc decides to reveal them.
     if (cp[23] && n.status !== 'departed') {
+      const fate = rollNFate(n);
+      n.trueFateRoll = fate;
+      n.trueFateScore = fate.finalScore;
+      n.trueFateKey = fate.outcomeKey;
+      n.trueFateLabel = fate.outcomeLabel;
       n.status = 'departed';
       n.awayLocation = 'Unknown';
       n.awayCompanion = 'Unknown Man';
+      window.logResidentArrivalDeparture(n, 'leave', 'Leaves Fair Tide with the masked guest.');
+      if (typeof logEvent === 'function') logEvent('🚪 N leaves Fair Tide. Her name moves from the active roster to \"Away.\"', 'neutral');
     }
   }
 
@@ -270,6 +569,7 @@
         trust: 'Unknown',
         traits: ['charming']
       });
+      window.logResidentArrivalDeparture(residentsState().sairen, 'join', 'A quiet, unnamed guest.');
     }
     const sairen = residentsState().sairen;
     if (!sairen) return;
@@ -280,6 +580,7 @@
       sairen.status = 'departed';
       sairen.awayLocation = 'Unknown';
       sairen.awayCompanion = 'N';
+      window.logResidentArrivalDeparture(sairen, 'leave', 'Leaves Fair Tide. N goes with him.');
       if (typeof logEvent === 'function') logEvent('🎭 The masked guest leaves Fair Tide. N goes with him.', 'neutral');
     }
   }
@@ -326,9 +627,12 @@
 
     const role = RESIDENT_WORK_ROLES.find(function(x){ return x.key === r.role; });
     const wages = window.residentAvailableWages(r.id);
+    const happinessTier = residentHappinessTier(r);
+    const bondTier = residentBondTier(r);
     let html = '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span class="story-chip">'+esc(RESIDENT_STATUS_LABELS[r.status] || r.status)+'</span> '+traitBadges+'<br>'+
       '<span style="font-size:.8rem;opacity:.8;">Role: '+(role ? esc(role.name) : 'Unassigned')+' · Room: '+esc(r.room || '—')+' · Memory: '+esc(r.memory || '—')+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span><br>'+
+      '<span style="font-size:.78rem;opacity:.75;">Happiness: '+happinessTier.icon+' '+esc(happinessTier.label)+' · Bond with San: '+bondTier.icon+' '+esc(bondTier.label)+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.75;">Earnings: '+r.earnings+'g · Available wages: '+wages+'g</span>';
 
     if (residentWorkUnlocked(r.id)) {
@@ -341,19 +645,62 @@
         html += '<div style="margin-top:6px;"><button class="btn btn-small btn-success" onclick="collectResidentWages(\''+r.id+'\')" '+(canCollect?'':'disabled')+'>💰 '+(canCollect ? 'Collect Wages' : 'Collected Today')+'</button></div>';
       }
     }
+    const canCheckIn = window.canCheckInOnResident(r.id);
+    html += '<div style="margin-top:6px;"><button class="btn btn-small" onclick="checkInOnResident(\''+r.id+'\')" '+(canCheckIn?'':'disabled')+'>💬 '+(canCheckIn ? 'Check In' : 'Checked In Today')+'</button></div>';
     html += '</article>';
     return html;
   }
 
+  // BUG FIX (San's report — N kept showing up here as "Away from Fair
+  // Tide... Status: Safe (last known)" even after Arc XXX resolves her as
+  // Missing/Access Revoked, flatly contradicting the separate "N — Case
+  // Closed" panel that arc30-mechanics.js renders elsewhere in this same
+  // Archive screen): a resident whose own later story has moved them out
+  // of "just away for now" doesn't belong in a list whose entire premise
+  // is "guests who might still come back." Rather than hardcoding
+  // Arc XXX's own logic into this file, this reads an optional, generic
+  // hook any later arc can register (residentHiddenFromRosterPanel) — so
+  // whichever arc actually knows a resident's story has concluded is the
+  // one deciding to hide them, not this one guessing at arc numbers.
+  // ARRIVAL / DEPARTURE LOG PANEL — Whiteout Survival's join/leave log as
+  // the explicit model. Shown even once every resident has departed or
+  // been hidden, same as the log itself persisting regardless of who's
+  // currently on the roster.
+  function renderResidentArrivalLog(){
+    const log = residentLogState();
+    if (!log.length) return '';
+    const rows = log.slice(-8).reverse().map(function(entry){
+      const verb = entry.type === 'join' ? 'arrives at' : 'leaves';
+      return '<div style="font-size:.76rem;opacity:.75;padding:2px 0;">Day '+entry.day+' — '+entry.icon+' '+esc(entry.name)+' '+verb+' Fair Tide'+(entry.note ? ' — '+esc(entry.note) : '')+'</div>';
+    }).join('');
+    return '<div class="panel-title" style="margin-top:16px;">📜 Fair Tide Arrivals & Departures</div>'+
+      '<article class="quest-item">'+rows+'</article>';
+  }
+  window.renderResidentArrivalLog = renderResidentArrivalLog;
+
+  // Scoped to the temporary-guest ladder only (resident/working_resident/
+  // departing/departed) -- 'crew' and 'ally' (fair-tide-wider-
+  // residents.js) are established Fair Tide people with their own
+  // existing displays (the Fair Tide Roster tab, the Wider Ally Network
+  // panel) and showing them here too would flatly contradict this
+  // panel's own "haven't joined the crew" premise below.
+  const TEMPORARY_RESIDENT_STATUSES = ['resident', 'working_resident', 'departing', 'departed'];
+
   function renderFairTideResidentsPanel(){
     const residents = residentsState();
-    const ids = Object.keys(residents);
-    if (!ids.length) return '';
-    let html = '<div class="panel-title" style="margin-top:16px;">🏘️ Fair Tide Residents</div>'+
-      '<p style="font-size:.78rem;opacity:.65;margin-bottom:8px;">Guests of Fair Tide who haven\'t joined the crew — not everyone who stays here becomes part of San\'s expedition.</p>';
-    ids.forEach(function(id){
-      html += renderResidentCard(residents[id]);
+    const ids = Object.keys(residents).filter(function(id){
+      if (TEMPORARY_RESIDENT_STATUSES.indexOf(residents[id].status) === -1) return false;
+      return !(typeof window.residentHiddenFromRosterPanel === 'function' && window.residentHiddenFromRosterPanel(id));
     });
+    let html = '';
+    if (ids.length) {
+      html += '<div class="panel-title" style="margin-top:16px;">🏘️ Fair Tide Residents</div>'+
+        '<p style="font-size:.78rem;opacity:.65;margin-bottom:8px;">Guests of Fair Tide who haven\'t joined the crew — not everyone who stays here becomes part of San\'s expedition.</p>';
+      ids.forEach(function(id){
+        html += renderResidentCard(residents[id]);
+      });
+    }
+    html += renderResidentArrivalLog();
     return html;
   }
   window.renderFairTideResidentsPanel = renderFairTideResidentsPanel;

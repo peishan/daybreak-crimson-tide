@@ -2,8 +2,20 @@
   // -------------------------------------------------------------------
   // ARC XXV — A FRIEND'S REQUEST. Gated at arc24Complete + level 375,
   // continuing the established +15-per-arc ladder (XXII:330, XXIII:345,
-  // XXIV:360, XXV:375). Ch.18 sets game.arc25Complete = true, matching
-  // every other arc's own finale flag.
+  // XXIV:360, XXV:375), PLUS Caelan actually recruited
+  // (game.foundCompanions.caelan, set when Arc XX Ch.13 "A Stranger at
+  // Fair Tide" is read) -- San's own direction: this is literally Joy
+  // and Caelan's story start to finish, so he's required for this one
+  // arc specifically, the same way San & Joel's own Bond track requires
+  // Arc V Ch.4 rather than just existing unconditionally. In ordinary
+  // sequential play Caelan is always already recruited by this point
+  // anyway (Arc XX's own chapters must be read in order, long before
+  // Arc XXIV can complete) -- this is a correctness/explicitness gate
+  // for whatever got the player here, not a new recruitment requirement
+  // nobody could already satisfy. Deliberately scoped to arc25ObjectiveState()
+  // alone: Caelan isn't made mandatory anywhere else by this change.
+  // Ch.18 sets game.arc25Complete = true, matching every other arc's own
+  // finale flag.
   //
   // Deliberately smaller in scale than Arc XXIV, per the outline's own
   // note — 18 chapters instead of 24, a personal Joy/Caelan story rather
@@ -84,6 +96,7 @@
   window.arc25ObjectiveState = function(){
     if (!game.arc24Complete) return null;
     if (level() < 375) return null;
+    if (!(game.foundCompanions && game.foundCompanions.caelan)) return null;
     game.comicProgress25 = game.comicProgress25 || {};
     for (const ch of ARC25_CHAPTERS) {
       if (!game.comicProgress25[ch.id]) return 'complete_arc25_chapter_' + ch.id;
@@ -142,8 +155,11 @@
       '<div class="story-act-kicker">Arc XXV</div><div class="story-act-title">A Friend\'s Request</div>'+
       '<div class="story-act-tagline">Sometimes asking for help is harder than giving it.</div></div>';
     if (!arc25Ready) {
+      const lockMsg = !game.arc24Complete ? 'Finish Arc XXIV first.'
+        : (level() < 375 ? 'Reach Level 375 to begin.'
+        : 'Recruit Caelan first (Arc XX, Ch.13 — "A Stranger at Fair Tide").');
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc24Complete ? 'Finish Arc XXIV first.' : 'Reach Level 375 to begin.')+'</div></div></section>';
+        lockMsg+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

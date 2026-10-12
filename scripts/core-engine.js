@@ -3925,9 +3925,20 @@ function doVoyage(portId, days, dangerLevel) {
         game.daysSinceInterception = 0;
         renderInterceptionStreak();
         clearInterval(interval);
-        setTimeout(() => { startCombat({kind:'sea', key: event.combat, enemy: scaledEnemyForExplore(event.combat, 'sea')}); }, 1000);
+        // Pirates/sirens (scripts/voyage-group-encounters.js) fight as a
+        // group, one foe at a time in the same encounter; every other
+        // sea combat key falls through to the ordinary single fight.
+        setTimeout(() => {
+          if (typeof window.startSeaGroupEncounter === 'function') {
+            window.startSeaGroupEncounter(event.combat);
+          } else {
+            startCombat({kind:'sea', key: event.combat, enemy: scaledEnemyForExplore(event.combat, 'sea')});
+          }
+        }, 1000);
         return;
       } else if (event.illusion) {
+        game.daysSinceInterception++;
+        renderInterceptionStreak();
         clearInterval(interval);
         setTimeout(() => { if (typeof window.triggerIllusionEncounter === 'function') window.triggerIllusionEncounter(true); }, 1000);
         return;

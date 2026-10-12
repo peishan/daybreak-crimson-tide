@@ -201,10 +201,20 @@ jobs:
               echo "Push rejected (attempt $attempt), fetching and rebasing before retrying..."
               sleep $((attempt * 3))
               git fetch origin ${{ github.ref_name }}
-              git rebase origin/${{ github.ref_name }}
+              if ! git rebase origin/${{ github.ref_name }}; then
+                # A real conflict (e.g. two runs converting the same filename
+                # to different bytes) will reproduce identically every time,
+                # so looping back into the same rebase wastes the remaining
+                # attempts on a guaranteed repeat rather than a transient
+                # race. Abort the half-finished rebase (leaving a clean tree)
+                # and stop retrying -- the error below still fires.
+                echo "::error::Rebase hit a real conflict, not just a race -- aborting."
+                git rebase --abort
+                break
+              fi
             done
             if [ "$pushed" != "true" ]; then
-              echo "::error::Could not push auto-converted art after 5 attempts -- giving up."
+              echo "::error::Could not push auto-converted art after retrying -- giving up."
               exit 1
             fi
           fi

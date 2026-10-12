@@ -46,6 +46,13 @@
   //     Her track caps at 100 points (not the usual 1000) on purpose —
   //     see scripts/dre-wedding.js, which fires a one-time wedding scene
   //     once this track reaches its max tier.
+  //   - Jovie     -> same shape as Dre exactly (San's own call: "special
+  //     bonding, like with Dre"): gated on game.fairTideRoster.jovie
+  //     rather than a chapter, members:[], capped at 100. She's
+  //     deliberately excluded from the lighter, generic Fair Tide
+  //     resident happiness/bond sweep (scripts/fair-tide-wider-
+  //     residents.js) -- this deeper track is her relationship system,
+  //     not that one.
   // -------------------------------------------------------------------
 
   window.BOND_TRACKS = window.BOND_TRACKS || {};
@@ -174,6 +181,31 @@
         {id: 'draft_contract', icon: '✍️', label: 'Help Draft a Contract', flavor: 'Dre\'s legal head is still sharper than anyone else\'s in Fair Tide.'},
         {id: 'people_watch',  icon: '👀', label: 'People-Watch at the Docks', flavor: 'Dre has an opinion about absolutely everyone who walks past.'},
         {id: 'reminisce',     icon: '💭', label: 'Reminisce About C. Adv', flavor: 'Old war stories from a job neither of them misses, exactly.'}
+      ]
+    },
+    {
+      key: 'san_jovie', label: 'San & Jovie', icon: '🩹', members: [],
+      actionLabel: 'Spend time with Jovie',
+      flavor: "Whatever she's patching up today, she's already three steps ahead of it.",
+      tiers: [
+        {threshold:0,   name:'Steady Hands, Quiet Past',       bonus:0},
+        {threshold:15,  name:'Trusted With the Small Things',  bonus:0},
+        {threshold:35,  name:'Someone Worth Checking On',      bonus:0},
+        {threshold:55,  name:'Fewer Walls Than Before',        bonus:0},
+        {threshold:80,  name:'Family, However She Found It',   bonus:0},
+        {threshold:100, name:'Enough to Matter',               bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.fairTideRoster && game.fairTideRoster['jovie']); },
+      handlerName: 'hangOutWithJovie',
+      panelTitle: '🩹 Spend Time with Jovie',
+      panelBlurb: 'Spend some time with Jovie. This still uses today\'s San &amp; Jovie time, same as above.',
+      activities: [
+        {id: 'clinic_shift',   icon: '🩹', label: 'Help with a Clinic Shift',    flavor: "Jovie talks through every step out loud, like she's teaching San or reminding herself. Hard to tell which."},
+        {id: 'herb_sorting',   icon: '🌿', label: 'Sort Medicinal Herbs',        flavor: 'Her hands know the sorting before her memory ever has to.'},
+        {id: 'check_on_her',   icon: '💛', label: 'Check On Her',               flavor: 'San asks if anything\'s come back to her yet. Jovie shrugs it off the same way she always does.'},
+        {id: 'quiet_tea',      icon: '🍵', label: 'Quiet Tea Between Patients', flavor: 'A rare five minutes where nobody needs stitching.'},
+        {id: 'trade_remedies', icon: '📖', label: 'Trade Old Remedies',         flavor: "Jovie knows cures San's never heard of, from somewhere she can't place anymore."},
+        {id: 'just_sit',       icon: '🌙', label: 'Just Sit With Her',          flavor: "Not every visit needs a reason. Jovie seems to need this one more than she'll say."}
       ]
     }
   ];

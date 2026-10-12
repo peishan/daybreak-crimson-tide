@@ -429,6 +429,31 @@
 // over, so the player doesn't have to manually refresh a second time
 // after an update is found. The `refreshing` guard prevents a reload loop
 // if controllerchange were to fire more than once.
+//
+// BUG FIX (San's report — the installed Android PWA wouldn't open at all
+// after her phone rebooted overnight; icon tap did nothing until she
+// deleted and reinstalled it): registration.update() used to fire
+// immediately on every single window.load, with no delay. Given how
+// often this project ships (CACHE_VERSION bumps most sessions), there is
+// almost always a newer sw.js waiting by the next morning -- and right
+// after a phone reboot is exactly when the network is least stable
+// (Wi-Fi/cellular still reconnecting). If the update's own install
+// finished and claimed this page WHILE it was still in the middle of its
+// very first cold launch, the controllerchange listener above fired
+// location.reload() mid-launch -- interrupting the app before it ever
+// finished rendering. Android's installed-PWA wrapper has no way to show
+// a half-reloaded page; it can just fail to visibly open at all, which
+// matches San's exact symptom. Deleting and reinstalling "fixed" it only
+// because a brand-new install has no pending update queued up to trigger
+// that reload in the first place.
+//
+// Delaying the update CHECK itself (not just reacting to its result)
+// gives the page time to finish its first render from whatever's already
+// cached -- instant regardless of network state, via sw.js's own fetch
+// handler -- before an update is even allowed to be found and start this
+// chain. This is not an open tab staring at stale content that urgently
+// needs refreshing; it's a fresh launch, so there's no cost to waiting a
+// few seconds before checking.
 if ('serviceWorker' in navigator) {
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -444,7 +469,7 @@ if ('serviceWorker' in navigator) {
     // can't detect a change it's not actually allowed to see). This
     // forces every update check to always bypass HTTP cache for sw.js.
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(registration => {
-      registration.update().catch(() => {});
+      setTimeout(() => { registration.update().catch(() => {}); }, 5000);
     }).catch(err => {
       console.warn('Service worker registration failed:', err);
     });

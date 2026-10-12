@@ -245,6 +245,11 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .event-gold { color: var(--gold); }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 .animate-float { animation: float 3s ease-in-out infinite; }
+/* Temporary Resident system alert (Arc XXX, N/Nadia's final status) — a
+   slow, soft pulse rather than an old-school hard blink, consistent with
+   this game's generally understated animation style. */
+@keyframes nStatusBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.n-status-blink { color: var(--danger); font-weight: 700; animation: nStatusBlink 1.6s ease-in-out infinite; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
 ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 3px; }
@@ -1511,6 +1516,7 @@ body{
       <div class="eyebrow" style="color: var(--sand); font-size: 0.85rem;">ENCOUNTER</div>
       <h2 style="color: var(--gold);">⚔️ Battle Stations!</h2>
     </div>
+    <div id="seaGroupRoster" style="display:none;"></div>
     <div class="combat-enemy" id="combatEnemy">
       <div class="combat-enemy-art" id="enemyArt">🐉</div>
       <div class="combat-enemy-name" id="enemyName">Sea Serpent</div>
@@ -2476,6 +2482,7 @@ body{
 
 <script src="scripts/clan-settlement-and-sw.js"></script>
 <script src="scripts/raid-mode.js"></script>
+<script src="scripts/voyage-group-encounters.js"></script>
 <script src="scripts/midnight-backup.js"></script>
 <script src="scripts/unknown-location-ui-fixes.js"></script>
 <script src="scripts/arc16-world-systems.js"></script>
@@ -2550,6 +2557,7 @@ body{
 <script src="scripts/san-joel-anniversary.js"></script>
 <script src="scripts/fair-tide-flavour-events.js"></script>
 <script src="scripts/fair-tide-ally-network.js"></script>
+<script src="scripts/fair-tide-wider-residents.js"></script>
 <script src="scripts/nursery-care-flavour-events.js"></script>
 <script src="scripts/tide-stories.js"></script>
 <script src="scripts/fair-tide-hobbies.js"></script>
