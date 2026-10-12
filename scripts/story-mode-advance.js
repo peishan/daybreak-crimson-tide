@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V383 · Uncapped Bonds/Buildings, Fixed Captain Names';
+window.__CT_BUILD__='V384 · Bounty Board Lock';

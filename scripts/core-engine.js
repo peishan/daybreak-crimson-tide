@@ -3788,11 +3788,28 @@ function bountyPool() {
 function refreshBounties() {
   const today = todayKey();
   if (game.bountyDay === today && game.bounties.length) return;
+  // LOCK (San's own report: bounties reshuffling out from under her every
+  // time she crosses into a new in-game day, losing whichever board she
+  // actually wanted to work on). While locked, skip the reshuffle
+  // entirely and just keep today's stamp moving forward so nothing here
+  // ever re-triggers once unlocked either — the board, including
+  // whatever progress/completions are already on it, stays exactly as
+  // it was until the player unlocks it themselves.
+  if (game.bountiesLocked && game.bounties && game.bounties.length) {
+    game.bountyDay = today;
+    return;
+  }
   const pool = bountyPool();
   const shuffled = pool.map(b => Object.assign({}, b, {c:0, done:false})).sort(() => Math.random() - 0.5);
   game.bounties = shuffled.slice(0, 10);
   game.bountyDay = today;
 }
+window.toggleBountyLock = function(){
+  game.bountiesLocked = !game.bountiesLocked;
+  toast(game.bountiesLocked ? '🔒 Bounty board locked — it will stay exactly as it is.' : '🔓 Bounty board unlocked — it will refresh again tomorrow.');
+  if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  if (typeof window.renderExplore === 'function') window.renderExplore();
+};
 function checkBountyProgress(type, target, amount) {
   refreshBounties();
   game.bounties.forEach(b => {
@@ -3811,7 +3828,8 @@ function checkBountyProgress(type, target, amount) {
 }
 function bountyBoardHTML() {
   refreshBounties();
-  return `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">💰 Bounty Board</h3><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Refreshes daily. Stack these on top of your normal hunting for bonus pay.</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span>${questFoundAtLine(b)}<br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
+  const locked = !!game.bountiesLocked;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:18px 0 4px;flex-wrap:wrap;"><h3 style="font-family:Cinzel;color:var(--gold);font-size:1rem;margin:0;">💰 Bounty Board</h3><button class="btn btn-small${locked ? ' btn-success' : ''}" onclick="toggleBountyLock()">${locked ? '🔒 Locked — tap to unlock' : '🔓 Lock this board'}</button></div><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">${locked ? 'Locked — this board will stay exactly as it is, even across days.' : 'Refreshes daily. Stack these on top of your normal hunting for bonus pay.'}</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span>${questFoundAtLine(b)}<br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
 }
 
 // ---------------------------------------------------------------------------
