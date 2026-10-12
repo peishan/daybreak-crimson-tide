@@ -117,13 +117,26 @@
     // sitting alongside it, since it's the system's own final word on
     // her, not one more incremental update.
     if (n.arc30RealName) {
-      return '<div class="panel-title" style="margin-top:16px;">🌑 Temporary Resident System — Alert</div>'+
+      let html = '<div class="panel-title" style="margin-top:16px;">🌑 Temporary Resident System — Alert</div>'+
         '<article class="quest-item">'+
         '<strong class="n-status-blink">'+esc(n.arc30RealName)+' (N) — Missing</strong><br>'+
         '<span style="font-size:.8rem;opacity:.85;">Former friend of San. Former temporary Fair Tide resident.<br>'+
         'Fair Tide access revoked. Known to have been punished after the failed operation.<br>'+
-        'Exact punishment unknown. Current whereabouts unknown.</span>'+
-        '</article>';
+        'Exact punishment unknown. Current whereabouts unknown.</span>';
+      // Out-of-story addendum (scripts/n-fate-reveal.js) -- the in-world
+      // text above never changes, this is the player's own separate
+      // payoff to the hidden dice-roll fate system.
+      if (n.trueFateRevealed) {
+        const icon = (n.trueFateRoll && n.trueFateRoll.outcomeIcon) || '🌑';
+        const note = (n.trueFateRoll && n.trueFateRoll.outcomeNote) || '';
+        html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15);">'+
+          '<strong>'+icon+' '+esc(n.trueFateLabel)+'</strong><br>'+
+          '<span style="font-size:.78rem;opacity:.8;">'+esc(note)+'</span></div>';
+      } else if (typeof window.canRevealNFate === 'function' && window.canRevealNFate()) {
+        html += '<div style="margin-top:8px;"><button class="btn btn-small" onclick="revealNFate()">🔍 What Really Happened?</button></div>';
+      }
+      html += '</article>';
+      return html;
     }
 
     let html = '<div class="panel-title" style="margin-top:16px;">🌑 N — Case Closed</div>';
