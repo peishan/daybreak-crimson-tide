@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V382 · N\'s Fate Reveal — Achievement-Style Popup';
+window.__CT_BUILD__='V383 · Uncapped Bonds/Buildings, Fixed Captain Names';

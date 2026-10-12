@@ -431,6 +431,63 @@
     return track.tiers[window.bondTier(trackKey)];
   };
 
+  // UNCAPPED PROGRESSION (San's own request: "bonds with no limits" —
+  // this save is a long journey). bondTier()/bondTierDef() above stay
+  // exactly as they were (a real index into the curated tiers array —
+  // several call sites index track.tiers[...] directly with that value,
+  // so changing its contract would silently break them). This is a
+  // separate, generic helper every render/bonus call site now goes
+  // through instead: once points pass the last curated tier, it
+  // synthesizes further ones rather than flatlining at "(Max)" forever.
+  //
+  // The extrapolation reuses the LAST real gap between tiers as a fixed
+  // step size (never shrinking, never exploding), and for every numeric
+  // field the tier objects carry (bonus, or San & Joel's own hpMpPct/
+  // dmgReductionPct/hasteTurns/hastePct), keeps applying that same
+  // field's last real per-tier increment at that same cadence — so
+  // growth stays smooth and predictable instead of guessing at an
+  // arbitrary curve, and works for every track shape with no per-track
+  // special-casing. Tracks with bonus:0 by design (the individual
+  // companion bonds — "story and memories, not another stacking
+  // percentage") keep bonus 0 forever too; only the name and threshold
+  // keep climbing for those, so the track still visibly progresses
+  // instead of looking stuck at "Max tier reached."
+  window.bondProgress = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return null;
+    const tiers = track.tiers;
+    const points = bondState()[trackKey].points;
+    const lastIdx = tiers.length - 1;
+    const last = tiers[lastIdx];
+    const secondLast = tiers[lastIdx - 1] || last;
+    const step = Math.max(1, last.threshold - secondLast.threshold);
+
+    if (points < last.threshold + step) {
+      // Still within (or just at) the curated tiers -- same tier lookup
+      // as before, except "Max" now always has a real next threshold.
+      let idx = 0;
+      for (let i = 0; i < tiers.length; i++) { if (points >= tiers[i].threshold) idx = i; }
+      const nextThreshold = (idx < lastIdx) ? tiers[idx+1].threshold : last.threshold + step;
+      return { tierDef: tiers[idx], nextThreshold: nextThreshold, points: points, levelsBeyond: 0 };
+    }
+
+    const levelsBeyond = Math.floor((points - last.threshold) / step);
+    const thisThreshold = last.threshold + step * levelsBeyond;
+    const nextThreshold = thisThreshold + step;
+    const tierDef = Object.assign({}, last, {
+      name: (track.label || '') + ' — Level ' + (lastIdx + 1 + levelsBeyond),
+      threshold: thisThreshold
+    });
+    Object.keys(last).forEach(function(field){
+      if (field === 'name' || field === 'threshold') return;
+      if (typeof last[field] === 'number' && typeof secondLast[field] === 'number') {
+        const fieldStep = last[field] - secondLast[field];
+        tierDef[field] = Math.round((last[field] + fieldStep * levelsBeyond) * 10000) / 10000;
+      }
+    });
+    return { tierDef: tierDef, nextThreshold: nextThreshold, points: points, levelsBeyond: levelsBeyond };
+  };
+
   // Whether the bonded character(s) are actually fielded right now — the
   // synergy condition. San & Crew uses a headcount instead of named
   // members (any 3+ non-San crew in the active party); San & The Later
@@ -500,7 +557,8 @@
     return sanHp > 0 && joelHp > 0;
   };
   window.sanJoelBondValues = function(){
-    return SAN_JOEL_TIERS[window.bondTier('san_joel')] || SAN_JOEL_TIERS[0];
+    const progress = window.bondProgress('san_joel');
+    return (progress && progress.tierDef) || SAN_JOEL_TIERS[0];
   };
 
   // -------------------------------------------------------------------
@@ -517,19 +575,19 @@
   window.getReputationBonus = function(statKey){
     let total = oldGetReputationBonusForBonds ? oldGetReputationBonusForBonds(statKey) : 0;
     if (window.bondSynergyActive('san_crew')) {
-      const def = SAN_CREW_TIERS[window.bondTier('san_crew')];
+      const def = window.bondProgress('san_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     if (window.bondSynergyActive('san_trio')) {
-      const def = SAN_TRIO_TIERS[window.bondTier('san_trio')];
+      const def = window.bondProgress('san_trio').tierDef;
       if (def && statKey === 'critBonus') total += def.bonus;
     }
     if (window.bondSynergyActive('tm_crew')) {
-      const def = TM_CREW_TIERS[window.bondTier('tm_crew')];
+      const def = window.bondProgress('tm_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     if (window.bondSynergyActive('c_adv_crew')) {
-      const def = C_ADV_CREW_TIERS[window.bondTier('c_adv_crew')];
+      const def = window.bondProgress('c_adv_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     return total;
@@ -567,8 +625,9 @@
     Object.keys(BOND_TRACKS).forEach(key=>{
       const track = BOND_TRACKS[key];
       const tierIdx = window.bondTier(key);
-      const tierDef = track.tiers[tierIdx];
-      const nextTier = track.tiers[tierIdx+1];
+      const progress = window.bondProgress(key);
+      const tierDef = progress.tierDef;
+      const nextTier = progress.nextThreshold != null ? { threshold: progress.nextThreshold } : null;
       const points = bondState()[key].points;
       const synergyActive = window.bondSynergyActive(key);
       const canSpend = window.canSpendTimeOnBond(key);
@@ -1959,6 +2018,7 @@
     const store = generatedCaptainsState();
     Object.keys(store).forEach(function(key){ registerGeneratedCaptain(key, store[key]); });
   }
+  window.ensureGeneratedCaptainsReplayed = ensureGeneratedCaptainsReplayed;
   ensureGeneratedCaptainsReplayed(); // best-effort at load time; re-armed below in case loadGame() hasn't run yet
 
   function ensureBaseKeyUseCounts(){
