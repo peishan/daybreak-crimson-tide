@@ -64,42 +64,58 @@
   const BETRAYAL_CHANCE = 0.08;
   const TRUST_DRIFT_PER_CHECK = 2;
 
-  // BETRAYAL OUTCOME — reveals where they actually went, rather than the
-  // old generic "pays a fine and leaves." Reuses N's own idea (a fate
-  // tier computed from happiness+bond) but explicitly NOT her Ch.23
-  // tiers: those were written around her own specific backstory (San's
-  // direction: remove any possibility of servitude/exploitation framing
-  // here — reformed rivals can be men as well, and this isn't their
-  // story to begin with). These four tiers are their own, scaled to
-  // where a reformed rival's score actually lands: the betrayal roll
-  // above only ever fires while both happiness and bond are still under
-  // their risk thresholds (55/45), so the realistic range at the moment
-  // of betrayal tops out well under those — never death, same rule as
-  // every other outcome in this system.
+  // BETRAYAL OUTCOME — "Nameless Judgment" extended to reformed rivals
+  // (San's own framing): the Nameless/relevant authority judge who gets
+  // caught, not just reveal where they ran to. Explicitly NOT N's own
+  // tiers — those were written around her specific backstory as a
+  // civilian asset; a captured pirate captain is judged on threat level
+  // and usefulness instead, so this is its own table (San's source
+  // list, reskinned onto the existing engine -- same two inputs,
+  // same score formula, same risk-gated trigger above, no new tracked
+  // stats). Scaled to where a reformed rival's score actually lands: the
+  // betrayal roll only ever fires while both happiness and bond are
+  // still under their risk thresholds (55/45), so realistic scores top
+  // out well under those -- never death, same rule as everywhere else in
+  // this system (San's explicit call: keep the never-dies rule
+  // universal rather than carving out an exception here).
   //
-  // The worst tier names the Nameless specifically only once they've
-  // actually been introduced (Arc XVIII Ch.22, "The Nameless Question");
-  // before that it stays deliberately vague rather than naming a faction
-  // the player hasn't met yet.
+  // Ordered worst to best by threshold. One tier names the Nameless
+  // specifically, gated the same way as before: only once Arc XVIII
+  // Ch.22 ("The Nameless Question") has actually introduced them.
+  function namelessKnown(){ return !!(game.comicProgress18 && game.comicProgress18[22]); }
+
+  // Band widths deliberately uneven at the top on purpose: the realistic
+  // reachable range here tops out around ~49 (betrayal only ever rolls
+  // while both stats are still under their risk thresholds), so an even
+  // split across 9 tiers would leave the best outcome a sliver only
+  // reachable at the absolute ceiling of both stats simultaneously.
+  // Widened so Conditional Freedom is a real, if still rare, possibility.
   const REFORMED_BETRAYAL_OUTCOMES = [
-    { key:'walked_away_clean',    threshold:36, icon:'🌫️', label:'Walked Away Clean',
-      note: function(name){ return name + ' slips away quietly after being caught — no faction claims them, no trail left behind.'; } },
-    { key:'back_to_old_waters',   threshold:24, icon:'🏴', label:'Back to the Old Waters',
-      note: function(name){ return name + ' is caught slipping back to old habits, and returns to small-time piracy — no deeper allegiance to speak of.'; } },
-    { key:'joined_rival_faction', threshold:12, icon:'⚔️', label:'Joined a Rival Faction',
-      note: function(name){ return name + ' is caught — and this time there\'s a name attached: they\'ve thrown in with a rival faction.'; } },
-    { key:'joined_nameless',      threshold:0,  icon:'🌑', label:'Recruited by the Nameless',
+    { key:'imprisonment',       threshold:5,   icon:'🔒', label:'Imprisonment',
+      note: function(name){ return '"Your crimes outweigh your usefulness." ' + name + ' is caught and held — a cell, a magical containment, an isolated island facility. A trial or release might come later. Not now.'; } },
+    { key:'indentured_service', threshold:10,  icon:'⛓️', label:'Indentured Service',
+      note: function(name){ return '"Your freedom was bought with your skills." Not slavery — a binding contract. Years of naval service, dangerous expeditions, rebuilding what was damaged.'; } },
+    { key:'intelligence_asset', threshold:16,  icon:'🕵️', label:'Intelligence Asset',
       note: function(name){
-        const namelessKnown = !!(game.comicProgress18 && game.comicProgress18[22]);
-        return name + ' is caught — and worse, ' + (namelessKnown
-          ? 'Fair Tide Intelligence traces them straight to the Nameless.'
-          : 'they\'ve vanished into a network far more dangerous than anything Fair Tide has faced yet.');
-      } }
+        return '"A pirate sees things governments cannot." Recruited as an informant' + (namelessKnown() ? ' by the Nameless' : ' by a network Fair Tide hasn\'t fully mapped yet') + ' — pirate movements, criminal networks, black-market information. Everyone knows the name. Nobody knows whose side it\'s actually on.';
+      } },
+    { key:'public_humiliation', threshold:22,  icon:'☠️', label:'Public Humiliation',
+      note: function(name){ return '"The captain dies. The person remains." Title, symbols, reputation — all stripped away. ' + name + ' survives, but loses everything that ever defined them.'; } },
+    { key:'forced_service',     threshold:28,  icon:'⚓', label:'Forced Service',
+      note: function(name){ return '"A pirate knows the sea better than anyone." Assigned to patrol fleets, exploration vessels, dangerous missions — not a punishment. A second chance, through service.'; } },
+    { key:'exile_settlement',   threshold:34,  icon:'🏝️', label:'Exile Settlement',
+      note: function(name){ return '"Too dangerous to return, too valuable to waste." Sent to a frontier island, a restricted port, a new colony. Loses the crew, the ship, the influence. Gains a real chance to rebuild.'; } },
+    { key:'debt_repayment',     threshold:40,  icon:'🪙', label:'Debt Repayment',
+      note: function(name){ return '"Freedom must be earned." A contract: escort runs, rescues, dangerous voyages. Once it\'s done, the record is reduced and a new identity is allowed.'; } },
+    { key:'forced_retirement',  threshold:45,  icon:'🌊', label:'Forced Retirement',
+      note: function(name){ return '"The sea no longer belongs to you." No ship, no crew, no piracy — a fisherman, a dockmaster, a merchant, a shipbuilder instead. A peaceful ending ' + name + ' may hate at first.'; } },
+    { key:'conditional_freedom',threshold:0,   icon:'🕊️', label:'Conditional Freedom',
+      note: function(name){ return '"You are useful, but watched." Released under restriction — can\'t command a ship independently, stays monitored — but becomes a genuine civilian contact, sharing pirate routes, underworld knowledge, naval tactics.'; } }
   ];
 
   function reformedBetrayalOutcome(score){
     for (let i = 0; i < REFORMED_BETRAYAL_OUTCOMES.length; i++) {
-      if (score >= REFORMED_BETRAYAL_OUTCOMES[i].threshold) return REFORMED_BETRAYAL_OUTCOMES[i];
+      if (score < REFORMED_BETRAYAL_OUTCOMES[i].threshold) return REFORMED_BETRAYAL_OUTCOMES[i];
     }
     return REFORMED_BETRAYAL_OUTCOMES[REFORMED_BETRAYAL_OUTCOMES.length - 1];
   }

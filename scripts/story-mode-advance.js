@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V380 · N\'s Nameless Judgment Fate Table';
+window.__CT_BUILD__='V381 · Reformed Rival Nameless Judgment Table';
