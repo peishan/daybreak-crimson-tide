@@ -933,7 +933,13 @@
       robin: {icon:'🧹', label:"Community Service", flavor: name + " cleans up after himself, for once — the kind of work he always assumed was beneath him."},
       jeff:  {icon:'⚓', label:"Working His Own Rules", flavor: "Unloading cargo. Clearing brush. Thirty minutes to eat. Working the off-days. Every rule " + name + " used to hand down, he's living now."}
     };
-    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether he likes it or not.'};
+    // BUG FIX (San's report): this fallback covers every captured rival
+    // except Robin/Jeff (confirmed male, handled above), including the
+    // procedurally generated pool, which carries no gender data at all
+    // -- "he" here was just wrong for however many of them read female.
+    // Singular "they" since there's genuinely nothing to key a pronoun
+    // off here, same reasoning as any other generic-unknown-person text.
+    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether they like it or not.'};
   }
 
   function communityServiceState(){

@@ -38,7 +38,7 @@
     {id: 'watch_argue',   icon: '🗣️', label: 'Watch Them Argue',      flavor: 'Three brilliant minds, one completely mundane disagreement.'},
     {id: 'help_research', icon: '📚', label: 'Help With Research',    flavor: 'San mostly hands things to people and nods at the right moments.'},
     {id: 'ask_questions', icon: '❓', label: 'Ask Questions',         flavor: 'San asks one question. Regrets it almost immediately, in the best way.'},
-    {id: 'field_notes',   icon: '🗒️', label: 'Review Field Notes',    flavor: "Erynn's handwriting is a mess. Nobody tells her."},
+    {id: 'field_notes',   icon: '🗒️', label: 'Review Field Notes',    flavor: "Erynn's handwriting is a mess. Nobody tells him."},
     {id: 'quiet_study',   icon: '🕯️', label: 'Quiet Study',          flavor: 'For once, nobody\'s arguing about anything at all.'},
     {id: 'dont_break',    icon: '🧪', label: "Try Not to Break Anything", flavor: "Mimi insists it's perfectly safe. San doesn't quite believe her, and stays anyway."}
   ];

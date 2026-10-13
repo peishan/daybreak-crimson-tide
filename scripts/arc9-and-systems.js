@@ -1946,16 +1946,60 @@
   // time this script itself first executes.
   // -------------------------------------------------------------------
 
+  // BUG FIX (San's report): given names here already carry a gender
+  // (e.g. Malay "Aziz" vs "Nurul"), and the Malay bank's own surnames are
+  // gendered too ("bin X" = son of, "binti X" = daughter of) -- but the
+  // two were being rolled completely independently, so roughly half of
+  // every generated Malay captain ended up with a mismatched name
+  // ("Aziz binti Rahman," a man titled "daughter of"). given is now
+  // {name, gender} for every bank, and any bank whose surnames are
+  // actually gendered (only Malay, among these five -- Chinese/Filipino/
+  // Vietnamese/Myanmar family names don't inflect for gender) keys its
+  // surname pool by {male:[], female:[]} instead of one flat list, so
+  // generateEndlessCaptainKey() below can only ever pick a matching pair.
   const NAME_BANKS = [
-    { title: 'Captain', given: ['Wei Ming','Jun Hao','Xiu Ying','Kai Feng','Li Na','Jia Hui','Cheng Long','Mei Xin','Zhi Yong','Yan Ting'],
+    { title: 'Captain',
+      given: [
+        {name:'Wei Ming', gender:'male'}, {name:'Jun Hao', gender:'male'}, {name:'Xiu Ying', gender:'female'},
+        {name:'Kai Feng', gender:'male'}, {name:'Li Na', gender:'female'}, {name:'Jia Hui', gender:'female'},
+        {name:'Cheng Long', gender:'male'}, {name:'Mei Xin', gender:'female'}, {name:'Zhi Yong', gender:'male'},
+        {name:'Yan Ting', gender:'female'}
+      ],
       surname: ['Lim','Tan','Ng','Chen','Wong','Ho','Lee','Goh','Ong','Sim'] },
-    { title: 'Nakhoda', given: ['Aziz','Hafiz','Nurul','Farah','Idris','Aisyah','Rahman','Zainab','Yusri','Mazlan'],
-      surname: ['bin Yaakob','binti Rahman','bin Samad','binti Aziz','bin Karim','binti Hashim','bin Osman','binti Latif','bin Zaman','binti Idris'] },
-    { title: 'Kapitan', given: ['Ramon','Corazon','Danilo','Teresita','Ernesto','Remedios','Rodrigo','Consuelo','Bayani','Luzviminda'],
+    { title: 'Nakhoda',
+      given: [
+        {name:'Aziz', gender:'male'}, {name:'Hafiz', gender:'male'}, {name:'Nurul', gender:'female'},
+        {name:'Farah', gender:'female'}, {name:'Idris', gender:'male'}, {name:'Aisyah', gender:'female'},
+        {name:'Rahman', gender:'male'}, {name:'Zainab', gender:'female'}, {name:'Yusri', gender:'male'},
+        {name:'Mazlan', gender:'male'}
+      ],
+      surname: {
+        male:   ['bin Yaakob','bin Samad','bin Karim','bin Osman','bin Zaman'],
+        female: ['binti Rahman','binti Aziz','binti Hashim','binti Latif','binti Idris']
+      } },
+    { title: 'Kapitan',
+      given: [
+        {name:'Ramon', gender:'male'}, {name:'Corazon', gender:'female'}, {name:'Danilo', gender:'male'},
+        {name:'Teresita', gender:'female'}, {name:'Ernesto', gender:'male'}, {name:'Remedios', gender:'female'},
+        {name:'Rodrigo', gender:'male'}, {name:'Consuelo', gender:'female'}, {name:'Bayani', gender:'male'},
+        {name:'Luzviminda', gender:'female'}
+      ],
       surname: ['Santos','Cruz','Bautista','Garcia','Ramos','Mercado','Aquino','Torres','Del Rosario','Navarro'] },
-    { title: 'Thuyen Truong', given: ['Van Hai','Thi Thu','Duc Anh','Ngoc Anh','Quang Minh','Thanh Ha','Van Tam','Thi Hoa','Cong Danh','Kim Ngan'],
+    { title: 'Thuyen Truong',
+      given: [
+        {name:'Van Hai', gender:'male'}, {name:'Thi Thu', gender:'female'}, {name:'Duc Anh', gender:'male'},
+        {name:'Ngoc Anh', gender:'female'}, {name:'Quang Minh', gender:'male'}, {name:'Thanh Ha', gender:'female'},
+        {name:'Van Tam', gender:'male'}, {name:'Thi Hoa', gender:'female'}, {name:'Cong Danh', gender:'male'},
+        {name:'Kim Ngan', gender:'female'}
+      ],
       surname: ['Nguyen','Tran','Le','Pham','Hoang','Vu','Dang','Bui','Do','Ngo'] },
-    { title: 'Bo', given: ['Zaw Min','Thida','Kyaw Swar','Nilar','Htet Aung','Khin Mar','Ye Naing','Su Mon','Aung Ko','Moe Thuzar'],
+    { title: 'Bo',
+      given: [
+        {name:'Zaw Min', gender:'male'}, {name:'Thida', gender:'female'}, {name:'Kyaw Swar', gender:'male'},
+        {name:'Nilar', gender:'female'}, {name:'Htet Aung', gender:'male'}, {name:'Khin Mar', gender:'female'},
+        {name:'Ye Naing', gender:'male'}, {name:'Su Mon', gender:'female'}, {name:'Aung Ko', gender:'male'},
+        {name:'Moe Thuzar', gender:'female'}
+      ],
       surname: ['Win','Aung','Htun','Naing','Thura','Maung','Kyaw','Soe','Tun','Myat'] }
   ];
 
@@ -2041,12 +2085,17 @@
   function generateEndlessCaptainKey(){
     const bank = NAME_BANKS[Math.floor(Math.random() * NAME_BANKS.length)];
     const given = bank.given[Math.floor(Math.random() * bank.given.length)];
-    const surname = bank.surname[Math.floor(Math.random() * bank.surname.length)];
-    const baseKey = 'gen_' + sanitizeKeyPart(surname) + '_' + sanitizeKeyPart(given);
+    // Gendered surname pool (currently just the Malay bank's bin/binti) ->
+    // pick only from the pool matching this given name's own gender, so
+    // the two can never mismatch. A flat array (every other bank's family
+    // names, which don't inflect for gender) is picked from as before.
+    const surnamePool = Array.isArray(bank.surname) ? bank.surname : (bank.surname[given.gender] || bank.surname.male);
+    const surname = surnamePool[Math.floor(Math.random() * surnamePool.length)];
+    const baseKey = 'gen_' + sanitizeKeyPart(surname) + '_' + sanitizeKeyPart(given.name);
     const priorUses = countPriorUses(baseKey);
     const fullKey = priorUses === 0 ? baseKey : baseKey + '_v' + (priorUses + 1);
     const descriptor = {
-      displayName: surname + ' ' + given + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
+      displayName: surname + ' ' + given.name + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
       title: bank.title
     };
     generatedCaptainsState()[fullKey] = descriptor;
