@@ -2096,7 +2096,11 @@
     const fullKey = priorUses === 0 ? baseKey : baseKey + '_v' + (priorUses + 1);
     const descriptor = {
       displayName: surname + ' ' + given.name + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
-      title: bank.title
+      title: bank.title,
+      // Stored (not just used to pick the surname above) so
+      // window.pronounFor() (core-engine.js) can give this captain a
+      // real he/her instead of always falling back to "they".
+      gender: given.gender
     };
     generatedCaptainsState()[fullKey] = descriptor;
     registerGeneratedCaptain(fullKey, descriptor);

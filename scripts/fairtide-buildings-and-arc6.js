@@ -934,12 +934,14 @@
       jeff:  {icon:'⚓', label:"Working His Own Rules", flavor: "Unloading cargo. Clearing brush. Thirty minutes to eat. Working the off-days. Every rule " + name + " used to hand down, he's living now."}
     };
     // BUG FIX (San's report): this fallback covers every captured rival
-    // except Robin/Jeff (confirmed male, handled above), including the
-    // procedurally generated pool, which carries no gender data at all
-    // -- "he" here was just wrong for however many of them read female.
-    // Singular "they" since there's genuinely nothing to key a pronoun
-    // off here, same reasoning as any other generic-unknown-person text.
-    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether they like it or not.'};
+    // except Robin/Jeff (confirmed male, handled above). "he" was wrong
+    // for however many of them read female. Now reads window.pronounFor()
+    // (core-engine.js) -- a generated-pool captain actually has a stored
+    // gender (arc9-and-systems.js's NAME_BANKS) and gets a real his/her;
+    // the fixed 52-name roster has no gender data at all, so those still
+    // correctly fall back to "their," same as anyone else unconfirmed.
+    const pronoun = (typeof window.pronounFor === 'function') ? window.pronounFor(key) : {subject:'they'};
+    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether ' + pronoun.subject + ' like' + (pronoun.subject === 'they' ? '' : 's') + ' it or not.'};
   }
 
   function communityServiceState(){

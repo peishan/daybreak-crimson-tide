@@ -351,6 +351,42 @@ const ALL_PARTY = [
   // the whole point of keeping the two mechanically separate.
   {id:'caelan',      name:'CAELAN',     role:'Magical Artificer',     combatRole:'Support',  hp:78, mp:95,  portrait:'⚙️', portraitAsset:'assets/portraits/caelan.jpg', desc:'Warden Engineer. Native to Veyren — his craft is what holds a place together, not what wins a fight outright.'}
 ];
+
+// BUG FIX (San's report: a shared combat log line hardcoded "them" for
+// whoever uses a taunt skill, which read oddly for Joel specifically —
+// but Ate Joy shares that same exact line via Warden's Guard, and she's
+// established female, so hardcoding "him" there instead would have just
+// traded one wrong pronoun for another). Confirmed against each
+// character's own established pronoun elsewhere in the game's existing
+// text (ALL_PARTY's own desc field, or story chapters) rather than
+// guessed — Iris and KW Liang are left out because no chapter has
+// actually established a pronoun for either of them yet; pronounFor()
+// below falls back to "they" for anyone missing here, same as it does
+// for the vast majority of pirates (the fixed 52-name roster carries no
+// gender data at all; only the endless generated pool does, per its own
+// NAME_BANKS gender tag — see arc9-and-systems.js).
+const PARTY_GENDER = {
+  san: 'female', joel: 'male', aisyah: 'female', eliz: 'female', mezstorm: 'female',
+  senedra: 'female', zaki: 'male', ser_aldric: 'male', sister_wren: 'female', soel: 'male',
+  dr_aa: 'male', mimi: 'female', brada_shah: 'male', renn: 'male', erynn: 'male',
+  ate_joy: 'female', caelan: 'male'
+};
+window.PARTY_GENDER = PARTY_GENDER;
+
+const PRONOUNS = {
+  male:   { subject:'he',   object:'him',  possessive:'his'  },
+  female: { subject:'she',  object:'her',  possessive:'her'  },
+  unknown:{ subject:'they', object:'them', possessive:'their' }
+};
+
+// Generic: checks the hand-confirmed party registry first, then falls
+// back to a generated captain's own stored gender (arc9-and-systems.js's
+// NAME_BANKS), then "they" if nothing is actually known. Never guesses.
+window.pronounFor = function(id){
+  const known = PARTY_GENDER[id] || (game.generatedCaptains && game.generatedCaptains[id] && game.generatedCaptains[id].gender);
+  return PRONOUNS[known] || PRONOUNS.unknown;
+};
+
 function memberUnlocked(m){
   if (m.id === 'san') return true;
   if (m.id === 'soel') return level() >= 10;
@@ -5042,7 +5078,7 @@ function combatAction(action) {
       const skill = (action === 'HIGHSKILL') ? kit.highSkill : kit.skill;
       if (!skill) { toast('No skill available!'); return; }
       if (skill.effect === 'taunt') {
-        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on them.');
+        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on ' + window.pronounFor(actor.id).object + '.');
         // Bonded by the Tide (Ch.4): when Joel uses Shield Wall with the
         // bond active, San catches a brief haste windfall off the surge —
         // now scaled by the current San/Joel bond tier instead of a fixed
