@@ -3952,6 +3952,12 @@ function sailTo(portId) {
 // useful as a running total than a per-trip count. Deliberately doesn't
 // count illusion encounters (arc10-12.js's own EVENTS entry) -- those
 // aren't a hostile interception, just a narrative beat.
+// Player request: a single interception used to wipe the whole streak
+// back to 0, which made a long streak (15-30 days, matching the
+// achievement thresholds below) brutal to rebuild for anyone who can't
+// play every day. An interception now only costs a week (7 days) off
+// the streak instead of resetting it entirely.
+const INTERCEPTION_STREAK_PENALTY_DAYS = 7;
 function renderInterceptionStreak() {
   const el = document.getElementById('voyageInterceptionStreak');
   if (!el) return;
@@ -3976,7 +3982,7 @@ function doVoyage(portId, days, dangerLevel) {
       document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
 
       if (event.combat) {
-        game.daysSinceInterception = 0;
+        game.daysSinceInterception = Math.max(0, (game.daysSinceInterception || 0) - INTERCEPTION_STREAK_PENALTY_DAYS);
         renderInterceptionStreak();
         clearInterval(interval);
         // Pirates/sirens (scripts/voyage-group-encounters.js) fight as a
