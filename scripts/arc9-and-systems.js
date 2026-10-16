@@ -431,6 +431,63 @@
     return track.tiers[window.bondTier(trackKey)];
   };
 
+  // UNCAPPED PROGRESSION (San's own request: "bonds with no limits" —
+  // this save is a long journey). bondTier()/bondTierDef() above stay
+  // exactly as they were (a real index into the curated tiers array —
+  // several call sites index track.tiers[...] directly with that value,
+  // so changing its contract would silently break them). This is a
+  // separate, generic helper every render/bonus call site now goes
+  // through instead: once points pass the last curated tier, it
+  // synthesizes further ones rather than flatlining at "(Max)" forever.
+  //
+  // The extrapolation reuses the LAST real gap between tiers as a fixed
+  // step size (never shrinking, never exploding), and for every numeric
+  // field the tier objects carry (bonus, or San & Joel's own hpMpPct/
+  // dmgReductionPct/hasteTurns/hastePct), keeps applying that same
+  // field's last real per-tier increment at that same cadence — so
+  // growth stays smooth and predictable instead of guessing at an
+  // arbitrary curve, and works for every track shape with no per-track
+  // special-casing. Tracks with bonus:0 by design (the individual
+  // companion bonds — "story and memories, not another stacking
+  // percentage") keep bonus 0 forever too; only the name and threshold
+  // keep climbing for those, so the track still visibly progresses
+  // instead of looking stuck at "Max tier reached."
+  window.bondProgress = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return null;
+    const tiers = track.tiers;
+    const points = bondState()[trackKey].points;
+    const lastIdx = tiers.length - 1;
+    const last = tiers[lastIdx];
+    const secondLast = tiers[lastIdx - 1] || last;
+    const step = Math.max(1, last.threshold - secondLast.threshold);
+
+    if (points < last.threshold + step) {
+      // Still within (or just at) the curated tiers -- same tier lookup
+      // as before, except "Max" now always has a real next threshold.
+      let idx = 0;
+      for (let i = 0; i < tiers.length; i++) { if (points >= tiers[i].threshold) idx = i; }
+      const nextThreshold = (idx < lastIdx) ? tiers[idx+1].threshold : last.threshold + step;
+      return { tierDef: tiers[idx], nextThreshold: nextThreshold, points: points, levelsBeyond: 0 };
+    }
+
+    const levelsBeyond = Math.floor((points - last.threshold) / step);
+    const thisThreshold = last.threshold + step * levelsBeyond;
+    const nextThreshold = thisThreshold + step;
+    const tierDef = Object.assign({}, last, {
+      name: (track.label || '') + ' — Level ' + (lastIdx + 1 + levelsBeyond),
+      threshold: thisThreshold
+    });
+    Object.keys(last).forEach(function(field){
+      if (field === 'name' || field === 'threshold') return;
+      if (typeof last[field] === 'number' && typeof secondLast[field] === 'number') {
+        const fieldStep = last[field] - secondLast[field];
+        tierDef[field] = Math.round((last[field] + fieldStep * levelsBeyond) * 10000) / 10000;
+      }
+    });
+    return { tierDef: tierDef, nextThreshold: nextThreshold, points: points, levelsBeyond: levelsBeyond };
+  };
+
   // Whether the bonded character(s) are actually fielded right now — the
   // synergy condition. San & Crew uses a headcount instead of named
   // members (any 3+ non-San crew in the active party); San & The Later
@@ -500,7 +557,8 @@
     return sanHp > 0 && joelHp > 0;
   };
   window.sanJoelBondValues = function(){
-    return SAN_JOEL_TIERS[window.bondTier('san_joel')] || SAN_JOEL_TIERS[0];
+    const progress = window.bondProgress('san_joel');
+    return (progress && progress.tierDef) || SAN_JOEL_TIERS[0];
   };
 
   // -------------------------------------------------------------------
@@ -517,19 +575,19 @@
   window.getReputationBonus = function(statKey){
     let total = oldGetReputationBonusForBonds ? oldGetReputationBonusForBonds(statKey) : 0;
     if (window.bondSynergyActive('san_crew')) {
-      const def = SAN_CREW_TIERS[window.bondTier('san_crew')];
+      const def = window.bondProgress('san_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     if (window.bondSynergyActive('san_trio')) {
-      const def = SAN_TRIO_TIERS[window.bondTier('san_trio')];
+      const def = window.bondProgress('san_trio').tierDef;
       if (def && statKey === 'critBonus') total += def.bonus;
     }
     if (window.bondSynergyActive('tm_crew')) {
-      const def = TM_CREW_TIERS[window.bondTier('tm_crew')];
+      const def = window.bondProgress('tm_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     if (window.bondSynergyActive('c_adv_crew')) {
-      const def = C_ADV_CREW_TIERS[window.bondTier('c_adv_crew')];
+      const def = window.bondProgress('c_adv_crew').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     return total;
@@ -567,8 +625,9 @@
     Object.keys(BOND_TRACKS).forEach(key=>{
       const track = BOND_TRACKS[key];
       const tierIdx = window.bondTier(key);
-      const tierDef = track.tiers[tierIdx];
-      const nextTier = track.tiers[tierIdx+1];
+      const progress = window.bondProgress(key);
+      const tierDef = progress.tierDef;
+      const nextTier = progress.nextThreshold != null ? { threshold: progress.nextThreshold } : null;
       const points = bondState()[key].points;
       const synergyActive = window.bondSynergyActive(key);
       const canSpend = window.canSpendTimeOnBond(key);
@@ -1887,16 +1946,60 @@
   // time this script itself first executes.
   // -------------------------------------------------------------------
 
+  // BUG FIX (San's report): given names here already carry a gender
+  // (e.g. Malay "Aziz" vs "Nurul"), and the Malay bank's own surnames are
+  // gendered too ("bin X" = son of, "binti X" = daughter of) -- but the
+  // two were being rolled completely independently, so roughly half of
+  // every generated Malay captain ended up with a mismatched name
+  // ("Aziz binti Rahman," a man titled "daughter of"). given is now
+  // {name, gender} for every bank, and any bank whose surnames are
+  // actually gendered (only Malay, among these five -- Chinese/Filipino/
+  // Vietnamese/Myanmar family names don't inflect for gender) keys its
+  // surname pool by {male:[], female:[]} instead of one flat list, so
+  // generateEndlessCaptainKey() below can only ever pick a matching pair.
   const NAME_BANKS = [
-    { title: 'Captain', given: ['Wei Ming','Jun Hao','Xiu Ying','Kai Feng','Li Na','Jia Hui','Cheng Long','Mei Xin','Zhi Yong','Yan Ting'],
+    { title: 'Captain',
+      given: [
+        {name:'Wei Ming', gender:'male'}, {name:'Jun Hao', gender:'male'}, {name:'Xiu Ying', gender:'female'},
+        {name:'Kai Feng', gender:'male'}, {name:'Li Na', gender:'female'}, {name:'Jia Hui', gender:'female'},
+        {name:'Cheng Long', gender:'male'}, {name:'Mei Xin', gender:'female'}, {name:'Zhi Yong', gender:'male'},
+        {name:'Yan Ting', gender:'female'}
+      ],
       surname: ['Lim','Tan','Ng','Chen','Wong','Ho','Lee','Goh','Ong','Sim'] },
-    { title: 'Nakhoda', given: ['Aziz','Hafiz','Nurul','Farah','Idris','Aisyah','Rahman','Zainab','Yusri','Mazlan'],
-      surname: ['bin Yaakob','binti Rahman','bin Samad','binti Aziz','bin Karim','binti Hashim','bin Osman','binti Latif','bin Zaman','binti Idris'] },
-    { title: 'Kapitan', given: ['Ramon','Corazon','Danilo','Teresita','Ernesto','Remedios','Rodrigo','Consuelo','Bayani','Luzviminda'],
+    { title: 'Nakhoda',
+      given: [
+        {name:'Aziz', gender:'male'}, {name:'Hafiz', gender:'male'}, {name:'Nurul', gender:'female'},
+        {name:'Farah', gender:'female'}, {name:'Idris', gender:'male'}, {name:'Aisyah', gender:'female'},
+        {name:'Rahman', gender:'male'}, {name:'Zainab', gender:'female'}, {name:'Yusri', gender:'male'},
+        {name:'Mazlan', gender:'male'}
+      ],
+      surname: {
+        male:   ['bin Yaakob','bin Samad','bin Karim','bin Osman','bin Zaman'],
+        female: ['binti Rahman','binti Aziz','binti Hashim','binti Latif','binti Idris']
+      } },
+    { title: 'Kapitan',
+      given: [
+        {name:'Ramon', gender:'male'}, {name:'Corazon', gender:'female'}, {name:'Danilo', gender:'male'},
+        {name:'Teresita', gender:'female'}, {name:'Ernesto', gender:'male'}, {name:'Remedios', gender:'female'},
+        {name:'Rodrigo', gender:'male'}, {name:'Consuelo', gender:'female'}, {name:'Bayani', gender:'male'},
+        {name:'Luzviminda', gender:'female'}
+      ],
       surname: ['Santos','Cruz','Bautista','Garcia','Ramos','Mercado','Aquino','Torres','Del Rosario','Navarro'] },
-    { title: 'Thuyen Truong', given: ['Van Hai','Thi Thu','Duc Anh','Ngoc Anh','Quang Minh','Thanh Ha','Van Tam','Thi Hoa','Cong Danh','Kim Ngan'],
+    { title: 'Thuyen Truong',
+      given: [
+        {name:'Van Hai', gender:'male'}, {name:'Thi Thu', gender:'female'}, {name:'Duc Anh', gender:'male'},
+        {name:'Ngoc Anh', gender:'female'}, {name:'Quang Minh', gender:'male'}, {name:'Thanh Ha', gender:'female'},
+        {name:'Van Tam', gender:'male'}, {name:'Thi Hoa', gender:'female'}, {name:'Cong Danh', gender:'male'},
+        {name:'Kim Ngan', gender:'female'}
+      ],
       surname: ['Nguyen','Tran','Le','Pham','Hoang','Vu','Dang','Bui','Do','Ngo'] },
-    { title: 'Bo', given: ['Zaw Min','Thida','Kyaw Swar','Nilar','Htet Aung','Khin Mar','Ye Naing','Su Mon','Aung Ko','Moe Thuzar'],
+    { title: 'Bo',
+      given: [
+        {name:'Zaw Min', gender:'male'}, {name:'Thida', gender:'female'}, {name:'Kyaw Swar', gender:'male'},
+        {name:'Nilar', gender:'female'}, {name:'Htet Aung', gender:'male'}, {name:'Khin Mar', gender:'female'},
+        {name:'Ye Naing', gender:'male'}, {name:'Su Mon', gender:'female'}, {name:'Aung Ko', gender:'male'},
+        {name:'Moe Thuzar', gender:'female'}
+      ],
       surname: ['Win','Aung','Htun','Naing','Thura','Maung','Kyaw','Soe','Tun','Myat'] }
   ];
 
@@ -1959,6 +2062,7 @@
     const store = generatedCaptainsState();
     Object.keys(store).forEach(function(key){ registerGeneratedCaptain(key, store[key]); });
   }
+  window.ensureGeneratedCaptainsReplayed = ensureGeneratedCaptainsReplayed;
   ensureGeneratedCaptainsReplayed(); // best-effort at load time; re-armed below in case loadGame() hasn't run yet
 
   function ensureBaseKeyUseCounts(){
@@ -1981,13 +2085,22 @@
   function generateEndlessCaptainKey(){
     const bank = NAME_BANKS[Math.floor(Math.random() * NAME_BANKS.length)];
     const given = bank.given[Math.floor(Math.random() * bank.given.length)];
-    const surname = bank.surname[Math.floor(Math.random() * bank.surname.length)];
-    const baseKey = 'gen_' + sanitizeKeyPart(surname) + '_' + sanitizeKeyPart(given);
+    // Gendered surname pool (currently just the Malay bank's bin/binti) ->
+    // pick only from the pool matching this given name's own gender, so
+    // the two can never mismatch. A flat array (every other bank's family
+    // names, which don't inflect for gender) is picked from as before.
+    const surnamePool = Array.isArray(bank.surname) ? bank.surname : (bank.surname[given.gender] || bank.surname.male);
+    const surname = surnamePool[Math.floor(Math.random() * surnamePool.length)];
+    const baseKey = 'gen_' + sanitizeKeyPart(surname) + '_' + sanitizeKeyPart(given.name);
     const priorUses = countPriorUses(baseKey);
     const fullKey = priorUses === 0 ? baseKey : baseKey + '_v' + (priorUses + 1);
     const descriptor = {
-      displayName: surname + ' ' + given + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
-      title: bank.title
+      displayName: surname + ' ' + given.name + (priorUses === 0 ? '' : romanSuffix(priorUses + 1)),
+      title: bank.title,
+      // Stored (not just used to pick the surname above) so
+      // window.pronounFor() (core-engine.js) can give this captain a
+      // real he/her instead of always falling back to "they".
+      gender: given.gender
     };
     generatedCaptainsState()[fullKey] = descriptor;
     registerGeneratedCaptain(fullKey, descriptor);

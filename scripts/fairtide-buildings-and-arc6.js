@@ -26,17 +26,21 @@
   // wrong. Every building now has real names through level 8, matching
   // the cap the mechanism already allows.
   const FT_BUILDINGS = {
-    // Cap raised 5 -> 15 (San's own request: this save is a long journey,
-    // and 8 — the old base-5 cap plus the one-time Ch.17 +3 bonus below —
-    // was getting within reach). Combined with that same +3 bonus, the
-    // real ceiling is now 18. Not extending the hand-authored tierNames
-    // arrays to match: see the tierName fallback in renderFTBuildingsTab()
-    // a little further down, which now covers any level beyond the
-    // curated set with a plain, never-blank label instead of needing 10
-    // more invented tier names per building (same bug class as the last
-    // fix otherwise — a numeric cap that quietly outgrows its tierNames
-    // array).
-    port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:15,
+    // Cap raised 5 -> 15 -> effectively uncapped (San's own request,
+    // twice now: this save is a long journey). 9999 rather than literal
+    // Infinity on purpose — Infinity doesn't survive this codebase's own
+    // JSON save/load round-trip (see captureRival's own documented bug
+    // fix for exactly that), so a finite, absurdly-high number is the
+    // safe way to mean "no real limit." Other buildings still cap at
+    // whichever is LOWER between this and Port HQ's own current level
+    // (window.fairTideBuildingCap below) — that's the real, meaningful
+    // progression gate ("raise Port HQ first"), not an arbitrary ceiling,
+    // and uncapping Port HQ itself uncaps every other building through
+    // it automatically. Not extending the hand-authored tierNames arrays
+    // to match: see the tierName fallback in renderFTBuildingsTab() a
+    // little further down, which already covers any level beyond the
+    // curated set with a plain, never-blank label.
+    port_hq:      {name:'Port HQ',       icon:'🏮', desc:'The heart of Fair Tide. Raises the level ceiling for every other building and speeds up every gathering run.', cost:{timber:40,stone:40,food:20,trade:30}, cap:9999,
       tierNames:['Fair Tide Claimed','A Real Foundation','Port HQ','A Port That Runs Itself','The Heart of Fair Tide','A Port Worth Returning To','The Capital of Somewhere Real','Fair Tide, Fully Realized']},
     warehouse:    {name:'Warehouse',     icon:'📦', desc:'Bigger hauls from every gathering party, and higher resource storage.', rosterKey:'dudin',  companionName:'Dudin',  cost:{timber:30,stone:20},
       tierNames:['A Place to Stack Crates','Proper Shelving','The Warehouse','Room for More','Dudin\'s Domain','Dudin\'s Second Wing','Nothing Goes to Waste Here','The Warehouse That Outgrew Fair Tide']},
@@ -342,15 +346,14 @@
         // in window.BOND_TRACKS gets this line for free, no per-character
         // wiring needed here.
         const bondKey = 'san_' + id;
-        const bondText = (typeof window.BOND_TRACKS !== 'undefined' && window.BOND_TRACKS[bondKey] && typeof window.bondTier === 'function')
+        const bondText = (typeof window.BOND_TRACKS !== 'undefined' && window.BOND_TRACKS[bondKey] && typeof window.bondProgress === 'function')
           ? (function(){
               const track = window.BOND_TRACKS[bondKey];
-              const tierIdx = window.bondTier(bondKey);
-              const tierDef = track.tiers[tierIdx];
-              const nextTier = track.tiers[tierIdx+1];
+              const progress = window.bondProgress(bondKey);
+              const tierDef = progress.tierDef;
               const points = (window.bondState ? window.bondState()[bondKey].points : 0);
               return '<br><span style="font-size:.78rem;opacity:.7;">'+track.icon+' Bond: '+esc(tierDef.name)+
-                (nextTier ? ' ('+points+'/'+nextTier.threshold+')' : ' (Max)')+'</span>';
+                (progress.nextThreshold != null ? ' ('+points+'/'+progress.nextThreshold+')' : ' (Max)')+'</span>';
             })()
           : '';
         // Generic, same idiom as bondText above: any roster id with a
@@ -930,7 +933,15 @@
       robin: {icon:'🧹', label:"Community Service", flavor: name + " cleans up after himself, for once — the kind of work he always assumed was beneath him."},
       jeff:  {icon:'⚓', label:"Working His Own Rules", flavor: "Unloading cargo. Clearing brush. Thirty minutes to eat. Working the off-days. Every rule " + name + " used to hand down, he's living now."}
     };
-    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether he likes it or not.'};
+    // BUG FIX (San's report): this fallback covers every captured rival
+    // except Robin/Jeff (confirmed male, handled above). "he" was wrong
+    // for however many of them read female. Now reads window.pronounFor()
+    // (core-engine.js) -- a generated-pool captain actually has a stored
+    // gender (arc9-and-systems.js's NAME_BANKS) and gets a real his/her;
+    // the fixed 52-name roster has no gender data at all, so those still
+    // correctly fall back to "their," same as anyone else unconfirmed.
+    const pronoun = (typeof window.pronounFor === 'function') ? window.pronounFor(key) : {subject:'they'};
+    return table[key] || {icon:'🧹', label:"Community Service", flavor: name + ' does useful work now, whether ' + pronoun.subject + ' like' + (pronoun.subject === 'they' ? '' : 's') + ' it or not.'};
   }
 
   function communityServiceState(){
@@ -975,9 +986,33 @@
   // falling back to a title-cased version of the key for a rival that
   // doesn't have one yet. Any future named rival works automatically,
   // no new code needed per-person.
+  // BUG FIX (San's report: captains from the endless generated pool
+  // showing up as raw keys like "Gen_bin_osman_farah" in the "Deciding
+  // Their Fate" panel). Generated captains DO get a proper formatted
+  // name registered into HARBOR_ENEMIES (arc9-and-systems.js's
+  // registerGeneratedCaptain) — but only once ensureGeneratedCaptains
+  // Replayed() has actually run, which this function never triggered
+  // itself, relying entirely on whichever OTHER code path happened to
+  // call it first. A panel that renders before that replay (e.g. a
+  // fresh load straight into pending community-service decisions) hit
+  // the fallback below with an empty HARBOR_ENEMIES entry. Calling the
+  // replay here too, defensively, closes that gap regardless of what
+  // else has or hasn't run yet.
+  function humanizeGeneratedKey(key){
+    const m = key.match(/^(.*)_v(\d+)$/);
+    const base = m ? m[1] : key;
+    const suffixNum = m ? Number(m[2]) : 0;
+    const words = base.replace(/^gen_/, '').split('_').filter(Boolean)
+      .map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
+    const ROMAN = ['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV'];
+    const suffix = suffixNum > 0 ? ' ' + (ROMAN[suffixNum] || suffixNum) : '';
+    return (words.join(' ') || key) + suffix;
+  }
+
   function rivalDisplayName(key){
+    if (typeof window.ensureGeneratedCaptainsReplayed === 'function') window.ensureGeneratedCaptainsReplayed();
     const base = (typeof HARBOR_ENEMIES!=='undefined') ? HARBOR_ENEMIES[key] : null;
-    if (!base || !base.name) return key.charAt(0).toUpperCase() + key.slice(1);
+    if (!base || !base.name) return humanizeGeneratedKey(key);
     const words = base.name.split(' ');
     const firstWord = words[0].replace(/[^\w]/g,'');
     // BUG FIX: two different captains (Siti Norhayati / Siti Rahayu)

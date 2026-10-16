@@ -69,7 +69,7 @@
   window.getReputationBonus = function(statKey){
     let total = oldGetReputationBonusForSanJoy ? oldGetReputationBonusForSanJoy(statKey) : 0;
     if (typeof window.bondSynergyActive === 'function' && window.bondSynergyActive('san_joy')) {
-      const def = SAN_JOY_TIERS[window.bondTier('san_joy')];
+      const def = window.bondProgress('san_joy').tierDef;
       if (def && (statKey === 'goldBonus' || statKey === 'xpBonus')) total += def.bonus;
     }
     return total;
@@ -82,8 +82,9 @@
   function renderSanJoyBondCard(){
     const track = window.BOND_TRACKS.san_joy;
     const tierIdx = window.bondTier('san_joy');
-    const tierDef = track.tiers[tierIdx];
-    const nextTier = track.tiers[tierIdx + 1];
+    const progress = window.bondProgress('san_joy');
+    const tierDef = progress.tierDef;
+    const nextTier = progress.nextThreshold != null ? { threshold: progress.nextThreshold } : null;
     const points = window.bondState ? window.bondState().san_joy.points : 0;
     const synergyActive = (typeof window.bondSynergyActive === 'function') && window.bondSynergyActive('san_joy');
     const canSpend = (typeof window.canSpendTimeOnBond === 'function') ? window.canSpendTimeOnBond('san_joy') : true;

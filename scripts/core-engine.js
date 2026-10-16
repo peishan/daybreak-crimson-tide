@@ -351,6 +351,42 @@ const ALL_PARTY = [
   // the whole point of keeping the two mechanically separate.
   {id:'caelan',      name:'CAELAN',     role:'Magical Artificer',     combatRole:'Support',  hp:78, mp:95,  portrait:'⚙️', portraitAsset:'assets/portraits/caelan.jpg', desc:'Warden Engineer. Native to Veyren — his craft is what holds a place together, not what wins a fight outright.'}
 ];
+
+// BUG FIX (San's report: a shared combat log line hardcoded "them" for
+// whoever uses a taunt skill, which read oddly for Joel specifically —
+// but Ate Joy shares that same exact line via Warden's Guard, and she's
+// established female, so hardcoding "him" there instead would have just
+// traded one wrong pronoun for another). Confirmed against each
+// character's own established pronoun elsewhere in the game's existing
+// text (ALL_PARTY's own desc field, or story chapters) rather than
+// guessed — Iris and KW Liang are left out because no chapter has
+// actually established a pronoun for either of them yet; pronounFor()
+// below falls back to "they" for anyone missing here, same as it does
+// for the vast majority of pirates (the fixed 52-name roster carries no
+// gender data at all; only the endless generated pool does, per its own
+// NAME_BANKS gender tag — see arc9-and-systems.js).
+const PARTY_GENDER = {
+  san: 'female', joel: 'male', aisyah: 'female', eliz: 'female', mezstorm: 'female',
+  senedra: 'female', zaki: 'male', ser_aldric: 'male', sister_wren: 'female', soel: 'male',
+  dr_aa: 'male', mimi: 'female', brada_shah: 'male', renn: 'male', erynn: 'male',
+  ate_joy: 'female', caelan: 'male'
+};
+window.PARTY_GENDER = PARTY_GENDER;
+
+const PRONOUNS = {
+  male:   { subject:'he',   object:'him',  possessive:'his'  },
+  female: { subject:'she',  object:'her',  possessive:'her'  },
+  unknown:{ subject:'they', object:'them', possessive:'their' }
+};
+
+// Generic: checks the hand-confirmed party registry first, then falls
+// back to a generated captain's own stored gender (arc9-and-systems.js's
+// NAME_BANKS), then "they" if nothing is actually known. Never guesses.
+window.pronounFor = function(id){
+  const known = PARTY_GENDER[id] || (game.generatedCaptains && game.generatedCaptains[id] && game.generatedCaptains[id].gender);
+  return PRONOUNS[known] || PRONOUNS.unknown;
+};
+
 function memberUnlocked(m){
   if (m.id === 'san') return true;
   if (m.id === 'soel') return level() >= 10;
@@ -3788,11 +3824,28 @@ function bountyPool() {
 function refreshBounties() {
   const today = todayKey();
   if (game.bountyDay === today && game.bounties.length) return;
+  // LOCK (San's own report: bounties reshuffling out from under her every
+  // time she crosses into a new in-game day, losing whichever board she
+  // actually wanted to work on). While locked, skip the reshuffle
+  // entirely and just keep today's stamp moving forward so nothing here
+  // ever re-triggers once unlocked either — the board, including
+  // whatever progress/completions are already on it, stays exactly as
+  // it was until the player unlocks it themselves.
+  if (game.bountiesLocked && game.bounties && game.bounties.length) {
+    game.bountyDay = today;
+    return;
+  }
   const pool = bountyPool();
   const shuffled = pool.map(b => Object.assign({}, b, {c:0, done:false})).sort(() => Math.random() - 0.5);
   game.bounties = shuffled.slice(0, 10);
   game.bountyDay = today;
 }
+window.toggleBountyLock = function(){
+  game.bountiesLocked = !game.bountiesLocked;
+  toast(game.bountiesLocked ? '🔒 Bounty board locked — it will stay exactly as it is.' : '🔓 Bounty board unlocked — it will refresh again tomorrow.');
+  if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  if (typeof window.renderExplore === 'function') window.renderExplore();
+};
 function checkBountyProgress(type, target, amount) {
   refreshBounties();
   game.bounties.forEach(b => {
@@ -3811,7 +3864,8 @@ function checkBountyProgress(type, target, amount) {
 }
 function bountyBoardHTML() {
   refreshBounties();
-  return `<h3 style="font-family:Cinzel;color:var(--gold);margin:18px 0 8px;font-size:1rem;">💰 Bounty Board</h3><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">Refreshes daily. Stack these on top of your normal hunting for bonus pay.</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span>${questFoundAtLine(b)}<br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
+  const locked = !!game.bountiesLocked;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:18px 0 4px;flex-wrap:wrap;"><h3 style="font-family:Cinzel;color:var(--gold);font-size:1rem;margin:0;">💰 Bounty Board</h3><button class="btn btn-small${locked ? ' btn-success' : ''}" onclick="toggleBountyLock()">${locked ? '🔒 Locked — tap to unlock' : '🔓 Lock this board'}</button></div><p style="font-size:0.8rem;opacity:0.75;margin-bottom:10px;">${locked ? 'Locked — this board will stay exactly as it is, even across days.' : 'Refreshes daily. Stack these on top of your normal hunting for bonus pay.'}</p><div class="chapter-grid">${game.bounties.map(b => `<article class="quest-item ${b.done ? 'completed' : ''}"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.4rem;">${b.icon}</div><div><strong>${b.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${b.desc}</span>${questFoundAtLine(b)}<br><b style="font-size:0.8rem;">${b.done ? 'COMPLETE ✓' : `${b.c}/${b.need} · ${b.rw.xp} XP + ${b.rw.gold}g`}</b></div></div></article>`).join('')}</div>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -3898,6 +3952,12 @@ function sailTo(portId) {
 // useful as a running total than a per-trip count. Deliberately doesn't
 // count illusion encounters (arc10-12.js's own EVENTS entry) -- those
 // aren't a hostile interception, just a narrative beat.
+// Player request: a single interception used to wipe the whole streak
+// back to 0, which made a long streak (15-30 days, matching the
+// achievement thresholds below) brutal to rebuild for anyone who can't
+// play every day. An interception now only costs a week (7 days) off
+// the streak instead of resetting it entirely.
+const INTERCEPTION_STREAK_PENALTY_DAYS = 7;
 function renderInterceptionStreak() {
   const el = document.getElementById('voyageInterceptionStreak');
   if (!el) return;
@@ -3922,7 +3982,7 @@ function doVoyage(portId, days, dangerLevel) {
       document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
 
       if (event.combat) {
-        game.daysSinceInterception = 0;
+        game.daysSinceInterception = Math.max(0, (game.daysSinceInterception || 0) - INTERCEPTION_STREAK_PENALTY_DAYS);
         renderInterceptionStreak();
         clearInterval(interval);
         // Pirates/sirens (scripts/voyage-group-encounters.js) fight as a
@@ -5024,7 +5084,7 @@ function combatAction(action) {
       const skill = (action === 'HIGHSKILL') ? kit.highSkill : kit.skill;
       if (!skill) { toast('No skill available!'); return; }
       if (skill.effect === 'taunt') {
-        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on them.');
+        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! The enemy focuses on ' + window.pronounFor(actor.id).object + '.');
         // Bonded by the Tide (Ch.4): when Joel uses Shield Wall with the
         // bond active, San catches a brief haste windfall off the surge —
         // now scaled by the current San/Joel bond tier instead of a fixed
