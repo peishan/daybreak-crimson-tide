@@ -3,43 +3,43 @@
   // -------------------------------------------------------------------
   // INTER-WORLD EXPEDITIONS. Gated behind game.arc12Complete — matching
   // the exact naming convention every other arc uses (arc6Complete,
-  // arc9Complete, arc10Complete, etc.). This file doesn't yet have Arc
-  // XII's actual content wired in (that happened in a different session
-  // and hasn't landed here as an uploadable file yet), so this is built
-  // against San's own stated gameplay-unlock outline rather than the
-  // arc's exact chapter text. Flagged clearly: "Beyond the Horizon" as
-  // the first world's name is the one piece of real, confirmed Arc XII
-  // content (its actual Ch.1 title, verified earlier); everything else
-  // about this destination's specific flavor is my own reasonable
-  // placeholder pending the real file, not verified story content.
+  // arc9Complete, arc10Complete, etc.).
+  //
+  // "Beyond the Horizon"'s flavor below is now reconciled against Arc
+  // XII's real chapter text (arc10-12.js), which landed after this file
+  // was first built against a placeholder guess. Two things changed:
+  //   1. No `enemies` array. Ch.7 is explicit the settlement has
+  //      "No people. No sign of danger either." and nothing in the arc's
+  //      24 chapters ever puts the crew in a fight there — the tension
+  //      is all survival/mystery (bad water, wrong food, a drifting
+  //      return point), never combat. A destination with no `enemies`
+  //      always resolves to a discovery (see resolveInterworldExpedition
+  //      below) rather than rolling for a fight that was never real.
+  //   2. Discoveries now come straight from the chapters themselves:
+  //      the child's toy (Ch.8), the settlement's sign and writing that
+  //      never resolves into anything readable (Ch.8-9), and the
+  //      structure beneath the harbour (Ch.16/19) -- the arc's one
+  //      genuine new piece of lore, built by whoever lived there not to
+  //      open a way between worlds but to find where the boundary
+  //      itself sits.
   //
   // Built genuinely data-driven from the start, per "future worlds can
   // be added as discoveries" — INTERWORLD_DESTINATIONS is an array, not
   // a single hardcoded destination, so adding a second world later is
-  // just a new entry, not new plumbing.
+  // just a new entry, not new plumbing. A later world that Arc XII-style
+  // content actually puts in danger can carry its own `enemies` array;
+  // this one just doesn't.
   // -------------------------------------------------------------------
   const INTERWORLD_DESTINATIONS = [
     {
       id: 'beyond_the_horizon',
       name: 'Beyond the Horizon',
-      tagline: 'The first world the Horizon Engine ever found. The settlement was empty when the crew arrived — but stocked, as if someone meant to come back.',
+      tagline: 'The first world the Horizon Engine ever opened a door to. A coastal settlement, left behind rather than destroyed -- no people, no danger, just quiet.',
       supplyCost: {gold: 80, food: 15},
-      enemies: [
-        // BUG FIX: these two were missing `gold`, unlike every other
-        // enemy in the game. handleVictory always does
-        // `game.gold += enemy.gold` — with no gold field that's
-        // `game.gold += undefined`, which silently turns game.gold into
-        // NaN on every Beyond the Horizon combat win. NaN then propagates
-        // through all future gold math, and the landing screen's readout
-        // (`Number(display.gold || 0)`) renders NaN as "0g" — which is
-        // what made it look like a full gold wipe rather than corruption.
-        {name: 'Something in the Empty Settlement', icon: '🏚️', hp: 260, dmg: 18, xp: 240, gold: 100},
-        {name: 'A Shape That Moved Wrong', icon: '👁️', hp: 300, dmg: 20, xp: 260, gold: 110}
-      ],
       discoveries: [
-        {name: 'A Marking Nobody Recognizes', icon: '🗿', flavor: 'Not Farseer. Not anything Erynn\'s ever catalogued. It means something to somebody, just not to anyone here yet.'},
-        {name: 'Preserved Rations', icon: '🫙', flavor: 'Whoever stocked this settlement expected to be gone a while. They never came back for it.'},
-        {name: 'A Child\'s Toy', icon: '🧸', flavor: 'Small, worn soft at the edges. Someone loved this enough to leave it behind reluctantly, not carelessly.'}
+        {name: 'A Child\'s Toy', icon: '🧸', flavor: 'Half-buried in dust in one of the empty homes. Small, worn soft at the edges. Someone loved this enough to leave it behind reluctantly, not carelessly.'},
+        {name: 'A Sign in No Language', icon: '📜', flavor: 'Faded lettering, unmistakably a sign, utterly unreadable. Some of the shapes almost look familiar -- which turns out to mean nothing. A familiar shape doesn\'t promise a familiar meaning.'},
+        {name: 'The Thing Beneath the Harbour', icon: '🗿', flavor: 'Not a weapon. Not a machine, not in any sense the crew has categories for. Whoever built it wasn\'t trying to open a way between worlds -- they were trying to find where the boundary itself sits. They understood inter-world phenomena long before the Crimson Tide ever built an Engine of their own.'}
       ]
     }
   ];
@@ -129,7 +129,8 @@
 
   function resolveInterworldExpedition(dest){
     game.interworldExpeditionsCompleted = (game.interworldExpeditionsCompleted||0) + 1;
-    if (Math.random() < 0.5) {
+    const canFight = Array.isArray(dest.enemies) && dest.enemies.length > 0;
+    if (canFight && Math.random() < 0.5) {
       const enemyBase = dest.enemies[Math.floor(Math.random() * dest.enemies.length)];
       const enemy = (typeof scaleCrimsonEnemy === 'function') ? scaleCrimsonEnemy(enemyBase, 'harbor') : Object.assign({}, enemyBase);
       toast('🌌 Something\'s waiting on the other side.', 2600);
