@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V389 · Arcs XXXIX-XL — The Steady Reach & Resonance';
+window.__CT_BUILD__='V390 · Arc XLI — The Ones Who Stay (Sairen Recruitable)';
