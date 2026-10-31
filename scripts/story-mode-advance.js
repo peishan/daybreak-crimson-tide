@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V387 · Interception Streak Weekly Penalty';
+window.__CT_BUILD__='V388 · Arc XXXVIII — The Lives We Didn\'t Live';
