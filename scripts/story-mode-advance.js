@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V388 · Arc XXXVIII — The Lives We Didn\'t Live';
+window.__CT_BUILD__='V389 · Arcs XXXIX-XL — The Steady Reach & Resonance';
