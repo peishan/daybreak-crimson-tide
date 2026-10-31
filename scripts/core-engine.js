@@ -5620,6 +5620,11 @@ function handleVictory() {
     // knows how to turn that back into a chapter id.
     const arc38ChId = (typeof window.arc38ChapterIdForGuardianKey === 'function') ? window.arc38ChapterIdForGuardianKey(enemy.key) : null;
     if (arc38ChId && typeof window.markArc38ChapterRead === 'function') window.markArc38ChapterRead(arc38ChId);
+  } else if (enemy.kind === 'arc42_frontier') {
+    // Arc XLII Ch.8's own one-off frontier fight -- only ever this one
+    // chapter, so no reverse-lookup needed, just a direct call into
+    // arc42.js's own completion logic.
+    if (typeof window.markArc42ChapterRead === 'function') window.markArc42ChapterRead(8);
   } else if (enemy.kind === 'memory') {
     const ch = currentAct3Chapter();
     if (ch) {
@@ -5788,6 +5793,13 @@ function handleVictory() {
     // second copy of the exact same cleanup.
     postBattleMessage = enemy.name + ' falls still. The Archive holds steady.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitRaidBattleToArchive()">📜 Return to the Archive</button>';
+  } else if (enemy.kind === 'arc42_frontier') {
+    // No dedicated Lunareth screen exists yet -- the expedition itself
+    // runs through the existing Inter-World Expeditions UI, not a bespoke
+    // location screen -- so "Return to Port" (the same exit Arc IX's own
+    // Ch.12 guardian fight uses) is the correct, already-established exit.
+    postBattleMessage = enemy.name + ' backs off. Whatever this was, it\'s settled for now.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'raid') {
     // See exitRaidBattleToArchive()'s own comment for why this branch
     // exists at all — the generic default below built a broken "Challenge

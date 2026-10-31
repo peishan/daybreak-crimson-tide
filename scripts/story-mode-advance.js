@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V392 · Arc XLII Ch.1-5 — Meet the Maker (First Contact)';
+window.__CT_BUILD__='V393 · Arc XLII Ch.6-10 — Meet the Maker (Black Pearl Introduced)';
