@@ -42,11 +42,17 @@
   //
   // Vaeren & Joelle (the twins): was a forward placeholder gated on
   // game.twinsChildStageReached, a flag nothing ever set -- written
-  // before the arcs that actually introduce them existed. They're born
-  // in Arc XXXIII and still growing through Arc XXXVII ("Children of Two
-  // Worlds"), which is also where the bio art's "grown enough to sit for
-  // a portrait" stage actually lands, so this now reads game.arc37Complete
-  // instead, same pattern as arc28Complete/arc29Complete above.
+  // before the arcs that actually introduce them existed. The replacement
+  // bio art is explicitly labeled "Toddler Stage (Arc 36-onwards)", so
+  // this reads game.arc36Complete rather than arc37Complete -- gated on
+  // whichever arc's completion actually matches the stage the art itself
+  // depicts, same principle as arc28Complete/arc29Complete above.
+  //
+  // Maera: introduced and established at Fair Tide across Arc XXII, so
+  // her bio uses the same non-recruitable customUnlocked pattern as N/
+  // Sairen, gated on her own arc's completion (game.arc22Complete) rather
+  // than a later one -- she's never added to ALL_PARTY, so the ids/
+  // memberUnlocked path doesn't apply to her either.
   // -------------------------------------------------------------------
 
   const CHARACTER_BIOS = [
@@ -66,7 +72,9 @@
     { key: 'sairen',             label: 'Sairen',                    image: 'assets/bios/sairen.png',
       customUnlocked: function(){ return !!game.arc29Complete; } },
     { key: 'vaeren_joelle',      label: 'Vaeren & Joelle',           image: 'assets/bios/vaeren-joelle.png',
-      customUnlocked: function(){ return !!game.arc37Complete; } }
+      customUnlocked: function(){ return !!game.arc36Complete; } },
+    { key: 'maera',              label: 'Maera',                     image: 'assets/bios/maera.png',
+      customUnlocked: function(){ return !!game.arc22Complete; } }
   ];
   window.CHARACTER_BIOS = CHARACTER_BIOS;
 
