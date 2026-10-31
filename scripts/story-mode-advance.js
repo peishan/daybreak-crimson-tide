@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V390 · Arc XLI — The Ones Who Stay (Sairen Recruitable)';
+window.__CT_BUILD__='V391 · Bridge — The Shore Beyond the Horizon (Lunareth)';

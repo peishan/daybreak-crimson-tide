@@ -41,6 +41,32 @@
         {name: 'A Sign in No Language', icon: '📜', flavor: 'Faded lettering, unmistakably a sign, utterly unreadable. Some of the shapes almost look familiar -- which turns out to mean nothing. A familiar shape doesn\'t promise a familiar meaning.'},
         {name: 'The Thing Beneath the Harbour', icon: '🗿', flavor: 'Not a weapon. Not a machine, not in any sense the crew has categories for. Whoever built it wasn\'t trying to open a way between worlds -- they were trying to find where the boundary itself sits. They understood inter-world phenomena long before the Crimson Tide ever built an Engine of their own.'}
       ]
+    },
+    // Lunareth -- the bridge chapter between Arc XLI and Arc XLII. Only
+    // the arrival region (see the bridge's own "first priority is to
+    // establish where they have arrived," never the whole world at
+    // once). unlockCheck gates it out of the Known Worlds list entirely
+    // until the bridge completes -- per the bridge's own build notes
+    // ("do not unlock all Lunareth locations immediately"), the one
+    // reason this file's render loop below now checks an optional
+    // per-destination unlockCheck instead of always showing every
+    // registered world. No `enemies` here either, same reasoning as
+    // Beyond the Horizon above: the bridge's own build notes rule out
+    // new bosses/combat for this content, and deeper Lunareth regions
+    // (with whatever threats Arc XLII actually calls for) get their own
+    // destination entries, locked behind their own story chapters, once
+    // that arc is actually built.
+    {
+      id: 'lunareth_arrival_shore',
+      name: 'Lunareth — The Arrival Shore',
+      tagline: 'A world reached, not just observed, for the first time since the Horizon Engine opened its very first door. Mountains, settlements, forests and waterways stretch beyond the coastline -- far more than anyone could explore in a single crossing.',
+      supplyCost: {gold: 100, food: 20},
+      unlockCheck: function(){ return !!game.arc41BridgeComplete; },
+      discoveries: [
+        {name: 'A Market Sign, Half-Readable', icon: '🏮', flavor: 'Enough of it resolves for the crew to make out trade goods, prices, maybe a place name. Not enough to be sure of any of it yet.'},
+        {name: 'Lights Along the Coast Road', icon: '🕯️', flavor: 'Too evenly spaced to be natural, too far apart to be one settlement. Something connects them. Nobody\'s followed the road far enough yet to say what.'},
+        {name: 'Fresh Tracks, No Owner', icon: '👣', flavor: 'Recent. Confident, unhurried -- whoever left them wasn\'t running from anything. Which means they live here, and the crew very much doesn\'t, yet.'}
+      ]
     }
   ];
   window.INTERWORLD_DESTINATIONS = INTERWORLD_DESTINATIONS;
@@ -106,6 +132,8 @@
   window.launchInterworldExpedition = function(destId){
     if (!window.interWorldTravelUnlocked()) { toast('🔒 Not yet — the way isn\'t open.'); return; }
     if (!window.canLaunchInterworldExpeditionHere()) { toast('🔒 The Horizon Engine only opens at Fair Tide.', 3200); return; }
+    const destForGate = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
+    if (destForGate && typeof destForGate.unlockCheck === 'function' && !destForGate.unlockCheck()) { toast('🔒 Not yet — that destination isn\'t open.'); return; }
     const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
     if (!dest) return;
     if (!window.canAffordInterworldTrip(destId)) { toast('Not enough supplies for the crossing.'); return; }
@@ -167,6 +195,7 @@
       (atFairTide ? '' : '<div class="story-chip">🔒 The Horizon Engine only opens here at Fair Tide — return home to launch a new expedition.</div>')+
       '</div>';
     INTERWORLD_DESTINATIONS.forEach(function(dest){
+      if (typeof dest.unlockCheck === 'function' && !dest.unlockCheck()) return;
       const afford = window.canAffordInterworldTrip(dest.id);
       const canLaunch = afford && atFairTide;
       const btnLabel = atFairTide ? '🌌 Prepare Expedition' : '🔒 Return to Fair Tide';
