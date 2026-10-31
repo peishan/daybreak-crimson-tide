@@ -5611,6 +5611,15 @@ function handleVictory() {
     game.storyModalQueue.push(Object.assign({}, DROWNED_PASSAGE, {companionName: 'Ser Aldric & Sister Wren'}));
     if (ACT2_CHAPTERS[0]) game.storyModalQueue.push({title: 'Act II — Fair Winds, Full Hands', blurb: ACT2_CHAPTERS[0].unlockBlurb});
     if (ACT3_CHAPTERS[0]) game.storyModalQueue.push({title: 'Act III — Origins', blurb: "San hasn't recalled much of anything from before the wreck — just fragments, and the people she somehow already trusts completely. Maybe it's time to go looking for the rest of it."});
+  } else if (enemy.kind === 'archive_guardian') {
+    // Arc XXXVIII's four Archive Guardian fights (Ch.6/12/18/23) --
+    // reuses markArc38ChapterRead() (arc38.js) for the actual completion
+    // logic (comicProgress38, chapter XP, story modal, arc38Complete on
+    // Ch.24) rather than duplicating it here, since enemy.key is the only
+    // thing this handler has to work with and arc38-mechanics.js already
+    // knows how to turn that back into a chapter id.
+    const arc38ChId = (typeof window.arc38ChapterIdForGuardianKey === 'function') ? window.arc38ChapterIdForGuardianKey(enemy.key) : null;
+    if (arc38ChId && typeof window.markArc38ChapterRead === 'function') window.markArc38ChapterRead(arc38ChId);
   } else if (enemy.kind === 'memory') {
     const ch = currentAct3Chapter();
     if (ch) {
@@ -5772,6 +5781,13 @@ function handleVictory() {
   } else if (enemy.kind === 'piratecove_voyage') {
     postBattleMessage = 'The crossing continues. ' + enemy.name + " won't be a problem for the rest of the way.";
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="goScreen(\'piratecove\')">🏴‍☠️ Continue to the Cove</button>';
+  } else if (enemy.kind === 'archive_guardian') {
+    // Same exit as the Guardian's Trial raid below (goScreen('archive'),
+    // not 'port' -- none of these four fights are entered from a port) --
+    // reusing exitRaidBattleToArchive() as-is rather than writing a
+    // second copy of the exact same cleanup.
+    postBattleMessage = enemy.name + ' falls still. The Archive holds steady.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitRaidBattleToArchive()">📜 Return to the Archive</button>';
   } else if (enemy.kind === 'raid') {
     // See exitRaidBattleToArchive()'s own comment for why this branch
     // exists at all — the generic default below built a broken "Challenge
