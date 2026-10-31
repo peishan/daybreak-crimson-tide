@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V391 · Bridge — The Shore Beyond the Horizon (Lunareth)';
+window.__CT_BUILD__='V392 · Arc XLII Ch.1-5 — Meet the Maker (First Contact)';
