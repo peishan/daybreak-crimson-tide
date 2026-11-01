@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V394 · Arc XLII Ch.11-15 — Meet the Maker (Jade Visits Fair Tide)';
+window.__CT_BUILD__='V395 · Arc XLII Ch.16-20 — Meet the Maker (Familiar Faces, New Friends)';
