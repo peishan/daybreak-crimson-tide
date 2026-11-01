@@ -1,8 +1,10 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XLII MECHANICS (Ch.6-10) — THE FRONTIER FIGHT and the BLACK
-  // PEARL INVESTIGATION, the gameplay Ch.8/9's own notes call for. Kept
-  // OUT of arc42.js itself, same split used since Arc XXIII.
+  // ARC XLII MECHANICS (Ch.6-10, extended by Ch.19) — THE FRONTIER FIGHT
+  // and the BLACK PEARL INVESTIGATION, the gameplay Ch.8/9's own notes
+  // call for. Kept OUT of arc42.js itself, same split used since Arc
+  // XXIII. Ch.19 ("A Question of Trust") adds one more append-only entry
+  // to the same investigation log, nothing more.
   //
   //   1. FRONTIER FIGHT — Ch.8's "minor disturbance," deliberately
   //      smaller than Arc XXXVIII's Archive Guardians per the chapter's
@@ -96,6 +98,9 @@
     }
     if (cp[13] && !state.log.some(function(e){ return e.id === 'arcane_trio_preliminary'; })) {
       state.log.push({ id: 'arcane_trio_preliminary', text: "Renn, Erynn and Mimi have run a first pass against what Jade and Devon actually know. Its nature is still genuinely uncertain -- whatever comes next needs information only Lunareth itself has." });
+    }
+    if (cp[19] && !state.log.some(function(e){ return e.id === 'joint_investigation_agreed'; })) {
+      state.log.push({ id: 'joint_investigation_agreed', text: "Another lead, no clearer answers. Jade, Devon and San have agreed on one rule going forward: investigate together, and don't assume anything about the Pearl's nature until the evidence actually says so." });
     }
 
     // The cooling spring (Ch.15): teased, not built. No destination
