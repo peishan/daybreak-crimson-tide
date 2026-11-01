@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V399 · Arc XLII Ch.36-40 — Meet the Maker (An Invitation That Remains)';
+window.__CT_BUILD__='V400 · Arc XLII Ch.41-45 — Meet the Maker COMPLETE (The Door Stays Open)';

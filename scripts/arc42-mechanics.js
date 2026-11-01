@@ -1,10 +1,12 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XLII MECHANICS (Ch.6-10, extended by Ch.19/39/40) — THE FRONTIER
-  // FIGHT and the BLACK PEARL INVESTIGATION, the gameplay Ch.8/9's own
-  // notes call for. Kept OUT of arc42.js itself, same split used since
-  // Arc XXIII. Ch.19/39/40 each add one more append-only entry to the
-  // same investigation log, nothing more.
+  // ARC XLII MECHANICS (Ch.6-10, extended by Ch.19/39/40/41/42) — THE
+  // FRONTIER FIGHT and the BLACK PEARL INVESTIGATION, the gameplay
+  // Ch.8/9's own notes call for. Kept OUT of arc42.js itself, same
+  // split used since Arc XXIII. Ch.19/39/40/41/42 each add one more
+  // append-only entry to the same investigation log, nothing more --
+  // Ch.41/42 are this arc's own final word on it: still no origin, no
+  // powers, no resolution, exactly as the outline insists.
   //
   //   1. FRONTIER FIGHT — Ch.8's "minor disturbance," deliberately
   //      smaller than Arc XXXVIII's Archive Guardians per the chapter's
@@ -107,6 +109,12 @@
     }
     if (cp[40] && !state.log.some(function(e){ return e.id === 'needs_lunareth_evidence'; })) {
       state.log.push({ id: 'needs_lunareth_evidence', text: "Renn and Erynn's verdict, for now: whatever comes next needs evidence that simply doesn't exist anywhere except Lunareth itself." });
+    }
+    if (cp[41] && !state.log.some(function(e){ return e.id === 'interference_caution'; })) {
+      state.log.push({ id: 'interference_caution', text: "Renn and Erynn have cross-checked everything Jade and Devon know against Fair Tide's own findings. The conclusion isn't an answer -- it's a caution: nobody understands the Pearl well enough yet to risk interfering with it directly." });
+    }
+    if (cp[42] && !state.log.some(function(e){ return e.id === 'three_disciplines_no_answer'; })) {
+      state.log.push({ id: 'three_disciplines_no_answer', text: "Mimi has joined the investigation. Between her, Renn and Erynn, three genuinely different disciplines have now looked at the Black Pearl -- and none of them will claim to understand it completely." });
     }
 
     // The cooling spring (Ch.15): teased, not built. No destination

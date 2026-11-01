@@ -1,23 +1,25 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XLII — MEET THE MAKER. Chapters 1-40 so far ("First Contact" +
-  // "The World Beyond the Manuscript" + "An Invitation Across Worlds" +
-  // "Familiar Faces, New Friends"), per San's own note that this arc
-  // needs building in pieces. Gated at game.arc41BridgeComplete + level
-  // 630 -- the same level the bridge chapter itself required, not a
-  // further bump, since Ch.1 picks up immediately where the bridge left
-  // off ("Following the Horizon crossing") rather than after any further
-  // time or leveling.
+  // ARC XLII — MEET THE MAKER. Chapters 1-45, now COMPLETE ("First
+  // Contact" + "The World Beyond the Manuscript" + "An Invitation
+  // Across Worlds" + "Familiar Faces, New Friends" + "The Door Stays
+  // Open"), built across nine batches per San's own note that this arc
+  // needed building in pieces. Gated at game.arc41BridgeComplete +
+  // level 630 -- the same level the bridge chapter itself required, not
+  // a further bump, since Ch.1 picks up immediately where the bridge
+  // left off ("Following the Horizon crossing") rather than after any
+  // further time or leveling.
   //
-  // This file is deliberately incomplete. ARC42_CHAPTERS currently only
-  // holds these first eight blocks; arc42ObjectiveState() reports
-  // 'arc42_part1_complete_for_now' once all forty are read, same
-  // fallback message every other arc file already has for exactly this
-  // situation. No game.arc42Complete is set anywhere in this file --
-  // that flag belongs to whichever chapter actually closes the arc, not
-  // yet written. Later chapter blocks extend ARC42_CHAPTERS/
-  // ARC42_CHAPTER_SCENES in place, the same way this file has already
-  // grown seven times and will keep growing, not replace itself.
+  // Ch.45 ("The Door Stays Open") is this arc's actual closing chapter
+  // -- markArc42ChapterRead() sets game.arc42Complete = true there, the
+  // same self-contained completion-flag pattern every prior arc uses
+  // (see arc41.js's own Ch.16). arc42ObjectiveState() still falls back
+  // to 'arc42_part1_complete_for_now' once all forty-five are read --
+  // same generic fallback string every other arc keeps even once
+  // actually complete (arc41ObjectiveState() does the same), not a sign
+  // anything's still missing. No further chapter blocks are expected
+  // for this file; a true sequel arc would gate on arc42Complete + a
+  // new level threshold, the same ladder every arc since Arc XVII uses.
   //
   // Ch.16-20 ("Familiar Faces, New Friends") bring Sally and Levi into
   // the Lunareth side of the story alongside Jade and Devon, then carry
@@ -95,6 +97,21 @@
   // both just register that more evidence is needed from Lunareth,
   // still no properties or resolution invented. All four visitors stay
   // temporary story allies, same as every pair before them.
+  //
+  // Ch.41-45 close the arc. Ch.41/42 add two final entries to the same
+  // Black Pearl log -- Renn/Erynn's caution against interfering with
+  // the Pearl, then Mimi joining via Fair Tide's existing research
+  // network and the trio's shared admission that none of them fully
+  // understands it yet. Per the outline's own explicit restraint, the
+  // investigation stays genuinely unresolved -- no origin, no powers,
+  // no conclusion, same caution carried since Ch.9. Ch.43 settles the
+  // Lunareth-Fair Tide relationship through systems that already
+  // exist (Lunareth's own INTERWORLD_DESTINATIONS entry has been
+  // permanently unlocked since the bridge chapter) rather than any new
+  // "alliance" flag -- travel voluntary, nothing further to wire. Ch.44
+  // is San's own quiet beat: Thought Resonance lets Joel sense what she
+  // isn't saying, and she still doesn't tell Jade about the manuscript
+  // -- per the outline's explicit instruction, that stays private.
   //
   // Ch.6-10 ("The World Beyond the Manuscript") introduce one new piece
   // of mechanics: Ch.8's frontier disturbance is an actual fight, not a
@@ -190,7 +207,12 @@
     {id:37, title:'Family Across Worlds', focus:"Rheon and Mirelle spend time exploring Fair Tide and learning how its residents have built their lives. Their conversations with San and Joel turn to raising children, responsibilities and finding time for family. Rheon admits that Sera has been rather difficult to question lately. \"Perhaps she just enjoyed her holiday.\" \"Exactly. A perfectly ordinary holiday.\" \"San.\"", image:'assets/comics/arc42/ch37-family-across-worlds.webp', xp:410, action:'👨‍👩‍👧‍👦 Discuss Family Across Worlds'},
     {id:38, title:'The Dragonvale Connection', focus:"San and Joel travel to Dragonvale, where they meet Roc, Delilah, Aster and Fen. Roc and Delilah introduce their twins, including Liora. San is delighted to meet another family, while Joel notices that she is already considering inviting them to Fair Tide. \"You're thinking about it.\" \"I haven't said anything.\" \"You don't have to.\"", image:'assets/comics/arc42/ch38-the-dragonvale-connection.webp', xp:420, action:'🐉 Explore the Dragonvale Connection'},
     {id:39, title:'A Workshop Without Borders', focus:"Aster and Fen accompany San and Joel to Fair Tide, where they meet Renn, Erynn and the research team. Fen becomes interested in the Horizon Engine and the possibilities of exchanging knowledge between worlds. Aster contributes to the discussion while exploring the settlement's facilities. Renn suggests that cooperation with Lunareth's researchers could help investigate the Black Pearl.", image:'assets/comics/arc42/ch39-a-workshop-without-borders.webp', xp:430, action:'🔬 Open a Workshop Without Borders'},
-    {id:40, title:'An Invitation That Remains', focus:"Roc and Delilah visit Fair Tide with their family, reuniting with Aster and Fen. The visitors enjoy the settlement, but San makes it clear that nobody needs to abandon their home in Dragonvale. Meanwhile, Renn and Erynn report that the Black Pearl investigation requires further evidence from Lunareth. \"So we're going back?\" \"Of course.\" \"I thought you'd say that.\" The Horizon Engine remains ready for the next journey.", image:'assets/comics/arc42/ch40-an-invitation-that-remains.webp', xp:440, action:'🌌 Accept an Invitation That Remains'}
+    {id:40, title:'An Invitation That Remains', focus:"Roc and Delilah visit Fair Tide with their family, reuniting with Aster and Fen. The visitors enjoy the settlement, but San makes it clear that nobody needs to abandon their home in Dragonvale. Meanwhile, Renn and Erynn report that the Black Pearl investigation requires further evidence from Lunareth. \"So we're going back?\" \"Of course.\" \"I thought you'd say that.\" The Horizon Engine remains ready for the next journey.", image:'assets/comics/arc42/ch40-an-invitation-that-remains.webp', xp:440, action:'🌌 Accept an Invitation That Remains'},
+    {id:41, title:"The Pearl's Shadow", focus:"San and Joel return to Lunareth with Renn and Erynn to continue investigating the Black Pearl. Jade and Devon share what they know, while the researchers compare their findings with earlier observations. The evidence suggests that more investigation is necessary before anyone should attempt to interfere with the Pearl. \"I thought our greatest troubles were behind us.\" \"Maybe they are. That doesn't mean every mystery is finished.\"", image:'assets/comics/arc42/ch41-the-pearls-shadow.webp', xp:430, action:"🖤 Face the Pearl's Shadow"},
+    {id:42, title:'The Limits of Knowing', focus:"Mimi joins the investigation through Fair Tide's existing research network. Renn, Erynn and Mimi approach the mystery from their different disciplines, but none claims to understand the Black Pearl completely. Joel advises against unnecessary risks, and Devon agrees. \"Look at that. Two sensible men agreeing.\" \"Should we be worried?\" \"We can hear you.\"", image:'assets/comics/arc42/ch42-the-limits-of-knowing.webp', xp:420, action:'🔮 Accept the Limits of Knowing'},
+    {id:43, title:'Two Worlds, One Understanding', focus:"San and Joel meet with Jade and the other available companions to discuss future cooperation. They agree that travel between Lunareth and Veyren should remain voluntary, with respect for each world's customs and responsibilities. Jade offers to help coordinate future visits, while San promises that Fair Tide will remain open to trusted friends. \"You make alliances rather easily.\" \"She makes friends. The alliances follow.\"", image:'assets/comics/arc42/ch43-two-worlds-one-understanding.webp', xp:430, action:'🤝 Reach Two Worlds, One Understanding'},
+    {id:44, title:'The Story That Grew Beyond Me', focus:"Before leaving Lunareth, San spends a quiet moment with Jade. Jade speaks about the life she has built, the people she loves and the future she still hopes for. San remembers the unfinished manuscript that first gave Jade her name. Through Thought Resonance, Joel senses San's emotions. \"Are you going to tell her?\" \"Not yet. She's already become so much more than anything I imagined.\" For now, San keeps the manuscript's existence private.", image:'assets/comics/arc42/ch44-the-story-that-grew-beyond-me.webp', xp:450, action:'📖 Honor the Story That Grew Beyond Me'},
+    {id:45, title:'The Door Stays Open', focus:"San and Joel return to Fair Tide aboard their ship. The Horizon Engine remains available for future journeys, and the visiting families are free to continue their lives in Lunareth. Renn and Erynn preserve their Black Pearl findings for future research. \"So, was this the adventure you expected?\" \"Not even close.\" \"And you're already thinking about going back.\" \"Well, we did make friends.\" Joel smiles. \"Of course we did.\"", image:'assets/comics/arc42/ch45-the-door-stays-open.webp', xp:460, action:'🚪 Leave the Door Open'}
   ];
   window.ARC42_CHAPTERS = ARC42_CHAPTERS;
 
@@ -234,7 +256,12 @@
     37: 'Rheon and Mirelle spend the rest of the day properly seeing Fair Tide, San and Joel walking them through how the settlement actually works — not just the buildings, but the lives layered into them. The conversation drifts naturally toward children, responsibility, the constant quiet effort of making room for family alongside everything else.<br><br>Somewhere in the middle of it, Rheon admits, almost to himself, that Sera\'s been oddly difficult to get a straight answer out of lately.<br><br>"Perhaps she just enjoyed her holiday," Joel offers, entirely too innocent about it.<br><br>"Exactly," San says. "A perfectly ordinary holiday."<br><br>"San," Joel says, under his breath, the warning clear even if Rheon doesn\'t catch it.',
     38: 'San and Joel make the trip out to Dragonvale themselves this time, curious to see where the rest of Jade\'s wider family calls home. Roc and Delilah greet them warmly, Aster and Fen not far behind, and it isn\'t long before the twins make their own entrance — Liora included, entirely unbothered by the strangers watching her toddle past.<br><br>San is openly delighted by all of it, the particular kind of happiness that comes from meeting one more family built out of love rather than obligation.<br><br>Joel watches her watching them, and knows exactly what\'s forming behind her eyes before she says anything at all.<br><br>"You\'re thinking about it," he says.<br><br>"I haven\'t said anything," San says.<br><br>"You don\'t have to."',
     39: 'Aster and Fen take San and Joel up on the trip to Fair Tide not long after, and Renn and Erynn pull them straight into the research team\'s usual orbit. Fen, in particular, lights up at the Horizon Engine — asking exactly the kind of questions that suggest he\'s already imagining what a proper exchange of knowledge between worlds could actually look like. Aster stays a little more grounded in the conversation, contributing steadily while still finding time to actually look around the settlement itself.<br><br>At some point, Renn raises something that\'s clearly been sitting in the back of her mind: cooperation with Lunareth\'s own researchers might be exactly what the Black Pearl investigation needs to actually move forward. Nobody has an answer yet. It\'s simply, finally, said out loud.',
-    40: 'Roc and Delilah bring the rest of the family to Fair Tide not long after, reuniting with Aster and Fen in a settlement that\'s clearly started feeling a little more familiar to all four of them. They enjoy themselves properly this time — no urgency to it, nothing to prove. San makes a point of saying what she\'s said to every visitor before them: nobody needs to leave Dragonvale behind for any of this to keep working.<br><br>Meanwhile, Renn and Erynn deliver their own update, more measured this time: whatever comes next on the Black Pearl is going to need evidence that simply doesn\'t exist anywhere except Lunareth itself.<br><br>"So we\'re going back?" Joel asks, already fairly sure of the answer.<br><br>"Of course," San says.<br><br>"I thought you\'d say that," Joel says, and doesn\'t sound surprised in the slightest.<br><br>The Horizon Engine sits ready behind them, exactly as it always is, waiting for wherever comes next.'
+    40: 'Roc and Delilah bring the rest of the family to Fair Tide not long after, reuniting with Aster and Fen in a settlement that\'s clearly started feeling a little more familiar to all four of them. They enjoy themselves properly this time — no urgency to it, nothing to prove. San makes a point of saying what she\'s said to every visitor before them: nobody needs to leave Dragonvale behind for any of this to keep working.<br><br>Meanwhile, Renn and Erynn deliver their own update, more measured this time: whatever comes next on the Black Pearl is going to need evidence that simply doesn\'t exist anywhere except Lunareth itself.<br><br>"So we\'re going back?" Joel asks, already fairly sure of the answer.<br><br>"Of course," San says.<br><br>"I thought you\'d say that," Joel says, and doesn\'t sound surprised in the slightest.<br><br>The Horizon Engine sits ready behind them, exactly as it always is, waiting for wherever comes next.',
+    41: 'San and Joel make the crossing back to Lunareth once more, Renn and Erynn in tow this time — the investigation finally moving at something closer to its proper pace, with Fair Tide\'s own researchers actually present to compare notes directly instead of working from secondhand reports.<br><br>Jade and Devon lay out everything they\'ve pieced together over the years, patiently, for what\'s probably the third or fourth time by now. Renn and Erynn cross-check it all against what they already know, piece by careful piece.<br><br>What comes out of it isn\'t an answer. It\'s a caution: whatever the Pearl actually is, nobody understands it well enough yet to risk interfering with it directly.<br><br>"I thought our greatest troubles were behind us," Jade says, something tired in it.<br><br>"Maybe they are," San says. "That doesn\'t mean every mystery is finished."',
+    42: 'Mimi joins the investigation properly this time, pulled in through the same research network Fair Tide\'s already built for exactly this kind of problem. Between her, Renn and Erynn, the Black Pearl gets looked at from three genuinely different angles at once — and still, none of the three of them is willing to claim they actually understand it.<br><br>Joel, practical as ever, is firm about one thing: no unnecessary risks, not until there\'s real understanding to work from. Devon agrees without hesitation.<br><br>"Look at that," San says. "Two sensible men agreeing."<br><br>"Should we be worried?" Jade asks, not entirely joking.<br><br>"We can hear you," Joel says, from somewhere just within earshot.',
+    43: 'With the investigation settled into something steadier, San and Joel sit down properly with Jade and whichever of her companions are around to talk about what actually comes next between the two worlds.<br><br>What they land on is simple, deliberately so: travel between Lunareth and Veyren stays voluntary, on both sides, with real respect for whatever responsibilities and customs each person is already carrying at home. Nobody\'s obligated. Nobody\'s expected to choose one world over the other.<br><br>Jade offers to help coordinate future visits from her side. San promises, in turn, that Fair Tide stays open to anyone who\'s actually earned that kind of trust.<br><br>"You make alliances rather easily," Devon observes.<br><br>"She makes friends," Joel says. "The alliances follow."',
+    44: 'Before the ship leaves, San takes a quiet moment alone with Jade — nothing formal about it, just two people who\'ve genuinely come to know each other, sitting with whatever\'s left unsaid between them.<br><br>Jade talks, unguarded for once, about the life she\'s actually built: the people she loves, the work still ahead of her, the future she\'s still letting herself hope for even after everything it took to get here.<br><br>San listens, and feels the old manuscript surface in her mind again — the early, half-formed version of this woman she once sketched out and never finished. Whatever she wrote back then isn\'t even a shadow of what\'s actually sitting across from her now.<br><br>Joel feels it too, through whatever still runs quietly between them. "Are you going to tell her?" he asks, later, once they\'re alone.<br><br>"Not yet," San says. "She\'s already become so much more than anything I imagined."<br><br>For now, the manuscript stays exactly where it\'s been all along — hers alone to carry.',
+    45: 'San and Joel make the crossing home, the Horizon Engine carrying them back to Fair Tide the same way it always does, nothing about the journey itself any different than before. Everyone they met stays exactly where they belong — Jade\'s family and friends free to keep living their own lives in Lunareth, nothing asked of them beyond the door staying open if they ever want to walk through it again.<br><br>Renn and Erynn carefully set aside everything they\'ve learned about the Black Pearl so far, ready for whenever the next piece of the puzzle actually surfaces.<br><br>"So," Joel says, once they\'re properly underway, "was this the adventure you expected?"<br><br>"Not even close," San says.<br><br>"And you\'re already thinking about going back," Joel says. It isn\'t a question.<br><br>"Well," San says, "we did make friends."<br><br>Joel smiles. "Of course we did."'
   };
   window.ARC42_CHAPTER_SCENES = ARC42_CHAPTER_SCENES;
 
@@ -253,6 +280,9 @@
     if (so !== ('complete_arc42_chapter_' + id)) return;
     game.comicProgress42 = game.comicProgress42 || {};
     game.comicProgress42[id] = true;
+    // Matches every prior arc's own completion flag (arc40/arc41Complete)
+    // — self-contained to this file, no aggregator dependency.
+    if (id === 45) game.arc42Complete = true;
     const ch = ARC42_CHAPTERS.find(c => c.id === id);
     if (ch) {
       gainXP(ch.xp);
