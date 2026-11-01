@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V395 · Arc XLII Ch.16-20 — Meet the Maker (Familiar Faces, New Friends)';
+window.__CT_BUILD__='V396 · Arc XLII Ch.21-25 — Meet the Maker (Somewhere Nobody Knows Us)';
