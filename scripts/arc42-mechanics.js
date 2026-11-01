@@ -1,10 +1,10 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XLII MECHANICS (Ch.6-10, extended by Ch.19) — THE FRONTIER FIGHT
-  // and the BLACK PEARL INVESTIGATION, the gameplay Ch.8/9's own notes
-  // call for. Kept OUT of arc42.js itself, same split used since Arc
-  // XXIII. Ch.19 ("A Question of Trust") adds one more append-only entry
-  // to the same investigation log, nothing more.
+  // ARC XLII MECHANICS (Ch.6-10, extended by Ch.19/39/40) — THE FRONTIER
+  // FIGHT and the BLACK PEARL INVESTIGATION, the gameplay Ch.8/9's own
+  // notes call for. Kept OUT of arc42.js itself, same split used since
+  // Arc XXIII. Ch.19/39/40 each add one more append-only entry to the
+  // same investigation log, nothing more.
   //
   //   1. FRONTIER FIGHT — Ch.8's "minor disturbance," deliberately
   //      smaller than Arc XXXVIII's Archive Guardians per the chapter's
@@ -101,6 +101,12 @@
     }
     if (cp[19] && !state.log.some(function(e){ return e.id === 'joint_investigation_agreed'; })) {
       state.log.push({ id: 'joint_investigation_agreed', text: "Another lead, no clearer answers. Jade, Devon and San have agreed on one rule going forward: investigate together, and don't assume anything about the Pearl's nature until the evidence actually says so." });
+    }
+    if (cp[39] && !state.log.some(function(e){ return e.id === 'cooperation_suggested'; })) {
+      state.log.push({ id: 'cooperation_suggested', text: "Renn has floated the idea out loud: real cooperation with Lunareth's own researchers might be exactly what this investigation actually needs to move forward." });
+    }
+    if (cp[40] && !state.log.some(function(e){ return e.id === 'needs_lunareth_evidence'; })) {
+      state.log.push({ id: 'needs_lunareth_evidence', text: "Renn and Erynn's verdict, for now: whatever comes next needs evidence that simply doesn't exist anywhere except Lunareth itself." });
     }
 
     // The cooling spring (Ch.15): teased, not built. No destination
