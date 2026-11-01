@@ -94,6 +94,19 @@
     if (cp[10] && !state.log.some(function(e){ return e.id === 'collaboration_open'; })) {
       state.log.push({ id: 'collaboration_open', text: 'San has offered Fair Tide\'s research capabilities -- the Horizon Engine included -- to whoever on Lunareth wants a second set of eyes on it. Nothing formal yet.' });
     }
+    if (cp[13] && !state.log.some(function(e){ return e.id === 'arcane_trio_preliminary'; })) {
+      state.log.push({ id: 'arcane_trio_preliminary', text: "Renn, Erynn and Mimi have run a first pass against what Jade and Devon actually know. Its nature is still genuinely uncertain -- whatever comes next needs information only Lunareth itself has." });
+    }
+
+    // The cooling spring (Ch.15): teased, not built. No destination
+    // screen exists for it yet -- per the outline's own framing
+    // ("agree to see it during a future stay"), this is deliberately
+    // just a flag for a later chapter block to actually pay off, same
+    // restraint as the Black Pearl's own properties.
+    if (cp[15] && !game.fairTideCoolingSpringTeased) {
+      game.fairTideCoolingSpringTeased = true;
+    }
+
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 })();

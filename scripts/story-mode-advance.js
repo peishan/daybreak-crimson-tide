@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V393 · Arc XLII Ch.6-10 — Meet the Maker (Black Pearl Introduced)';
+window.__CT_BUILD__='V394 · Arc XLII Ch.11-15 — Meet the Maker (Jade Visits Fair Tide)';
