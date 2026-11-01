@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V398 · Arc XLII Ch.31-35 — Meet the Maker (Knowledge Worth Sharing)';
+window.__CT_BUILD__='V399 · Arc XLII Ch.36-40 — Meet the Maker (An Invitation That Remains)';
