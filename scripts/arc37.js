@@ -15,6 +15,21 @@
   // quite considered: the twins aren't displaced Earth people the way
   // she once was — Veyren is their actual homeland.
   //
+  // CONTINUITY NOTE (confirmed against the finished comic pages, not
+  // just this file's own text): Ch.19 ("Stable") is Maera's first
+  // confirmed shipboard appearance -- she's visibly on deck with San,
+  // Joel and the crew, observing the Horizon disturbance and warning
+  // that stability doesn't necessarily mean harmless; Ch.21 ("Not
+  // Veyren") continues that same shipboard participation. This is NOT
+  // a recruitment moment, though -- nothing in Ch.19-21's text (or the
+  // pages) has her boarding deliberately or accepting any kind of
+  // crew role, so no ALL_PARTY entry is added here. Same restraint
+  // arc29.js already used for Sairen ("no ALL_PARTY entry... no
+  // recruitment path" until the arc that actually writes that
+  // decision) -- Maera becomes a fieldable healer only once a real
+  // chapter writes her actually joining, not retroactively from a
+  // chapter that simply shows her present.
+  //
   // Per the outline's own explicit restraint: this arc discovers a
   // stable Horizon overlap to another world (Ch.19-21) and deliberately
   // stops there — Ch.22 ("No Expedition Yet") and Ch.24's own closing
