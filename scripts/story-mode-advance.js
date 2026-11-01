@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V396 · Arc XLII Ch.21-25 — Meet the Maker (Somewhere Nobody Knows Us)';
+window.__CT_BUILD__='V397 · Arc XLII Ch.26-30 — Meet the Maker (A Secret Worth Keeping)';
