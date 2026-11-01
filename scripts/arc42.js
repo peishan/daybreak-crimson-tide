@@ -1,22 +1,22 @@
 (function(){
   // -------------------------------------------------------------------
-  // ARC XLII — MEET THE MAKER. Chapters 1-10 so far ("First Contact" +
-  // "The World Beyond the Manuscript"), per San's own note that this arc
-  // needs building in pieces. Gated at game.arc41BridgeComplete + level
-  // 630 -- the same level the bridge chapter itself required, not a
-  // further bump, since Ch.1 picks up immediately where the bridge left
-  // off ("Following the Horizon crossing") rather than after any
-  // further time or leveling.
+  // ARC XLII — MEET THE MAKER. Chapters 1-15 so far ("First Contact" +
+  // "The World Beyond the Manuscript" + "An Invitation Across Worlds"),
+  // per San's own note that this arc needs building in pieces. Gated at
+  // game.arc41BridgeComplete + level 630 -- the same level the bridge
+  // chapter itself required, not a further bump, since Ch.1 picks up
+  // immediately where the bridge left off ("Following the Horizon
+  // crossing") rather than after any further time or leveling.
   //
   // This file is deliberately incomplete. ARC42_CHAPTERS currently only
-  // holds these first two blocks; arc42ObjectiveState() reports
-  // 'arc42_part1_complete_for_now' once all ten are read, same
+  // holds these first three blocks; arc42ObjectiveState() reports
+  // 'arc42_part1_complete_for_now' once all fifteen are read, same
   // fallback message every other arc file already has for exactly this
   // situation. No game.arc42Complete is set anywhere in this file --
   // that flag belongs to whichever chapter actually closes the arc, not
   // yet written. Later chapter blocks extend ARC42_CHAPTERS/
   // ARC42_CHAPTER_SCENES in place, the same way this file has already
-  // grown once and will keep growing, not replace itself.
+  // grown twice and will keep growing, not replace itself.
   //
   // Ch.6-10 ("The World Beyond the Manuscript") introduce one new piece
   // of mechanics: Ch.8's frontier disturbance is an actual fight, not a
@@ -29,6 +29,15 @@
   // conclusions are invented here, matching the crossover planning
   // doc's own note that its artifact effects are deliberately future
   // work, not this block's.
+  //
+  // Ch.11-15 ("An Invitation Across Worlds") bring Jade's party to
+  // Veyren for the first time -- a short, explicitly temporary visit,
+  // never a recruitment or settlement. Ch.13 adds the Arcane Trio's own
+  // preliminary pass on the Black Pearl to the same investigation log
+  // Ch.9/10 started (still no properties or conclusions invented).
+  // Ch.15's cooling spring is deliberately just a tease -- a flag
+  // (game.fairTideCoolingSpringTeased) for a later chapter block to
+  // actually pay off, not a built destination here.
   //
   // Per the outline's own explicit framing: the bridge chapter
   // (arc41-bridge.js) already handled the Horizon crossing itself --
@@ -73,7 +82,12 @@
     {id:7, title:'The Guard and the First Mate', focus:"Joel and Devon find common ground through their protective instincts and experience supporting strong-willed partners. Meanwhile, San and Jade exchange stories about their adventures. Jade discovers that San is considerably less formal than she expected from a captain.", image:'assets/comics/arc42/ch07-the-guard-and-the-first-mate.webp', xp:385, action:'⚔️ Meet the Guard and the First Mate'},
     {id:8, title:'A Little Adventure', focus:"Jade's party invites San and Joel to help investigate a minor disturbance along the frontier. The two groups work together, learning each other's abilities and fighting styles. The successful expedition establishes mutual trust without introducing another major villain.", image:'assets/comics/arc42/ch08-a-little-adventure.webp', xp:410, action:'🗡️ Join a Little Adventure'},
     {id:9, title:'The Pearl That Remains', focus:"During a quiet conversation, Jade and Devon mention the Black Pearl. Although Xima's curse has ended, the Pearl remains a concern. San realizes this is something entirely beyond her original manuscript. She suggests involving Fair Tide's researchers.", image:'assets/comics/arc42/ch09-the-pearl-that-remains.webp', xp:420, action:'🖤 Learn of the Pearl That Remains'},
-    {id:10, title:'An Open Door', focus:"San explains the Horizon Engine and Fair Tide's research capabilities. Jade's companions are intrigued by the possibility of visiting another world. San offers to arrange a future visit. \"You're inviting everyone already?\" \"I'm being hospitable.\" \"Of course you are.\"", image:'assets/comics/arc42/ch10-an-open-door.webp', xp:410, action:'🚪 Leave an Open Door'}
+    {id:10, title:'An Open Door', focus:"San explains the Horizon Engine and Fair Tide's research capabilities. Jade's companions are intrigued by the possibility of visiting another world. San offers to arrange a future visit. \"You're inviting everyone already?\" \"I'm being hospitable.\" \"Of course you are.\"", image:'assets/comics/arc42/ch10-an-open-door.webp', xp:410, action:'🚪 Leave an Open Door'},
+    {id:11, title:'A Passage to Veyren', focus:'San arranges a short visit to Fair Tide for Jade and her five-person party. The visitors experience the Horizon passage and discover that Veyren is unlike Lunareth. Joel assures them the journey is reversible. "You do this regularly?" "We\'re getting better at it."', image:'assets/comics/arc42/ch11-a-passage-to-veyren.webp', xp:420, action:'🌌 Open a Passage to Veyren'},
+    {id:12, title:'Welcome to Fair Tide', focus:"San and Joel introduce their guests to Fair Tide. Jade's party meets members of the crew, including Renn, Erynn and Mimi. The researchers are fascinated by the visitors' different abilities and experiences. San proudly shows Jade the settlement she helped build.", image:'assets/comics/arc42/ch12-welcome-to-fair-tide.webp', xp:400, action:'⚓ Welcome Them to Fair Tide'},
+    {id:13, title:'The Arcane Trio', focus:"Renn, Erynn and Mimi begin preliminary examinations of the Black Pearl's known history and effects. Jade explains what she and Devon understand about it. The researchers acknowledge that its nature remains uncertain -- further investigation will require information from Lunareth.", image:'assets/comics/arc42/ch13-the-arcane-trio.webp', xp:430, action:'🔮 Consult the Arcane Trio'},
+    {id:14, title:"The Captain's Family", focus:"Jade and her companions meet Vaeren, Joelle and Soel. San and Joel's established family life surprises them. Jade quietly observes the twins, while Devon notices her thoughtful expression. San senses the couple may have something personal on their minds, but doesn't pry.", image:'assets/comics/arc42/ch14-the-captains-family.webp', xp:410, action:"🐈 Meet the Captain's Family"},
+    {id:15, title:'A Rather Nice Spring', focus:'Before their guests return to Lunareth, San casually mentions a beautiful cooling spring in Fair Tide. Jade is curious. Joel recognizes San\'s suspiciously innocent expression. "San…" "What? It\'s very refreshing." The visitors agree to see it during a future stay. San offers no further explanation.', image:'assets/comics/arc42/ch15-a-rather-nice-spring.webp', xp:400, action:'♨️ Mention a Rather Nice Spring'}
   ];
   window.ARC42_CHAPTERS = ARC42_CHAPTERS;
 
@@ -87,7 +101,12 @@
     7: "Joel and Devon fall into an easy rapport almost immediately, the kind that doesn't need much explaining once you notice the shape of it — two men who've each spent years quietly watching over someone strong-willed enough not to need the watching, and loving them anyway for exactly who they are. They trade notes without either one treating it as a competition.<br><br>San and Jade, meanwhile, end up deep in their own exchange — adventures, close calls, the particular stories that only make sense to someone who's actually lived through something similar.<br><br>Jade comes away from it faintly surprised. Whatever she expected from a ship's captain, San turns out to be considerably less formal about the whole thing than that title suggested.",
     8: "Jade's party brings word of something minor stirring along the frontier — nothing that sounds like it needs Lunareth's own heaviest hitters, but not nothing either. They ask if San and Joel want in.<br><br>San says yes before Joel finishes the question in his own head, which he notices and doesn't comment on.<br><br>The two groups head out together, and the real value of the trip isn't really the disturbance itself — it's watching how everyone actually fights, up close, learning each other's instincts and timing in a way no amount of conversation back at the shore could have taught them. Devon reads an opening half a second before San does. Joel adjusts around Jade's own rhythm without needing to be told how.<br><br>It gets handled, cleanly, without turning into anything larger than it already was. Nobody needed a new villain for the trip to be worth taking.",
     9: "Later, somewhere quieter, the conversation turns serious without quite meaning to. Jade and Devon mention the Black Pearl, carefully, the way people discuss something they've mostly made peace with but haven't entirely stopped worrying about.<br><br>Xima's curse is broken. That much is settled, over, genuinely finished. The Pearl itself, though, is still there — still a question neither of them has a clean answer for, even now, years past the part of the story where it should have simply resolved.<br><br>San listens, and realizes fairly quickly that whatever this actually is, it sits well outside anything she ever wrote. This was never her story to finish.<br><br>\"Fair Tide has people who look into exactly this kind of thing,\" she offers. \"Researchers. If you'd want another set of eyes on it.\"",
-    10: 'San lays out what Fair Tide actually has to offer — the Horizon Engine, the research team behind it, everything they\'ve learned crossing into worlds that were never theirs to begin with. She explains it plainly, without overselling any of it.<br><br>Jade\'s companions light up at the idea almost immediately, visibly intrigued by the notion of an entire other world sitting one crossing away. San offers to arrange a proper visit sometime soon — nothing permanent, nobody expected to leave Lunareth for good, just a door left open for whoever wants to walk through it.<br><br>"You\'re inviting everyone already?" Joel asks, watching her work the room.<br><br>"I\'m being hospitable," San says.<br><br>"Of course you are," Joel says, and doesn\'t bother arguing the point further.'
+    10: 'San lays out what Fair Tide actually has to offer — the Horizon Engine, the research team behind it, everything they\'ve learned crossing into worlds that were never theirs to begin with. She explains it plainly, without overselling any of it.<br><br>Jade\'s companions light up at the idea almost immediately, visibly intrigued by the notion of an entire other world sitting one crossing away. San offers to arrange a proper visit sometime soon — nothing permanent, nobody expected to leave Lunareth for good, just a door left open for whoever wants to walk through it.<br><br>"You\'re inviting everyone already?" Joel asks, watching her work the room.<br><br>"I\'m being hospitable," San says.<br><br>"Of course you are," Joel says, and doesn\'t bother arguing the point further.',
+    11: 'True to her word, San arranges a short visit — just long enough for Jade\'s whole party to actually see Veyren for themselves, nothing more ambitious than that.<br><br>The Horizon passage itself catches all five of them off guard in different ways. Whatever they expected crossing between worlds to feel like, none of it quite matches the real thing, and Veyren itself turns out to be nothing like Lunareth once they\'re actually standing in it — different sky, different water, a whole different shape to how the world sits together.<br><br>Joel makes a point of reassuring them before anyone gets too deep into their own unease about it. The journey goes both ways. Nobody\'s stranded here.<br><br>"You do this regularly?" Jade asks, still visibly adjusting.<br><br>"We\'re getting better at it," San says, which is as honest an answer as she has.',
+    12: "San and Joel bring their guests properly into Fair Tide, and the settlement does what it always does to first-time visitors — slowly, steadily, makes its case for itself without anyone having to oversell it. Jade's party meets the crew in pieces: Renn, already talking faster than anyone can quite follow; Erynn, measured and watchful; Mimi, reading each of them with open, genuine curiosity.<br><br>The researchers, for their part, are plainly fascinated. Five people with abilities and histories entirely outside anything Veyren's own records have ever catalogued is not a small thing to any of the three of them, and it shows.<br><br>San walks Jade through the settlement herself, a clear, quiet pride in it she doesn't bother hiding. This is what she built, out of considerably less than Jade apparently started with. Jade can tell.",
+    13: "Renn, Erynn and Mimi don't waste the opportunity. With Jade's party actually present, they start in on preliminary work almost immediately — gathering what's known about the Black Pearl's history, its documented effects, anything that might actually help make sense of it.<br><br>Jade lays out what she and Devon understand, which turns out to be less than any of the researchers initially hoped and more than they expected given how little Lunareth itself seems to have resolved about it.<br><br>By the end of the session, the three of them are honest about where that leaves things: its actual nature is still genuinely uncertain. Whatever comes next is going to need information Fair Tide simply doesn't have access to yet — information that only exists back on Lunareth.",
+    14: "Jade and her companions meet the rest of San and Joel's life — Vaeren, Joelle, and Soel keeping his usual careful watch over both of them. It's a different kind of surprise than the settlement itself, quieter, more personal: a captain and a former guard, with an entire family built alongside everything else they've taken on.<br><br>Jade watches the twins for a while, longer than the moment strictly calls for, something thoughtful settling over her expression. Devon notices. He doesn't say anything about it, not yet, just stays close.<br><br>San catches the look too, the same way she catches most things. She doesn't ask. Whatever's sitting between the two of them right now feels like theirs to work through first, not hers to pry into.",
+    15: 'Before the visit winds down, San mentions — almost too casually to be entirely casual — that Fair Tide has a rather nice cooling spring, somewhere quiet, very refreshing this time of year.<br><br>Jade\'s curiosity is immediate and obvious.<br><br>Joel knows that particular innocent look on San\'s face far too well by now.<br><br>"San…" he says, a warning and a question at once.<br><br>"What?" San says, entirely too pleased with herself. "It\'s very refreshing."<br><br>The visitors agree readily enough to see it, whenever their next stay actually happens. San doesn\'t offer anything further on the subject, and doesn\'t look especially sorry about that either.'
   };
   window.ARC42_CHAPTER_SCENES = ARC42_CHAPTER_SCENES;
 
