@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V401 · Steady Reach Ally Network — Wei Liang, Theo, Suzie, Chiu May, Intan';
+window.__CT_BUILD__='V402 · Arc XXXIX Ch.3-12 Revised — The Steady Reach (full crew on-page)';
