@@ -71,15 +71,73 @@
       {speaker:'Mimi', line:'No.'},
       {speaker:'Brada', line:"You didn't even think about it."},
       {speaker:'Mimi', line:"I don't need to."}
+    ]},
+    { id:'lewis_aisy_rigging', characters:['lewis_ally','aisy_ally'], lines:[
+      {speaker:'Lewis', line:"Something's wrong with the rigging."},
+      {speaker:"Aisy'", line:'No, it isn\'t.'},
+      {speaker:'Lewis', line:'...How do you already know that?'},
+      {speaker:"Aisy'", line:'I checked it an hour ago.'}
+    ]},
+    { id:'zul_jonathan_manifest', characters:['zul_ally','jonathan_ally'], lines:[
+      {speaker:'Zul', line:"Cargo's all aboard!"},
+      {speaker:'Jonathan', line:"That's not what the manifest says."},
+      {speaker:'Zul', line:"The manifest's wrong."},
+      {speaker:'Jonathan', line:'...I wrote the manifest.'}
+    ]},
+    { id:'elva_selina_current', characters:['elva_ally','selina_ally'], lines:[
+      {speaker:'Elva', line:"Current's shifting east."},
+      {speaker:'Selina', line:'Noted.'},
+      {speaker:'Elva', line:"That's it?"},
+      {speaker:'Selina', line:'What else is there?'}
+    ]},
+    { id:'wei_liang_lewis_ballista', characters:['wei_liang_ally','lewis_ally'], lines:[
+      {speaker:'Lewis', line:"It's one more ballista."},
+      {speaker:'Wei Liang', line:"It's one more ballista we can't afford."},
+      {speaker:'Lewis', line:'We could sell something.'},
+      {speaker:'Wei Liang', line:'We are not selling the ship.'}
+    ]},
+    { id:'theo_jorvin_unconventional', characters:['theo_ally','jorvin'], lines:[
+      {speaker:'Theo', line:"It's not broken. It's unconventional."},
+      {speaker:'Jorvin', line:"It's broken."},
+      {speaker:'Theo', line:"...It's also broken."}
+    ]},
+    { id:'suzie_intan_nickname', characters:['suzie_ally','intan_ally'], lines:[
+      {speaker:'Suzie', line:"Mimi's calling you Tan again."},
+      {speaker:'Intan', line:"I've noticed."},
+      {speaker:'Suzie', line:'You could tell her to stop.'},
+      {speaker:'Intan', line:'I could.'}
+    ]},
+    { id:'chiu_may_lewis_voice', characters:['chiu_may_ally','lewis_ally'], lines:[
+      {speaker:'Chiu May', line:"You're doing the voice again."},
+      {speaker:'Lewis', line:'What voice?'},
+      {speaker:'Chiu May', line:"The supervisor voice. On people who don't work for you anymore."},
+      {speaker:'Lewis', line:'Force of habit.'}
     ]}
   ];
   window.FAIR_TIDE_CREW_CONVERSATIONS = CONVERSATIONS;
+
+  // Generic '<id>_ally' token: true once that id is both registered AND
+  // currently eligible in FAIR_TIDE_ALLY_NETWORK (fair-tide-ally-
+  // network.js) -- covers Lewis's own Steady Reach crew and the TM
+  // colleagues (Suzie, Chiu May, Intan) the same way, without a
+  // one-off branch per name. They're never game.foundCompanions (never
+  // recruited, never relocated to Fair Tide -- see arc39.js's own
+  // restraint), so the default foundCompanions check below would never
+  // fire for them; this is the same kind of named special case
+  // maera_roster already is, just written once for the whole network
+  // instead of per person.
+  function allyNetworkEligible(id){
+    if (typeof window.FAIR_TIDE_ALLY_NETWORK === 'undefined') return false;
+    const entry = window.FAIR_TIDE_ALLY_NETWORK.find(function(a){ return a.id === id; });
+    return !!(entry && (!entry.eligible || entry.eligible()));
+  }
 
   function characterEligible(token){
     if (token === 'san') return true;
     if (token === 'maera_roster') return !!(game.fairTideRoster && game.fairTideRoster.maera);
     if (token === 'children_unlocked') return !!(typeof window.fairTideChildrenUnlocked === 'function' && window.fairTideChildrenUnlocked());
     if (token === 'soel_unlocked') return !!(typeof level === 'function' && level() >= 10);
+    if (token.slice(-5) === '_ally') return allyNetworkEligible(token.slice(0, -5));
     return !!(game.foundCompanions && game.foundCompanions[token]);
   }
 
