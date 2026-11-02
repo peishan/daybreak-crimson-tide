@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V404 · Arc XXXIX Ch.13 — Chiu May (Suzie & Intan introduced)';
+window.__CT_BUILD__='V405 · The Steady Reach building at Fair Tide (Gym & Dance Room)';
