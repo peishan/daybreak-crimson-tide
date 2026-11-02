@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V402 · Arc XXXIX Ch.3-12 Revised — The Steady Reach (full crew on-page)';
+window.__CT_BUILD__='V403 · Steady Reach crew join Fair Tide banter ("Overheard at Fair Tide")';
