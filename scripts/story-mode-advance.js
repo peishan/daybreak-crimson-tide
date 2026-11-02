@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V403 · Steady Reach crew join Fair Tide banter ("Overheard at Fair Tide")';
+window.__CT_BUILD__='V404 · Arc XXXIX Ch.13 — Chiu May (Suzie & Intan introduced)';
