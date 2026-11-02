@@ -90,6 +90,18 @@
       hari_raya_aidilfitri: { month:3, day:10, endDay:12 },
       dragon_boat:          { month:6, day:9 },
       mid_autumn:           { month:9, day:15 }
+    },
+    // 2028: hari_raya_aidilfitri intentionally left out of this entry --
+    // every source checked (timeanddate, truecalendar, officeholidays)
+    // still calls it a tentative estimate (around Feb 27-28, 2028),
+    // pending the actual moon-sighting announcement closer to the date.
+    // Add it here once Brunei/Malaysia's authorities confirm it, same as
+    // every other lunar date in this table.
+    2028: {
+      cny:          { month:1, day:26, endDay:27 },
+      chap_goh_mei: { month:2, day:9 },
+      dragon_boat:  { month:5, day:28 },
+      mid_autumn:   { month:10, day:3 }
     }
   };
   window.FESTIVAL_YEAR_DATES = FESTIVAL_YEAR_DATES;
