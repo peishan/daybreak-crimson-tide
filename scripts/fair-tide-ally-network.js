@@ -25,6 +25,23 @@
   // finally given a data layer. Gated on game.lewisAllyCaptain so they
   // don't appear before that scene has actually introduced them.
   //
+  // Wei Liang and Theo (Purser and Ship's Engineer) complete the Steady
+  // Reach's 8-person crew per the Steady Reach Crew Bible -- same gate,
+  // same voice, nothing from their fuller bible invented here beyond a
+  // short observational snapshot, matching every other entry's own
+  // restraint.
+  //
+  // Suzie, Chiu May, and Intan ("Tan" -- Mimi's own nickname for her,
+  // not her choice) are explicitly NOT Steady Reach crew -- former TM
+  // colleagues who appear from Arc XXXIX onwards per San's own note.
+  // No dedicated introduction chapter exists yet to gate them on, so
+  // they share the same game.lewisAllyCaptain gate as the rest of this
+  // network for now (the earliest point this whole "former colleagues"
+  // thread is actually live) -- re-gate to their own chapter flag once
+  // one exists. Kept deliberately light on personality, same restraint
+  // as Wei Liang's own "not yet fully established" -- nothing invented
+  // beyond what San's own note actually said about them.
+  //
   // Every entry here also gets a Happiness line once registered through
   // the generic Fair Tide resident sweep (scripts/fair-tide-wider-
   // residents.js, loaded after this file) -- that's what actually backs
@@ -67,6 +84,26 @@
     {id:'jonathan', name:'Jonathan', icon:'🌅',
       connection:"Lewis's crew, aboard The Steady Reach.",
       desc:"Quiet — watching the horizon the way he always seems to be watching something the rest of them haven't noticed yet.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'wei_liang', name:'Wei Liang', icon:'📒',
+      connection:"Lewis's crew, aboard The Steady Reach.",
+      desc:"Keeps the ship's ledger somewhere between a weapon and a prayer book — exact, and not up for debate.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'theo', name:'Theo', icon:'🛠️',
+      connection:"Lewis's crew, aboard The Steady Reach.",
+      desc:"Already elbow-deep in something mechanical before the gangplank's even properly down.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'suzie', name:'Suzie', icon:'🧾',
+      connection:"A former TM colleague — not part of Lewis's crew.",
+      desc:"Her own place in Veyren is still taking shape.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'chiu_may', name:'Chiu May', icon:'🗂️',
+      connection:"A former manager at TM, from the same old workplace.",
+      desc:"Carries herself with the same quiet authority she always did.",
+      eligible: function(){ return !!game.lewisAllyCaptain; }},
+    {id:'intan', name:'Intan', icon:'🏷️',
+      connection:"Part of Suzie's circle back at TM.",
+      desc:"Still gets called \"Tan\" by anyone who already knew her before Veyren — Mimi's nickname for her, never her own choice.",
       eligible: function(){ return !!game.lewisAllyCaptain; }}
   ];
   window.FAIR_TIDE_ALLY_NETWORK = FAIR_TIDE_ALLY_NETWORK;

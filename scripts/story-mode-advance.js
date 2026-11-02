@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V400 · Arc XLII Ch.41-45 — Meet the Maker COMPLETE (The Door Stays Open)';
+window.__CT_BUILD__='V401 · Steady Reach Ally Network — Wei Liang, Theo, Suzie, Chiu May, Intan';
