@@ -53,6 +53,25 @@
   // Sairen, gated on her own arc's completion (game.arc22Complete) rather
   // than a later one -- she's never added to ALL_PARTY, so the ids/
   // memberUnlocked path doesn't apply to her either.
+  //
+  // Jovie: joins at Arc V Chapter 13 ("Here, Now") as a type:'roster'
+  // recruit (arc5-and-objective-chain.js) -- roster recruits only ever
+  // set game.fairTideRoster[id], never game.foundCompanions[id], so like
+  // Maera/N/Sairen she can never satisfy the default ids path either.
+  // customUnlocked reads her exact recruitment chapter directly
+  // (game.comicProgress5[13]) instead of a broader arc-complete flag,
+  // since Arc V keeps running well past the chapter she joins in.
+  //
+  // Medical Personnel (Maera, Jovie, Senedra, Dr. AA, Eliz, Sister Wren):
+  // Senedra/Dr. AA/Eliz are ordinary ALL_PARTY companions recruited during
+  // Arc I; Sister Wren joins at that same arc's climax (memberUnlocked's
+  // own special case, game.finalCleared -- that flag is set at Arc I's
+  // finale, "The Drowned Passage", not any later point in the game).
+  // Maera (Arc XXII) and Jovie (Arc V Ch.13) both join long after those
+  // four, so the combined sheet is written as customUnlocked checking all
+  // six conditions directly rather than just reusing game.arc22Complete
+  // alone -- it still lands on Maera's join being the real gate today, but
+  // stays correct even if any of the earlier four ever moved later.
   // -------------------------------------------------------------------
 
   const CHARACTER_BIOS = [
@@ -74,7 +93,16 @@
     { key: 'vaeren_joelle',      label: 'Vaeren & Joelle',           image: 'assets/bios/vaeren-joelle.png',
       customUnlocked: function(){ return !!game.arc36Complete; } },
     { key: 'maera',              label: 'Maera',                     image: 'assets/bios/maera.png',
-      customUnlocked: function(){ return !!game.arc22Complete; } }
+      customUnlocked: function(){ return !!game.arc22Complete; } },
+    { key: 'jovie',               label: 'Jovie',                     image: 'assets/bios/jovie.png',
+      customUnlocked: function(){ return !!(game.comicProgress5 && game.comicProgress5[13]); } },
+    { key: 'medical_personnel',  label: 'Medical Personnel',         image: 'assets/bios/medical-personnel.png',
+      customUnlocked: function(){
+        return !!(game.foundCompanions && game.foundCompanions.senedra && game.foundCompanions.dr_aa && game.foundCompanions.eliz) &&
+          !!game.finalCleared &&
+          !!game.arc22Complete &&
+          !!(game.comicProgress5 && game.comicProgress5[13]);
+      } }
   ];
   window.CHARACTER_BIOS = CHARACTER_BIOS;
 
