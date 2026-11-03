@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V405 · The Steady Reach building at Fair Tide (Gym & Dance Room)';
+window.__CT_BUILD__='V406 · Jovie & Medical Personnel character bios';
