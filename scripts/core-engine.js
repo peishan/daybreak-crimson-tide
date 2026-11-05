@@ -1752,6 +1752,11 @@ let game = {
   hasteTurns: 0, hastePct: 0, timeStopTurns: 0, markedBoss: false,
   enemyVulnerable: 0, enemyVulnerablePct: 0,
   defending: {}, enemyStatus: null, pendingPostBattle: null,
+  // Vaeren/Joelle/Sairen kit state (Guardian's Current/Celestial Veil's
+  // single-ally shield, Vanishing Step's evasion, Twin Resonance) -- same
+  // per-battle scalar/flag shape as shieldTurns/markedBoss above, reset in
+  // startCombat() alongside them.
+  allyShield: null, evade: null, twinResonanceArmed: false, sairenNextAtkBonus: false,
   inventory: [], consumables: {}, equippedTrophies: {},
   equipmentInventory: [],
   equippedGear: {},
@@ -4622,6 +4627,10 @@ function startCombat(encounter) {
   game.markedBoss = false;
   game.defending = {};
   game.enemyStatus = null;
+  game.allyShield = null;
+  game.evade = null;
+  game.twinResonanceArmed = false;
+  game.sairenNextAtkBonus = false;
   game.growthUsedThisBattle = {};
   game.nervousCourageActive = false;
   game.spellMenuOpen = false;
@@ -5026,6 +5035,15 @@ function logCombat(line) { game.combatLog.push(line); if (game.combatLog.length 
 function rollCrit(actorId) {
   let chance = CRIT_BASE;
   if (actorId === 'senedra') chance += (affinityFor('senedra').fx.critPct || 0);
+  // Silent Cut -- Sairen's basic attack, Shadow Operative kit: a flat
+  // baseline crit bonus, same per-actor rollCrit extension Senedra's
+  // affinity bonus above already uses (not a separate skill -- it's a
+  // trait of his ordinary ATTACK).
+  if (actorId === 'sairen') chance += 0.08;
+  // Eyes in the Dark (passive): extra crit chance whenever the enemy is
+  // already exposed/weakened (game.enemyVulnerable -- the same state his
+  // own Weakness Exposed, and Erynn's/Mimi's expose spells, set).
+  if (actorId === 'sairen' && game.enemyVulnerable > 0) chance += 0.20;
   if (typeof window.getReputationBonus === 'function') chance += window.getReputationBonus('critBonus');
   return Math.random() < chance;
 }
@@ -5065,6 +5083,12 @@ function combatAction(action) {
       if (game.nervousCourageActive && (actor.id === 'zaki' || actor.id === 'san')) dmg += 6;
       const t = trinketBonus(actor.id);
       if (t && t.dmgPct) dmg = Math.round(dmg * (1 + t.dmgPct));
+      // Vanishing Step's "next-attack damage bonus" (Sairen) -- consumed
+      // the moment it's used, same one-shot-flag shape as game.markedBoss.
+      if (actor.id === 'sairen' && game.sairenNextAtkBonus) {
+        dmg = Math.round(dmg * 1.4);
+        game.sairenNextAtkBonus = false;
+      }
       let isCrit = rollCrit(actor.id);
       if (game.markedBoss && actor.id === 'san') { isCrit = true; game.markedBoss = false; }
       if (isCrit) dmg = Math.round(dmg * 1.5);
@@ -5157,6 +5181,35 @@ function combatAction(action) {
         logCombat(trio
           ? esc(actor.name) + " uses " + skill.icon + ' ' + skill.name + "! Renn's experiments, Mimi's sight, and Erynn's records all line up at once — the enemy has nowhere left to hide."
           : esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + '! An old weakness, right where the records said it would be.');
+      } else if (skill.effect === 'exposeSingle') {
+        // Weakness Exposed (Sairen, Shadow Operative kit): a free skill
+        // version of the same expose state Erynn's/Mimi's spells already
+        // set (game.enemyVulnerable/enemyVulnerablePct) -- "Mark target to
+        // increase incoming damage" maps directly onto it rather than
+        // inventing a parallel single-target mark system.
+        game.enemyVulnerable = 2;
+        game.enemyVulnerablePct = 0.20;
+        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + "! The weak point is marked — every hit lands harder now.");
+      } else if (skill.effect === 'guardAlly') {
+        // Guardian's Current (Vaeren) / Celestial Veil (Joelle): single-
+        // ally shield, shared helper (arc41-twins-classes.js) so both
+        // kits — one a free skill, one an MP spell — drive the exact same
+        // game.allyShield state and Twin Resonance hookup.
+        if (typeof window.armAllyShield === 'function') window.armAllyShield(actor, party);
+      } else if (skill.effect === 'tauntStrike') {
+        // Undertow Challenge (Vaeren highSkill): damage + taunt in one
+        // action — reuses the mult-damage math every other mult skill
+        // already uses, plus the same flavor-only taunt log line Joel's
+        // Shield Wall/Ate Joy's Warden's Guard use (this engine's enemy
+        // counter-attack always picks a random live target; taunt has
+        // never mechanically redirected it for anyone, so this doesn't
+        // either — consistent, not a new gap).
+        const gb = gearBonuses(actor.id);
+        let tdmg = Math.round((18 + rollDice('1d20') + gb.atk + gb.magic) * (skill.mult || 1) * (1 + (game.ship.cannons * 0.12)));
+        if (game.hasteTurns > 0) tdmg = Math.round(tdmg * (1 + game.hastePct / 100));
+        if (game.enemyVulnerable > 0) tdmg = Math.round(tdmg * (1 + game.enemyVulnerablePct));
+        game.combatEnemyHp = Math.max(0, game.combatEnemyHp - tdmg);
+        logCombat(esc(actor.name) + ' uses ' + skill.icon + ' ' + skill.name + ' for <span class="damage">' + tdmg + '</span> damage! The enemy focuses on ' + window.pronounFor(actor.id).object + '.');
       } else if (skill.effect === 'hex') {
         const mpCost = skill.mp || 0;
         const curMp = game.partyMp[actor.id] || 0;
@@ -5302,6 +5355,19 @@ function castSpell(spellIndex) {
     game.enemyVulnerable = spell.buffTurns || 3;
     game.enemyVulnerablePct = spell.buffVal / 100;
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! The enemy is exposed for ' + game.enemyVulnerable + ' turns.');
+  } else if (spell.buffType === 'evade') {
+    // Vanishing Step (Sairen): evasion for buffTurns turns, plus a bonus
+    // on his very next attack (consumed in combatAction's ATTACK case).
+    // New buffType, same shape as defense/haste/expose above — game.evade
+    // read in enemyCounterAttack, decremented in endTurn() alongside them.
+    game.evade = {id: actor.id, turns: spell.buffTurns || 2, pct: (spell.buffVal || 0) / 100};
+    game.sairenNextAtkBonus = true;
+    logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! Harder to hit, and ready to strike.');
+  } else if (spell.effect === 'guardAlly') {
+    // Celestial Veil (Joelle): the spell-cast twin of Vaeren's free
+    // Guardian's Current skill — same shared helper, same game.allyShield
+    // state, so Twin Resonance fires identically either way.
+    if (typeof window.armAllyShield === 'function') window.armAllyShield(actor, party);
   } else if (spell.effect === 'revive') {
     // Mirrors the skill-path 'revive' branch in combatAction exactly
     // (same San-priority targeting, same configurable revivePct) — added
@@ -5341,15 +5407,38 @@ function castSpell(spellIndex) {
     const curMp = game.partyMp[target.id] || target.mp;
     game.partyMp[target.id] = Math.min(effectiveMaxMp(target), curMp + spell.restoreAmt);
     logCombat(esc(actor.name) + ' casts ' + spell.icon + ' ' + spell.name + '! ' + esc(target.name) + ' restores <span class="heal">' + spell.restoreAmt + '</span> MP.');
-  } else if (spell.dice) {
+  }
+
+  // Deliberately NOT an "else if" of the chain above — Astral Threads and
+  // Constellation Bloom (Joelle) are the first spells in this kit to pair
+  // a buffType with real damage on the SAME spell object (arcane damage +
+  // enemy-expose for Astral Threads; damage + a small party shield for
+  // Constellation Bloom's "AoE" — framed, same as Renn's hex and Erynn's
+  // kit before it, as one hard hit rather than true multi-target, since
+  // game.combatEnemyHp is a single scalar). Every existing dice spell
+  // (San/Mezstorm/Mimi/Renn/…) only ever sets `dice`, never a buffType
+  // too, so pulling this out of the else-if chain changes nothing for
+  // any of them — it only adds the ability to combine, it never forces it.
+  if (spell.dice) {
     const gb = gearBonuses(actor.id);
     let sdmg = Math.round((rollDice(spell.dice) * 3 + gb.magic) * (1 + (game.ship.cannons * 0.1)));
     const tb = trinketBonus(actor.id);
     if (tb && tb.spellPct) sdmg = Math.round(sdmg * (1 + tb.spellPct));
     if (game.hasteTurns > 0) sdmg = Math.round(sdmg * (1 + game.hastePct / 100));
     if (game.enemyVulnerable > 0) sdmg = Math.round(sdmg * (1 + game.enemyVulnerablePct));
+    // Twin Resonance (passive): Joelle's next spell after Vaeren's
+    // Guardian's Current shields her specifically — armed in
+    // window.armAllyShield, consumed the first time she lands a damaging
+    // spell (Astral Threads or Constellation Bloom, whichever comes next).
+    let resonance = false;
+    if (actor.id === 'joelle' && game.twinResonanceArmed) {
+      sdmg = Math.round(sdmg * 1.3);
+      game.twinResonanceArmed = false;
+      resonance = true;
+    }
     game.combatEnemyHp = Math.max(0, game.combatEnemyHp - sdmg);
-    logCombat(esc(actor.name) + ' casts ' + spell.icon + ' <span class="spell">' + spell.name + '</span> for <span class="damage">' + sdmg + '</span> damage!');
+    logCombat(esc(actor.name) + ' casts ' + spell.icon + ' <span class="spell">' + spell.name + '</span> for <span class="damage">' + sdmg + '</span> damage!' +
+      (resonance ? ' <span style="color:#e8c96a">✦ Twin Resonance — Vaeren\'s shield still hums around her.</span>' : ''));
     applyStatus(spell);
   }
 
@@ -5399,6 +5488,11 @@ function endTurn() {
   if (game.shieldTurns > 0) game.shieldTurns--;
   if (game.hasteTurns > 0) game.hasteTurns--;
   if (game.enemyVulnerable > 0) game.enemyVulnerable--;
+  // Guardian's Current/Celestial Veil's single-ally shield and Vanishing
+  // Step's evasion window — same turns-based decrement as shieldTurns/
+  // hasteTurns above, just scoped to one ally instead of the whole party.
+  if (game.allyShield) { game.allyShield.turns--; if (game.allyShield.turns <= 0) game.allyShield = null; }
+  if (game.evade) { game.evade.turns--; if (game.evade.turns <= 0) game.evade = null; }
   tickEnemyStatus();
 
   if (game.combatEnemyHp > 0) {
@@ -5449,6 +5543,25 @@ function enemyCounterAttack() {
   const tb = trinketBonus(target.id);
   if (tb && tb.defPct) dmg = Math.round(dmg * (1 - tb.defPct));
 
+  // Vanishing Step (Sairen): a chance to dodge the hit entirely, while
+  // game.evade is active for him.
+  let evaded = false;
+  if (game.evade && game.evade.id === target.id && Math.random() < game.evade.pct) {
+    dmg = 0;
+    evaded = true;
+  }
+  // Guardian's Current/Celestial Veil: flat damage reduction for whichever
+  // ally is currently shielded.
+  if (!evaded && game.allyShield && game.allyShield.id === target.id) {
+    dmg = Math.round(dmg * (1 - game.allyShield.pct));
+  }
+  // Born of Two Horizons (Vaeren, passive): extra defense for himself
+  // specifically while he's actively shielding someone else — "defense
+  // bonus while protecting an ally," not a flat always-on bonus.
+  if (!evaded && target.id === 'vaeren' && game.allyShield && game.allyShield.by === 'vaeren' && game.allyShield.id !== 'vaeren') {
+    dmg = Math.max(1, Math.round(dmg * 0.85));
+  }
+
   // First Mate's Aegis (Arc V, Ch.5): a real activated skill now (see
   // useFirstMatesAegis()) rather than an automatic trigger — Joel spends
   // his turn to arm the mark, and it blocks the next hit that lands on
@@ -5477,8 +5590,12 @@ function enemyCounterAttack() {
   if (aegisTriggered) {
     logCombat('🛡️✨ The mark on Joel\'s chest flares — <b>First Mate\'s Aegis</b> shields San from the worst of it!');
   }
-  logCombat(esc(enemy.name) + ' strikes ' + esc(target.name) + ' for <span class="damage">' + dmg + '</span> damage!' +
-    (nextHp === 0 ? ' <span style="color:#e74c3c">' + esc(target.name) + ' has fallen!</span>' : ''));
+  if (evaded) {
+    logCombat('💨 ' + esc(enemy.name) + ' strikes at ' + esc(target.name) + ' — <b>Vanishing Step</b> carries them clear. The blow finds nothing.');
+  } else {
+    logCombat(esc(enemy.name) + ' strikes ' + esc(target.name) + ' for <span class="damage">' + dmg + '</span> damage!' +
+      (nextHp === 0 ? ' <span style="color:#e74c3c">' + esc(target.name) + ' has fallen!</span>' : ''));
+  }
 
   // San falling no longer immediately ends combat as a flee — see the
   // matching note above the allFallen check in renderCombat(). She's

@@ -767,7 +767,19 @@
   // TRAINING_LOCKED_IDS just below for why she currently isn't), same as
   // Ser Aldric/Sister Wren/Brada Shah/Caelan: important, but no different
   // from any other fieldable companion mechanically.
-  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel']);
+  //
+  // Vaeren, Joelle and Sairen (Arc XLI): San's own explicit spec —
+  // "story required characters, cannot be fielded, do not take up a party
+  // slot." The twins grow up enough across Arc XLI to actually fight, and
+  // Sairen's existing Ch.16 recruitment already grants a normal
+  // ALL_PARTY/foundCompanions entry for him — this is the one piece of
+  // that spec this file actually owns: once any of the three is unlocked,
+  // they're with the crew for free, same as San/Joel/Soel, rather than
+  // competing with everyone else for the fieldCap. Fully exploring with
+  // them (San's own "by Arc 42 and the sequel, they can be taken on
+  // exploration") is later, sequel-side work — this only covers combat
+  // fielding, which is all getFieldedIds()/toggleFielded below govern.
+  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel', 'vaeren', 'joelle', 'sairen']);
   window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
 
   // -------------------------------------------------------------------

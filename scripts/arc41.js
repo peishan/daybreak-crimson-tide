@@ -116,6 +116,11 @@
     // arc41-mechanics.js's own hook on this same chapter id -- kept out
     // of this file per the usual story/mechanics split.
     if (typeof window.grantSairenRecruitIfDue === 'function') window.grantSairenRecruitIfDue(id);
+    // Vaeren and Joelle: San's own call -- "the twins grow up 'bigger' by
+    // arc 41... we'll make them recruitable by end of arc 41." Same chapter
+    // id (16, Arc XLI's own finale/arc41Complete trigger just above), same
+    // mechanics-file split, in arc41-twins-classes.js.
+    if (typeof window.grantTwinsRecruitIfDue === 'function') window.grantTwinsRecruitIfDue(id);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof updateUI === 'function') updateUI();
     if (typeof renderStory === 'function') renderStory();

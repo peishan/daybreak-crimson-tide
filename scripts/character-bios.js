@@ -102,7 +102,15 @@
           !!game.finalCleared &&
           !!game.arc22Complete &&
           !!(game.comicProgress5 && game.comicProgress5[13]);
-      } }
+      } },
+    // Crossover sheet: San & Joel (Crimson Tide) vs. Jade & Devon (Curse of
+    // the Hidden Isle Tribute) -- a standalone crossover character sheet,
+    // not a recruit, so it has no ids to unlock against. Gated on
+    // game.arc42Complete since Jade and Devon are Arc XLII's own guest
+    // characters (arc42.js) and the sheet only makes sense once they've
+    // actually appeared in the story.
+    { key: 'san_joel_jade_devon', label: 'Crossover: San & Joel × Jade & Devon', image: 'assets/bios/san-joel-jade-devon.png',
+      customUnlocked: function(){ return !!game.arc42Complete; } }
   ];
   window.CHARACTER_BIOS = CHARACTER_BIOS;
 
