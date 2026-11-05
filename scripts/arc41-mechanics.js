@@ -52,8 +52,12 @@
     if (game.foundCompanions && game.foundCompanions.sairen) return; // idempotent
     game.foundCompanions = game.foundCompanions || {};
     if (typeof ALL_PARTY !== 'undefined' && Array.isArray(ALL_PARTY) && !ALL_PARTY.some(function(m){ return m.id === 'sairen'; })) {
+      // mp:50 (was 0) -- bumped alongside his Shadow Operative kit upgrade
+      // (arc41-twins-classes.js, loaded right after this file): Vanishing
+      // Step and Nameless Execution both cost MP, which his original
+      // single-skill Ghost Step placeholder never needed.
       ALL_PARTY.push({id:'sairen', name:'SAIREN', role:'Former Operative', combatRole:'Rogue',
-        hp:76, mp:0, portrait:'🥷', portraitAsset:'assets/portraits/sairen.png',
+        hp:76, mp:50, portrait:'🥷', portraitAsset:'assets/portraits/sairen.png',
         desc:"Once Nameless. Chose Fair Tide instead -- not for the twins, not for Jovie, though neither hurt. For himself."});
     }
     game.foundCompanions.sairen = true;
