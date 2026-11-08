@@ -2817,6 +2817,7 @@ function goScreen(name) {
   if (name === 'port') { renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderTemple(); ctPlayMusic('port'); }
   if (name === 'navigate') { renderNavigation(); ctPlayMusic('explore'); }
   if (name === 'party') renderPartyScreen();
+  if (name === 'crossover' && typeof window.renderCrossoverScreen === 'function') window.renderCrossoverScreen();
   if (name === 'inventory') renderInventory();
   if (name === 'equipment') { renderEquipment(); ctPlayMusic('port'); }
   if (name === 'shipyard') renderShipyard();
