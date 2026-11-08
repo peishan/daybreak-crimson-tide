@@ -413,15 +413,23 @@ function getActiveParty(){ return ALL_PARTY.filter(memberUnlocked); }
 // can't take them below 1 HP, same rule as the source game.
 const UNKILLABLE_IDS = new Set(['eliz','soel']);
 // Vaeren and Joelle (San's own call, prepping for the sequel): too young
-// to actually be put in harm's way, even though they're combat-capable
-// and free-fielded alongside San/Joel/Soel. Stronger than UNKILLABLE_IDS
-// above (which still lets a hit land, just not past 1 HP) -- these two
-// are removed from enemyCounterAttack's target pool entirely, so they
-// can act, cast, and deal damage every turn but are never the one hit
-// back. No separate leveling system needed for this (core-engine.js has
-// never had per-character levels -- level() is one shared value for the
-// whole party); this is purely a targeting exclusion.
-const PROTECTED_FROM_TARGETING_IDS = new Set(['vaeren','joelle']);
+// to actually be put in harm's way WHILE THEY'RE STILL GROWING, even
+// though they're combat-capable and free-fielded alongside San/Joel/
+// Soel. Stronger than UNKILLABLE_IDS above (which still lets a hit land,
+// just not past 1 HP) -- while this applies, they're removed from
+// enemyCounterAttack's target pool entirely, so they can act, cast, and
+// deal damage every turn but are never the one hit back.
+//
+// Conditional, not permanent (San's own correction): protection lasts
+// only until a given character's own characterPowerMult (see
+// YOUNG_GROWING_IDS/characterLevel near levelStatMult) actually reaches
+// 1 -- full personal strength, caught up to the party's own level. Once
+// a twin is fully grown, they take combat risk exactly like anyone
+// else; this only shields them for however long they're genuinely
+// still catching up.
+function isProtectedFromTargeting(id){
+  return YOUNG_GROWING_IDS.has(id) && characterPowerMult(id) < 1;
+}
 
 // ---------------------------------------------------------------------------
 
@@ -4496,9 +4504,11 @@ function levelStatMult(kind){
 //   - YOUNG_GROWING_IDS (Vaeren, Joelle) seed at 0 XP / real level 1 —
 //     they're genuinely meant to grow through being fielded, not start
 //     pre-leveled like an adult recruit. Safe to let them start this
-//     low specifically because they're also in
-//     PROTECTED_FROM_TARGETING_IDS above (never take a hit), so a tiny
-//     early HP number is cosmetic, not a survival risk.
+//     low specifically because isProtectedFromTargeting() (above
+//     UNKILLABLE_IDS) shields anyone in this set from being hit for as
+//     long as they're still below full power, so a tiny early HP number
+//     is cosmetic, not a survival risk -- and that protection itself
+//     lifts automatically the moment they actually reach 1x power.
 // characterPowerMult is still floored (0.25, not 0 — avoids a literal
 // 0 HP edge case for anyone in this bracket who ISN'T also
 // untargetable) and capped at 1 (nobody's personal level can ever
@@ -5636,10 +5646,11 @@ function enemyCounterAttack() {
   const party = getCrimsonCombatParty().filter(m => (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp) > 0);
   if (!party.length) return;
 
-  // Vaeren/Joelle are never eligible to be hit (PROTECTED_FROM_TARGETING_IDS
-  // above) -- falls back to the full party in the never-expected case where
-  // everyone alive happens to be protected, so this can't silently no-op.
-  const targetable = party.filter(m => !PROTECTED_FROM_TARGETING_IDS.has(m.id));
+  // Vaeren/Joelle are only shielded from being hit while still growing
+  // (isProtectedFromTargeting above) -- falls back to the full party in
+  // the never-expected case where everyone alive happens to be
+  // protected, so this can't silently no-op.
+  const targetable = party.filter(m => !isProtectedFromTargeting(m.id));
   const targetPool = targetable.length ? targetable : party;
   const target = targetPool[Math.floor(Math.random() * targetPool.length)];
   const gb = gearBonuses(target.id);
@@ -5664,13 +5675,16 @@ function enemyCounterAttack() {
     dmg = Math.round(dmg * (1 - game.allyShield.pct));
   }
   // NOTE: Vaeren's "Born of Two Horizons" passive (extra defense for
-  // himself while actively shielding someone else) is removed as of
-  // PROTECTED_FROM_TARGETING_IDS above -- target.id can never be
-  // 'vaeren' anymore, so the branch that used to live here could never
-  // fire again. Never had a player-facing name/description anywhere
-  // (CLASS_KIT.vaeren never listed it), so nothing shown to players
-  // changes; flagged to San in case she wants a new passive for him now
-  // that he can't be hit at all.
+  // himself while actively shielding someone else) was removed when
+  // isProtectedFromTargeting() first shipped -- while that protection is
+  // active, target.id can never be 'vaeren', so the branch that used to
+  // live here could never fire. It's no longer strictly permanent
+  // (protection lifts once he reaches full personal power), but the
+  // passive still isn't restored -- never had a player-facing name/
+  // description anywhere (CLASS_KIT.vaeren never listed it), so nothing
+  // shown to players changes either way; flagged to San in case she
+  // wants a new passive for him, for whenever he's grown enough to
+  // actually be hit again.
 
   // First Mate's Aegis (Arc V, Ch.5): a real activated skill now (see
   // useFirstMatesAegis()) rather than an automatic trigger — Joel spends
