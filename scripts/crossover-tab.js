@@ -32,6 +32,11 @@
   //      image already registered in character-bios.js's bios panel,
   //      surfaced here too as a dedicated highlight rather than only
   //      inside the generic Character Bios list.
+  //   4. The Vaeren/Joelle/Soel "Tribute x Crimson Tide" crossover sheet
+  //      -- a separate reference image from the existing toddler-stage
+  //      bio (assets/bios/vaeren-joelle.png, still gated at arc36Complete
+  //      in character-bios.js and untouched by this file) -- San's own
+  //      direction was to add this one here instead, not replace that.
   //
   // Pronouns: only characters whose pronoun is explicitly confirmed by a
   // direct word (he/she/him/her/husband/wife) in Arc XLII's own text or
@@ -141,6 +146,10 @@
     let html = '<div class="panel">'+
       '<img src="assets/bios/san-joel-jade-devon.png" alt="San &amp; Joel x Jade &amp; Devon crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
       '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">San &amp; Joel (Crimson Tide) x Jade &amp; Devon (Tribute)</div>'+
+      '</div>';
+    html += '<div class="panel">'+
+      '<img src="assets/bios/vaeren-joelle-soel-crossover.png" alt="Tribute x Crimson Tide -- Vaeren, Joelle &amp; Soel crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
+      '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">Vaeren, Joelle &amp; Soel -- Twins &amp; Guardian Companion (Tribute x Crimson Tide)</div>'+
       '</div>';
     html += '<div class="panel">'+renderTributeRosterPanel()+'</div>';
     const pearlPanel = (typeof window.renderBlackPearlPanel === 'function') ? window.renderBlackPearlPanel() : '';
