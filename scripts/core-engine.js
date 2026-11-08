@@ -412,6 +412,16 @@ function getActiveParty(){ return ALL_PARTY.filter(memberUnlocked); }
 // Eliz and Soel are narratively unkillable — damage still lands, it just
 // can't take them below 1 HP, same rule as the source game.
 const UNKILLABLE_IDS = new Set(['eliz','soel']);
+// Vaeren and Joelle (San's own call, prepping for the sequel): too young
+// to actually be put in harm's way, even though they're combat-capable
+// and free-fielded alongside San/Joel/Soel. Stronger than UNKILLABLE_IDS
+// above (which still lets a hit land, just not past 1 HP) -- these two
+// are removed from enemyCounterAttack's target pool entirely, so they
+// can act, cast, and deal damage every turn but are never the one hit
+// back. No separate leveling system needed for this (core-engine.js has
+// never had per-character levels -- level() is one shared value for the
+// whole party); this is purely a targeting exclusion.
+const PROTECTED_FROM_TARGETING_IDS = new Set(['vaeren','joelle']);
 
 // ---------------------------------------------------------------------------
 
@@ -5534,7 +5544,12 @@ function enemyCounterAttack() {
   const party = getCrimsonCombatParty().filter(m => (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp) > 0);
   if (!party.length) return;
 
-  const target = party[Math.floor(Math.random() * party.length)];
+  // Vaeren/Joelle are never eligible to be hit (PROTECTED_FROM_TARGETING_IDS
+  // above) -- falls back to the full party in the never-expected case where
+  // everyone alive happens to be protected, so this can't silently no-op.
+  const targetable = party.filter(m => !PROTECTED_FROM_TARGETING_IDS.has(m.id));
+  const targetPool = targetable.length ? targetable : party;
+  const target = targetPool[Math.floor(Math.random() * targetPool.length)];
   const gb = gearBonuses(target.id);
   let dmg = enemy.dmg + Math.floor(Math.random() * 10);
   if (gb.defense) dmg = Math.max(1, Math.round(dmg * (1 - Math.min(0.35, gb.defense / 200))));
@@ -5556,12 +5571,14 @@ function enemyCounterAttack() {
   if (!evaded && game.allyShield && game.allyShield.id === target.id) {
     dmg = Math.round(dmg * (1 - game.allyShield.pct));
   }
-  // Born of Two Horizons (Vaeren, passive): extra defense for himself
-  // specifically while he's actively shielding someone else — "defense
-  // bonus while protecting an ally," not a flat always-on bonus.
-  if (!evaded && target.id === 'vaeren' && game.allyShield && game.allyShield.by === 'vaeren' && game.allyShield.id !== 'vaeren') {
-    dmg = Math.max(1, Math.round(dmg * 0.85));
-  }
+  // NOTE: Vaeren's "Born of Two Horizons" passive (extra defense for
+  // himself while actively shielding someone else) is removed as of
+  // PROTECTED_FROM_TARGETING_IDS above -- target.id can never be
+  // 'vaeren' anymore, so the branch that used to live here could never
+  // fire again. Never had a player-facing name/description anywhere
+  // (CLASS_KIT.vaeren never listed it), so nothing shown to players
+  // changes; flagged to San in case she wants a new passive for him now
+  // that he can't be hit at all.
 
   // First Mate's Aegis (Arc V, Ch.5): a real activated skill now (see
   // useFirstMatesAegis()) rather than an automatic trigger — Joel spends
