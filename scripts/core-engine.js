@@ -1751,6 +1751,11 @@ let game = {
   cargo: {}, cargoPurchaseCost: {}, cargoCapacity: 50, cargoUsed: 0,
   ship: { hull: 1, cannons: 1, sails: 1, cargo: 1 }, shipTier: 0,
   reputation: 0, xp: 0, xpTotal: 0,
+  // Per-character combat level (San's own sequel-prep request) — additive
+  // on top of xpTotal/level() above, never replacing it. See
+  // characterXpForLevel/characterLevel/characterPowerMult near
+  // levelStatMult for the full design note.
+  characterXp: {}, characterLevelMigrationDone: false,
   rumors: [], marketPrices: {}, difficulty: 'normal', log: [],
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
@@ -4449,6 +4454,84 @@ function levelStatMult(kind){
   if(kind==='mp') return Math.min(5, 1 + steps*0.025);
   return Math.min(6, 1 + steps*0.03);
 }
+
+// ---------------------------------------------------------------------------
+// PER-CHARACTER COMBAT LEVEL — an additive second growth axis layered on
+// top of xpTotal/level() above, never replacing it. San's own scoping for
+// the Crimson Horizon sequel prep: a character's own level only affects
+// their HP/MP scaling (the exact same thing the shared level already
+// does via levelStatMult, just personalized), never which abilities they
+// can use — every existing kit's levelReq (San's capstone at 255, Eliz's
+// at 150, Ate Joy's highSkill at 40, etc.) stays checked against the
+// shared level() exactly as before, so none of the ~23 already-tuned
+// kits need touching.
+//
+// Tracks how much THIS specific character has personally fought in
+// combat — separate from game.xpTotal, which still gates arcs and
+// ability unlocks and is fed by both combat AND story/chapter XP. This
+// pool is fed ONLY from handleVictory()'s own combat-XP grant (see
+// grantCharacterCombatXP there), never from the dozens of gainXP(ch.xp)
+// calls scattered through every arc file for chapter completion.
+//
+// Deliberately a much gentler curve than xpForLevel (50*(l-1)*l) — that
+// one assumes 42 arcs' worth of story XP on top of combat rewards to
+// reach 600+; this one needs to be climbable through normal fielded
+// combat alone, within a reasonable number of fights, or "field them to
+// catch up" never actually pays off. Tune the 10 below if it feels too
+// fast/slow once this is actually played with.
+//
+// characterPowerMult is floored at 0.6 (a brand-new recruit is weaker,
+// not instantly unplayable/one-shot fodder) and capped at 1 (nobody's
+// personal level can ever outscale what the shared-level formula alone
+// would already give — this only ever pulls someone DOWN toward their
+// own level, never boosts them past the existing ceiling).
+//
+// Migration: existing saves aren't retroactively nerfed. The first time
+// this code runs, ensureCharacterLevelMigrated() seeds every already-
+// unlocked companion at full personal power (matching the party's
+// current shared level) exactly once, gated by
+// game.characterLevelMigrationDone. Only characters recruited AFTER that
+// one-time seed start fresh at 0 and have to actually be fielded to
+// catch up — which is the whole point for the sequel's new recruits.
+// ---------------------------------------------------------------------------
+function characterXpForLevel(l) { return 10 * (l - 1) * l; }
+function characterLevel(id) {
+  const xp = (game.characterXp && game.characterXp[id]) || 0;
+  let l = 1;
+  while (characterXpForLevel(l + 1) <= xp) l++;
+  return l;
+}
+function ensureCharacterLevelMigrated() {
+  if (game.characterLevelMigrationDone) return;
+  game.characterXp = game.characterXp || {};
+  const seedXp = characterXpForLevel(Math.max(1, level()));
+  (typeof getActiveParty === 'function' ? getActiveParty() : []).forEach(function(m){
+    if (game.characterXp[m.id] == null) game.characterXp[m.id] = seedXp;
+  });
+  game.characterLevelMigrationDone = true;
+}
+function characterPowerMult(id) {
+  ensureCharacterLevelMigrated();
+  const partyLv = Math.max(1, level());
+  const ownLv = characterLevel(id);
+  return Math.max(0.6, Math.min(1, ownLv / partyLv));
+}
+window.characterLevel = characterLevel;
+window.characterPowerMult = characterPowerMult;
+function grantCharacterCombatXP(participants, amount) {
+  ensureCharacterLevelMigrated();
+  game.characterXp = game.characterXp || {};
+  (participants || []).forEach(function(m){
+    if (!m || !m.id || m.id === 'soel') return; // Soel is a fixed-stat mascot, same exclusion levelStatMult already makes
+    const before = characterLevel(m.id);
+    game.characterXp[m.id] = (game.characterXp[m.id] || 0) + Math.max(0, amount);
+    const after = characterLevel(m.id);
+    if (after > before) {
+      logCombat('✦ ' + esc(m.name) + ' grows more confident in the field. <span style="opacity:.75;">(Personal Level ' + after + ')</span>');
+    }
+  });
+}
+window.grantCharacterCombatXP = grantCharacterCombatXP;
 function effectiveMaxHp(m) {
   // Idempotency guard: getCrimsonCombatParty() calls this once per member
   // to build its transformed combat-party objects, and stamps the result
@@ -4461,7 +4544,7 @@ function effectiveMaxHp(m) {
   if (m._scaledMaxHp != null) return m._scaledMaxHp;
   const t = trinketBonus(m.id); const g = gearBonuses(m.id);
   const base = Number(m.maxHp ?? m.hp ?? 1);
-  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('hp'));
+  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('hp') * characterPowerMult(m.id));
   return scaledBase + (t && t.hpBonus ? t.hpBonus : 0) + g.hp;
 }
 function partyHpOf(m) { return game.partyHp[m.id] != null ? game.partyHp[m.id] : effectiveMaxHp(m); }
@@ -4470,7 +4553,7 @@ function effectiveMaxMp(m) {
   if (m._scaledMaxMp != null) return m._scaledMaxMp;
   const t = trinketBonus(m.id);
   const base = Number(m.maxMp ?? m.mp ?? 0);
-  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('mp'));
+  const scaledBase = (m.id==='soel') ? base : Math.round(base * levelStatMult('mp') * characterPowerMult(m.id));
   return scaledBase + (t && t.mpBonus ? t.mpBonus : 0);
 }
 function trinketBonus(memberId) {
@@ -4935,7 +5018,7 @@ function renderCombat() {
     return `<div class="combat-party-card ${isActive ? 'active' : ''}${isFallen ? ' fallen' : ''}">
       ${portraitMarkup(m, "combat")}
       <div class="name">${m.name}</div>
-      <div style="font-size:0.7rem;opacity:0.7;">${m.combatRole || m.role}</div>
+      <div style="font-size:0.7rem;opacity:0.7;">${m.combatRole || m.role}${m.id !== 'soel' ? ' · Lv.' + characterLevel(m.id) : ''}</div>
       <div class="party-hp-bar"><div class="party-hp-fill" style="width:${hpPct2}%;background:${hpPct2 > 50 ? 'var(--success)' : hpPct2 > 25 ? '#f39c12' : 'var(--danger)'};"></div></div>
       <div class="hp-text" style="font-size:0.7rem;">${hp}/${maxHp} HP</div>
       ${m.mp > 0 ? `<div class="party-mp-bar"><div class="party-mp-fill" style="width:${mpPct}%;"></div></div>` : ''}
@@ -5686,6 +5769,11 @@ function handleVictory() {
   // of everything the crew has ever fought.
   game.bestiaryDiscovered = game.bestiaryDiscovered || {};
   if (enemy && enemy.key) game.bestiaryDiscovered[enemy.key] = true;
+  // Snapshot who actually fought THIS fight (respects combatPartyOverride,
+  // e.g. a training-bout one-on-one) before it gets cleared just below --
+  // per-character combat XP should only go to this battle's own
+  // participants, not the whole fielded roster.
+  const combatParticipants = getCrimsonCombatParty();
   // Clear the training-bout one-on-one override the moment ANY fight
   // resolves — not just training ones — so it can never leak into a
   // non-combat screen (party list, equipment) in the gap between this
@@ -5693,6 +5781,7 @@ function handleVictory() {
   game.combatPartyOverride = null;
   if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
   gainXP(enemy.xp);
+  if (typeof window.grantCharacterCombatXP === 'function') window.grantCharacterCombatXP(combatParticipants, enemy.xp);
   // Reputation rank gold bonus (see ct-build-v91-reputation-ranks) —
   // scoped to combat victories only, matching Daybreak's own "+X% gold
   // from every victory" framing rather than a universal gold multiplier.

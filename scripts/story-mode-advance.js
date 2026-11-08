@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V410 · Vaeren & Joelle protected from combat targeting';
+window.__CT_BUILD__='V411 · Per-character combat level (sequel prep)';
