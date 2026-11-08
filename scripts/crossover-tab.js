@@ -33,11 +33,20 @@
   //      surfaced here too as a dedicated highlight rather than only
   //      inside the generic Character Bios list.
   //
-  // Pronouns: only characters whose pronoun is explicitly confirmed in
-  // Arc XLII's own dialogue/narration use he/she below (Jade, Devon,
-  // Sally, Levi, Hugh, Sera, Adrian, Eve, Rheon, Mirelle). Sky, Jenika,
-  // Roc, Delilah, Aster and Fen are never given a pronoun anywhere in the
-  // arc's text, so their entries avoid guessing one.
+  // Pronouns: only characters whose pronoun is explicitly confirmed by a
+  // direct word (he/she/him/her/husband/wife) in Arc XLII's own text or
+  // San's own reference sheets use he/she below (Jade, Devon, Sally,
+  // Levi, Hugh, Sera, Adrian, Eve, Rheon, Mirelle, Fen -- Fen confirmed
+  // via San's crossover research-team sheet: "Aster's wife"). Sky,
+  // Jenika, Roc, Delilah and Aster are never given a pronoun anywhere in
+  // the arc's text or the sheets seen so far (Aster is named only as
+  // Fen's spouse, never directly), so their entries still avoid
+  // guessing one -- flagged to San for confirmation rather than assumed.
+  //
+  // Titles below (Mirelle/Rheon = Queen/King of Altan, Fen = Queen of
+  // Dragonvale, Adrian = Prince-Consort/Royal Scholar of Tribute, Jenika
+  // = Imperial Healer/Royal Cousin) come directly from San's own
+  // crossover reference sheets, not invented.
   // -------------------------------------------------------------------
 
   const TRIBUTE_CROSSOVER_CAST = [
@@ -66,8 +75,8 @@
       desc:"Lighter here than she ever lets herself be back home. No longer uncertain about Hugh, even if the two of them aren't telling anyone yet.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[23]); }},
     {id:'adrian', name:'Adrian', icon:'🔧',
-      connection:"Lunareth — Jade's older brother.",
-      desc:"Measuring at first, visibly won over by the end of it. Has a genuine head for exactly how the Horizon Engine actually works, much to Renn's delight.",
+      connection:"Lunareth — Jade's older brother. Prince-Consort of Tribute, Royal Scholar and future Imperial Advisor.",
+      desc:"Measuring at first, visibly won over by the end of it. A brilliant scholar and statesman — has a genuine head for exactly how the Horizon Engine actually works, much to Renn's delight.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[31]); }},
     {id:'eve', name:'Eve', icon:'💭',
       connection:"Lunareth — Adrian's partner.",
@@ -78,16 +87,16 @@
       desc:"A healer's curiosity, and a young son with Jenika neither of them has bothered formalizing. Genuinely interested in how Veyren's medicine differs from Lunareth's own.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[33]); }},
     {id:'jenika', name:'Jenika', icon:'📋',
-      connection:"Lunareth — Devon's cousin, Sky's partner.",
-      desc:"Compares notes with Fair Tide's medical team like someone who's done this kind of exchange before.",
+      connection:"Lunareth — Imperial Healer, Royal Cousin (Devon's cousin). Sky's unmarried partner.",
+      desc:"Advanced healing, recovery and maternal care — connects Tribute's own medical resources to Fair Tide's. Compares notes with the infirmary team like someone who's done this kind of exchange before.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[33]); }},
     {id:'rheon', name:'Rheon', icon:'🧐',
-      connection:"Lunareth — Sera's older brother.",
+      connection:"Lunareth — Sera's older brother. King of Altan.",
       desc:"Suspicious that his sister came back from Fair Tide unusually happy. Hasn't worked out why yet.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[36]); }},
     {id:'mirelle', name:'Mirelle', icon:'🌷',
-      connection:"Lunareth — Rheon's partner.",
-      desc:"Delighted by every small story about the families Fair Tide's residents have built here.",
+      connection:"Lunareth — Rheon's wife, Queen of Altan.",
+      desc:"A long-standing friend Devon has looked up to since he was young — former Head of House Veyne and a key figure in Tribute's political and intelligence circles. Delighted by every small story about the families Fair Tide's residents have built here.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[36]); }},
     {id:'roc', name:'Roc', icon:'🐉',
       connection:"Dragonvale.",
@@ -98,12 +107,12 @@
       desc:"Builds a life out of love rather than obligation — the kind San is openly delighted to see in another family.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'aster', name:'Aster', icon:'🗺️',
-      connection:"Dragonvale.",
+      connection:"Dragonvale — Fen's spouse. Jade and Devon's sibling.",
       desc:"Steady in conversation, contributes without needing to lead it, and still finds time to actually look around wherever the visit lands.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'fen', name:'Fen', icon:'⚙️',
-      connection:"Dragonvale.",
-      desc:"Lights up at the Horizon Engine — already imagining what a real exchange of knowledge between worlds could look like.",
+      connection:"Dragonvale — Queen of Dragonvale. Aster's wife; Jade and Devon's sister-in-law.",
+      desc:"A learned queen with a sharp, compassionate mind. Lights up at the Horizon Engine — already imagining what a real exchange of knowledge between worlds could look like.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }}
   ];
   window.TRIBUTE_CROSSOVER_CAST = TRIBUTE_CROSSOVER_CAST;
