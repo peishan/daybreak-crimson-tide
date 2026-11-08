@@ -1755,7 +1755,7 @@ let game = {
   // on top of xpTotal/level() above, never replacing it. See
   // characterXpForLevel/characterLevel/characterPowerMult near
   // levelStatMult for the full design note.
-  characterXp: {}, characterLevelMigrationDone: false,
+  characterXp: {},
   rumors: [], marketPrices: {}, difficulty: 'normal', log: [],
   shipName: 'The Daybreak',
   foundCompanions: {}, finalCleared: false, clearedGuardians: {}, storyModalQueue: [],
@@ -4480,20 +4480,33 @@ function levelStatMult(kind){
 // catch up" never actually pays off. Tune the 10 below if it feels too
 // fast/slow once this is actually played with.
 //
-// characterPowerMult is floored at 0.6 (a brand-new recruit is weaker,
-// not instantly unplayable/one-shot fodder) and capped at 1 (nobody's
-// personal level can ever outscale what the shared-level formula alone
-// would already give — this only ever pulls someone DOWN toward their
-// own level, never boosts them past the existing ceiling).
-//
-// Migration: existing saves aren't retroactively nerfed. The first time
-// this code runs, ensureCharacterLevelMigrated() seeds every already-
-// unlocked companion at full personal power (matching the party's
-// current shared level) exactly once, gated by
-// game.characterLevelMigrationDone. Only characters recruited AFTER that
-// one-time seed start fresh at 0 and have to actually be fielded to
-// catch up — which is the whole point for the sequel's new recruits.
+// Seeding is per-character and lazy (the first time anything actually
+// asks for a given id's power), not one global migration pass. Two
+// different starting points, matching San's own distinction (Sairen
+// joins already a trained adult; the twins join as actual children):
+//   - Everyone EXCEPT the ids in YOUNG_GROWING_IDS is seeded at full
+//     personal power the first time they're queried — matching how
+//     every companion in this game has always felt the moment they
+//     join (San, Joel, Sairen, and every future adult sequel recruit
+//     included). Nothing changes for them versus before this system
+//     existed. This is also what keeps existing saves from being
+//     retroactively nerfed: an already-recruited companion's first
+//     query (right after this code ships) seeds them at the party's
+//     current level, i.e. exactly where they already were.
+//   - YOUNG_GROWING_IDS (Vaeren, Joelle) seed at 0 XP / real level 1 —
+//     they're genuinely meant to grow through being fielded, not start
+//     pre-leveled like an adult recruit. Safe to let them start this
+//     low specifically because they're also in
+//     PROTECTED_FROM_TARGETING_IDS above (never take a hit), so a tiny
+//     early HP number is cosmetic, not a survival risk.
+// characterPowerMult is still floored (0.25, not 0 — avoids a literal
+// 0 HP edge case for anyone in this bracket who ISN'T also
+// untargetable) and capped at 1 (nobody's personal level can ever
+// outscale what the shared-level formula alone would already give —
+// this only ever pulls someone DOWN toward their own level, never
+// boosts them past the existing ceiling).
 // ---------------------------------------------------------------------------
+const YOUNG_GROWING_IDS = new Set(['vaeren','joelle']);
 function characterXpForLevel(l) { return 10 * (l - 1) * l; }
 function characterLevel(id) {
   const xp = (game.characterXp && game.characterXp[id]) || 0;
@@ -4501,28 +4514,24 @@ function characterLevel(id) {
   while (characterXpForLevel(l + 1) <= xp) l++;
   return l;
 }
-function ensureCharacterLevelMigrated() {
-  if (game.characterLevelMigrationDone) return;
+function ensureCharacterSeeded(id) {
   game.characterXp = game.characterXp || {};
-  const seedXp = characterXpForLevel(Math.max(1, level()));
-  (typeof getActiveParty === 'function' ? getActiveParty() : []).forEach(function(m){
-    if (game.characterXp[m.id] == null) game.characterXp[m.id] = seedXp;
-  });
-  game.characterLevelMigrationDone = true;
+  if (game.characterXp[id] != null) return; // already seeded (or has real progress) -- never overwrite
+  game.characterXp[id] = YOUNG_GROWING_IDS.has(id) ? 0 : characterXpForLevel(Math.max(1, level()));
 }
 function characterPowerMult(id) {
-  ensureCharacterLevelMigrated();
+  ensureCharacterSeeded(id);
   const partyLv = Math.max(1, level());
   const ownLv = characterLevel(id);
-  return Math.max(0.6, Math.min(1, ownLv / partyLv));
+  return Math.max(0.25, Math.min(1, ownLv / partyLv));
 }
 window.characterLevel = characterLevel;
 window.characterPowerMult = characterPowerMult;
 function grantCharacterCombatXP(participants, amount) {
-  ensureCharacterLevelMigrated();
   game.characterXp = game.characterXp || {};
   (participants || []).forEach(function(m){
     if (!m || !m.id || m.id === 'soel') return; // Soel is a fixed-stat mascot, same exclusion levelStatMult already makes
+    ensureCharacterSeeded(m.id);
     const before = characterLevel(m.id);
     game.characterXp[m.id] = (game.characterXp[m.id] || 0) + Math.max(0, amount);
     const after = characterLevel(m.id);
