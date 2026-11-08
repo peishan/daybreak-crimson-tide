@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V412 · Adult recruits join at full power, twins at real level 1';
+window.__CT_BUILD__='V413 · Twins untargetable only until fully grown';
