@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V413 · Twins untargetable only until fully grown';
+window.__CT_BUILD__='V414 · Crimson Horizon sequel splash';
