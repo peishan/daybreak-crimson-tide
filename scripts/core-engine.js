@@ -2472,6 +2472,11 @@ function loadGame() {
     }
     if (!Number.isFinite(Number(game.xpTotal))) game.xpTotal = 0;
     game.cargoPurchaseCost = game.cargoPurchaseCost || {};
+    // Must be true before updateUI() below -- see ensureCharacterSeeded's
+    // own comment (San's "went back to level 1" report) for why gating on
+    // this flag matters here specifically.
+    gameSessionActive = true;
+    repairPrematurelySeededCharacterLevels();
     // One-time repair for saves from before the Uncharted Reach
     // state-sync fix (see startCombat's guard): if a save already has
     // uncharted.active stuck true from before that fix existed, with no
@@ -2499,7 +2504,6 @@ function loadGame() {
     updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
     logEvent('📂 Voyage resumed from Day ' + game.day, 'good');
     maybeLaunchPendingStory();
-    gameSessionActive = true;
   } catch (e) {
     toast('Could not read that save file.');
   }
@@ -2526,12 +2530,13 @@ function importSave(event) {
       }
       if (!Number.isFinite(Number(game.xpTotal))) game.xpTotal = 0;
       game.cargoPurchaseCost = game.cargoPurchaseCost || {};
+      gameSessionActive = true;
+      repairPrematurelySeededCharacterLevels();
       refreshBounties(); refreshQuests();
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('portScreen').classList.add('active');
       updateUI(); renderMarket(); renderCargo(); renderIntel(); renderExplore(); renderLandingV24(); renderAFKWelcome();
       logEvent('📥 Save imported successfully.', 'good');
-      gameSessionActive = true;
     } catch(e) { toast('Could not import that file.'); }
     event.target.value = '';
   };
@@ -3212,12 +3217,14 @@ function startGame() {
   game.arc1Objective = 'begin_chapter_1';
   game.malaccaPrepStep = 0;
   logEvent('⚓ San sets sail from Singapore aboard ' + game.shipName + ' with ' + game.gold + ' gold.', 'neutral');
+  // Before updateUI() below, same ordering reason as loadGame()/importSave()
+  // -- see ensureCharacterSeeded's own comment.
+  gameSessionActive = true;
   updateUI();
   renderMarket();
   renderLandingV24(); renderAFKWelcome(); renderMainGoal();
   toast('🎯 New Objective: Begin Chapter 1 — open Story.', 5200);
   // Story Mode is manual: the Objective tells the player to open Story.
-  gameSessionActive = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -4525,9 +4532,44 @@ function characterLevel(id) {
   return l;
 }
 function ensureCharacterSeeded(id) {
+  // BUG FIX (San's report -- "San went back to level 1" after loading a
+  // save): goScreen('intro') unconditionally calls updateUI() ->
+  // renderPartyList(), which calls effectiveMaxHp() for every member
+  // getActiveParty() returns -- and San is always unlocked (memberUnlocked
+  // returns true for her unconditionally), so this ran on EVERY page load,
+  // via the DOMContentLoaded handler that fires goScreen('intro') before
+  // the player ever clicks "Continue Voyage". At that point `game` is
+  // still the fresh default object (xpTotal 0, level() 1), so San got
+  // seeded at characterXpForLevel(1) = 0 the instant the page opened --
+  // permanently, since this function never re-seeds an id once it's
+  // non-null. loadGame()'s Object.assign can't fix it afterward either:
+  // any save made before this per-character system existed has no
+  // characterXp key at all, so the merge leaves the already-corrupted
+  // value in place. Gating the actual write on gameSessionActive (same
+  // flag/pattern as the "hard refresh resets progress to level 1" fix
+  // near game's own declaration) means this premature call now computes
+  // a harmless live level-1-vs-level-1 ratio without ever persisting it,
+  // so the real seed still happens correctly once an actual voyage
+  // (loaded or new) is active. See loadGame()/importSave() for the
+  // one-time repair of saves that already have the corrupted value baked in.
+  if (!gameSessionActive) return;
   game.characterXp = game.characterXp || {};
   if (game.characterXp[id] != null) return; // already seeded (or has real progress) -- never overwrite
   game.characterXp[id] = YOUNG_GROWING_IDS.has(id) ? 0 : characterXpForLevel(Math.max(1, level()));
+}
+// One-time repair for saves already carrying the corrupted pre-session
+// seed described above: by design, nobody outside YOUNG_GROWING_IDS can
+// legitimately sit below the party's own level (they always seed at full
+// personal power). A non-young character whose characterLevel is behind
+// level() right after a real load is unambiguous evidence of that bug,
+// never a legitimate state, so it's always safe to re-seed them here.
+function repairPrematurelySeededCharacterLevels() {
+  if (!game.characterXp) return;
+  const partyLv = Math.max(1, level());
+  Object.keys(game.characterXp).forEach(function(id){
+    if (YOUNG_GROWING_IDS.has(id)) return;
+    if (characterLevel(id) < partyLv) game.characterXp[id] = characterXpForLevel(partyLv);
+  });
 }
 function characterPowerMult(id) {
   ensureCharacterSeeded(id);
