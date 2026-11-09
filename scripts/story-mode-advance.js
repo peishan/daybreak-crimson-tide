@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V414 · Crimson Horizon sequel splash';
+window.__CT_BUILD__='V415 · Fix San reverting to Lv.1 after loading a save';
