@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V422 · Crimson Horizon Ch.033-041 (Arc IV opens: The Mist Straits)';
+window.__CT_BUILD__='V423 · Crimson Horizon Ch.042-048 (Arc IV complete)';
