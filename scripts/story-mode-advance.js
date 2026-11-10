@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V420 · Crimson Horizon Ch.021-027 (finish Arc III\'s submerged-station chain)';
+window.__CT_BUILD__='V421 · Crimson Horizon Ch.028-032 (Arc III complete)';
