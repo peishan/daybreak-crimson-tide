@@ -36,11 +36,12 @@
   // just a mark-as-read button; quiet/dialogue-only chapters (San's own
   // example: Ch.037) stay narrated in both games. Ch.008 ("Hold the
   // Passage", __ctHoldThePassageStep) and Ch.026 ("The Channel That
-  // Takes It", __ctPlotThePulseAgainstCurrent) are built this way so
-  // far. 039/042 and any future handoff chapters follow the same
-  // pattern once their own comic pages exist.
+  // Takes It", __ctPlotThePulseAgainstCurrent) and Ch.039 ("Low
+  // Water", __ctLowWaterStep) are built this way so far. 042 and any
+  // future handoff chapters follow the same pattern once their own
+  // comic pages exist.
   //
-  // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-032 -- every chapter
+  // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-041 -- every chapter
   // with a finished comic page and real dialogue so far (assets/comics/
   // sequel/). San's own numbering runs Prologue, then 001-032
   // continuously straight across Arc I/II/III (no per-arc restart,
@@ -48,7 +49,7 @@
   // their own ch.id at 1). The ids here follow that scheme too -- id:1
   // is the Prologue, id:2 is "001", id:3 is "002", and so on -- so later
   // batches can just keep appending without renumbering anything already
-  // shipped. Each entry's own `arc` field (1/2/3) drives which cover/
+  // shipped. Each entry's own `arc` field (1-4) drives which cover/
   // kicker/title the act header below shows, matching the real comic
   // pages' own per-arc page headers.
   //
@@ -102,15 +103,15 @@
   // The crew follows coupling SV-7729 to the West Gate. The missing
   // lantern from Ch.032 turns out to be part of a false route that
   // leads ships straight into the hands of a salvage crew.
-  //   033 The Missing Lantern -- Sally spots a light flashing where the second route marker should be. Joel stops the Crimson Tide when Levi sees that the light is moving against the current.
-  //   034 The Pilot's Bell -- A local pilot guides the ship into a sheltered quay by ringing a bell from shore. She tells San that the second lantern vanished three nights ago and two ships have gone aground since.
-  //   035 The West Gate Yard -- Jade and Aisyah visit the maintenance yard to ask about SV-7729. The foreman recognizes it as part of a shipment that was signed out for routine beacon repairs.
-  //   036 Signed and Transferred -- From Fair Tide, Adrian and Fen send a copy of the transfer record. Sally compares it with the yard's dispatch book and finds three more couplings collected under the same work order.
-  //   037 A Place at the Table -- Sky treats a sailor from one of the wrecks over supper aboard the Crimson Tide. When the twins ask how he knew where to sail, he taps out the rhythm of the light he followed.
-  //   038 The Wrong Rhythm -- Renn checks the sailor's account against the old pilot codes from Fair Tide. The moving light copied the official signal closely enough to fool anyone approaching in fog.
-  //   039 Low Water -- Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it. [game handoff: scout the shoal]
-  //   040 Lights for Sale -- Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches.
-  //   041 The Evening Convoy -- The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker.
+  //   033 The Missing Lantern -- Sally spots a light flashing where the second route marker should be. Joel stops the Crimson Tide when Levi sees that the light is moving against the current. [BUILT]
+  //   034 The Pilot's Bell -- A local pilot guides the ship into a sheltered quay by ringing a bell from shore. She tells San that the second lantern vanished three nights ago and two ships have gone aground since. [BUILT]
+  //   035 The West Gate Yard -- Jade and Aisyah visit the maintenance yard to ask about SV-7729. The foreman recognizes it as part of a shipment that was signed out for routine beacon repairs. [BUILT]
+  //   036 Signed and Transferred -- From Fair Tide, Adrian and Fen send a copy of the transfer record. Sally compares it with the yard's dispatch book and finds three more couplings collected under the same work order. [BUILT]
+  //   037 A Place at the Table -- Sky treats a sailor from one of the wrecks over supper aboard the Crimson Tide. When the twins ask how he knew where to sail, he taps out the rhythm of the light he followed. [BUILT]
+  //   038 The Wrong Rhythm -- Renn checks the sailor's account against the old pilot codes from Fair Tide. The moving light copied the official signal closely enough to fool anyone approaching in fog. [BUILT]
+  //   039 Low Water -- Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it. [BUILT -- cross-game handoff: real objective, see __ctLowWaterStep]
+  //   040 Lights for Sale -- Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches. [BUILT]
+  //   041 The Evening Convoy -- The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker. [BUILT]
   //   042 Through the White Water -- Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They reach the convoy as its lead ship begins turning toward the false light. [game handoff: intercept the convoy]
   //   043 The Lantern Skiff -- Levi and Sairen cut off the skiff's retreat through the shallows. When its crew tries to throw the lantern overboard, Sally pins the release rope to the gunwale from the Crimson Tide. [game handoff: intercept the convoy]
   //   044 Light the Real Channel -- Jade gets the yard foreman to bring a spare lantern to the empty post. Once it's lit, Joel leads the convoy through the true channel to the waiting pilot. [game handoff: restore the true channel light]
@@ -121,8 +122,8 @@
   //
   // Cover/chapter art is the real uploaded pages, not placeholders --
   // assets/comics/sequel/. arc1-cover-a-new-voyage.webp, arc2-cover-
-  // storm-shelf.webp and arc3-cover-beneath-the-storm-shelf.webp are
-  // each arc's own cover (ARC_META below, used in the act header);
+  // storm-shelf.webp, arc3-cover-beneath-the-storm-shelf.webp and
+  // arc4-cover-the-mist-straits.webp are each arc's own cover (ARC_META below, used in the act header);
   // crimson-horizon-cover.webp is the separate one-time splash
   // announcing the sequel, shown the instant Arc XLII completes
   // regardless of the Level 645 chapter gate -- see
@@ -164,14 +165,24 @@
     {id:30, arc:3, title:'029 · Between Two Pulses', focus:"San and Mezstorm steady the water at the dive entrance while Levi and Sairen switch the station to its bypass and remove the coupling. The next warning comes through as a single, quiet bell.", image:'assets/comics/sequel/ch29-between-two-pulses.webp', xp:420, action:'🔔 Weather Between Two Pulses'},
     {id:31, arc:3, title:'030 · Back on Deck', focus:"Sky checks the divers as the East Gate reopens to traffic. Aisyah finally gets everyone around the same table, and the twins insist Soel deserves a place on the watch roster.", image:'assets/comics/sequel/ch30-back-on-deck.webp', xp:400, action:'🍽️ Gather Back on Deck'},
     {id:32, arc:3, title:'031 · The Mark Beneath the Salt', focus:"Adrian and Fen compare the recovered coupling with the charts. Beneath the salt is a West Gate service mark and a fresh inventory number, giving the crew a way to trace who handled it.", image:'assets/comics/sequel/ch31-the-mark-beneath-the-salt.webp', xp:420, action:'🔍 Find the Mark Beneath the Salt'},
-    {id:33, arc:3, title:'032 · Into the Mist Straits', focus:"San and Jade chart a course for the West Gate to trace the coupling. The comic ends at the edge of the mist, where the first route lantern is lit and the second is missing.", image:'assets/comics/sequel/ch32-into-the-mist-straits.webp', xp:430, action:'🌫️ Sail Into the Mist Straits'}
+    {id:33, arc:3, title:'032 · Into the Mist Straits', focus:"San and Jade chart a course for the West Gate to trace the coupling. The comic ends at the edge of the mist, where the first route lantern is lit and the second is missing.", image:'assets/comics/sequel/ch32-into-the-mist-straits.webp', xp:430, action:'🌫️ Sail Into the Mist Straits'},
+    {id:34, arc:4, title:'033 · The Missing Lantern', focus:"Sally spots a light flashing where the second route marker should be. Joel stops the Crimson Tide when Levi sees that the light is moving against the current.", image:'assets/comics/sequel/ch33-the-missing-lantern.webp', xp:410, action:'🏮 Sight the Missing Lantern'},
+    {id:35, arc:4, title:"034 · The Pilot's Bell", focus:"A local pilot guides the ship into a sheltered quay by ringing a bell from shore. She tells San that the second lantern vanished three nights ago and two ships have gone aground since.", image:'assets/comics/sequel/ch34-the-pilots-bell.webp', xp:410, action:"🔔 Follow the Pilot's Bell"},
+    {id:36, arc:4, title:'035 · The West Gate Yard', focus:"Jade and Aisyah visit the maintenance yard to ask about SV-7729. The foreman recognizes it as part of a shipment that was signed out for routine beacon repairs.", image:'assets/comics/sequel/ch35-the-west-gate-yard.webp', xp:410, action:'🏗️ Visit the West Gate Yard'},
+    {id:37, arc:4, title:'036 · Signed and Transferred', focus:"From Fair Tide, Adrian and Fen send a copy of the transfer record. Sally compares it with the yard's dispatch book and finds three more couplings collected under the same work order.", image:'assets/comics/sequel/ch36-signed-and-transferred.webp', xp:420, action:'📋 Compare What Was Signed and Transferred'},
+    {id:38, arc:4, title:'037 · A Place at the Table', focus:"Sky treats a sailor from one of the wrecks over supper aboard the Crimson Tide. When the twins ask how he knew where to sail, he taps out the rhythm of the light he followed.", image:'assets/comics/sequel/ch37-a-place-at-the-table.webp', xp:400, action:'🍲 Offer a Place at the Table'},
+    {id:39, arc:4, title:'038 · The Wrong Rhythm', focus:"Renn checks the sailor's account against the old pilot codes from Fair Tide. The moving light copied the official signal closely enough to fool anyone approaching in fog.", image:'assets/comics/sequel/ch38-the-wrong-rhythm.webp', xp:420, action:'🎼 Decode the Wrong Rhythm'},
+    {id:40, arc:4, title:'039 · Low Water', focus:"Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it.", image:'assets/comics/sequel/ch39-low-water.webp', xp:430, action:'🌊 Launch the Shore Expedition'},
+    {id:41, arc:4, title:'040 · Lights for Sale', focus:"Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches.", image:'assets/comics/sequel/ch40-lights-for-sale.webp', xp:410, action:'🔭 Watch the Lights for Sale'},
+    {id:42, arc:4, title:'041 · The Evening Convoy', focus:"The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker.", image:'assets/comics/sequel/ch41-the-evening-convoy.webp', xp:420, action:'⛵ Split for the Evening Convoy'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
   const CRIMSON_HORIZON_ARC_META = {
     1: {cover:'assets/comics/sequel/arc1-cover-a-new-voyage.webp', kicker:'Crimson Horizon · Arc I', title:'A New Voyage', tagline:'One crew. Two worlds. A wider horizon.'},
     2: {cover:'assets/comics/sequel/arc2-cover-storm-shelf.webp', kicker:'Crimson Horizon · Arc II', title:'Storm Shelf', tagline:'Something beneath the Shelf has been waiting to be found.'},
-    3: {cover:'assets/comics/sequel/arc3-cover-beneath-the-storm-shelf.webp', kicker:'Crimson Horizon · Arc III', title:'Beneath the Storm Shelf', tagline:'The signal was never random. Someone kept it active.'}
+    3: {cover:'assets/comics/sequel/arc3-cover-beneath-the-storm-shelf.webp', kicker:'Crimson Horizon · Arc III', title:'Beneath the Storm Shelf', tagline:'The signal was never random. Someone kept it active.'},
+    4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'}
   };
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
@@ -207,7 +218,16 @@
     30: 'At the dive entrance, San and Mezstorm work together to steady the water, keeping the current calm and stable for the team below.<br><br>"BYPASS engaged," Levi says. "Switching the station now." "Confirmed. The signal is rerouting," Sairen says. "Removing the coupling next."<br><br>"Coupling removed," Sairen says. "The station is now on the bypass line."<br><br>A moment later, the next warning comes through — not a harsh alarm, but a single, quiet bell. "It\'s stable," San says. "We\'ve bought ourselves time," Mezstorm says. "Keep the channel clear."',
     31: 'With the bypass complete, the East Gate reopens. Traffic resumes through the channel under the crew\'s watch.<br><br>"Vitals are good. No decompression issues," Sky says, checking the divers. "Both of you held up well down there."<br><br>"Finally! Everyone at the same table again," Aisyah says. "No dive gear, no reports — just a proper meal."<br><br>"Then it\'s settled! Soel should be on the watch roster!" Vaeren says. "Yes! Soel keeps the ship safe too!" Joelle adds. "He\'s always on watch with us!"<br><br>"A watch roster... for a cat," Joel says. "Only on the Crimson Tide," San says. "He\'s earned it," Aisyah says. "Soel keeps morale high, alerts us to strange sounds, and somehow always shows up where he needs to be."<br><br>Watch Roster (Updated): Bridge Watch, Deck & Channel, Dive Operations, Night Rounds, Ship\'s Familiar — Soel. All confirmed.',
     32: 'Back in the research workshop, Adrian and Fen lay the recovered coupling on the table, comparing it with the original charts.<br><br>"The structure matches... but there\'s something different here," Adrian says. "A mark beneath the salt layer," Fen says. "Let me clean it further."<br><br>As Fen carefully cleans away the salt buildup, a set of engraved marks emerges: W-GATE, SV-7729.<br><br>"It\'s a West Gate service mark," Adrian says. "And this inventory number... SV-7729." "This isn\'t an old component," Fen says. "The number sequence is recent — within the last few cycles."<br><br>They cross-check the number against the West Gate service charts, tracing the handling records and transfer log. Inventory No. SV-7729 · Component: Channel Coupling (Type C) · Service: West Gate (Maintenance Bay) · Last Handled: Cycle 324.17 · Handled By: [Record: Transferred].<br><br>"There it is," Adrian says. "We have a trace — who handled it, when, and where it was sent next." "Then we follow the chain," Fen says. "If this coupling was moved recently... someone is still active in the West Gate network."',
-    33: 'San and Jade chart a course for the West Gate to trace the coupling.<br><br>"Set our course for the West Gate," San says. "We\'ll trace the coupling." "I\'ll mark the route and check for any maintenance bypasses," Jade says.<br><br>"The West Gate should be just beyond the Mist Straits," San says, tracing the chart. "There may be a maintenance bypass," Jade says. "Let\'s check the records."<br><br>"Prepare the navigation team," San says. "We\'ll enter the Mist Straits at the West Gate." "Keep watch for the lanterns," Jade says. "Something\'s wrong with the second route."<br><br>The comic ends at the edge of the mist, where the first route lantern is lit and the second is missing.'
+    33: 'San and Jade chart a course for the West Gate to trace the coupling.<br><br>"Set our course for the West Gate," San says. "We\'ll trace the coupling." "I\'ll mark the route and check for any maintenance bypasses," Jade says.<br><br>"The West Gate should be just beyond the Mist Straits," San says, tracing the chart. "There may be a maintenance bypass," Jade says. "Let\'s check the records."<br><br>"Prepare the navigation team," San says. "We\'ll enter the Mist Straits at the West Gate." "Keep watch for the lanterns," Jade says. "Something\'s wrong with the second route."<br><br>The comic ends at the edge of the mist, where the first route lantern is lit and the second is missing.',
+    34: '"Wait — there! A light... by the second marker!" Sally calls. "Hold the Crimson Tide! Bring us about!" Joel orders. "This isn\'t right..." Levi says, telescope raised. "That light is moving against the current!"<br><br>The crew turns toward the second route marker, only to find a lone light moving against the current in the Mist Straits.<br><br>"Engines idle! Maintain position!" Joel calls. "It\'s definitely moving... and not a route lantern," Levi says. "Someone — or something — is out there in the straits."<br><br>"Could it be a rescue signal?" Sally asks. "Or a trap set to draw vessels in...?" "Either way, we need to find out," San says. "The Mist Straits rarely give a light unless it means trouble," Jade says.',
+    35: 'A local pilot guides the ship into a sheltered quay by ringing a bell from shore.<br><br>"Thank you for guiding us in," San says. "We\'re tracing a route marker — the second lantern." "You\'re too late, Captain," the pilot says. "The second lantern vanished three nights ago."<br><br>"Since then, two ships have gone aground in the Straits," she says. "Both were experienced crews... but they never made it past that section."<br><br>"Two ships... that\'s not an accident," Joel says. "The Straits aren\'t just unforgiving," comes the reply beside him. "Someone may be clearing the route." "Then we need to find out who," San says, "...and why the lantern was taken."',
+    36: 'Jade and Aisyah visit the maintenance yard to ask about SV-7729.<br><br>"We\'re looking for a coupling coded SV-7729," Jade says. "It should be part of the West Gate maintenance record," Aisyah adds.<br><br>"SV-7729... that number sounds familiar," the foreman says. "Let me check the dispatch log."<br><br>"Found it. SV-7729 was part of a shipment signed out for routine beacon repairs." Dispatch No. WG-4187 · Item Code: SV-7729 · Beacon Coupling (Type B) · Purpose: Routine Beacon Repairs · Status: Signed Out.<br><br>"Routine repairs..." Jade says. "Then it was sent to service one of the route beacons." "Which beacon was it assigned to?" Aisyah asks.<br><br>"The log shows the second route marker in the Mist Straits," the foreman says. "It was sent out three nights ago, just before the lantern vanished."',
+    37: 'From Fair Tide, Adrian and Fen send a copy of the transfer record to confirm the coupling\'s trail.<br><br>"Transfer record sent, Sally. You should have it now," Adrian says. "It includes SV-7729 and its associated work order," Fen says. "Check it against the yard\'s dispatch book." "Got it," Sally says, in the Crimson Tide\'s chart room. "Let me compare it with the yard\'s dispatch book."<br><br>"Routine repairs... but it\'s not just one coupling..." Sally says. "There are three more collected under the same work order."<br><br>"Four couplings... all for the beacon repairs?" Adrian asks. "That\'s a larger maintenance run than expected," Fen says. "And the timing matches — three nights ago, just before the second lantern vanished," Sally says. "Then we track where all four were sent... and who handled them."<br><br>The transfer record and the yard\'s dispatch book match: four couplings under one work order — WG-4187, SV-7729 through SV-7732 — all for West Gate beacon repairs.',
+    38: 'That evening, a survivor from one of the wrecks joins the crew for supper aboard the Crimson Tide.<br><br>"Easy now. The fever\'s come down, and the cuts are healing well," Sky says. "Heh..." the sailor says. "Your medicine is better than any port ale I\'ve had in years."<br><br>"Uncle, how did you know where to sail?" Vaeren asks. "There were so many wrecks..." Joelle says. "How did you find your way through the mists?"<br><br>Tap... tap... tap-tap... tap. "It wasn\'t by sight... Not by stars either," the sailor says, tapping the table. "I followed the rhythm of the light."<br><br>"Out there in the mists, there\'s a beacon... It doesn\'t stay bright all the time," he says. "It breathes... slow... then a double pulse... then a longer pause... That rhythm led us here."<br><br>"A pattern... not just a light," Sky says. "That could be a beacon network... or a signal meant for specific routes."',
+    39: 'Later that evening at Fair Tide, Renn reviews the sailor\'s account alongside the old pilot codes from Fair Tide.<br><br>"Let\'s compare his description with the Fair Tide pilot codes..." Renn says. "Particularly the coastal beacon patterns."<br><br>"Here it is. The West Gate approach signal — Type B. Three short pulses, a double pause, then a long pulse." "The rhythm he tapped matches the official signal almost exactly..."<br><br>"The moving light copied the sequence with remarkable accuracy... Same rhythm, same timing intervals..." Renn says. "...from a distance, and especially in heavy fog, it would be indistinguishable from the real West Gate beacon." "It\'s a clever imitation. Not random... not a natural light either."<br><br>"So it wasn\'t the real beacon at all..." "No. It was a deliberate decoy — close enough to lure vessels onto a false route, possibly toward the wreck sites," Renn says. "Someone knew the pilot codes... and how to use them against us."',
+    40: 'At first light, Levi and Sairen follow fresh bootprints across a shoal newly exposed by the low tide.<br><br>"Fresh prints... not from the ship\'s crew," Levi says. "And the stride is purposeful..." Sairen says. "Heading toward the cove."<br><br>"There it is... the missing lantern," Levi says. "And it\'s mounted on a skiff..." Sairen says. "Not merely abandoned."<br><br>Beneath the skiff, a fitting stamped W-GATE, SV-7731. "A West Gate coupling..." Levi says. "So this skiff was part of the same signal network."<br><br>"This confirms it. The false beacon wasn\'t just a light..." Levi says. "It was an active transmission node, set to mimic the West Gate signals." "Then someone prepared this carefully..." Sairen says. "A decoy route, ready for vessels to follow at the right tide."',
+    41: 'Sally watches the skiff\'s crew sell cargo stripped from the grounded ships.<br><br>Salvage... but this is more than scrap, she thinks. They\'re selling cargo from the wrecks...<br><br>"They\'re not just scavengers," Sally says quietly. They\'re moving the cargo quickly... preparing for another run.<br><br>"I\'ll reset the lantern now," one of the crew says. "The evening convoy will be here soon."<br><br>One of them leaves with a lantern and a small toolkit, heading to the skiff anchored near the shoal.<br><br>"There... he\'s setting it again —" Sally says. Just in time. "The evening convoy...!"',
+    42: 'The pilot confirms the news — the evening convoy has already passed beyond sight of shore.<br><br>"The convoy is already beyond sight of shore," the pilot says. "If we want to catch them, we must move now." "Then we split," San says. "Joel and Mezstorm will intercept the convoy at sea."<br><br>"Understood," Joel says. "We\'ll take a fast boat, close the distance, and stop them before they clear the straits." "Leave the chase to us," Mezstorm says. "We\'ll intercept the convoy, secure the cargo, and bring them back."<br><br>"I\'ll lead the shore team," Jade says. "We\'ll retrieve the real marker, reset the West Gate coupling, and restore the proper signal. Levi, Sairen, and Sally — with me. We need the marker active again before the next vessel arrives."<br><br>"Good. Joel and Mezstorm, move at once," San says. "Jade, restore the marker and report back when the signal is live. We stop the false route here — before more ships are lost."'
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -289,6 +309,26 @@
     if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(27);
   };
 
+  // Ch.039 ("Low Water") -- the third cross-game handoff objective,
+  // per San's design doc: Crimson Tide's side is "use the low-tide
+  // window to launch the shore expedition and recover its findings"
+  // (Tribute's own side scouts the shoal on foot with Levi and Sairen).
+  // Two steps, launch then recover, same never-a-hard-fail shape as
+  // Ch.008. game.crimsonHorizonLowWaterStep tracks 0 -> 1 -> complete.
+  window.__ctLowWaterStep = function(step){
+    game.crimsonHorizonLowWaterStep = game.crimsonHorizonLowWaterStep || 0;
+    if (step === 1 && game.crimsonHorizonLowWaterStep === 0) {
+      toast('🌊 Low tide. The shoal is exposed — Levi and Sairen go over the side at first light, following fresh bootprints toward the cove.', 3600);
+      game.crimsonHorizonLowWaterStep = 1;
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+      if (typeof renderStory === 'function') renderStory();
+    } else if (step === 2 && game.crimsonHorizonLowWaterStep === 1) {
+      toast('🏮 "There it is... the missing lantern." Mounted on a skiff, with a West Gate coupling — SV-7731 — fitted beneath it. The shore team is back aboard before the tide turns.', 3800);
+      game.crimsonHorizonLowWaterStep = 2;
+      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(40);
+    }
+  };
+
   window.__ctShowCrimsonHorizonSplash = function(){
     const overlay = document.getElementById('crimsonHorizonSplashOverlay');
     if (overlay) overlay.style.display = 'flex';
@@ -345,6 +385,13 @@
         action = (step < 1)
           ? '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(1)">⚓ Position the Ship for the Tow</button>'
           : '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(2)">🌊 Hold Steady Through the Surge</button>';
+      } else if (ready && ch.id === 40) {
+        // Ch.039 "Low Water" -- real two-step objective, see
+        // __ctLowWaterStep above.
+        const lwStep = game.crimsonHorizonLowWaterStep || 0;
+        action = (lwStep < 1)
+          ? '<button class="btn btn-small btn-success" onclick="window.__ctLowWaterStep(1)">🌊 Launch the Shore Expedition</button>'
+          : '<button class="btn btn-small btn-success" onclick="window.__ctLowWaterStep(2)">🏮 Recover the Expedition\'s Findings</button>';
       } else if (ready && ch.id === 27) {
         // Ch.026 "The Channel That Takes It" -- real objective, see
         // __ctPlotThePulseAgainstCurrent above.
