@@ -56,14 +56,32 @@ jobs:
           python3 - <<'EOF'
           import os, re, glob
 
-          def load_chapter_map(arc_num):
-              path = f'scripts/arc{arc_num}.js'
+          # Every numbered arc (assets/comics/arc<N>/) keeps its own chapter
+          # list in scripts/arc<N>.js. Crimson Horizon (assets/comics/
+          # sequel/) is the one exception -- its chapters live in a single
+          # continuously-numbered list in scripts/crimson-horizon-
+          # sequel.js instead of a per-arc file, since San's own numbering
+          # runs Prologue+001-032 straight across Arcs I-III rather than
+          # restarting at 1 per arc. folder_source maps a bare-art folder
+          # name to the script file its chapter map should be read from --
+          # add an entry here for any future folder that doesn't follow
+          # the plain arc<N> pattern, rather than hand-renaming its uploads
+          # forever.
+          folder_source = {'sequel': 'scripts/crimson-horizon-sequel.js'}
+
+          def load_chapter_map(arc_dir):
+              path = folder_source.get(arc_dir)
+              if path is None:
+                  arc_match = re.match(r'^arc(\d+)$', arc_dir)
+                  if not arc_match:
+                      return None
+                  path = f'scripts/arc{arc_match.group(1)}.js'
               if not os.path.isfile(path):
                   return None
               with open(path, 'r', encoding='utf-8') as f:
                   src = f.read()
               mapping = {}
-              for m in re.finditer(r"image:\s*'assets/comics/arc" + re.escape(arc_num) + r"/(ch(\d{2})-[^']+\.\w+)'", src):
+              for m in re.finditer(r"image:\s*'assets/comics/" + re.escape(arc_dir) + r"/(ch(\d{2})-[^']+\.\w+)'", src):
                   filename, chnum = m.group(1), m.group(2)
                   mapping[chnum] = filename
               return mapping
@@ -73,7 +91,7 @@ jobs:
           chapter_map_cache = {}
           bare_pattern = re.compile(r'^ch(\d{2})\.(png|jpg|jpeg|webp)$', re.IGNORECASE)
 
-          for filepath in glob.glob('assets/comics/arc*/*'):
+          for filepath in glob.glob('assets/comics/*/*'):
               if not os.path.isfile(filepath):
                   continue
               dirpath, basename = os.path.split(filepath)
@@ -82,21 +100,20 @@ jobs:
                   continue
               chnum, ext = m.group(1), m.group(2).lower()
               arc_dir = os.path.basename(dirpath)
-              arc_match = re.match(r'^arc(\d+)$', arc_dir)
-              if not arc_match:
-                  warnings.append(f'{filepath}: parent folder "{arc_dir}" doesn\'t match the expected arcNN pattern, skipped.')
+              is_known_dir = arc_dir in folder_source or re.match(r'^arc(\d+)$', arc_dir)
+              if not is_known_dir:
+                  warnings.append(f'{filepath}: parent folder "{arc_dir}" doesn\'t match a known chapter-art folder, skipped.')
                   continue
-              arc_num = arc_match.group(1)
 
-              if arc_num not in chapter_map_cache:
-                  chapter_map_cache[arc_num] = load_chapter_map(arc_num)
-              chapter_map = chapter_map_cache[arc_num]
+              if arc_dir not in chapter_map_cache:
+                  chapter_map_cache[arc_dir] = load_chapter_map(arc_dir)
+              chapter_map = chapter_map_cache[arc_dir]
 
               if chapter_map is None:
-                  warnings.append(f'{filepath}: no scripts/arc{arc_num}.js found to look up chapter names, skipped.')
+                  warnings.append(f'{filepath}: no chapter-list script found for "{arc_dir}" to look up chapter names, skipped.')
                   continue
               if chnum not in chapter_map:
-                  warnings.append(f'{filepath}: no chapter {chnum} found in scripts/arc{arc_num}.js\'s own chapter list, skipped.')
+                  warnings.append(f'{filepath}: no chapter {chnum} found in "{arc_dir}"\'s own chapter list, skipped.')
                   continue
 
               full_filename = chapter_map[chnum]
