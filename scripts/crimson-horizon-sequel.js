@@ -82,6 +82,27 @@
   //   031 The Mark Beneath the Salt -- Adrian and Fen compare the recovered coupling with the charts. Beneath the salt is a West Gate service mark and a fresh inventory number, giving the crew a way to trace who handled it.
   //   032 Into the Mist Straits -- San and Jade chart a course for the West Gate to trace the coupling. Ends at the edge of the mist, where the first route lantern is lit and the second is missing. [game handoff: sets up the next playable route through the West Gate]
   //
+  // CRIMSON HORIZON · ARC IV -- THE MIST STRAITS (033-048)
+  // The crew follows coupling SV-7729 to the West Gate. The missing
+  // lantern from Ch.032 turns out to be part of a false route that
+  // leads ships straight into the hands of a salvage crew.
+  //   033 The Missing Lantern -- Sally spots a light flashing where the second route marker should be. Joel stops the Crimson Tide when Levi sees that the light is moving against the current.
+  //   034 The Pilot's Bell -- A local pilot guides the ship into a sheltered quay by ringing a bell from shore. She tells San that the second lantern vanished three nights ago and two ships have gone aground since.
+  //   035 The West Gate Yard -- Jade and Aisyah visit the maintenance yard to ask about SV-7729. The foreman recognizes it as part of a shipment that was signed out for routine beacon repairs.
+  //   036 Signed and Transferred -- From Fair Tide, Adrian and Fen send a copy of the transfer record. Sally compares it with the yard's dispatch book and finds three more couplings collected under the same work order.
+  //   037 A Place at the Table -- Sky treats a sailor from one of the wrecks over supper aboard the Crimson Tide. When the twins ask how he knew where to sail, he taps out the rhythm of the light he followed.
+  //   038 The Wrong Rhythm -- Renn checks the sailor's account against the old pilot codes from Fair Tide. The moving light copied the official signal closely enough to fool anyone approaching in fog.
+  //   039 Low Water -- Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it. [game handoff: scout the shoal]
+  //   040 Lights for Sale -- Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches.
+  //   041 The Evening Convoy -- The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker.
+  //   042 Through the White Water -- Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They reach the convoy as its lead ship begins turning toward the false light. [game handoff: intercept the convoy]
+  //   043 The Lantern Skiff -- Levi and Sairen cut off the skiff's retreat through the shallows. When its crew tries to throw the lantern overboard, Sally pins the release rope to the gunwale from the Crimson Tide. [game handoff: intercept the convoy]
+  //   044 Light the Real Channel -- Jade gets the yard foreman to bring a spare lantern to the empty post. Once it's lit, Joel leads the convoy through the true channel to the waiting pilot. [game handoff: restore the true channel light]
+  //   045 The Salvage Ledger -- The harbor pilot takes the recovered ledger to the families of the wrecked crews so they can reclaim their cargo. The entries show the salvage crew used several couplings locally and sold one on to the Storm Shelf.
+  //   046 The Last Crate South -- Fen traces the final coupling from the shipment to an unopened crate still awaiting pickup. Its delivery instructions name the South Gate · Deep Channel, with a tide and berth but no recipient.
+  //   047 A Light of Their Own -- The yard crew restores the permanent marker, and the pilot invites the twins to ring the quay bell for the first ship safely through. San asks her to teach the crew the local signals before they sail.
+  //   048 The Deep Channel -- San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock. [game handoff: opens the Deep Channel route]
+  //
   // Cover/chapter art is the real uploaded pages, not placeholders --
   // assets/comics/sequel/. arc1-cover-a-new-voyage.webp, arc2-cover-
   // storm-shelf.webp and arc3-cover-beneath-the-storm-shelf.webp are
