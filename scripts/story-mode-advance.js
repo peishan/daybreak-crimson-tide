@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V417 · Crimson Horizon Arc I numbering + full 3-arc outline';
+window.__CT_BUILD__='V418 · Crimson Horizon Ch.005-020 (finish Arc I, all of Arc II, Arc III opens)';
