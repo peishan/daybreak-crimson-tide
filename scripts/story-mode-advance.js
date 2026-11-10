@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V419 · Ch.008 real objective (cross-game shared-chapter design)';
+window.__CT_BUILD__='V420 · Crimson Horizon Ch.021-027 (finish Arc III\'s submerged-station chain)';
