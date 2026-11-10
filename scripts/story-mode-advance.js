@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V418 · Crimson Horizon Ch.005-020 (finish Arc I, all of Arc II, Arc III opens)';
+window.__CT_BUILD__='V419 · Ch.008 real objective (cross-game shared-chapter design)';

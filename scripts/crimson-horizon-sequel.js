@@ -16,13 +16,28 @@
   // sequel-structure notes), so Jade, Sally and the rest of Canon Five
   // appear in these scenes -- but none of them have ALL_PARTY/CLASS_KIT
   // entries yet (that's its own deferred batch). Every "fight" chapter so
-  // far (Ch.002's leviathan, Ch.008's passage, Ch.012's storm gap) is
-  // narrated rather than built as a real encounter for exactly that
-  // reason: San is the only participant shown who already has a combat
-  // kit to field her with -- a genuine fight would either leave the rest
-  // of the cast out of their own scene or fake stats for characters that
-  // don't exist in the engine yet. Revisit this once Canon Five are real
-  // combat recruits.
+  // far (Ch.002's leviathan, Ch.012's storm gap) is narrated rather than
+  // built as a real encounter for exactly that reason: San is the only
+  // participant shown who already has a combat kit to field her with --
+  // a genuine fight would either leave the rest of the cast out of their
+  // own scene or fake stats for characters that don't exist in the
+  // engine yet. Revisit this once Canon Five are real combat recruits.
+  //
+  // CROSS-GAME SHARED CHAPTERS -- San's own design doc: Tribute (its own
+  // repo) and Crimson Tide play the same Crimson Horizon chapter
+  // numbers, comic panels and story outcomes, but each through its own
+  // core loop (Tribute: party quests/regional exploration; Crimson Tide:
+  // voyages/ship operations/expeditions). Each game builds its own
+  // unlock condition, playable objective and reward -- nothing here
+  // needs to match Tribute's own implementation, only the shared chapter
+  // number and the comic's outcome. "Game handoff" chapters (flagged
+  // throughout the outline above) are where that divergence actually
+  // matters -- those get a real playable objective on this side, not
+  // just a mark-as-read button; quiet/dialogue-only chapters (San's own
+  // example: Ch.037) stay narrated in both games. Ch.008 ("Hold the
+  // Passage") is the first of these -- see startHoldThePassageStep
+  // below. 026/039/042 and any future handoff chapters follow the same
+  // pattern once their own comic pages exist.
   //
   // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-020 -- every chapter
   // with a finished comic page and real dialogue so far (assets/comics/
@@ -204,6 +219,38 @@
     }
   };
 
+  // Ch.008 ("Hold the Passage") -- the first shared chapter built with a
+  // real Crimson Tide-side objective instead of a plain mark-as-read
+  // button, per San's cross-game design doc: "position the ship for the
+  // tow and hold it steady through the surge." A full combat encounter
+  // doesn't fit here any more than Ch.002's leviathan did (Jade and
+  // Sally, both shown working the tow, still have no CLASS_KIT), so this
+  // is a two-step ship-handling sequence instead, using the crew's
+  // existing sails tier (game.ship.sails) for flavor the way Crimson
+  // Tide's own core loop already leans on ship stats -- never a hard
+  // fail, same as every other story objective in this game; the tier
+  // only changes which line plays, not whether the chapter completes.
+  // game.crimsonHorizonHoldPassageStep tracks progress through the two
+  // steps (0 -> 1 -> complete); left at its final value afterward, same
+  // as every other one-off chapter flag in this file.
+  window.__ctHoldThePassageStep = function(step){
+    game.crimsonHorizonHoldPassageStep = game.crimsonHorizonHoldPassageStep || 0;
+    if (step === 1 && game.crimsonHorizonHoldPassageStep === 0) {
+      const sails = (game.ship && game.ship.sails) || 1;
+      const msg = sails >= 3
+        ? '⚓ "I\'ve steadied the current. The passage is open — for now." The Crimson Tide\'s own sails hold her steady without a fight. First boat moves through clean.'
+        : '⚓ "I\'ve steadied the current. The passage is open — for now." It takes everything the crew has, but the first boat moves through clean.';
+      toast(msg, 3600);
+      game.crimsonHorizonHoldPassageStep = 1;
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+      if (typeof renderStory === 'function') renderStory();
+    } else if (step === 2 && game.crimsonHorizonHoldPassageStep === 1) {
+      toast('🌊 "Just a little more... keep pulling! Don\'t let go!" The second boat clears the gate as it starts to close.', 3600);
+      game.crimsonHorizonHoldPassageStep = 2;
+      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(9);
+    }
+  };
+
   window.__ctShowCrimsonHorizonSplash = function(){
     const overlay = document.getElementById('crimsonHorizonSplashOverlay');
     if (overlay) overlay.style.display = 'flex';
@@ -252,7 +299,15 @@
       const ready = !done && so===('complete_crimson_horizon_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if (ready) {
+      if (ready && ch.id === 9) {
+        // Ch.008 "Hold the Passage" -- real two-step objective, see
+        // __ctHoldThePassageStep above, instead of a single mark-read
+        // button (San's cross-game shared-chapter design).
+        const step = game.crimsonHorizonHoldPassageStep || 0;
+        action = (step < 1)
+          ? '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(1)">⚓ Position the Ship for the Tow</button>'
+          : '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(2)">🌊 Hold Steady Through the Surge</button>';
+      } else if (ready) {
         action = '<button class="btn btn-small btn-success" onclick="markCrimsonHorizonChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
       } else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>'+esc(ch.title)+'</strong><br>'+
