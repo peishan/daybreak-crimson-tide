@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V416 · Crimson Horizon Prologue + Chapters 1-4';
+window.__CT_BUILD__='V417 · Crimson Horizon Arc I numbering + full 3-arc outline';
