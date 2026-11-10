@@ -36,14 +36,23 @@
   // just a mark-as-read button; quiet/dialogue-only chapters (San's own
   // example: Ch.037) stay narrated in both games. Ch.008 ("Hold the
   // Passage", __ctHoldThePassageStep) and Ch.026 ("The Channel That
-  // Takes It", __ctPlotThePulseAgainstCurrent) and Ch.039 ("Low
-  // Water", __ctLowWaterStep) are built this way so far. 042 and any
-  // future handoff chapters follow the same pattern once their own
-  // comic pages exist.
+  // Takes It", __ctPlotThePulseAgainstCurrent), Ch.039 ("Low Water",
+  // __ctLowWaterStep), Ch.042 ("Through the White Water",
+  // __ctWhiteWaterStep) and Ch.044 ("Light the Real Channel",
+  // __ctLightTheRealChannel) are built this way so far -- 039/042/044
+  // being the three West Gate objectives the Arc IV outline's own game
+  // handoff names (scout the shoal, intercept the convoy, restore the
+  // true channel light).
   //
-  // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-041 -- every chapter
-  // with a finished comic page and real dialogue so far (assets/comics/
-  // sequel/). San's own numbering runs Prologue, then 001-032
+  // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-048 (Arcs I-IV
+  // complete). Prologue-041 had their scene text transcribed from the
+  // finished comic pages. 042 onward goes back to how every Crimson
+  // Tide arc since Arc I was actually written: scene text expanded from
+  // San's own 1-2 line chapter descriptions, with the image path
+  // registered up front so a bare chNN.png upload gets auto-renamed by
+  // the Pages workflow whenever the art exists -- no page reading. Art
+  // for 042-048 isn't uploaded yet; nothing renders those paths until
+  // it is. San's own numbering runs Prologue, then 001-032
   // continuously straight across Arc I/II/III (no per-arc restart,
   // unlike every numbered arc file before this one, which each reset
   // their own ch.id at 1). The ids here follow that scheme too -- id:1
@@ -53,12 +62,8 @@
   // kicker/title the act header below shows, matching the real comic
   // pages' own per-arc page headers.
   //
-  // The rest of San's full three-arc outline is reference-only, kept
-  // here so the next batch doesn't need it re-pasted. Nothing past 020
-  // is built -- these are one-line beat plans, not finished scripts, and
-  // turning them into real chapters (narrated prose, dialogue, XP,
-  // unlock gates) is explicitly deferred until the matching comic pages
-  // exist, same as every chapter before them in this game.
+  // San's own chapter descriptions for all four arcs, kept verbatim as
+  // the record of what each chapter was written from.
   //
   // CRIMSON HORIZON · ARC I -- A NEW VOYAGE (Prologue + 001-010) [BUILT]
   //   Prologue  San and Jade set sail aboard the Crimson Tide with the unified crew, including Tribute's canon five. The Black Pearl research continues in Fair Tide.
@@ -112,13 +117,13 @@
   //   039 Low Water -- Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it. [BUILT -- cross-game handoff: real objective, see __ctLowWaterStep]
   //   040 Lights for Sale -- Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches. [BUILT]
   //   041 The Evening Convoy -- The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker. [BUILT]
-  //   042 Through the White Water -- Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They reach the convoy as its lead ship begins turning toward the false light. [game handoff: intercept the convoy]
-  //   043 The Lantern Skiff -- Levi and Sairen cut off the skiff's retreat through the shallows. When its crew tries to throw the lantern overboard, Sally pins the release rope to the gunwale from the Crimson Tide. [game handoff: intercept the convoy]
-  //   044 Light the Real Channel -- Jade gets the yard foreman to bring a spare lantern to the empty post. Once it's lit, Joel leads the convoy through the true channel to the waiting pilot. [game handoff: restore the true channel light]
-  //   045 The Salvage Ledger -- The harbor pilot takes the recovered ledger to the families of the wrecked crews so they can reclaim their cargo. The entries show the salvage crew used several couplings locally and sold one on to the Storm Shelf.
-  //   046 The Last Crate South -- Fen traces the final coupling from the shipment to an unopened crate still awaiting pickup. Its delivery instructions name the South Gate · Deep Channel, with a tide and berth but no recipient.
-  //   047 A Light of Their Own -- The yard crew restores the permanent marker, and the pilot invites the twins to ring the quay bell for the first ship safely through. San asks her to teach the crew the local signals before they sail.
-  //   048 The Deep Channel -- San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock. [game handoff: opens the Deep Channel route]
+  //   042 Through the White Water -- Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They reach the convoy as its lead ship begins turning toward the false light. [BUILT -- handoff objective, see __ctWhiteWaterStep]
+  //   043 The Lantern Skiff -- Levi and Sairen cut off the skiff's retreat through the shallows. When its crew tries to throw the lantern overboard, Sally pins the release rope to the gunwale from the Crimson Tide. [BUILT -- narrated; part of the same convoy beat as 042]
+  //   044 Light the Real Channel -- Jade gets the yard foreman to bring a spare lantern to the empty post. Once it's lit, Joel leads the convoy through the true channel to the waiting pilot. [BUILT -- handoff objective, see __ctLightTheRealChannel]
+  //   045 The Salvage Ledger -- The harbor pilot takes the recovered ledger to the families of the wrecked crews so they can reclaim their cargo. The entries show the salvage crew used several couplings locally and sold one on to the Storm Shelf. [BUILT]
+  //   046 The Last Crate South -- Fen traces the final coupling from the shipment to an unopened crate still awaiting pickup. Its delivery instructions name the South Gate · Deep Channel, with a tide and berth but no recipient. [BUILT]
+  //   047 A Light of Their Own -- The yard crew restores the permanent marker, and the pilot invites the twins to ring the quay bell for the first ship safely through. San asks her to teach the crew the local signals before they sail. [BUILT]
+  //   048 The Deep Channel -- San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock. [BUILT -- closes Arc IV; opens the Deep Channel route]
   //
   // Cover/chapter art is the real uploaded pages, not placeholders --
   // assets/comics/sequel/. arc1-cover-a-new-voyage.webp, arc2-cover-
@@ -174,7 +179,14 @@
     {id:39, arc:4, title:'038 · The Wrong Rhythm', focus:"Renn checks the sailor's account against the old pilot codes from Fair Tide. The moving light copied the official signal closely enough to fool anyone approaching in fog.", image:'assets/comics/sequel/ch38-the-wrong-rhythm.webp', xp:420, action:'🎼 Decode the Wrong Rhythm'},
     {id:40, arc:4, title:'039 · Low Water', focus:"Levi and Sairen follow fresh bootprints across a shoal exposed at low tide. They find the missing lantern mounted on a small skiff, with a West Gate coupling fitted beneath it.", image:'assets/comics/sequel/ch39-low-water.webp', xp:430, action:'🌊 Launch the Shore Expedition'},
     {id:41, arc:4, title:'040 · Lights for Sale', focus:"Sally watches the skiff's crew sell cargo stripped from the grounded ships. One of them leaves to set the lantern again just as the evening convoy approaches.", image:'assets/comics/sequel/ch40-lights-for-sale.webp', xp:410, action:'🔭 Watch the Lights for Sale'},
-    {id:42, arc:4, title:'041 · The Evening Convoy', focus:"The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker.", image:'assets/comics/sequel/ch41-the-evening-convoy.webp', xp:420, action:'⛵ Split for the Evening Convoy'}
+    {id:42, arc:4, title:'041 · The Evening Convoy', focus:"The pilot says the convoy is already beyond sight of shore. San sends Joel and Mezstorm to intercept it while Jade coordinates a shore team to restore the real marker.", image:'assets/comics/sequel/ch41-the-evening-convoy.webp', xp:420, action:'⛵ Split for the Evening Convoy'},
+    {id:43, arc:4, title:'042 · Through the White Water', focus:"Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They reach the convoy as its lead ship begins turning toward the false light.", image:'assets/comics/sequel/ch42-through-the-white-water.webp', xp:430, action:'🌫️ Steer Into the White Water'},
+    {id:44, arc:4, title:'043 · The Lantern Skiff', focus:"Levi and Sairen cut off the skiff's retreat through the shallows. When its crew tries to throw the lantern overboard, Sally pins the release rope to the gunwale from the Crimson Tide.", image:'assets/comics/sequel/ch43-the-lantern-skiff.webp', xp:420, action:'🏹 Corner the Lantern Skiff'},
+    {id:45, arc:4, title:'044 · Light the Real Channel', focus:"Jade gets the yard foreman to bring a spare lantern to the empty post. Once it's lit, Joel leads the convoy through the true channel to the waiting pilot.", image:'assets/comics/sequel/ch44-light-the-real-channel.webp', xp:430, action:'🏮 Light the Real Channel'},
+    {id:46, arc:4, title:'045 · The Salvage Ledger', focus:"The harbor pilot takes the recovered ledger to the families of the wrecked crews so they can reclaim their cargo. The entries show the salvage crew used several couplings locally and sold one on to the Storm Shelf.", image:'assets/comics/sequel/ch45-the-salvage-ledger.webp', xp:410, action:'📒 Open the Salvage Ledger'},
+    {id:47, arc:4, title:'046 · The Last Crate South', focus:"Fen traces the final coupling from the shipment to an unopened crate still awaiting pickup. Its delivery instructions name the South Gate · Deep Channel, with a tide and berth but no recipient.", image:'assets/comics/sequel/ch46-the-last-crate-south.webp', xp:410, action:'📦 Trace the Last Crate South'},
+    {id:48, arc:4, title:'047 · A Light of Their Own', focus:"The yard crew restores the permanent marker, and the pilot invites the twins to ring the quay bell for the first ship safely through. San asks her to teach the crew the local signals before they sail.", image:'assets/comics/sequel/ch47-a-light-of-their-own.webp', xp:400, action:'🔔 Ring In a Light of Their Own'},
+    {id:49, arc:4, title:'048 · The Deep Channel', focus:"San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock.", image:'assets/comics/sequel/ch48-the-deep-channel.webp', xp:430, action:'⚓ Follow the Line Into the Deep Channel'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
@@ -227,7 +239,14 @@
     39: 'Later that evening at Fair Tide, Renn reviews the sailor\'s account alongside the old pilot codes from Fair Tide.<br><br>"Let\'s compare his description with the Fair Tide pilot codes..." Renn says. "Particularly the coastal beacon patterns."<br><br>"Here it is. The West Gate approach signal — Type B. Three short pulses, a double pause, then a long pulse." "The rhythm he tapped matches the official signal almost exactly..."<br><br>"The moving light copied the sequence with remarkable accuracy... Same rhythm, same timing intervals..." Renn says. "...from a distance, and especially in heavy fog, it would be indistinguishable from the real West Gate beacon." "It\'s a clever imitation. Not random... not a natural light either."<br><br>"So it wasn\'t the real beacon at all..." "No. It was a deliberate decoy — close enough to lure vessels onto a false route, possibly toward the wreck sites," Renn says. "Someone knew the pilot codes... and how to use them against us."',
     40: 'At first light, Levi and Sairen follow fresh bootprints across a shoal newly exposed by the low tide.<br><br>"Fresh prints... not from the ship\'s crew," Levi says. "And the stride is purposeful..." Sairen says. "Heading toward the cove."<br><br>"There it is... the missing lantern," Levi says. "And it\'s mounted on a skiff..." Sairen says. "Not merely abandoned."<br><br>Beneath the skiff, a fitting stamped W-GATE, SV-7731. "A West Gate coupling..." Levi says. "So this skiff was part of the same signal network."<br><br>"This confirms it. The false beacon wasn\'t just a light..." Levi says. "It was an active transmission node, set to mimic the West Gate signals." "Then someone prepared this carefully..." Sairen says. "A decoy route, ready for vessels to follow at the right tide."',
     41: 'Sally watches the skiff\'s crew sell cargo stripped from the grounded ships.<br><br>Salvage... but this is more than scrap, she thinks. They\'re selling cargo from the wrecks...<br><br>"They\'re not just scavengers," Sally says quietly. They\'re moving the cargo quickly... preparing for another run.<br><br>"I\'ll reset the lantern now," one of the crew says. "The evening convoy will be here soon."<br><br>One of them leaves with a lantern and a small toolkit, heading to the skiff anchored near the shoal.<br><br>"There... he\'s setting it again —" Sally says. Just in time. "The evening convoy...!"',
-    42: 'The pilot confirms the news — the evening convoy has already passed beyond sight of shore.<br><br>"The convoy is already beyond sight of shore," the pilot says. "If we want to catch them, we must move now." "Then we split," San says. "Joel and Mezstorm will intercept the convoy at sea."<br><br>"Understood," Joel says. "We\'ll take a fast boat, close the distance, and stop them before they clear the straits." "Leave the chase to us," Mezstorm says. "We\'ll intercept the convoy, secure the cargo, and bring them back."<br><br>"I\'ll lead the shore team," Jade says. "We\'ll retrieve the real marker, reset the West Gate coupling, and restore the proper signal. Levi, Sairen, and Sally — with me. We need the marker active again before the next vessel arrives."<br><br>"Good. Joel and Mezstorm, move at once," San says. "Jade, restore the marker and report back when the signal is live. We stop the false route here — before more ships are lost."'
+    42: 'The pilot confirms the news — the evening convoy has already passed beyond sight of shore.<br><br>"The convoy is already beyond sight of shore," the pilot says. "If we want to catch them, we must move now." "Then we split," San says. "Joel and Mezstorm will intercept the convoy at sea."<br><br>"Understood," Joel says. "We\'ll take a fast boat, close the distance, and stop them before they clear the straits." "Leave the chase to us," Mezstorm says. "We\'ll intercept the convoy, secure the cargo, and bring them back."<br><br>"I\'ll lead the shore team," Jade says. "We\'ll retrieve the real marker, reset the West Gate coupling, and restore the proper signal. Levi, Sairen, and Sally — with me. We need the marker active again before the next vessel arrives."<br><br>"Good. Joel and Mezstorm, move at once," San says. "Jade, restore the marker and report back when the signal is live. We stop the false route here — before more ships are lost."',
+    43: 'Joel takes the Crimson Tide into the white water, where the fog sits so thick the bow lantern barely reaches the next swell. Mezstorm stands at the rail, one hand raised, and tears brief gaps in it — a few breaths of clear water at a time, never more.<br><br>"Left of the rocks, then hold," Joel says. "Give me another gap when you can."<br><br>"You\'ll have it," Mezstorm says. "Don\'t waste it."<br><br>Gap by gap, they close the distance. When the fog opens again the convoy is there ahead of them — and its lead ship is already beginning to turn, bow swinging toward the false light.',
+    44: 'On the shoal side, Levi and Sairen move through the shallows to cut off the skiff\'s retreat before its crew can slip back out to deeper water.<br><br>Cornered, the skiff\'s crew go for the one thing that proves what they\'ve been doing: the lantern. One of them hauls on the release rope to drop it overboard.<br><br>From the deck of the Crimson Tide, Sally looses a single shot. It pins the release rope to the gunwale, and the lantern stays exactly where it is.<br><br>"That stays aboard," Levi says, wading in. "All of it."',
+    45: 'With the false light taken, the second post still stands empty — and the convoy is still out in the fog. Jade goes to the one person who can fix that tonight.<br><br>"The second post is empty and there\'s a convoy in the fog," she tells the yard foreman. "I need a spare lantern on it tonight."<br><br>The foreman brings it personally. Once the lantern is seated and lit, the true signal carries out over the water — three short pulses, a double pause, then a long one.<br><br>Joel picks it up from the helm and brings the Crimson Tide about. One by one the convoy falls in behind, and he leads them through the true channel to where the pilot is waiting.',
+    46: 'The lantern skiff gives up more than its light. Among the salvage crew\'s things is a ledger — every cargo stripped from the grounded ships, and where it went.<br><br>The harbor pilot takes it herself to the families of the wrecked crews, so they can reclaim what was theirs.<br><br>The rest of the entries matter to the Crimson Tide. The salvage crew used several of the West Gate couplings locally, for the false light — and sold one on. The buyer\'s line reads: Storm Shelf.<br><br>"One coupling, sold on to the Storm Shelf," San says. "That\'s the one we pulled out of the station."',
+    47: 'At Fair Tide, Fen follows the shipment to its end. Four couplings left the West Gate yard under one work order, and three are accounted for. The fourth never went anywhere at all.<br><br>It is still sitting in an unopened crate, awaiting pickup.<br><br>The delivery instructions are brief. They name the South Gate — Deep Channel. They give a tide and a berth. Where the recipient should be, there is nothing.<br><br>"Someone is expecting it," Fen reports. "They just didn\'t want their name on the paper."',
+    48: 'The yard crew restores the permanent marker on the second post — no borrowed lantern this time, but the Straits\' own light, back where it belongs.<br><br>When the first ship comes safely through, the pilot hands the bell rope to Vaeren and Joelle. They ring the quay bell together, a little out of time and far too long, and nobody on the quay minds.<br><br>Before the Crimson Tide sails, San asks the pilot for one more thing: to teach the crew the local signals.<br><br>"Next time we come through," San says, "I\'d like us to read your lights the way you do."',
+    49: 'San and Jade take the delivery instructions south, to see for themselves who comes for the crate.<br><br>The tide is the one written on the paper. The berth is the one written on the paper. Nobody is waiting there.<br><br>There is only a mooring rope, made fast at the berth and pulled taut — running straight down into water far too deep for any dock.<br><br>"Something is holding the other end," Jade says.<br><br>San looks at the line, and at the dark water it disappears into. "Then that\'s where we go next."'
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -329,6 +348,36 @@
     }
   };
 
+  // Ch.042 ("Through the White Water") -- "steer through the fog and
+  // intercept the convoy before it follows the false light" (San's
+  // cross-game doc). Two steps, same never-a-hard-fail shape as Ch.008;
+  // the sails tier only changes the first line, as there.
+  // game.crimsonHorizonWhiteWaterStep tracks 0 -> 1 -> complete.
+  window.__ctWhiteWaterStep = function(step){
+    game.crimsonHorizonWhiteWaterStep = game.crimsonHorizonWhiteWaterStep || 0;
+    if (step === 1 && game.crimsonHorizonWhiteWaterStep === 0) {
+      const sails = (game.ship && game.ship.sails) || 1;
+      toast(sails >= 3
+        ? '🌫️ Into the white water. Mezstorm opens a gap in the fog and the Crimson Tide takes it cleanly, already gaining on the convoy.'
+        : '🌫️ Into the white water. Mezstorm opens a gap in the fog and the Crimson Tide claws through it, slowly gaining on the convoy.', 3600);
+      game.crimsonHorizonWhiteWaterStep = 1;
+      if (typeof saveGameQuiet === 'function') saveGameQuiet();
+      if (typeof renderStory === 'function') renderStory();
+    } else if (step === 2 && game.crimsonHorizonWhiteWaterStep === 1) {
+      toast('⛵ The convoy is in sight — its lead ship already turning toward the false light. The Crimson Tide cuts across its bow.', 3600);
+      game.crimsonHorizonWhiteWaterStep = 2;
+      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(43);
+    }
+  };
+
+  // Ch.044 ("Light the Real Channel") -- the third West Gate objective
+  // the Arc IV outline's game handoff names: restore the true channel
+  // light. One action, like Ch.026.
+  window.__ctLightTheRealChannel = function(){
+    toast('🏮 The spare lantern is lit on the empty post. Three short pulses, a double pause, a long one — the true channel is marked again.', 3600);
+    if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(45);
+  };
+
   window.__ctShowCrimsonHorizonSplash = function(){
     const overlay = document.getElementById('crimsonHorizonSplashOverlay');
     if (overlay) overlay.style.display = 'flex';
@@ -385,6 +434,15 @@
         action = (step < 1)
           ? '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(1)">⚓ Position the Ship for the Tow</button>'
           : '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(2)">🌊 Hold Steady Through the Surge</button>';
+      } else if (ready && ch.id === 43) {
+        // Ch.042 "Through the White Water" -- see __ctWhiteWaterStep.
+        const wwStep = game.crimsonHorizonWhiteWaterStep || 0;
+        action = (wwStep < 1)
+          ? '<button class="btn btn-small btn-success" onclick="window.__ctWhiteWaterStep(1)">🌫️ Steer Into the White Water</button>'
+          : '<button class="btn btn-small btn-success" onclick="window.__ctWhiteWaterStep(2)">⛵ Intercept the Convoy</button>';
+      } else if (ready && ch.id === 45) {
+        // Ch.044 "Light the Real Channel" -- see __ctLightTheRealChannel.
+        action = '<button class="btn btn-small btn-success" onclick="window.__ctLightTheRealChannel()">🏮 Light the Real Channel</button>';
       } else if (ready && ch.id === 40) {
         // Ch.039 "Low Water" -- real two-step objective, see
         // __ctLowWaterStep above.
