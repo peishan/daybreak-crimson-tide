@@ -155,6 +155,23 @@
   // 061 opens regular travel; 064 charts the Central Gate (Arc VI).
   // -------------------------------------------------------------------
 
+  // -------------------------------------------------------------------
+  // CRIMSON HORIZON · ARC VI -- A PLACE TO COME HOME TO (065-069, "A New
+  // Shore") [BUILT, text-first]. Immediately after 064. San and Joel stay
+  // the principal viewpoint. Theme: finding somewhere new can change what
+  // you want to come home to.
+  //   065 Beyond the Central Gate -- through the gate at first light into a busy island harbor.
+  //   066 A Day Ashore -- market, waterfront, and Jade's first unarranged trip (a harbor bench).
+  //   067 The Boat That Couldn't Leave -- a damaged skipper; San offers passage for her and her cargo.
+  //   068 The Story I Left Behind -- San tells Jade about the manuscript (Imperial Guard Meets
+  //       Runaway Prince, later Tangled with the Runaway Prince). Joel already knows from Meet the Maker.
+  //   069 Around the Same Time -- Jade/Sally's due dates may overlap; tell Devon after the outer island.
+  // Game: 065 unlocks Island Harbor (the working name -- the outline never names it) as a standard
+  // port; Central Gate is now selectable after 064 and 065 plays there. 067 sets
+  // game.crimsonHorizonProvisionsRunReady for the next batch, which unlocks the outer island on
+  // arrival. The next substantial Black Pearl development takes place at Fair Tide.
+  // -------------------------------------------------------------------
+
   const CRIMSON_HORIZON_CHAPTERS = [
     {id:1, arc:1, title:'Prologue — A New Voyage', focus:"Aboard the Crimson Tide, San and Joel look out over a new horizon — one chapter closed, a wider world still waiting. The Black Pearl remains in their guardianship, its true nature still unknown. They decide to meet whatever comes next together, as one unified crew.", image:'assets/comics/sequel/prologue-a-new-voyage.webp', xp:400, action:'🌅 Set Sail Toward the Horizon'},
     {id:2, arc:1, title:'001 · The First Storm', focus:"The Crimson Tide's new voyage opens with a fierce, chaotic storm — their first battle sooner than expected. In its wake comes quieter news: several of the crew are expecting, each pregnancy its own long Veyren road, with the whole crew pacing missions around it together.", image:'assets/comics/sequel/ch01-the-first-storm.webp', xp:410, action:'⚡ Weather the First Storm'},
@@ -220,7 +237,12 @@
     {id:62, arc:5, title:"061 · First Ship Through", focus:"One of the freed pilots volunteers to guide a waiting vessel through the reopened channel. Joel follows at a distance while the shore team watches for any change in the current.", image:'assets/comics/sequel/ch61-first-ship-through.webp', xp:480, action:'📖 Read Chapter'},
     {id:63, arc:5, title:"062 · The Dispatch Book", focus:"Fen and Adrian match the Keeper's dispatch book to the West Gate records. The same operation bought the Storm Shelf coupling and kept the South Gate order under SV-7740, and a separate entry schedules a service delivery at the Central Gate.", image:'assets/comics/sequel/ch62-the-dispatch-book.webp', xp:480, action:'📖 Read Chapter'},
     {id:64, arc:5, title:"063 · The Pilots Come Home", focus:"The freed pilots return ashore. One gives the crew a corrected chart marking the public lane and the rescue berth, and asks that both be shared with other ships.", image:'assets/comics/sequel/ch63-the-pilots-come-home.webp', xp:485, action:'📖 Read Chapter'},
-    {id:65, arc:5, title:"064 · The Central Bearing", focus:"San and Jade agree to investigate the Central Gate after the South Gate is back in local hands. Devon plots the approach from the corrected chart, and a signal from the Central Gate answers before they reach its first marker.", image:'assets/comics/sequel/ch64-the-central-bearing.webp', xp:500, action:'📖 Read Chapter'}
+    {id:65, arc:5, title:"064 · The Central Bearing", focus:"San and Jade agree to investigate the Central Gate after the South Gate is back in local hands. Devon plots the approach from the corrected chart, and a signal from the Central Gate answers before they reach its first marker.", image:'assets/comics/sequel/ch64-the-central-bearing.webp', xp:500, action:'📖 Read Chapter'},
+    {id:66, arc:6, title:"065 · Beyond the Central Gate", focus:"Joel takes the Crimson Tide through the Central Gate at first light. Beyond it, small trading boats are already sailing out of a busy island harbor, and a local pilot waves the crew toward the quay.", image:'assets/comics/sequel/ch65-beyond-the-central-gate.webp', xp:500, action:'📖 Read Chapter'},
+    {id:67, arc:6, title:"066 · A Day Ashore", focus:"Aisyah heads for the market while Joel takes Vaeren, Joelle and Soel along the waterfront. San and Jade go looking for food and end up sharing a harbor bench, where Jade tells San about the first time she travelled without anyone from the court arranging her day.", image:'assets/comics/sequel/ch66-a-day-ashore.webp', xp:500, action:'📖 Read Chapter'},
+    {id:68, arc:6, title:"067 · The Boat That Couldn’t Leave", focus:"San and Joel find a local skipper at the quay whose boat was damaged before she could take provisions to an outer island. San offers room aboard the Crimson Tide for her and her cargo, and Joel asks her to show them where she normally lands.", image:'assets/comics/sequel/ch67-the-boat-that-couldnt-leave.webp', xp:505, action:'📖 Read Chapter'},
+    {id:69, arc:6, title:"068 · The Story I Left Behind", focus:"That evening, San asks Jade to stay on deck after the others go below. She tells her about the manuscript, Imperial Guard Meets Runaway Prince, and admits she recognized Jade and Devon's names the day they met in Lunareth.", image:'assets/comics/sequel/ch68-the-story-i-left-behind.webp', xp:540, action:'📖 Read Chapter'},
+    {id:70, arc:6, title:"069 · Around the Same Time", focus:"As the crew prepares to sail, Jade and Sally compare their expected dates. They could still go into labour around the same time, and they agree to tell Devon and Levi after the provisions are unloaded on the outer island.", image:'assets/comics/sequel/ch69-around-the-same-time.webp', xp:510, action:'📖 Read Chapter'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
@@ -229,7 +251,8 @@
     2: {cover:'assets/comics/sequel/arc2-cover-storm-shelf.webp', kicker:'Crimson Horizon · Arc II', title:'Storm Shelf', tagline:'Something beneath the Shelf has been waiting to be found.'},
     3: {cover:'assets/comics/sequel/arc3-cover-beneath-the-storm-shelf.webp', kicker:'Crimson Horizon · Arc III', title:'Beneath the Storm Shelf', tagline:'The signal was never random. Someone kept it active.'},
     4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'},
-    5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'}
+    5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'},
+    6: {cover:null, kicker:'Crimson Horizon · Arc VI', title:'A Place to Come Home To', tagline:'Finding somewhere new can change what you want to come home to.'}
   };
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
@@ -297,7 +320,12 @@
     62: "A freed pilot walks to the rail of the Crimson Tide, looks down the reopened channel, and turns to San.<br><br>\"A ship's been waiting outside the gate for days,\" the pilot says. \"Let me take it through. I know this water. I want to be the one.\"<br><br>\"Are you sure?\" Sky asks, quietly. \"You've barely rested.\"<br><br>\"I'm sure.\"<br><br>The waiting vessel gets its pilot, and the Crimson Tide follows at a distance, close enough to help and far enough not to crowd.<br><br>On the shore, the gate team watches the current. \"Steady,\" Levi calls. \"No change.\"<br><br>The ship passes the narrows, clears the markers, and slides out into open water. A cheer goes up along the quay.<br><br>\"The South Gate is open,\" San says. \"For everyone.\"<br><br>Regular travel to the South Gate is unlocked.",
     63: "In Fair Tide, Fen and Adrian spread the Keeper's dispatch book across the research table, next to the West Gate records.<br><br>\"The hand matches,\" Adrian says. \"Same ledger style, same work order numbers.\"<br><br>\"The same operation,\" Fen says, tapping two lines. \"It bought the Storm Shelf coupling, and it kept the South Gate order under SV-7740. The Keeper was only one hand in it.\"<br><br>\"There's another entry,\" Adrian says. \"Separate, at the back. A service delivery, scheduled at the Central Gate.\"<br><br>Renn leans over the page. \"That's a date. Not far off.\"<br><br>\"The coupling investigation is closed,\" San says over the line. \"But the trail isn't.\"<br><br>The Central Gate lead is open.",
     64: "The freed pilots come ashore in the afternoon, wrapped in Aisyah's blankets, and the quay goes quiet to let them pass.<br><br>One of them stops in front of San and holds out a rolled chart.<br><br>\"Corrected,\" the pilot says. \"The public lane, the rescue berth, the stairs, the flood line. Every mark checked against the water.\"<br><br>\"Thank you,\" San says, taking it carefully.<br><br>\"Please share it. Every ship that uses this coast should have it. Nobody should have to find the passage the way we did.\"<br><br>\"They will,\" Jade promises. \"We'll send copies to every harbor office.\"<br><br>Devon pins the chart in the voyage log, and the twins ring the quay bell for the pilots as they walk home.<br><br>The corrected chart is added to the journal.",
-    65: "On the deck of the Crimson Tide, San and Jade spread the corrected chart across the table, with the Keeper's dispatch book open beside it.<br><br>\"The Central Gate,\" Jade says. \"The service delivery is scheduled there.\"<br><br>\"After the South Gate is back in local hands,\" San says. \"We leave it with the pilots first.\"<br><br>\"Agreed.\"<br><br>Devon lays a course along the chart's edge. \"I can plot the whole approach from the corrected lane,\" Devon says.<br><br>The Crimson Tide gets under way at dusk. They are still some way from the first marker when the lamp at the helm flickers and the lantern on the far horizon answers.<br><br>\"That signal,\" Joel says slowly. \"They answered before we asked.\"<br><br>San looks out at the dark water ahead. \"Then they know we're coming.\"<br><br>The Central Gate is charted."
+    65: "On the deck of the Crimson Tide, San and Jade spread the corrected chart across the table, with the Keeper's dispatch book open beside it.<br><br>\"The Central Gate,\" Jade says. \"The service delivery is scheduled there.\"<br><br>\"After the South Gate is back in local hands,\" San says. \"We leave it with the pilots first.\"<br><br>\"Agreed.\"<br><br>Devon lays a course along the chart's edge. \"I can plot the whole approach from the corrected lane,\" Devon says.<br><br>The Crimson Tide gets under way at dusk. They are still some way from the first marker when the lamp at the helm flickers and the lantern on the far horizon answers.<br><br>\"That signal,\" Joel says slowly. \"They answered before we asked.\"<br><br>San looks out at the dark water ahead. \"Then they know we're coming.\"<br><br>The Central Gate is charted.",
+    66: "First light, and the Central Gate opens ahead of the Crimson Tide, a wide mouth of weathered stone with the tide running through it. Joel takes the helm himself and holds her steady on the line Devon plotted.<br><br>San stands at the rail, watching the stone slide by on either side. There is no signal, and no lantern answering from the dark. Whatever answered them on the way here, it doesn't answer now.<br><br>Then the walls fall away.<br><br>Beyond the gate is an island, green on the hills and gold along the waterfront, and a busy harbor already awake. Small trading boats are sailing out past them in the early light, sails patched and bright, crews calling to one another across the water.<br><br>\"That,\" Joel says slowly, \"is not what I expected.\"<br><br>A local pilot in a skiff waves them in, pointing toward an empty stretch of the quay.<br><br>\"Shall I tell everyone we're staying one night?\" Joel asks.<br><br>\"Tell them we're staying at least one night,\" San says.<br><br>Island Harbor is now on your charts.",
+    67: "Aisyah is down the gangway before the lines are properly made fast, a basket on one arm and a list in her head. \"Market,\" she says, over her shoulder. \"Nobody follow me unless you're carrying.\"<br><br>Joel takes the waterfront with Vaeren, Joelle and Soel. Vaeren wants to know what every boat is called. Joelle wants to know what every boat is carrying. Soel rides the top of a bollard like a figurehead and accepts a piece of dried fish from a stranger without a flicker of shame.<br><br>\"We're supposed to be looking for a quiet morning,\" Joel says to nobody in particular.<br><br>San and Jade go looking for food and find a bench on the harbor wall instead, with a view of the whole quay and two warm buns from a stall. For a while they simply eat.<br><br>\"The first time I travelled without anyone from the court arranging my day,\" Jade says, \"I was sure I'd be wonderful at it.\"<br><br>\"And?\"<br><br>\"I got lost before noon.\"<br><br>\"Did you ask for directions?\" San asks.<br><br>\"Eventually.\"<br><br>San laughs, and Jade does too, a little late, as if she's still checking whether she's allowed to.",
+    68: "At the far end of the quay, a skipper is sitting on an upturned crate beside a boat with a cracked strake and a sagging rail. Sacks and barrels are stacked on the stones around her, covered with sailcloth against the sun.<br><br>\"Wasn't meant to still be here,\" she says, when San asks. \"I was taking provisions out to the outer island. Then a swell put me against the pier on the way out, and now the boat won't float a full load.\"<br><br>\"How long would the repairs take?\" Joel asks.<br><br>\"Longer than the people on that island have got. They're running low.\"<br><br>San looks at the stacked cargo, then at the Crimson Tide. \"We have the room,\" she says. \"For you and everything you were carrying. We can take it out ourselves.\"<br><br>The skipper stares at her. \"You'd do that? You don't know me.\"<br><br>\"You were going to do it for people you don't know either,\" San says.<br><br>Joel crouches beside the damaged hull. \"Show us where you normally land,\" he says. \"We'll want to come in the way you do.\"<br><br>The skipper finally nods, and the cargo starts moving up the gangway.<br><br>The provisions run is set.",
+    69: "That evening the Crimson Tide is quiet. The harbor lights come on one by one, and the others go below in twos and threes until only San and Jade are left on deck.<br><br>\"You asked me to stay,\" Jade says. \"I was hoping it wasn't bad news.\"<br><br>\"It isn't. I don't think.\" San takes a breath. \"There's something I've never told you. I wrote a story once, a long time ago. Imperial Guard Meets Runaway Prince. Later I renamed it Tangled with the Runaway Prince.\"<br><br>Jade is very still. \"A prince.\"<br><br>\"And an Imperial Guard. When you and Devon told me your names in Lunareth, I recognized them. I didn't say anything. I wasn't sure how.\"<br><br>\"You knew,\" Jade says slowly. \"From the first day.\"<br><br>\"I recognized the names. I didn't know what it would mean to be standing in front of you.\" San looks at her hands. \"Joel already knows. This is the first time I'm telling you myself.\"<br><br>Jade looks out at the harbor for a while. \"How far did you get?\"<br><br>\"Somewhere in the fifties. Then life got in the way.\"<br><br>\"And after that?\"<br><br>\"After that, you'll have to tell me.\"<br><br>\"I'll show you the manuscript whenever you're ready,\" San says.<br><br>Jade almost smiles. \"I'd like to hear how it begins first.\"",
+    70: "The Crimson Tide is stowed and ready by morning. The skipper's cargo is lashed down in the hold, and every crate is accounted for. San and Joel stand at the helm, going over the approach the skipper marked on the chart.<br><br>Down on deck, Jade and Sally have found a quiet spot by the mainmast, their heads close over a scrap of paper covered in dates.<br><br>\"Three years for me, give or take,\" Jade says. \"Two and a half for you.\"<br><br>\"Which is close enough that it might not matter,\" Sally says. \"We could still end up going into labour around the same time.\"<br><br>\"Devon and Levi already know about the pregnancies.\"<br><br>\"But neither of them knows about this part.\" Sally taps the paper. \"Should we tell them our due dates might overlap?\"<br><br>Jade thinks about it. \"After we've unloaded the provisions on the outer island. Let's not give them anything else to worry about at sea.\"<br><br>\"Agreed.\"<br><br>\"I'll tell Devon first,\" Jade says. \"I want to see his face.\"<br><br>At the helm, Joel glances at San and raises an eyebrow. San shrugs, smiling, and gives the order to cast off.<br><br>The Crimson Tide is ready to sail."
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -348,7 +376,11 @@
       blurb:'Berth B-12 and the passage inside the cliffs. Until the first ship comes through, this is an expedition, not a public route.',
       tradeReady:function(){ return !!prog()[62]; }},
     {id:'central_gate', name:'Central Gate', icon:'🧭', danger:3, specialties:['timber','rice','rum'],
-      desc:'The next destination, charted but not yet reachable.', blurb:'Charted at the end of Arc V. The route opens in Arc VI.'}
+      desc:'A wide stone gate with the tide running through it, and an island harbor on the far side.',
+      blurb:'The Central Gate, open after the South Gate was returned to local hands. Beyond it lies the first new shore.'},
+    {id:'island_harbor', name:'Island Harbor', icon:'🏝️', danger:3, specialties:['tea','silk','spices'],
+      desc:'A busy island harbor beyond the Central Gate, with trading boats already sailing out at first light. (Working name.)',
+      blurb:'Green hills, a gold waterfront and a market that never quite closes. The crew\'s first landfall in a new place.'}
   ];
   const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
   window.CRIMSON_HORIZON_PORTS = CH_PORTS;
@@ -359,7 +391,8 @@
     storm_shelf: function(){ return !!prog()[11]; },     // Ch.010 read
     west_gate:   function(){ return !!prog()[33]; },     // Ch.032 read
     south_gate:  function(){ return !!prog()[49]; },     // Ch.048 read
-    central_gate:function(){ return false; }             // charted only, this build
+    central_gate:function(){ return !!prog()[65]; },     // Ch.064 read: selectable, Ch.065 plays here
+    island_harbor:function(){ return !!prog()[66]; }     // Ch.065 read (Make Landfall)
   };
 
   function registerCrimsonHorizonPorts(){
@@ -401,12 +434,7 @@
       else if (i === 0) revealed = !!game.arc42Complete;
       else revealed = !!CH_PORT_UNLOCK[CH_PORTS[i - 1].id]();
       if (!revealed) { card.remove(); return; }
-      if (def.id === 'central_gate') {
-        card.removeAttribute('onclick');
-        card.style.cursor = 'default';
-        card.style.opacity = '.8';
-        card.innerHTML = '<div class="port-icon">🧭</div><div class="port-name">Central Gate</div><div class="port-dist">Charted — the route opens in Arc VI</div>';
-      } else if (def.id === 'south_gate' && CH_PORT_UNLOCK.south_gate() && !prog()[62] && game.location !== 'south_gate') {
+      if (def.id === 'south_gate' && CH_PORT_UNLOCK.south_gate() && !prog()[62] && game.location !== 'south_gate') {
         const d = card.querySelector('.port-dist');
         if (d) d.textContent = '🧭 Expedition — not yet a public route';
       }
@@ -414,7 +442,7 @@
   };
 
   function chapterPortId(id){
-    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : null;
+    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : id <= 66 ? 'central_gate' : id <= 70 ? 'island_harbor' : null;
   }
   function chPortName(portId){
     const p = CH_PORTS.find(function(x){ return x.id === portId; });
@@ -425,6 +453,7 @@
     if (id <= 11) return '⚓ ' + chPortName('harbor_beyond_charts');
     if (id <= 19) return '⚓ Storm Shelf · Stage I';
     if (id <= 33) return '⚓ Storm Shelf · Stage II — Beneath the Storm Shelf';
+    if (id >= 67 && id <= 70) return '⚓ Island Harbor · A New Shore';
     return '⚓ ' + chPortName(chapterPortId(id));
   }
   window.crimsonHorizonChapterPort = chapterPortId;
@@ -436,7 +465,8 @@
     33: 'West Gate · Mist Straits is now on your charts.',
     49: 'South Gate · Deep Channel is now on your charts as an expedition.',
     62: 'The first ship is through. South Gate · Deep Channel is now open to regular travel.',
-    65: 'Central Gate is charted. The route opens in Arc VI.'
+    65: 'The Central Gate is now open. Sail through it to continue the voyage.',
+    66: 'Island Harbor is now on your charts, with standard port and trade interactions.'
   };
 
   // ===================================================================
@@ -481,8 +511,21 @@
          result:'First the private bypass shuts. Then the gate team confirms the lower stairs are empty. Then the public gate opens, and the channel runs clear.'},
     62: {label:'⛵ Escort the First Vessel', objective:'Escort the first ship through the reopened channel.',
          result:'A freed pilot takes the helm of a waiting vessel. Joel follows at a distance while the shore team watches the current. The ship clears the channel, and the South Gate route is open to regular travel.'},
+    66: {label:'🏝️ Make Landfall', objective:'Bring the Crimson Tide through the Central Gate and take a berth at the island harbor.',
+         result:'Joel brings the Crimson Tide through the gate at first light. A local pilot waves them toward the quay, and the lines go ashore. The island harbor is on your charts.'},
+    67: {label:'🛍️ Go Ashore', objective:'Spend a day ashore: the market, the waterfront and a bench on the harbor wall.',
+         result:'Aisyah finds the market, Joel finds the twins a fish stall, and San and Jade find a bench. By evening the crew is rested, fed and a little sunburnt.'},
+    68: {label:'🤝 Offer Passage', objective:'Offer the skipper room aboard and set up the provisions run.',
+         result:'San offers room aboard for the skipper and her cargo. The skipper shows Joel where she normally lands, and the provisions are stowed for the run.'},
+    70: {label:'⛵ Prepare to Sail', objective:'Make ready to leave. The provisions are aboard and the crew is accounted for.',
+         result:'The cargo is lashed down, the watches are set, and the approach the skipper marked is on the chart. The Crimson Tide is ready to sail.'},
     63: {label:'📖 Match the Records', objective:"Match the Keeper's dispatch book to the West Gate records.",
          result:'The same operation bought the Storm Shelf coupling and held the South Gate order under SV-7740. A separate entry schedules a service delivery at the Central Gate. The coupling investigation is closed, and the Central Gate lead is open.'}
+  };
+
+  // Objective text for chapters with no check button or fight.
+  const CH_NOTES = {
+    69: 'Stay on deck after the others go below, and tell Jade about the manuscript.'
   };
 
   // Chapters that depict a fight use existing DCT combat. Pinned to the
@@ -531,7 +574,7 @@
     const check = CH_CHECKS[id], fight = CH_FIGHTS[id];
     const fightWon = !!game.crimsonHorizonFights[String(id)];
     const checked = !!game.crimsonHorizonChecked[id];
-    const objective = fight ? fight.objective : (check ? check.objective : 'Take in what the crew learns here, then continue the voyage.');
+    const objective = fight ? fight.objective : (check ? check.objective : (CH_NOTES[id] || 'Take in what the crew learns here, then continue the voyage.'));
     let html = '<div style="font-size:.78rem;opacity:.75;margin-bottom:8px;">' + esc(chapterPlace(id)) + '</div>' +
       '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>' + esc(ch.focus) + '</div>' +
       '<div><strong>Objective</strong><br>' + esc(objective) + '</div>';
@@ -618,6 +661,9 @@
       gainXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
+    // Ch.067 (id 68): the provisions run for the outer island is set up;
+    // the next batch reads this when the outer island opens.
+    if (id === 68) game.crimsonHorizonProvisionsRunReady = true;
     const note = CH_UNLOCK_NOTES[id];
     if (note) {
       game.storyModalQueue = game.storyModalQueue || [];
@@ -698,7 +744,7 @@
         '<span style="font-size:.78rem;">' + status + '</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +' + ch.xp + '</span><div class="story-actions">' + action + '</div></article>';
     });
     if (so === 'crimson_horizon_part1_complete_for_now') {
-      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. The Central Gate route opens next — check back soon.</div></div>';
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. The outer island opens next — check back soon.</div></div>';
     }
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
