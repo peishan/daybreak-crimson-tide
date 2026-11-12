@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V425 · Crimson Horizon ports + Arc V (049-064)';
+window.__CT_BUILD__='V426 · Crimson Horizon Arc VI Ch.065-069 (A New Shore)';
