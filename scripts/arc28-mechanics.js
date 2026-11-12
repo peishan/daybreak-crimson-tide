@@ -172,6 +172,46 @@
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
   };
 
+  // CHECK IN WITH EVERYONE — per San's report that checking in on each
+  // resident one by one is tiring. Exactly what clicking every visible
+  // "Check In" button once would do (same gains, same once-a-day rule,
+  // same people), applied in one pass with a single summary toast. Targets
+  // mirror what the three roster panels actually show: crew-roster members
+  // and temporary guests with a resident record, plus the Wider Ally
+  // Network entries that are currently visible and have a record.
+  function checkInTargetIds(){
+    const residents = residentsState();
+    const seen = {}, ids = [];
+    function add(id){ if (!seen[id] && residents[id]) { seen[id] = true; ids.push(id); } }
+    Object.keys(game.fairTideRoster || {}).forEach(add);
+    Object.keys(residents).forEach(function(id){
+      if (TEMPORARY_RESIDENT_STATUSES.indexOf(residents[id].status) === -1) return;
+      if (typeof window.residentHiddenFromRosterPanel === 'function' && window.residentHiddenFromRosterPanel(id)) return;
+      add(id);
+    });
+    (window.FAIR_TIDE_ALLY_NETWORK || []).forEach(function(a){
+      if (!a.eligible || a.eligible()) add(a.id);
+    });
+    return ids;
+  }
+  window.checkInTargetIds = checkInTargetIds;
+
+  window.checkInAllResidents = function(){
+    const due = checkInTargetIds().filter(function(id){ return window.canCheckInOnResident(id); });
+    if (!due.length) { toast('Everyone\'s already been checked in on today.'); return; }
+    const day = game.day || 0;
+    due.forEach(function(id){
+      const r = residentsState()[id];
+      r.lastCheckInDay = day;
+      window.adjustResidentHappiness(id, CHECK_IN_HAPPINESS_GAIN);
+      window.adjustResidentBond(id, CHECK_IN_BOND_GAIN);
+    });
+    toast('💬 San checks in with ' + due.length + ' ' + (due.length === 1 ? 'person' : 'people') + ' — Happiness and Bond up.', 4200);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+  };
+
   // ARRIVAL / DEPARTURE LOG — Whiteout Survival's join/leave log as the
   // explicit model. Generic: any resident's arrival or departure can be
   // recorded here, not just N's.
@@ -712,6 +752,15 @@
     if (tab !== 'roster') return;
     const container = document.getElementById('ft-tab-roster');
     if (!container) return;
+    const existingBtn = document.getElementById('checkInAllWrap');
+    if (existingBtn) existingBtn.remove();
+    const targets = checkInTargetIds();
+    if (targets.length) {
+      const dueCount = targets.filter(function(id){ return window.canCheckInOnResident(id); }).length;
+      container.insertAdjacentHTML('afterbegin', '<div id="checkInAllWrap" style="margin-bottom:10px;">'+
+        '<button class="btn btn-small btn-magic" onclick="checkInAllResidents()" '+(dueCount?'':'disabled')+'>💬 '+
+        (dueCount ? 'Check In With Everyone ('+dueCount+')' : 'Everyone Checked In Today')+'</button></div>');
+    }
     const existing = document.getElementById('fairTideResidentsPanelWrap');
     if (existing) existing.remove();
     const panel = renderFairTideResidentsPanel();
