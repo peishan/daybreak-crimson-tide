@@ -3951,15 +3951,15 @@ function renderNavigation() {
   const objective = objectiveState();
   grid.innerHTML = PORTS.map(port => {
     if (port.id === game.location) {
-      return `<div class="port-card current"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">📍 You are here</div></div>`;
+      return `<div class="port-card current" data-port="${port.id}"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">📍 You are here</div></div>`;
     }
     const unlocked = isPortUnlocked(port.id);
     const isObjectiveDestination = objective === 'sail_malacca' && port.id === 'malacca';
     if (!unlocked) {
-      return `<div class="port-card" style="opacity:.55;"><div class="port-icon">🔒</div><div class="port-name">${port.name}</div><div class="port-dist">Locked</div></div>`;
+      return `<div class="port-card" data-port="${port.id}" style="opacity:.55;"><div class="port-icon">🔒</div><div class="port-name">${port.name}</div><div class="port-dist">Locked</div></div>`;
     }
     const dist = currentPort?.distances?.[port.id] ?? '?';
-    return `<div class="port-card ${isObjectiveDestination ? 'objective-target' : ''}" onclick="sailTo('${port.id}')" style="cursor:pointer;"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">${isObjectiveDestination ? '🎯 Current Objective' : '⛵ ' + dist + ' units'} </div></div>`;
+    return `<div class="port-card ${isObjectiveDestination ? 'objective-target' : ''}" data-port="${port.id}" onclick="sailTo('${port.id}')" style="cursor:pointer;"><div class="port-icon">${port.icon}</div><div class="port-name">${port.name}</div><div class="port-dist">${isObjectiveDestination ? '🎯 Current Objective' : '⛵ ' + dist + ' units'} </div></div>`;
   }).join('');
 
   document.getElementById('voyageConditions').innerHTML =
@@ -5914,6 +5914,10 @@ function handleVictory() {
     // chapter, so no reverse-lookup needed, just a direct call into
     // arc42.js's own completion logic.
     if (typeof window.markArc42ChapterRead === 'function') window.markArc42ChapterRead(8);
+  } else if (enemy.kind === 'crimson_horizon') {
+    // Crimson Horizon story fights (scripts/crimson-horizon-sequel.js) --
+    // records the win so that chapter's objective modal can Continue.
+    if (typeof window.onCrimsonHorizonFightWon === 'function') window.onCrimsonHorizonFightWon(enemy.key);
   } else if (enemy.kind === 'memory') {
     const ch = currentAct3Chapter();
     if (ch) {
@@ -6089,6 +6093,9 @@ function handleVictory() {
     // Ch.12 guardian fight uses) is the correct, already-established exit.
     postBattleMessage = enemy.name + ' backs off. Whatever this was, it\'s settled for now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'crimson_horizon') {
+    postBattleMessage = enemy.name + ' is beaten. The chapter is waiting.';
+    postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort(); setTimeout(function(){ if (window.__ctResumeCrimsonHorizonChapter) window.__ctResumeCrimsonHorizonChapter(); }, 600);">📖 Back to the Chapter</button>';
   } else if (enemy.kind === 'raid') {
     // See exitRaidBattleToArchive()'s own comment for why this branch
     // exists at all — the generic default below built a broken "Challenge

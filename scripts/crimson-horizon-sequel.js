@@ -31,18 +31,10 @@
   // unlock condition, playable objective and reward -- nothing here
   // needs to match Tribute's own implementation, only the shared chapter
   // number and the comic's outcome. "Game handoff" chapters (flagged
-  // throughout the outline above) are where that divergence actually
-  // matters -- those get a real playable objective on this side, not
-  // just a mark-as-read button; quiet/dialogue-only chapters (San's own
-  // example: Ch.037) stay narrated in both games. Ch.008 ("Hold the
-  // Passage", __ctHoldThePassageStep) and Ch.026 ("The Channel That
-  // Takes It", __ctPlotThePulseAgainstCurrent), Ch.039 ("Low Water",
-  // __ctLowWaterStep), Ch.042 ("Through the White Water",
-  // __ctWhiteWaterStep) and Ch.044 ("Light the Real Channel",
-  // __ctLightTheRealChannel) are built this way so far -- 039/042/044
-  // being the three West Gate objectives the Arc IV outline's own game
-  // handoff names (scout the shoal, intercept the convoy, restore the
-  // true channel light).
+  // throughout the outline above) used to get custom per-chapter mini-
+  // objectives here; per San's redesign those are gone (see REDESIGN
+  // below). The shared story outcomes (008, 026, 039, 042, 044) now play
+  // as each chapter's objective-modal check button instead.
   //
   // CRIMSON_HORIZON_CHAPTERS holds Prologue + 001-048 (Arcs I-IV
   // complete). Prologue-041 had their scene text transcribed from the
@@ -137,6 +129,32 @@
   // assets/portraits/sequel/, not yet wired into ALL_PARTY/CLASS_KIT.
   // -------------------------------------------------------------------
 
+  // -------------------------------------------------------------------
+  // REDESIGN (Crimson Tide side): the sequel plays as DESTINATIONS, not a
+  // list of mini-objectives. See the PORTS block below. Chapters are
+  // modal story chapters (Read Chapter -> objective modal -> Continue);
+  // the five old custom objectives (008, 026, 039, 042, 044) are gone --
+  // their outcomes now play as the objective modal's own check button,
+  // and chapters that depict a fight (002, 058, 059) use existing DCT
+  // combat. Completed chapters, claimed XP and route unlocks in existing
+  // saves are untouched: every port unlock is derived from
+  // game.comicProgressCrimsonHorizon.
+  //
+  // CRIMSON HORIZON · ARC V -- THE DEEP CHANNEL (049-064) [BUILT, text-first]
+  // South Gate · Deep Channel, Berth B-12, high tide Day 8, consignment
+  // SV-7740, recipient blank. Outcome: discover who ordered the coupling,
+  // free the pilots forced to navigate the hidden passage, restore the
+  // South Gate's public route; the dispatch book points to the Central Gate.
+  //   049-052 Find the hidden berth: Berth B-12 / No Name on the Manifest / High Tide, Day Eight / The Berth Behind the Rock
+  //   053-056 Learn who controls the passage: The Pilots Below / The Channel Keeper / The Original Passage / Before the Water Turns
+  //   057-061 Free the pilots, reopen the gate: The Bunkroom Key / Hold the Launch (fight) / The Keeper's Last Order (fight) / Open the Public Channel / First Ship Through
+  //   062-064 Close the case, chart the next route: The Dispatch Book / The Pilots Come Home / The Central Bearing
+  // Checkpoints: pilots' rescue after 058, dispatch book after 059, gate
+  // restoration after 060 (a retry starts at the current objective and
+  // keeps earlier clears). Completing 048 opens the South Gate expedition;
+  // 061 opens regular travel; 064 charts the Central Gate (Arc VI).
+  // -------------------------------------------------------------------
+
   const CRIMSON_HORIZON_CHAPTERS = [
     {id:1, arc:1, title:'Prologue — A New Voyage', focus:"Aboard the Crimson Tide, San and Joel look out over a new horizon — one chapter closed, a wider world still waiting. The Black Pearl remains in their guardianship, its true nature still unknown. They decide to meet whatever comes next together, as one unified crew.", image:'assets/comics/sequel/prologue-a-new-voyage.webp', xp:400, action:'🌅 Set Sail Toward the Horizon'},
     {id:2, arc:1, title:'001 · The First Storm', focus:"The Crimson Tide's new voyage opens with a fierce, chaotic storm — their first battle sooner than expected. In its wake comes quieter news: several of the crew are expecting, each pregnancy its own long Veyren road, with the whole crew pacing missions around it together.", image:'assets/comics/sequel/ch01-the-first-storm.webp', xp:410, action:'⚡ Weather the First Storm'},
@@ -186,7 +204,23 @@
     {id:46, arc:4, title:'045 · The Salvage Ledger', focus:"The harbor pilot takes the recovered ledger to the families of the wrecked crews so they can reclaim their cargo. The entries show the salvage crew used several couplings locally and sold one on to the Storm Shelf.", image:'assets/comics/sequel/ch45-the-salvage-ledger.webp', xp:410, action:'📒 Open the Salvage Ledger'},
     {id:47, arc:4, title:'046 · The Last Crate South', focus:"Fen traces the final coupling from the shipment to an unopened crate still awaiting pickup. Its delivery instructions name the South Gate · Deep Channel, with a tide and berth but no recipient.", image:'assets/comics/sequel/ch46-the-last-crate-south.webp', xp:410, action:'📦 Trace the Last Crate South'},
     {id:48, arc:4, title:'047 · A Light of Their Own', focus:"The yard crew restores the permanent marker, and the pilot invites the twins to ring the quay bell for the first ship safely through. San asks her to teach the crew the local signals before they sail.", image:'assets/comics/sequel/ch47-a-light-of-their-own.webp', xp:400, action:'🔔 Ring In a Light of Their Own'},
-    {id:49, arc:4, title:'048 · The Deep Channel', focus:"San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock.", image:'assets/comics/sequel/ch48-the-deep-channel.webp', xp:430, action:'⚓ Follow the Line Into the Deep Channel'}
+    {id:49, arc:4, title:'048 · The Deep Channel', focus:"San and Jade take the delivery instructions south to see who comes for the crate. At the rendezvous berth, they find a mooring rope pulled taut into water too deep for any dock.", image:'assets/comics/sequel/ch48-the-deep-channel.webp', xp:430, action:'⚓ Follow the Line Into the Deep Channel'},
+    {id:50, arc:5, title:"049 · Berth B-12", focus:"Joel holds the Crimson Tide offshore while Levi and Sairen inspect the line from a launch. They find a submerged guide ring and fresh wear on the rope, showing that small boats still use it.", image:'assets/comics/sequel/ch49-berth-b-12.webp', xp:440, action:'📖 Read Chapter'},
+    {id:51, arc:5, title:"050 · No Name on the Manifest", focus:"In Fair Tide, Fen and Adrian verify the contents of SV-7740 and secure the coupling. Renn sends Devon the berth instructions and a copy of the seal, and Sally proposes watching the pickup with a substitute crate.", image:'assets/comics/sequel/ch50-no-name-on-the-manifest.webp', xp:440, action:'📖 Read Chapter'},
+    {id:52, arc:5, title:"051 · High Tide, Day Eight", focus:"A tender follows the line into B-12. Sally watches from cover as its crew takes the marked crate and signals someone beyond the rocks, and Joel lets the tender get ahead before launching the pursuit.", image:'assets/comics/sequel/ch51-high-tide-day-eight.webp', xp:445, action:'📖 Read Chapter'},
+    {id:53, arc:5, title:"052 · The Berth Behind the Rock", focus:"At high tide, the submerged line leads the tender through a narrow opening in the cliff. The scouts find an old rescue dock, a storage loft, and a haulage lift connecting the dock to an upper passage.", image:'assets/comics/sequel/ch52-the-berth-behind-the-rock.webp', xp:445, action:'📖 Read Chapter'},
+    {id:54, arc:5, title:"053 · The Pilots Below", focus:"Levi and Sairen overhear a captive pilot refusing to take another boat through the passage. A second pilot slips them a message with a tally of the people being held and the location of the bunkroom.", image:'assets/comics/sequel/ch53-the-pilots-below.webp', xp:450, action:'📖 Read Chapter'},
+    {id:55, arc:5, title:"054 · The Channel Keeper", focus:"The current Channel Keeper inspects the delivery. The scouts hear him demand the missing coupling so he can operate the public gate and the hidden passage independently, holding pilots to run his private route while regular traffic waits outside.", image:'assets/comics/sequel/ch54-the-channel-keeper.webp', xp:450, action:'📖 Read Chapter'},
+    {id:56, arc:5, title:"055 · The Original Passage", focus:"Erynn identifies the dock as part of an old rescue route. Renn sends a restoration diagram to Devon aboard the ship, and Jade spots that opening the public gate will flood the lower service stairs.", image:'assets/comics/sequel/ch55-the-original-passage.webp', xp:455, action:'📖 Read Chapter'},
+    {id:57, arc:5, title:"056 · Before the Water Turns", focus:"San assigns the extraction, ship, and gate teams. Aisyah stages supplies for the freed pilots, Sky clears space aboard, and Jade and Sally coordinate from protected positions.", image:'assets/comics/sequel/ch56-before-the-water-turns.webp', xp:455, action:'📖 Read Chapter'},
+    {id:58, arc:5, title:"057 · The Bunkroom Key", focus:"Levi and Sairen enter through the storage loft and reach the locked bunkroom. One pilot can barely walk, so the team takes the upper passage slowly while Sally keeps watch on the dock.", image:'assets/comics/sequel/ch57-the-bunkroom-key.webp', xp:460, action:'📖 Read Chapter'},
+    {id:59, arc:5, title:"058 · Hold the Launch", focus:"Joel brings the launch alongside the upper landing while the Keeper's tender tries to block it. San and Mezstorm steady the water long enough for the pilots to board.", image:'assets/comics/sequel/ch58-hold-the-launch.webp', xp:465, action:'📖 Read Chapter'},
+    {id:60, arc:5, title:"059 · The Keeper’s Last Order", focus:"The Keeper retreats to the control room and orders his guards to destroy the records while he tries to flood the stairs. The party has to take the controls before he can cut off access to the gate mechanism.", image:'assets/comics/sequel/ch59-the-keepers-last-order.webp', xp:480, action:'📖 Read Chapter'},
+    {id:61, arc:5, title:"060 · Open the Public Channel", focus:"Jade relays the restoration sequence from the ship. The gate team confirms the lower stairs are empty, shuts the private bypass, and opens the public gate.", image:'assets/comics/sequel/ch60-open-the-public-channel.webp', xp:470, action:'📖 Read Chapter'},
+    {id:62, arc:5, title:"061 · First Ship Through", focus:"One of the freed pilots volunteers to guide a waiting vessel through the reopened channel. Joel follows at a distance while the shore team watches for any change in the current.", image:'assets/comics/sequel/ch61-first-ship-through.webp', xp:480, action:'📖 Read Chapter'},
+    {id:63, arc:5, title:"062 · The Dispatch Book", focus:"Fen and Adrian match the Keeper's dispatch book to the West Gate records. The same operation bought the Storm Shelf coupling and kept the South Gate order under SV-7740, and a separate entry schedules a service delivery at the Central Gate.", image:'assets/comics/sequel/ch62-the-dispatch-book.webp', xp:480, action:'📖 Read Chapter'},
+    {id:64, arc:5, title:"063 · The Pilots Come Home", focus:"The freed pilots return ashore. One gives the crew a corrected chart marking the public lane and the rescue berth, and asks that both be shared with other ships.", image:'assets/comics/sequel/ch63-the-pilots-come-home.webp', xp:485, action:'📖 Read Chapter'},
+    {id:65, arc:5, title:"064 · The Central Bearing", focus:"San and Jade agree to investigate the Central Gate after the South Gate is back in local hands. Devon plots the approach from the corrected chart, and a signal from the Central Gate answers before they reach its first marker.", image:'assets/comics/sequel/ch64-the-central-bearing.webp', xp:500, action:'📖 Read Chapter'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
@@ -194,7 +228,8 @@
     1: {cover:'assets/comics/sequel/arc1-cover-a-new-voyage.webp', kicker:'Crimson Horizon · Arc I', title:'A New Voyage', tagline:'One crew. Two worlds. A wider horizon.'},
     2: {cover:'assets/comics/sequel/arc2-cover-storm-shelf.webp', kicker:'Crimson Horizon · Arc II', title:'Storm Shelf', tagline:'Something beneath the Shelf has been waiting to be found.'},
     3: {cover:'assets/comics/sequel/arc3-cover-beneath-the-storm-shelf.webp', kicker:'Crimson Horizon · Arc III', title:'Beneath the Storm Shelf', tagline:'The signal was never random. Someone kept it active.'},
-    4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'}
+    4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'},
+    5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'}
   };
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
@@ -246,7 +281,23 @@
     46: 'The lantern skiff gives up more than its light. Among the salvage crew\'s things is a ledger — every cargo stripped from the grounded ships, and where it went.<br><br>The harbor pilot takes it herself to the families of the wrecked crews, so they can reclaim what was theirs.<br><br>The rest of the entries matter to the Crimson Tide. The salvage crew used several of the West Gate couplings locally, for the false light — and sold one on. The buyer\'s line reads: Storm Shelf.<br><br>"One coupling, sold on to the Storm Shelf," San says. "That\'s the one we pulled out of the station."',
     47: 'At Fair Tide, Fen follows the shipment to its end. Four couplings left the West Gate yard under one work order, and three are accounted for. The fourth never went anywhere at all.<br><br>It is still sitting in an unopened crate, awaiting pickup.<br><br>The delivery instructions are brief. They name the South Gate — Deep Channel. They give a tide and a berth. Where the recipient should be, there is nothing.<br><br>"Someone is expecting it," Fen reports. "They just didn\'t want their name on the paper."',
     48: 'The yard crew restores the permanent marker on the second post — no borrowed lantern this time, but the Straits\' own light, back where it belongs.<br><br>When the first ship comes safely through, the pilot hands the bell rope to Vaeren and Joelle. They ring the quay bell together, a little out of time and far too long, and nobody on the quay minds.<br><br>Before the Crimson Tide sails, San asks the pilot for one more thing: to teach the crew the local signals.<br><br>"Next time we come through," San says, "I\'d like us to read your lights the way you do."',
-    49: 'San and Jade take the delivery instructions south, to see for themselves who comes for the crate.<br><br>The tide is the one written on the paper. The berth is the one written on the paper. Nobody is waiting there.<br><br>There is only a mooring rope, made fast at the berth and pulled taut — running straight down into water far too deep for any dock.<br><br>"Something is holding the other end," Jade says.<br><br>San looks at the line, and at the dark water it disappears into. "Then that\'s where we go next."'
+    49: 'San and Jade take the delivery instructions south, to see for themselves who comes for the crate.<br><br>The tide is the one written on the paper. The berth is the one written on the paper. Nobody is waiting there.<br><br>There is only a mooring rope, made fast at the berth and pulled taut — running straight down into water far too deep for any dock.<br><br>"Something is holding the other end," Jade says.<br><br>San looks at the line, and at the dark water it disappears into. "Then that\'s where we go next."',
+    50: "The Crimson Tide holds offshore as the tide begins to climb. Joel keeps the ship steady while Levi and Sairen take a launch in toward Berth B-12.<br><br>\"The rope's still taut,\" Levi calls back. \"Fresh wear along it. Somebody hauls on this every few days.\"<br><br>\"There's a ring down here too,\" Sairen says, lowering a lantern into the water. \"Bolted into the rock, below the waterline. The rope runs through it, and the iron's polished bright.\"<br><br>Jade marks both on the chart from the deck. \"That's a guide ring,\" she says. \"Small boats still use this berth. Whatever it leads to, it isn't abandoned.\"<br><br>\"Then someone's running a route nobody wrote down,\" San says. \"Put the hidden approach on the chart before the tide turns.\"<br><br>Chart updated: Hidden Approach, Berth B-12.",
+    51: "In Fair Tide, Fen and Adrian lay the crate's contents out under the lamp. Consignment SV-7740 matches the last coupling exactly, down to the seal. The recipient line is still blank.<br><br>\"Nobody signed for it,\" Adrian says. \"Whoever ordered this expects it to arrive without a name attached.\"<br><br>\"The original stays here,\" Fen says, locking the coupling away. \"Nobody gets it.\"<br><br>Renn sends Devon the berth instructions and a copy of the seal. \"Everything the pickup crew will check is in there,\" Renn says. \"They'll be looking for that mark.\"<br><br>\"Then let's give them something that carries it,\" Sally says over the line. \"A substitute crate, marked and weighted. I'll watch the pickup from cover and see who comes for it.\"<br><br>\"Do it,\" San says. \"The coupling stays in Fair Tide. The stakeout starts on the tide.\"",
+    52: "High tide, Day Eight. The marked crate sits at Berth B-12, and Sally lies flat behind a ridge of rock with the glass to her eye.<br><br>\"Tender coming in,\" she murmurs. \"Four aboard. They're following the rope in, no lamp.\"<br><br>The tender noses against the berth. Its crew lifts the crate without a word, checks the seal against a copy, and one of them flashes a short signal toward the rocks beyond the berth. Something answers from out of sight.<br><br>\"Signal answered,\" Sally says. \"Two quick, one long. From behind the cliff.\"<br><br>Aboard the Crimson Tide, Joel waits. \"Let them get ahead,\" he says. \"A boat that's looking behind it sees a lantern. A boat that isn't just sees water.\"<br><br>When the tender is far enough ahead, the launch slips off the Crimson Tide and follows the rope in.",
+    53: "The line runs straight at the cliff, and for a moment it looks like it runs into solid stone. Then the water lifts, and a narrow opening shows in the rock.<br><br>\"It only opens at high tide,\" Levi whispers. \"Look at the waterline. There's barely a hand's width above the boat.\"<br><br>The tender slides through. The scouts follow, hugging the wall, and come out into a sheltered cave. An old rescue dock stands against one side, and above it a storage loft. A haulage lift runs from the dock up into an upper passage.<br><br>\"That's an old rescue station,\" Jade says over the line. \"Somebody built this to save people.\"<br><br>\"Mark both exits,\" San says. \"The lift and the water. And mark where the tender unloaded.\"<br><br>The crate goes up in the lift. The scouts stay low, and start counting doors.",
+    54: "From the shadow of the loft, Levi and Sairen can hear voices below the dock.<br><br>\"I won't take another boat through,\" a pilot says, hoarse and steady. \"Not for you. Not for anyone you answer to.\"<br><br>\"You'll do what you're told,\" a guard answers. \"Same as the rest.\"<br><br>When the guard leaves, a second pilot passes the loft grate with a bucket and doesn't look up. A folded scrap drops through the bars.<br><br>Sairen unfolds it by lantern light. A tally of marks, and below it a drawing of a door with the word <i>bunkroom</i>.<br><br>\"That's how many are being held,\" Levi breathes. \"And where.\"<br><br>\"Don't touch anything,\" Jade says over the line. \"Not yet. Record it and get out clean.\"<br><br>The captives' location is on the chart. The extraction plan is open.",
+    55: "The Channel Keeper comes down the lift with two guards and crosses the dock without looking at the pilots. He opens the crate himself and turns the coupling over in his hands.<br><br>\"This is one,\" he says. \"Where is the other?\"<br><br>\"That's all that came,\" a guard answers.<br><br>\"Then someone has the second one.\" The Keeper sets the coupling down carefully. \"I ordered both so I could work the public gate and the passage without asking anyone. Without the pilots, without the harbor office, without waiting on the tide.\"<br><br>\"The pilots won't cooperate,\" the guard says.<br><br>\"They don't have to like it. They only have to steer.\" He looks toward the water. \"While ships queue outside the gate for days, mine run when I say.\"<br><br>In the loft, Levi and Sairen share a look. Now they know who ordered SV-7740, and why.",
+    56: "Aboard the Crimson Tide, Erynn bends over the scouts' sketches. \"That dock is a rescue station,\" she says. \"Older than the harbor office. The lift and the loft are part of an old route for getting people out of the water.\"<br><br>\"Then there'll be a diagram,\" Devon says.<br><br>\"Sending it now,\" Renn says from Fair Tide, and a restoration diagram comes up on the chart table.<br><br>Jade traces the lower stairs with her finger and stops. \"Wait. If we open the public gate, the water goes down these stairs first. The service stairs flood.\"<br><br>\"So no one stays down there,\" San says.<br><br>\"Order matters,\" Jade says. \"Get everyone above the flood line first. Then restore the gate.\"<br><br>\"Extraction first,\" San says. \"Gate second. Write it down.\"<br><br>Devon writes it at the top of the page.",
+    57: "San gathers the crew on deck as the afternoon light goes gold.<br><br>\"Three teams,\" she says. \"Extraction: Levi and Sairen, through the loft. Ship: Joel, with the launch at the upper landing. Gate: everyone else, once the pilots are clear.\"<br><br>\"Supplies are staged,\" Aisyah says. \"Blankets, water, something warm. They'll be hungry and cold when they come aboard.\"<br><br>\"I've cleared the forward berths,\" Sky says. \"Plenty of room, and the infirmary's ready.\"<br><br>Jade and Sally will coordinate from protected positions, and nobody argues about it.<br><br>\"Recall signal?\" Devon asks.<br><br>\"Three bells,\" Joel says. \"The same as under the shelf.\"<br><br>\"Route, signal, pickup point,\" San says. \"Confirmed. Wait for the water to turn.\"<br><br>The rescue starts at the next tide.",
+    58: "Levi and Sairen come through the storage loft in the dark. The key hangs where a guard would reach for it, and Sairen lifts it off its hook without a sound.<br><br>The bunkroom lock turns. Inside, tired faces look up at the lantern light, and no one speaks.<br><br>\"We're from the Crimson Tide,\" Levi says, quiet. \"We're getting you out. Stay close and stay quiet.\"<br><br>One pilot can barely stand. Two others take the weight between them, and the group starts up the upper passage slowly, one step at a time.<br><br>On the dock below, Sally keeps watch from the shadows, her glass tracking the guards' lanterns. \"Nobody's looking this way,\" she says. \"Take your time.\"<br><br>At the upper landing, Levi counts heads twice. Everyone is accounted for before anyone touches the gate.",
+    59: "Joel brings the launch alongside the upper landing, close enough for the pilots to step across.<br><br>\"Keeper's tender,\" Sally calls from cover. \"Coming round the rock. They're trying to block the landing.\"<br><br>The tender cuts across the launch's bow. Its crew has hooks, and they aren't there to talk.<br><br>San and Mezstorm take the water. Between them the surge flattens, and the launch holds steady against the rock. \"Board!\" San shouts. \"One at a time!\"<br><br>The pilots cross, the weakest carried between two others. The tender's crew tries to close in, and the party meets them at the landing until the escort is clear.<br><br>\"That's all of them,\" Levi says at last.<br><br>\"Take them to Sky,\" Joel says. \"I'll hold the launch.\"<br><br>The pilots are aboard the Crimson Tide, and Sky is waiting.",
+    60: "The Keeper reaches the control room first, and his voice carries down the passage.<br><br>\"Burn the dispatch book! Every record, every ledger. And flood those stairs. If I can't hold this place, nobody gets it.\"<br><br>\"He's cutting off the gate mechanism,\" Jade says over the line. \"If he floods the stairs, no one reaches the controls.\"<br><br>\"Then we get there first,\" San says.<br><br>The Keeper's guards meet them at the control room door. The fight is short and ugly in the narrow passage. When the last guard goes down, the party reaches the controls before the first water touches the stairs.<br><br>The Keeper's dispatch book lies half-burned on the floor, and Levi pulls it clear of the flames.<br><br>\"Manual release,\" Sairen says, finding the old lever behind a panel. \"It still works.\"<br><br>The dispatch book is recovered. The manual release is open.",
+    61: "Aboard the Crimson Tide, Jade reads the restoration sequence aloud, one line at a time.<br><br>\"Gate team,\" she says. \"Are the lower stairs empty?\"<br><br>\"Empty,\" Levi answers. \"We checked twice.\"<br><br>\"Then shut the private bypass. It's the lever on the left, behind the panel.\"<br><br>The bypass shuts with a groan of old iron.<br><br>\"Now the public gate. Slowly.\"<br><br>Sairen and Levi bear down on the release together. Far below, the water starts to move, and then the great gate swings open.<br><br>\"It's moving,\" Sally says from her post, watching the channel through the glass. \"The whole channel's running.\"<br><br>\"The public route is restored,\" Jade says. The hidden berth is a rescue dock again.",
+    62: "A freed pilot walks to the rail of the Crimson Tide, looks down the reopened channel, and turns to San.<br><br>\"A ship's been waiting outside the gate for days,\" the pilot says. \"Let me take it through. I know this water. I want to be the one.\"<br><br>\"Are you sure?\" Sky asks, quietly. \"You've barely rested.\"<br><br>\"I'm sure.\"<br><br>The waiting vessel gets its pilot, and the Crimson Tide follows at a distance, close enough to help and far enough not to crowd.<br><br>On the shore, the gate team watches the current. \"Steady,\" Levi calls. \"No change.\"<br><br>The ship passes the narrows, clears the markers, and slides out into open water. A cheer goes up along the quay.<br><br>\"The South Gate is open,\" San says. \"For everyone.\"<br><br>Regular travel to the South Gate is unlocked.",
+    63: "In Fair Tide, Fen and Adrian spread the Keeper's dispatch book across the research table, next to the West Gate records.<br><br>\"The hand matches,\" Adrian says. \"Same ledger style, same work order numbers.\"<br><br>\"The same operation,\" Fen says, tapping two lines. \"It bought the Storm Shelf coupling, and it kept the South Gate order under SV-7740. The Keeper was only one hand in it.\"<br><br>\"There's another entry,\" Adrian says. \"Separate, at the back. A service delivery, scheduled at the Central Gate.\"<br><br>Renn leans over the page. \"That's a date. Not far off.\"<br><br>\"The coupling investigation is closed,\" San says over the line. \"But the trail isn't.\"<br><br>The Central Gate lead is open.",
+    64: "The freed pilots come ashore in the afternoon, wrapped in Aisyah's blankets, and the quay goes quiet to let them pass.<br><br>One of them stops in front of San and holds out a rolled chart.<br><br>\"Corrected,\" the pilot says. \"The public lane, the rescue berth, the stairs, the flood line. Every mark checked against the water.\"<br><br>\"Thank you,\" San says, taking it carefully.<br><br>\"Please share it. Every ship that uses this coast should have it. Nobody should have to find the passage the way we did.\"<br><br>\"They will,\" Jade promises. \"We'll send copies to every harbor office.\"<br><br>Devon pins the chart in the voyage log, and the twins ring the quay bell for the pilots as they walk home.<br><br>The corrected chart is added to the journal.",
+    65: "On the deck of the Crimson Tide, San and Jade spread the corrected chart across the table, with the Keeper's dispatch book open beside it.<br><br>\"The Central Gate,\" Jade says. \"The service delivery is scheduled there.\"<br><br>\"After the South Gate is back in local hands,\" San says. \"We leave it with the pilots first.\"<br><br>\"Agreed.\"<br><br>Devon lays a course along the chart's edge. \"I can plot the whole approach from the corrected lane,\" Devon says.<br><br>The Crimson Tide gets under way at dusk. They are still some way from the first marker when the lamp at the helm flickers and the lantern on the far horizon answers.<br><br>\"That signal,\" Joel says slowly. \"They answered before we asked.\"<br><br>San looks out at the dark water ahead. \"Then they know we're coming.\"<br><br>The Central Gate is charted."
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -260,122 +311,337 @@
     return 'crimson_horizon_part1_complete_for_now';
   };
 
+  // ===================================================================
+  // PORTS -- per San's redesign: Crimson Horizon is played in Crimson
+  // Tide as new DESTINATIONS on top of the existing ports, not as a
+  // list of mini-objectives. Each destination's chapters open as story
+  // modals when the crew docks there; finishing a stage unlocks the
+  // next destination.
+  //
+  //   The Harbor Beyond the Charts  Prologue, 001-010  (Arc 42 + Lv 645)
+  //   Storm Shelf                   011-018, then 019-032 (second story
+  //                                 stage, "Beneath the Storm Shelf")
+  //   West Gate · Mist Straits      033-048
+  //   South Gate · Deep Channel     049-064 (open for the expedition
+  //                                 after 048; regular travel after 061)
+  //   Central Gate                  charted after 064, left locked for
+  //                                 this build (Arc VI handoff)
+  //
+  // East Gate stays a passage in the story, not a port. Specialties,
+  // danger and distances are PROVISIONAL defaults copied from the
+  // existing late-game ports. Every unlock is DERIVED from
+  // game.comicProgressCrimsonHorizon, so existing saves land in the right
+  // state with no migration and no new unlock flags.
+  // ===================================================================
+  const CH_PORTS = [
+    {id:'harbor_beyond_charts', name:'The Harbor Beyond the Charts', icon:'🌫️', danger:3, specialties:['rice','tea','rum'],
+      desc:'An unmapped harbor past the edge of the old charts, its channel lights dark before every surge.',
+      blurb:'A harbor that was never on the charts, kept alive by fishers and a pilot who remembers when the channel lights stayed lit.'},
+    {id:'storm_shelf', name:'Storm Shelf', icon:'⛈️', danger:3, specialties:['antiquities','silk','tea'],
+      desc:'Two storm fronts, an old watchtower, and something beneath the shelf that has been waiting to be found.',
+      blurb:'Open water walled in by storms. The East Gate is the only fallback when the northern passage closes.'},
+    {id:'west_gate', name:'West Gate · Mist Straits', icon:'🏮', danger:3, specialties:['timber','rum','pepper'],
+      desc:'A fogbound strait where a light is not always a way home.',
+      blurb:'The maintenance yard, the pilot quay and the shoals of the Mist Straits, where false lanterns have put ships aground.'},
+    {id:'south_gate', name:'South Gate · Deep Channel', icon:'⚓', danger:3, specialties:['spices','antiquities','rice'],
+      desc:'A deep channel with a hidden berth, an old rescue dock, and a rope pulled taut into the dark.',
+      blurb:'Berth B-12 and the passage inside the cliffs. Until the first ship comes through, this is an expedition, not a public route.',
+      tradeReady:function(){ return !!prog()[62]; }},
+    {id:'central_gate', name:'Central Gate', icon:'🧭', danger:3, specialties:['timber','rice','rum'],
+      desc:'The next destination, charted but not yet reachable.', blurb:'Charted at the end of Arc V. The route opens in Arc VI.'}
+  ];
+  const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
+  window.CRIMSON_HORIZON_PORTS = CH_PORTS;
+
+  function prog(){ return (game && game.comicProgressCrimsonHorizon) || {}; }
+  const CH_PORT_UNLOCK = {
+    harbor_beyond_charts: function(){ return !!game.arc42Complete && level() >= 645; },
+    storm_shelf: function(){ return !!prog()[11]; },     // Ch.010 read
+    west_gate:   function(){ return !!prog()[33]; },     // Ch.032 read
+    south_gate:  function(){ return !!prog()[49]; },     // Ch.048 read
+    central_gate:function(){ return false; }             // charted only, this build
+  };
+
+  function registerCrimsonHorizonPorts(){
+    if (typeof PORTS === 'undefined') return;
+    const baseIds = PORTS.filter(function(p){ return CH_PORT_IDS.indexOf(p.id) === -1; }).map(function(p){ return p.id; });
+    CH_PORTS.forEach(function(def){
+      if (PORTS.some(function(p){ return p.id === def.id; })) return;
+      const distances = {};
+      baseIds.forEach(function(id){ distances[id] = (id === 'fair_tide') ? 5 : 6; });
+      CH_PORTS.forEach(function(o){ if (o.id !== def.id) distances[o.id] = 2; });
+      PORTS.push(Object.assign({chapterId:null, companion:null, guardian:null, harbor:['dock_thief','smuggler_crew']}, def, {distances:distances}));
+    });
+    PORTS.forEach(function(p){
+      if (CH_PORT_IDS.indexOf(p.id) !== -1) return;
+      CH_PORT_IDS.forEach(function(id){ if (p.distances && !p.distances[id]) p.distances[id] = (p.id === 'fair_tide') ? 5 : 6; });
+    });
+  }
+  registerCrimsonHorizonPorts();
+
+  const oldIsPortUnlockedForCH = window.isPortUnlocked;
+  window.isPortUnlocked = function(id){
+    if (CH_PORT_UNLOCK[id]) return !!CH_PORT_UNLOCK[id]();
+    return oldIsPortUnlockedForCH(id);
+  };
+
+  // Destination cards: the next port is shown (locked) once the one
+  // before it is open; Central Gate appears, charted but unreachable,
+  // only after Ch.064.
+  const oldRenderNavigationForCH = window.renderNavigation;
+  window.renderNavigation = function(){
+    oldRenderNavigationForCH.apply(this, arguments);
+    const grid = document.getElementById('navPortGrid');
+    if (!grid) return;
+    CH_PORTS.forEach(function(def, i){
+      const card = grid.querySelector('[data-port="' + def.id + '"]');
+      if (!card) return;
+      let revealed;
+      if (def.id === 'central_gate') revealed = !!prog()[65];
+      else if (i === 0) revealed = !!game.arc42Complete;
+      else revealed = !!CH_PORT_UNLOCK[CH_PORTS[i - 1].id]();
+      if (!revealed) { card.remove(); return; }
+      if (def.id === 'central_gate') {
+        card.removeAttribute('onclick');
+        card.style.cursor = 'default';
+        card.style.opacity = '.8';
+        card.innerHTML = '<div class="port-icon">🧭</div><div class="port-name">Central Gate</div><div class="port-dist">Charted — the route opens in Arc VI</div>';
+      } else if (def.id === 'south_gate' && CH_PORT_UNLOCK.south_gate() && !prog()[62] && game.location !== 'south_gate') {
+        const d = card.querySelector('.port-dist');
+        if (d) d.textContent = '🧭 Expedition — not yet a public route';
+      }
+    });
+  };
+
+  function chapterPortId(id){
+    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : null;
+  }
+  function chPortName(portId){
+    const p = CH_PORTS.find(function(x){ return x.id === portId; });
+    return p ? p.name : portId;
+  }
+  function chapterPlace(id){
+    if (id <= 4) return '⛵ At sea — on the way to ' + chPortName('harbor_beyond_charts');
+    if (id <= 11) return '⚓ ' + chPortName('harbor_beyond_charts');
+    if (id <= 19) return '⚓ Storm Shelf · Stage I';
+    if (id <= 33) return '⚓ Storm Shelf · Stage II — Beneath the Storm Shelf';
+    return '⚓ ' + chPortName(chapterPortId(id));
+  }
+  window.crimsonHorizonChapterPort = chapterPortId;
+
+  // Messages shown in a modal when finishing a chapter opens something new.
+  const CH_UNLOCK_NOTES = {
+    11: 'Storm Shelf is now on your charts. Sail there to continue the voyage.',
+    19: 'Beneath the Storm Shelf is now open as the second story stage at Storm Shelf.',
+    33: 'West Gate · Mist Straits is now on your charts.',
+    49: 'South Gate · Deep Channel is now on your charts as an expedition.',
+    62: 'The first ship is through. South Gate · Deep Channel is now open to regular travel.',
+    65: 'Central Gate is charted. The route opens in Arc VI.'
+  };
+
+  // ===================================================================
+  // CHAPTER FLOW -- Read Chapter -> objective modal -> Continue.
+  // A chapter's objective modal may carry one button ("Check the
+  // Lantern") that shows its result in the modal, or a real DCT fight
+  // for the chapters that depict one. Checks never fail; a fight must be
+  // won, and can be retried any number of times.
+  // ===================================================================
+  const CH_CHECKS = {
+    9:  {label:'⚓ Hold the Passage', objective:'Steady the current, coordinate the crossing and get a towline to the stranded boats.',
+         result:"San steadies the current while Jade calls the crossing and Sally's towline lands across the second boat's bow. The first boat clears the gate. The second loses steerage as the gate starts to close, and the Crimson Tide is already moving in behind it."},
+    27: {label:'🗺️ Plot the Pulse Against the Current', objective:'Trace the next pulse along the outer current.',
+         result:'Devon and Renn lay the pulse timings over the outer current. The line runs straight to the East Gate, where ships are already using the same fallback the crew took. Joel marks the arrival window on the chart.'},
+    34: {label:'🔦 Check the Lantern', objective:'Judge whether the flashing light is the real route marker.',
+         result:'Levi watches the light through the glass for a full minute. It sits where the second marker should be, but it drifts against the current, the way no fixed lantern could. Joel holds the Crimson Tide where it is. "That\'s not the marker."'},
+    40: {label:'👣 Follow the Bootprints', objective:'Cross the low-water shoal and find where the prints lead.',
+         result:'Levi and Sairen follow the prints across the exposed shoal. They end at a small skiff, the missing lantern mounted on its mast and a West Gate coupling fitted beneath it.'},
+    43: {label:'🌫️ Steer Into the White Water', objective:'Reach the convoy before its lead ship commits to the false light.',
+         result:"Joel takes the Crimson Tide into the fog while Mezstorm clears brief gaps in it. They break through just as the convoy's lead ship begins to turn toward the false light."},
+    45: {label:'🏮 Light the Real Channel', objective:'Get the spare lantern lit so the convoy can follow the true channel.',
+         result:'The spare lantern catches on the empty post. Three short pulses, a double pause, a long one: the true channel is marked again, and Joel leads the convoy through to the waiting pilot.'},
+    50: {label:'🔎 Survey Berth B-12', objective:'Inspect the line, the guide ring and the berth marker.',
+         result:'The rope is worn smooth where small boats have hauled on it, and the submerged guide ring is polished bright. The hidden approach is added to the chart.'},
+    51: {label:'📋 Review the Consignment Record', objective:'Verify SV-7740 and prepare the marked crate.',
+         result:"SV-7740 matches the coupling in the crate, and the recipient line is still blank. The original coupling stays locked in Fair Tide, and Sally's substitute crate is marked and ready. The stakeout is unlocked."},
+    52: {label:'⛵ Follow the Tender', objective:'Let the tender get ahead, then follow it through the marked route.',
+         result:'Joel lets the tender draw ahead before the launch follows. The line leads it toward the cliff and into a narrow opening in the rock that only shows at high tide. The cliff entrance is on the chart.'},
+    53: {label:'🧭 Mark Both Exits', objective:'Survey the dock from cover and mark both exits.',
+         result:'From cover the scouts mark the haulage lift to the upper passage and the water exit. The rescue dock is unlocked, and the spot where the tender unloaded is marked.'},
+    54: {label:'🤫 Make Contact', objective:'Reach the captives without alerting the guards.',
+         result:"The message passes hand to hand while the guards look the other way. It holds a tally of the captives and the bunkroom's location. The extraction plan is unlocked."},
+    55: {label:"👂 Overhear the Keeper", objective:"Inspect the opened crate and listen to the Keeper's orders.",
+         result:'The Keeper turns the coupling over and demands the missing one. With it he could run the public gate and the hidden passage on his own. SV-7740 was ordered for exactly that.'},
+    56: {label:'📐 Compare the Diagram', objective:"Match Renn's diagram to the scouts' notes and fix the order of operations.",
+         result:'The diagram and the notes agree: opening the public gate floods the lower service stairs. Everyone goes above the flood line first. Then the gate.'},
+    57: {label:'📣 Confirm the Plan', objective:'Confirm the extraction route, the recall signal and the launch pickup point.',
+         result:'Route through the upper passage. Recall: three bells. Pickup: the upper landing. Every team has its part, and the rescue starts.'},
+    58: {label:'🗝️ Recover the Key', objective:'Reach the bunkroom, recover the key and bring the pilots to the upper landing.',
+         result:'The key hangs inside the loft door, and the bunkroom opens. One pilot can barely walk, so the team goes slowly and counts every captive twice before they climb.'},
+    61: {label:'🎛️ Work the Controls', objective:'Three ordered interactions: shut the bypass, confirm the stairs, open the gate.',
+         result:'First the private bypass shuts. Then the gate team confirms the lower stairs are empty. Then the public gate opens, and the channel runs clear.'},
+    62: {label:'⛵ Escort the First Vessel', objective:'Escort the first ship through the reopened channel.',
+         result:'A freed pilot takes the helm of a waiting vessel. Joel follows at a distance while the shore team watches the current. The ship clears the channel, and the South Gate route is open to regular travel.'},
+    63: {label:'📖 Match the Records', objective:"Match the Keeper's dispatch book to the West Gate records.",
+         result:'The same operation bought the Storm Shelf coupling and held the South Gate order under SV-7740. A separate entry schedules a service delivery at the Central Gate. The coupling investigation is closed, and the Central Gate lead is open.'}
+  };
+
+  // Chapters that depict a fight use existing DCT combat. Pinned to the
+  // sequel's gate level, same one-off-story-fight pattern as Arc XLII's
+  // frontier battle; enemy numbers are provisional.
+  const CH_FIGHTS = {
+    3:  {label:'⚔️ Face the Stormborn Leviathan', objective:'Bring down the Stormborn Leviathan before it breaks the ship.',
+         enemy:{name:'Stormborn Leviathan', icon:'🌊', hp:1500, dmg:55, xp:700, gold:350, desc:'A colossal sea-born predator, awakened by a power unknown. The storm was only its shape.'}},
+    59: {label:'⚔️ Hold the Landing', objective:"Hold the upper landing against the Keeper's tender until the escort is clear.",
+         enemy:{name:"The Keeper's Tender Crew", icon:'🛶', hp:1300, dmg:48, xp:650, gold:330, desc:'Hooks, oars and orders to keep the launch from the landing.'}},
+    60: {label:'⚔️ Take the Control Room', objective:"Defeat the Keeper's guard and secure the controls.",
+         enemy:{name:"The Keeper's Guard", icon:'🛡️', hp:1500, dmg:52, xp:720, gold:360, desc:'The last line between the party and the gate mechanism.'}}
+  };
+
+  window.CRIMSON_HORIZON_FIGHT_IDS = Object.keys(CH_FIGHTS).map(Number);
+
+  function chState(){
+    game.crimsonHorizonSceneSeen = game.crimsonHorizonSceneSeen || {};
+    game.crimsonHorizonChecked = game.crimsonHorizonChecked || {};
+    game.crimsonHorizonFights = game.crimsonHorizonFights || {};
+  }
+  function chById(id){ return CRIMSON_HORIZON_CHAPTERS.find(function(c){ return c.id === id; }); }
+  function currentChapter(){
+    const so = window.crimsonHorizonObjectiveState();
+    return CRIMSON_HORIZON_CHAPTERS.find(function(c){ return so === ('complete_crimson_horizon_chapter_' + c.id); }) || null;
+  }
+
+  window.onCrimsonHorizonFightWon = function(key){
+    chState();
+    game.crimsonHorizonFights[key] = true;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+
+  function startChapterFight(id){
+    const f = CH_FIGHTS[id];
+    if (!f || typeof startCombat !== 'function') return;
+    if (typeof closeModal === 'function') closeModal();
+    const enemy = scaleCrimsonEnemy(f.enemy, 'guardian', 645);
+    startCombat({ kind: 'crimson_horizon', key: String(id), enemy: enemy });
+  }
+
+  function openObjective(id, resultHtml){
+    chState();
+    const ch = chById(id);
+    if (!ch) return;
+    const check = CH_CHECKS[id], fight = CH_FIGHTS[id];
+    const fightWon = !!game.crimsonHorizonFights[String(id)];
+    const checked = !!game.crimsonHorizonChecked[id];
+    const objective = fight ? fight.objective : (check ? check.objective : 'Take in what the crew learns here, then continue the voyage.');
+    let html = '<div style="font-size:.78rem;opacity:.75;margin-bottom:8px;">' + esc(chapterPlace(id)) + '</div>' +
+      '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>' + esc(ch.focus) + '</div>' +
+      '<div><strong>Objective</strong><br>' + esc(objective) + '</div>';
+    if (fight && fightWon) html += '<div style="margin-top:10px;color:var(--success);">✓ Victory. The way is clear.</div>';
+    if (check && checked) html += '<div style="margin-top:10px;">' + esc(resultHtml || check.result) + '</div>';
+    const buttons = [];
+    let canContinue = true;
+    if (fight && !fightWon) {
+      canContinue = false;
+      buttons.push({text: fight.label, action: function(){ startChapterFight(id); }});
+    } else if (check && !checked) {
+      canContinue = false;
+      buttons.push({text: check.label, action: function(){
+        chState();
+        game.crimsonHorizonChecked[id] = true;
+        if (typeof saveGameQuiet === 'function') saveGameQuiet();
+        openObjective(id, check.result);
+      }});
+    }
+    buttons.push({text: 'Continue', action: function(){
+      if (typeof closeModal === 'function') closeModal();
+      completeChapter(id);
+    }});
+    showModal('Objective · ' + ch.title, html, buttons);
+    if (!canContinue) {
+      const btns = document.querySelectorAll('#modalButtons button');
+      const cont = btns[btns.length - 1];
+      if (cont) { cont.disabled = true; cont.style.opacity = '.45'; }
+    }
+  }
+
+  function completeChapter(id){
+    window.markCrimsonHorizonChapterRead(id);
+    // The Prologue-003 sequence plays at sea, in order, then landfall (004).
+    if (id >= 1 && id <= 4) {
+      setTimeout(function(){
+        if (window.crimsonHorizonObjectiveState() === ('complete_crimson_horizon_chapter_' + (id + 1))) window.__ctReadCrimsonHorizonChapter(id + 1);
+      }, 900);
+    }
+  }
+
+  window.__ctReadCrimsonHorizonChapter = function(id){
+    chState();
+    const ch = chById(id);
+    if (!ch) return;
+    const done = !!prog()[id];
+    if (!done) {
+      if (window.crimsonHorizonObjectiveState() !== ('complete_crimson_horizon_chapter_' + id)) { toast('🔒 Follow the current Objective first.'); return; }
+      const portId = chapterPortId(id);
+      if (portId && game.location !== portId && !(id <= 4 && game.location === 'harbor_beyond_charts')) {
+        toast('⚓ Sail to ' + chPortName(portId) + ' to continue this chapter.', 3600);
+        return;
+      }
+    }
+    const scene = CRIMSON_HORIZON_CHAPTER_SCENES[id] || ch.focus;
+    if (done || !game.crimsonHorizonSceneSeen[id]) {
+      showModal(ch.title, scene, [{text: done ? 'Close' : 'Continue', action: function(){
+        if (typeof closeModal === 'function') closeModal();
+        if (!done) {
+          game.crimsonHorizonSceneSeen[id] = true;
+          if (typeof saveGameQuiet === 'function') saveGameQuiet();
+          setTimeout(function(){ openObjective(id); }, 250);
+        }
+      }}]);
+    } else {
+      openObjective(id);
+    }
+  };
+
+  // After a fight: reopen the current chapter's objective modal.
+  window.__ctResumeCrimsonHorizonChapter = function(){
+    chState();
+    const ch = currentChapter();
+    if (ch && game.crimsonHorizonSceneSeen[ch.id]) openObjective(ch.id);
+  };
+
   window.markCrimsonHorizonChapterRead = function(id){
     const so = window.crimsonHorizonObjectiveState();
     if (so !== ('complete_crimson_horizon_chapter_' + id)) return;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
     game.comicProgressCrimsonHorizon[id] = true;
-    const ch = CRIMSON_HORIZON_CHAPTERS.find(c => c.id === id);
+    const ch = chById(id);
     if (ch) {
       gainXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
-    if (CRIMSON_HORIZON_CHAPTER_SCENES[id]) {
+    const note = CH_UNLOCK_NOTES[id];
+    if (note) {
       game.storyModalQueue = game.storyModalQueue || [];
-      game.storyModalQueue.push({ title: ch.title, blurb: CRIMSON_HORIZON_CHAPTER_SCENES[id] });
+      game.storyModalQueue.push({ title: '🧭 New Destination Charted', blurb: note });
     }
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof updateUI === 'function') updateUI();
     if (typeof renderStory === 'function') renderStory();
-    if (typeof window.showStoryModal === 'function' && game.storyModalQueue.length) {
+    if (typeof renderNavigation === 'function') { try { renderNavigation(); } catch(e) {} }
+    if (note && typeof window.showStoryModal === 'function' && game.storyModalQueue.length) {
       const next = game.storyModalQueue.shift();
-      setTimeout(() => window.showStoryModal(next), 400);
+      setTimeout(function(){ window.showStoryModal(next); }, 400);
     }
   };
 
-  // Ch.008 ("Hold the Passage") -- the first shared chapter built with a
-  // real Crimson Tide-side objective instead of a plain mark-as-read
-  // button, per San's cross-game design doc: "position the ship for the
-  // tow and hold it steady through the surge." A full combat encounter
-  // doesn't fit here any more than Ch.002's leviathan did (Jade and
-  // Sally, both shown working the tow, still have no CLASS_KIT), so this
-  // is a two-step ship-handling sequence instead, using the crew's
-  // existing sails tier (game.ship.sails) for flavor the way Crimson
-  // Tide's own core loop already leans on ship stats -- never a hard
-  // fail, same as every other story objective in this game; the tier
-  // only changes which line plays, not whether the chapter completes.
-  // game.crimsonHorizonHoldPassageStep tracks progress through the two
-  // steps (0 -> 1 -> complete); left at its final value afterward, same
-  // as every other one-off chapter flag in this file.
-  window.__ctHoldThePassageStep = function(step){
-    game.crimsonHorizonHoldPassageStep = game.crimsonHorizonHoldPassageStep || 0;
-    if (step === 1 && game.crimsonHorizonHoldPassageStep === 0) {
-      const sails = (game.ship && game.ship.sails) || 1;
-      const msg = sails >= 3
-        ? '⚓ "I\'ve steadied the current. The passage is open — for now." The Crimson Tide\'s own sails hold her steady without a fight. First boat moves through clean.'
-        : '⚓ "I\'ve steadied the current. The passage is open — for now." It takes everything the crew has, but the first boat moves through clean.';
-      toast(msg, 3600);
-      game.crimsonHorizonHoldPassageStep = 1;
-      if (typeof saveGameQuiet === 'function') saveGameQuiet();
-      if (typeof renderStory === 'function') renderStory();
-    } else if (step === 2 && game.crimsonHorizonHoldPassageStep === 1) {
-      toast('🌊 "Just a little more... keep pulling! Don\'t let go!" The second boat clears the gate as it starts to close.', 3600);
-      game.crimsonHorizonHoldPassageStep = 2;
-      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(9);
-    }
-  };
-
-  // Ch.026 ("The Channel That Takes It") -- the second cross-game
-  // handoff objective, per San's design doc's own worked example: Renn
-  // stays in Fair Tide, Devon stays aboard, and Crimson Tide's side is
-  // "plot the pulse against the outer current on the navigation chart."
-  // A single real action (not a two-step sequence like Ch.008 -- the
-  // comic itself is one exchange, not a physical struggle) replacing the
-  // plain mark-as-read button; completes the chapter the normal way
-  // once plotted.
-  window.__ctPlotThePulseAgainstCurrent = function(){
-    toast('🗺️ "The pulse is moving along the outer current — the same channel we used before." Plotted against the chart: it\'s headed straight for the East Gate.', 3600);
-    if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(27);
-  };
-
-  // Ch.039 ("Low Water") -- the third cross-game handoff objective,
-  // per San's design doc: Crimson Tide's side is "use the low-tide
-  // window to launch the shore expedition and recover its findings"
-  // (Tribute's own side scouts the shoal on foot with Levi and Sairen).
-  // Two steps, launch then recover, same never-a-hard-fail shape as
-  // Ch.008. game.crimsonHorizonLowWaterStep tracks 0 -> 1 -> complete.
-  window.__ctLowWaterStep = function(step){
-    game.crimsonHorizonLowWaterStep = game.crimsonHorizonLowWaterStep || 0;
-    if (step === 1 && game.crimsonHorizonLowWaterStep === 0) {
-      toast('🌊 Low tide. The shoal is exposed — Levi and Sairen go over the side at first light, following fresh bootprints toward the cove.', 3600);
-      game.crimsonHorizonLowWaterStep = 1;
-      if (typeof saveGameQuiet === 'function') saveGameQuiet();
-      if (typeof renderStory === 'function') renderStory();
-    } else if (step === 2 && game.crimsonHorizonLowWaterStep === 1) {
-      toast('🏮 "There it is... the missing lantern." Mounted on a skiff, with a West Gate coupling — SV-7731 — fitted beneath it. The shore team is back aboard before the tide turns.', 3800);
-      game.crimsonHorizonLowWaterStep = 2;
-      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(40);
-    }
-  };
-
-  // Ch.042 ("Through the White Water") -- "steer through the fog and
-  // intercept the convoy before it follows the false light" (San's
-  // cross-game doc). Two steps, same never-a-hard-fail shape as Ch.008;
-  // the sails tier only changes the first line, as there.
-  // game.crimsonHorizonWhiteWaterStep tracks 0 -> 1 -> complete.
-  window.__ctWhiteWaterStep = function(step){
-    game.crimsonHorizonWhiteWaterStep = game.crimsonHorizonWhiteWaterStep || 0;
-    if (step === 1 && game.crimsonHorizonWhiteWaterStep === 0) {
-      const sails = (game.ship && game.ship.sails) || 1;
-      toast(sails >= 3
-        ? '🌫️ Into the white water. Mezstorm opens a gap in the fog and the Crimson Tide takes it cleanly, already gaining on the convoy.'
-        : '🌫️ Into the white water. Mezstorm opens a gap in the fog and the Crimson Tide claws through it, slowly gaining on the convoy.', 3600);
-      game.crimsonHorizonWhiteWaterStep = 1;
-      if (typeof saveGameQuiet === 'function') saveGameQuiet();
-      if (typeof renderStory === 'function') renderStory();
-    } else if (step === 2 && game.crimsonHorizonWhiteWaterStep === 1) {
-      toast('⛵ The convoy is in sight — its lead ship already turning toward the false light. The Crimson Tide cuts across its bow.', 3600);
-      game.crimsonHorizonWhiteWaterStep = 2;
-      if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(43);
-    }
-  };
-
-  // Ch.044 ("Light the Real Channel") -- the third West Gate objective
-  // the Arc IV outline's game handoff names: restore the true channel
-  // light. One action, like Ch.026.
-  window.__ctLightTheRealChannel = function(){
-    toast('🏮 The spare lantern is lit on the empty post. Three short pulses, a double pause, a long one — the true channel is marked again.', 3600);
-    if (typeof markCrimsonHorizonChapterRead === 'function') markCrimsonHorizonChapterRead(45);
+  // Docking at a Crimson Horizon port opens that port's next chapter.
+  const oldTriggerArrivalStoryForCH = window.triggerArrivalStory;
+  window.triggerArrivalStory = function(portId){
+    if (oldTriggerArrivalStoryForCH) oldTriggerArrivalStoryForCH.apply(this, arguments);
+    if (CH_PORT_IDS.indexOf(portId) === -1) return;
+    setTimeout(function(){
+      const ch = currentChapter();
+      if (ch && game.location === portId && chapterPortId(ch.id) === portId) window.__ctReadCrimsonHorizonChapter(ch.id);
+    }, 1400);
   };
 
   window.__ctShowCrimsonHorizonSplash = function(){
@@ -395,9 +661,7 @@
     const container = document.getElementById('storyContent');
     if (!container) return;
     // The splash is purely an announcement the moment the main campaign
-    // ends -- independent of the Level 645 chapter gate below, same as
-    // every other arc's splash firing the instant its own arc becomes
-    // reachable, not once its first chapter is actually unlocked.
+    // ends -- independent of the Level 645 chapter gate below.
     const sequelAnnounced = !!game.arc42Complete;
     if (sequelAnnounced && !game.crimsonHorizonSplashSeen && typeof window.__ctShowCrimsonHorizonSplash === 'function') {
       window.__ctShowCrimsonHorizonSplash();
@@ -405,64 +669,36 @@
     const chReady = window.crimsonHorizonObjectiveState() !== null;
     if (!sequelAnnounced) return;
     const so = window.crimsonHorizonObjectiveState();
-    // Act header follows whichever arc the current (next-incomplete)
-    // chapter belongs to -- falls back to the last chapter's arc once
-    // everything built so far is read, and to Arc I if nothing is
-    // unlocked yet. Matches the real comic pages' own per-arc headers.
-    const currentChapter = CRIMSON_HORIZON_CHAPTERS.find(c => so === ('complete_crimson_horizon_chapter_' + c.id));
-    const headerArc = currentChapter ? currentChapter.arc : CRIMSON_HORIZON_CHAPTERS[CRIMSON_HORIZON_CHAPTERS.length - 1].arc;
+    const cur = currentChapter();
+    const headerArc = cur ? cur.arc : CRIMSON_HORIZON_CHAPTERS[CRIMSON_HORIZON_CHAPTERS.length - 1].arc;
     const meta = CRIMSON_HORIZON_ARC_META[headerArc] || CRIMSON_HORIZON_ARC_META[1];
-    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="'+meta.cover+'" alt="'+esc(meta.kicker+': '+meta.title)+'" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
-      '<div class="story-act-kicker">'+esc(meta.kicker)+'</div><div class="story-act-title">'+esc(meta.title)+'</div>'+
-      '<div class="story-act-tagline">'+esc(meta.tagline)+'</div></div>';
+    let html = '<section class="story-act story-quest-panel"><div class="story-act-header">' +
+      (meta.cover ? '<img src="' + meta.cover + '" alt="' + esc(meta.kicker + ': ' + meta.title) + '" style="width:100%;border-radius:8px;margin-bottom:12px;">' : '') +
+      '<div class="story-act-kicker">' + esc(meta.kicker) + '</div><div class="story-act-title">' + esc(meta.title) + '</div>' +
+      '<div class="story-act-tagline">' + esc(meta.tagline) + '</div></div>';
     if (!chReady) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Crimson Horizon Locked</div><div class="story-chapter-sub">Reach Level 645 to begin.</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
     CRIMSON_HORIZON_CHAPTERS.forEach(function(ch){
-      const done = !!(game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[ch.id]);
-      const ready = !done && so===('complete_crimson_horizon_chapter_'+ch.id);
-      const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
+      const done = !!prog()[ch.id];
+      const ready = !done && so === ('complete_crimson_horizon_chapter_' + ch.id);
+      const portId = chapterPortId(ch.id);
+      const docked = !portId || game.location === portId || (ch.id <= 4 && game.location === 'harbor_beyond_charts');
+      const status = done ? '✓ COMPLETE' : (ready ? 'CURRENT' : '🔒 LOCKED');
       let action;
-      if (ready && ch.id === 9) {
-        // Ch.008 "Hold the Passage" -- real two-step objective, see
-        // __ctHoldThePassageStep above, instead of a single mark-read
-        // button (San's cross-game shared-chapter design).
-        const step = game.crimsonHorizonHoldPassageStep || 0;
-        action = (step < 1)
-          ? '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(1)">⚓ Position the Ship for the Tow</button>'
-          : '<button class="btn btn-small btn-success" onclick="window.__ctHoldThePassageStep(2)">🌊 Hold Steady Through the Surge</button>';
-      } else if (ready && ch.id === 43) {
-        // Ch.042 "Through the White Water" -- see __ctWhiteWaterStep.
-        const wwStep = game.crimsonHorizonWhiteWaterStep || 0;
-        action = (wwStep < 1)
-          ? '<button class="btn btn-small btn-success" onclick="window.__ctWhiteWaterStep(1)">🌫️ Steer Into the White Water</button>'
-          : '<button class="btn btn-small btn-success" onclick="window.__ctWhiteWaterStep(2)">⛵ Intercept the Convoy</button>';
-      } else if (ready && ch.id === 45) {
-        // Ch.044 "Light the Real Channel" -- see __ctLightTheRealChannel.
-        action = '<button class="btn btn-small btn-success" onclick="window.__ctLightTheRealChannel()">🏮 Light the Real Channel</button>';
-      } else if (ready && ch.id === 40) {
-        // Ch.039 "Low Water" -- real two-step objective, see
-        // __ctLowWaterStep above.
-        const lwStep = game.crimsonHorizonLowWaterStep || 0;
-        action = (lwStep < 1)
-          ? '<button class="btn btn-small btn-success" onclick="window.__ctLowWaterStep(1)">🌊 Launch the Shore Expedition</button>'
-          : '<button class="btn btn-small btn-success" onclick="window.__ctLowWaterStep(2)">🏮 Recover the Expedition\'s Findings</button>';
-      } else if (ready && ch.id === 27) {
-        // Ch.026 "The Channel That Takes It" -- real objective, see
-        // __ctPlotThePulseAgainstCurrent above.
-        action = '<button class="btn btn-small btn-success" onclick="window.__ctPlotThePulseAgainstCurrent()">🗺️ Plot the Pulse Against the Current</button>';
-      } else if (ready) {
-        action = '<button class="btn btn-small btn-success" onclick="markCrimsonHorizonChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
-      } else action = '<div class="story-chip">Follow the current Objective.</div>';
-      html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>'+esc(ch.title)+'</strong><br>'+
-        '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
-        '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
+      if (done) action = '<button class="btn btn-small" onclick="__ctReadCrimsonHorizonChapter(' + ch.id + ')">↺ Replay</button>';
+      else if (ready && docked) action = '<button class="btn btn-small btn-success" onclick="__ctReadCrimsonHorizonChapter(' + ch.id + ')">📖 Read Chapter</button>';
+      else if (ready) action = '<button class="btn btn-small btn-magic" onclick="sailTo(\'' + portId + '\')">⛵ Sail to ' + esc(chPortName(portId)) + '</button>';
+      else action = '<div class="story-chip">Follow the current Objective.</div>';
+      html += '<article class="quest-item ' + (done ? 'completed' : (ready ? 'active' : '')) + '"><strong>' + esc(ch.title) + '</strong><br>' +
+        '<span style="font-size:.74rem;opacity:.7;">' + esc(chapterPlace(ch.id)) + '</span><br>' +
+        '<span style="font-size:.82rem;opacity:.82;">' + esc(ch.focus) + '</span><br>' +
+        '<span style="font-size:.78rem;">' + status + '</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +' + ch.xp + '</span><div class="story-actions">' + action + '</div></article>';
     });
-    if (so==='crimson_horizon_part1_complete_for_now'){
-      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. More chapters are on the way — check back soon.</div></div>';
+    if (so === 'crimson_horizon_part1_complete_for_now') {
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. The Central Gate route opens next — check back soon.</div></div>';
     }
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
