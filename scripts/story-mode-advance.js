@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V424 · One-click trade dispatch + check in with everyone';
+window.__CT_BUILD__='V425 · Crimson Horizon ports + Arc V (049-064)';

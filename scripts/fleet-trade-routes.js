@@ -37,6 +37,7 @@
     return PORTS.filter(function(p){
       return p.id !== 'fair_tide' &&
         (typeof isPortUnlocked === 'function' ? isPortUnlocked(p.id) : true) &&
+        (typeof p.tradeReady !== 'function' || p.tradeReady()) &&
         !!home.distances[p.id];
     });
   }
