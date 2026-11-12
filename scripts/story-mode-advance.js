@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V423 · Crimson Horizon Ch.042-048 (Arc IV complete)';
+window.__CT_BUILD__='V424 · One-click trade dispatch + check in with everyone';

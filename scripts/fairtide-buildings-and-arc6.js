@@ -399,6 +399,13 @@
       if (game.inheritedShips.some(function(s){ return !!s.stats; })) {
         html += '<div style="margin-bottom:10px;"><button class="btn btn-small btn-success" onclick="upgradeAllFleetShips()">⬆️ Upgrade All Affordable</button></div>';
       }
+      // One click: collect anything that's back, take the daily trickle, and
+      // send every idle trade ship out on a random route (fleet-trade-
+      // routes.js). Only shown once at least one trade ship exists.
+      if (game.inheritedShips.some(function(s){ return !!s.tradeIncome; }) && typeof window.dispatchAllTradeShips === 'function') {
+        html += '<div style="margin-bottom:10px;"><button class="btn btn-small btn-magic" onclick="dispatchAllTradeShips()">🎲 Dispatch All Trade Ships</button>'+
+          '<div style="font-size:.74rem;opacity:.7;margin-top:3px;">Collects returns, takes today\'s trade income, and sends every idle trade ship on a random route you can afford.</div></div>';
+      }
       game.inheritedShips.forEach(ship=>{
         const designated = !!ship.designation;
         let extra = '';
@@ -1407,10 +1414,15 @@
     if (!ship || !ship.tradeIncome) return false;
     return ship.tradeIncome.lastClaimDay !== game.day;
   };
-  window.claimTradeIncome = function(shipId){
+  // opts.quiet: used by the one-click "Dispatch All Trade Ships" button
+  // (fleet-trade-routes.js), which batches the toast/save/render into a
+  // single summary instead of one per ship. Returns the gold credited
+  // (0 when nothing was claimed).
+  window.claimTradeIncome = function(shipId, opts){
+    const quiet = !!(opts && opts.quiet);
     const ship = (game.inheritedShips||[]).find(s=>s.id===shipId);
-    if (!ship || !ship.tradeIncome) { toast('Not a trade vessel.'); return; }
-    if (!window.canClaimTradeIncome(shipId)) { toast('Already collected today.'); return; }
+    if (!ship || !ship.tradeIncome) { if (!quiet) toast('Not a trade vessel.'); return 0; }
+    if (!window.canClaimTradeIncome(shipId)) { if (!quiet) toast('Already collected today.'); return 0; }
     // Same day-scaling fix as claimCommunityLabor: a longer voyage can
     // advance game.day by several days between claims, so credit every
     // day since the last claim (capped at 6) instead of a flat one day.
@@ -1418,9 +1430,11 @@
     ship.tradeIncome.lastClaimDay = game.day;
     const amount = 25 * daysSince;
     game.gold = (game.gold||0) + amount;
+    if (quiet) return amount;
     toast('💰 ' + ship.name + ' brings in ' + amount + 'g from trade' + (daysSince > 1 ? ' (' + daysSince + ' days\' worth).' : '.'), 3200);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    return amount;
   };
 
   window.completeArc6Chapter5 = function(){
