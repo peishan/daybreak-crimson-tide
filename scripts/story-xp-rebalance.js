@@ -60,7 +60,7 @@
     const n = +k, g = 105 + 10 * (n - 7);
     SEGMENTS.push({lo:g, hi:g + 10, names:ARC_ARRAYS[k]});
   });
-  // Crimson Horizon: ninety-one chapters opening at 465, roughly four arcs' worth.
+  // Crimson Horizon: about a hundred chapters opening at 465, roughly four arcs' worth.
   SEGMENTS.push({lo:465, hi:505, names:['CRIMSON_HORIZON_CHAPTERS']});
 
   function round(n){ return Math.round(n / ROUND_TO) * ROUND_TO; }
