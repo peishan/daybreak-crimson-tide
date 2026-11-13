@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V444 · Arc XLII visitors are Fair Tide residents during their stay';
+window.__CT_BUILD__='V445 · Tribute Chronicle archive tab; Cold Spring notes for Arc XLII visitors';

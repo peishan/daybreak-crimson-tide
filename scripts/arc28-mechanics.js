@@ -661,6 +661,7 @@
       return '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span style="opacity:.75;">Away from Fair Tide</span><br>'+
         '<span style="font-size:.8rem;opacity:.8;">Location: '+esc(r.awayLocation || 'Unknown')+' · Companion: '+esc(r.awayCompanion || 'Unknown')+' · Status: Safe (last known)</span><br>'+
         '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span>'+
+        (r.note ? '<br><span style="font-size:.76rem;opacity:.75;">'+esc(r.note)+'</span>' : '')+
         (r.finalAccount ? '<div style="font-size:.76rem;opacity:.65;margin-top:4px;">Final account: earned '+r.finalAccount.earned+'g, paid '+r.finalAccount.finalWages+'g · Old debt: '+esc(r.finalAccount.bruneiDebt)+'</div>' : '')+
         '</article>';
     }
@@ -672,6 +673,7 @@
     let html = '<article class="quest-item"><strong>'+r.icon+' '+residentDisplayName(r)+'</strong> — <span class="story-chip">'+esc(RESIDENT_STATUS_LABELS[r.status] || r.status)+'</span> '+traitBadges+'<br>'+
       '<span style="font-size:.8rem;opacity:.8;">Role: '+(role ? esc(role.name) : 'Unassigned')+' · Room: '+esc(r.room || '—')+' · Memory: '+esc(r.memory || '—')+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.7;">Relationship: '+esc(r.relationship)+' · San\'s Trust: '+esc(r.trust)+'</span><br>'+
+      (r.note ? '<span style="font-size:.76rem;opacity:.75;">'+esc(r.note)+'</span><br>' : '')+
       '<span style="font-size:.78rem;opacity:.75;">Happiness: '+happinessTier.icon+' '+esc(happinessTier.label)+' · Bond with San: '+bondTier.icon+' '+esc(bondTier.label)+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.75;">Earnings: '+r.earnings+'g · Available wages: '+wages+'g</span>';
 
