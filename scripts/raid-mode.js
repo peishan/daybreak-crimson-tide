@@ -148,7 +148,12 @@
   function getRaidById(id){ return RAIDS.find(function(r){ return r.id === id; }); }
   window.getRaidById = getRaidById;
 
-  function isRaidUnlocked(raid){ return level() >= raid.unlockLevel; }
+  // A raid can also carry a story gate (`requires`, with `requiresText` for
+  // the locked card): the three Crimson Horizon raids use it so their names
+  // never run ahead of the chapters they draw on.
+  function isRaidUnlocked(raid){
+    return level() >= raid.unlockLevel && (typeof raid.requires !== 'function' || !!raid.requires());
+  }
   window.isRaidUnlocked = isRaidUnlocked;
 
   const RAID_STAGE_RECOVERY_PCT = 0.25; // partial, not full — matches Raid Mode's own shape
@@ -162,7 +167,7 @@
   function enterRaid(raidId){
     const raid = getRaidById(raidId);
     if (!raid) return;
-    if (!isRaidUnlocked(raid)) { toast('🔒 ' + raid.name + ' unlocks at Level ' + raid.unlockLevel + '.', 3200); return; }
+    if (!isRaidUnlocked(raid)) { toast('🔒 ' + raid.name + ' unlocks at Level ' + raid.unlockLevel + (raid.requiresText ? ' · ' + raid.requiresText : '') + '.', 3600); return; }
     game.raid = { active: true, raidId: raidId, stageIndex: 0, participants: (game.fieldedIds || []).slice() };
     toast('🌀 Entering ' + raid.name + ' — ' + raid.stages.length + ' stages stand between the crew and the reward.', 3600);
     startRaidStage();
@@ -221,7 +226,17 @@
       completeRaid(raid);
       return;
     }
-    // Partial, not full, recovery between stages.
+    // Mid-raid checkpoint (raids built with five stages set checkpointAfter):
+    // the crew may rest properly for Fair Tide Food, or press on.
+    if (raid.checkpointAfter && r.stageIndex === raid.checkpointAfter) { showRaidCheckpoint(raid); return; }
+    applyStageRecovery();
+    setTimeout(startRaidStage, 600);
+  };
+
+  function raidCheckpointFoodCost(raid){ return 10 + Math.floor(raid.unlockLevel / 50); }
+  window.raidCheckpointFoodCost = raidCheckpointFoodCost;
+
+  function applyStageRecovery(){
     game.fieldedIds.forEach(function(id){
       const member = ALL_PARTY.find(function(m){ return m.id === id; });
       if (!member) return;
@@ -231,8 +246,39 @@
       game.partyMp[id] = Math.min(maxMp, (game.partyMp[id] || 0) + Math.round(maxMp * RAID_STAGE_RECOVERY_PCT));
     });
     toast('💨 A brief respite — the crew recovers ' + Math.round(RAID_STAGE_RECOVERY_PCT * 100) + '% before the next stage.', 3200);
-    setTimeout(startRaidStage, 600);
-  };
+  }
+
+  function showRaidCheckpoint(raid){
+    const r = game.raid;
+    const res = (game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0});
+    const cost = raidCheckpointFoodCost(raid);
+    const canRest = (res.food || 0) >= cost;
+    const left = raid.stages.length - r.stageIndex;
+    const buttons = [
+      { text: '🏕️ Rest here (−' + cost + ' Food)', action: function(){
+        if ((res.food || 0) < cost) { toast('Not enough Food.'); return; }
+        res.food -= cost;
+        game.fieldedIds.forEach(function(id){
+          const member = ALL_PARTY.find(function(m){ return m.id === id; });
+          if (!member) return;
+          game.partyHp[id] = effectiveMaxHp(member);
+          game.partyMp[id] = effectiveMaxMp(member);
+        });
+        toast('🏕️ The crew rests at the checkpoint. Everyone is fully recovered.', 3200);
+        closeModal(); setTimeout(startRaidStage, 400);
+      } },
+      { text: '⚔️ Press on (' + Math.round(RAID_STAGE_RECOVERY_PCT * 100) + '% recovery)', action: function(){
+        closeModal(); applyStageRecovery(); setTimeout(startRaidStage, 400);
+      } }
+    ];
+    showModal('🏕️ Checkpoint — ' + raid.name,
+      'Stage ' + r.stageIndex + ' of ' + raid.stages.length + ' is behind the crew, and ' + left + ' stage' + (left === 1 ? '' : 's') + ' remain.<br><br>' +
+      'Rest here for ' + cost + ' Food (you have ' + (res.food || 0) + ') and everyone recovers fully, or press on with only a quarter recovered.', buttons);
+    if (!canRest) {
+      const b = document.querySelector('#modalButtons button');
+      if (b) { b.disabled = true; b.style.opacity = '.45'; }
+    }
+  }
 
   function completeRaid(raid){
     const r = game.raid;
@@ -265,14 +311,17 @@
     RAIDS.forEach(function(raid){
       const unlocked = isRaidUnlocked(raid);
       const cleared = raidCleared(raid.id);
-      html += '<article class="quest-item" style="' + (unlocked ? '' : 'opacity:.55;') + '"><div style="display:flex;gap:10px;align-items:flex-start;">'+
-        '<div style="font-size:1.4rem;">'+raid.icon+'</div><div style="flex:1;">'+
-        '<strong>'+esc(raid.name)+'</strong>'+(cleared ? ' <span class="story-chip">✓ Cleared</span>' : '')+'<br>'+
-        '<span style="font-size:.8rem;opacity:.85;">'+esc(raid.desc)+'</span><br>'+
-        '<span style="font-size:.72rem;opacity:.55;">'+raid.stages.length+' stages · unlocks Level '+raid.unlockLevel+'</span>'+
-        '</div></div>'+
-        (unlocked ? '<button class="btn btn-small" onclick="enterRaid(\''+raid.id+'\')" style="margin-top:6px;">'+(cleared ? '🔁 Re-enter (Training)' : '⚔️ Enter Raid')+'</button>'
-                   : '<div style="font-size:.72rem;opacity:.55;margin-top:6px;">🔒 Locked</div>')+
+      const lockText = level() < raid.unlockLevel ? 'Level ' + raid.unlockLevel : (raid.requiresText || 'Locked');
+      html += '<article class="quest-item" style="' + (unlocked ? '' : 'opacity:.55;') + '">' +
+        '<div style="display:flex;gap:10px;align-items:center;">' +
+        '<div style="font-size:1.4rem;">' + raid.icon + '</div>' +
+        '<div style="flex:1;min-width:0;"><strong>' + esc(raid.name) + '</strong>' + (cleared ? ' <span class="story-chip">✓ Cleared</span>' : '') + '<br>' +
+        '<span style="font-size:.72rem;opacity:.6;">' + raid.stages.length + ' stages · Level ' + raid.unlockLevel + (raid.checkpointAfter ? ' · checkpoint after stage ' + raid.checkpointAfter : '') + '</span></div>' +
+        (unlocked ? '<button class="btn btn-small" onclick="enterRaid(\'' + raid.id + '\')">' + (cleared ? '🔁 Train' : '⚔️ Enter') + '</button>'
+                  : '<div style="font-size:.72rem;opacity:.65;text-align:right;">🔒 ' + esc(lockText) + '</div>') +
+        '</div>' +
+        '<details style="margin-top:4px;"><summary style="font-size:.72rem;opacity:.7;cursor:pointer;">About</summary>' +
+        '<div style="font-size:.78rem;opacity:.85;margin-top:4px;line-height:1.4;">' + esc(raid.desc) + '</div></details>' +
         '</article>';
     });
     return html;
