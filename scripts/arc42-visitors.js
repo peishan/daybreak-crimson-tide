@@ -17,7 +17,7 @@
   // are not activated (they stay narrative).
   //
   // Fountain: everyone who stayed goes to the Cold Spring except Jenika
-  // (too busy, the pavilion needs her) -- shown as a line on their resident card. Narrative only.
+  // (the chapters keep her with the medical team) -- shown as a line on their resident card. Narrative only.
   //
   // Not work-assignable (the default in residentWorkUnlocked), and no
   // wages: they are guests, not workers.
@@ -80,10 +80,11 @@
           if (rec.status !== 'departed') changed = true;
           rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = names.length ? names.join(', ') : 'Family';
           // Everyone who stayed took the waters at the Cold Spring (the Fountain of
-          // Youth) except Jenika, who is too busy and serious for it -- the pavilion
-          // needs her, and she only did a one-day trial run with the medical team. Jade and Devon's first,
+          // Youth) except Jenika. Her note follows the chapters (Arc XLII Ch.34-35,
+          // Tribute 955/975): she spends her visit with Fair Tide's medical team,
+          // and no chapter puts her at the spring. Jade and Devon's first,
           // short visit (g1a) ended before the spring was visited.
-          if (v.key !== 'g1a') rec.note = (id === 'jenika') ? 'Skipped the Cold Spring: too busy, with the pavilion to look after. Her visit was a one-day trial run with Fair Tide\'s medical team.' : '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
+          if (v.key !== 'g1a') rec.note = (id === 'jenika') ? 'Spent her visit with Fair Tide\'s medical team, comparing notes.' : '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
           logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
         } else {
           if (rec.status !== 'resident') changed = true;
