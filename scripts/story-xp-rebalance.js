@@ -84,4 +84,74 @@
     report.push({lo:seg.lo, hi:seg.hi, arrays:seg.names.join('+'), total:total, budget:Math.round(budget)});
   });
   window.STORY_XP_REBALANCE = {share:SHARE, perChapterCap:PER_CHAPTER_CAP, segments:report};
+
+  // -------------------------------------------------------------------
+  // ONE-TIME CATCH-UP for saves made before this rebalance.
+  //
+  // A chapter that was already read paid its old (small) XP. The first
+  // time such a save is shown after loading, it is paid the difference
+  // (new XP minus original XP) for every chapter it has already read, then
+  // `game.storyXpRebalanced` is set so it never runs again.
+  //
+  // A brand-new voyage has no read chapters on its first refresh, so it
+  // simply gets the flag with nothing to pay -- and everything it reads
+  // afterwards already pays the new amounts.
+  //
+  // The sum is added straight to the total (no reputation bonus, no
+  // 5000-per-grant cap -- it is a back-payment of many chapters, not one
+  // grant), then gainXP(0) runs the usual level-up bookkeeping and saves.
+  // -------------------------------------------------------------------
+  function progressKey(name){
+    const m = /^ARC(\d+)_CHAPTERS$/.exec(name);
+    if (m) return 'comicProgress' + m[1];
+    return ({
+      ARC20_INTERLUDE_CHAPTERS: 'comicProgress20Interlude',
+      ARC41_INTERLUDE_CHAPTERS: 'comicProgress41Interlude',
+      ARC41_BRIDGE_CHAPTERS: 'comicProgressArc41Bridge',
+      CRIMSON_HORIZON_CHAPTERS: 'comicProgressCrimsonHorizon'
+    })[name] || null;
+  }
+
+  window.storyXpCatchupOwed = function(){
+    let owed = 0;
+    SEGMENTS.forEach(function(seg){
+      seg.names.forEach(function(name){
+        const list = window[name], key = progressKey(name);
+        const done = key && game[key];
+        if (!Array.isArray(list) || !done) return;
+        list.forEach(function(ch){
+          if (!done[ch.id] || ch.__xpOrig == null) return;
+          owed += Math.max(0, (+ch.xp || 0) - ch.__xpOrig);
+        });
+      });
+    });
+    return owed;
+  };
+
+  window.applyStoryXpCatchup = function(){
+    if (typeof game === 'undefined' || !game || game.storyXpRebalanced) return 0;
+    const owed = window.storyXpCatchupOwed();
+    game.storyXpRebalanced = true;
+    if (owed > 0) {
+      const before = (typeof level === 'function') ? level() : 0;
+      game.xpTotal = (Number(game.xpTotal) || 0) + owed;
+      if (typeof logEvent === 'function') logEvent('📖 Story XP catch-up: +' + owed.toLocaleString() + ' XP for chapters you had already read.', 'gold');
+      if (typeof toast === 'function') toast('📖 Story XP catch-up: +' + owed.toLocaleString() + ' XP for chapters already read.', 4200);
+      if (typeof gainXP === 'function') gainXP(0);
+      else if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    } else if (typeof saveGameQuiet === 'function') {
+      saveGameQuiet();
+    }
+    return owed;
+  };
+
+  // The page rebuilds its UI after every load/import (import is async, so
+  // hook the refresh itself rather than the import call).
+  const oldUpdateUI = window.updateUI;
+  if (typeof oldUpdateUI === 'function') {
+    window.updateUI = function(){
+      try { if (typeof gameSessionActive !== 'undefined' && gameSessionActive && !game.storyXpRebalanced) window.applyStoryXpCatchup(); } catch(e) {}
+      return oldUpdateUI.apply(this, arguments);
+    };
+  }
 })();
