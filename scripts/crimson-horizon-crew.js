@@ -3,10 +3,10 @@
   // CRIMSON HORIZON CREW -- the two-sided crew from the sequel's design:
   // San's side and Jade's side, shown with the real sequel portraits as a
   // collapsed panel at the bottom of the Crew screen once Arc XLII is
-  // complete. INFORMATION ONLY: Jade, Devon, Sky, Levi and Sally appear in
-  // the story chapters but are not fieldable in combat yet (they have no
-  // party entries or skill kits), and Soel and the twins are boosters, not
-  // fighters. Nothing here changes the party, fielding or combat.
+  // complete. INFORMATION ONLY: the five on Jade's side are real party
+  // members (scripts/canon-five.js) fielded from the roster above; this
+  // panel just shows the two-sided structure. Nothing here changes the
+  // party, fielding or combat.
   // -------------------------------------------------------------------
   const SIDES = [
     { title: "San's side", members: [
@@ -20,11 +20,11 @@
       { id: 'joelle',   name: 'Joelle',   role: 'Twin · booster',   img: 'assets/portraits/joelle.png', booster: true }
     ] },
     { title: "Jade's side", members: [
-      { id: 'jade',  name: 'Jade',  role: 'Coordinator',     img: 'assets/portraits/sequel/jade.png' },
-      { id: 'devon', name: 'Devon', role: 'Navigator',       img: 'assets/portraits/sequel/devon.png' },
-      { id: 'sky',   name: 'Sky',   role: 'Ship\'s Physician', img: 'assets/portraits/sequel/sky.png' },
-      { id: 'levi',  name: 'Levi',  role: 'Scout & Diver',   img: 'assets/portraits/sequel/levi.png' },
-      { id: 'sally', name: 'Sally', role: 'Marksman',        img: 'assets/portraits/sequel/sally.png' }
+      { id: 'jade',  name: 'Jade',  role: 'Imperial Guardian', img: 'assets/portraits/sequel/jade.png' },
+      { id: 'devon', name: 'Devon', role: 'Dragon Scholar',    img: 'assets/portraits/sequel/devon.png' },
+      { id: 'sky',   name: 'Sky',   role: 'Mystic Martialist', img: 'assets/portraits/sequel/sky.png' },
+      { id: 'levi',  name: 'Levi',  role: 'Shadow Archer',     img: 'assets/portraits/sequel/levi.png' },
+      { id: 'sally', name: 'Sally', role: 'Noble Assassin',    img: 'assets/portraits/sequel/sally.png' }
     ] }
   ];
   window.CRIMSON_HORIZON_CREW = SIDES;
@@ -46,7 +46,7 @@
       '.chc-role{font-size:.58rem;opacity:.7;line-height:1.2}' +
       '</style>' +
       '<details class="panel" id="crimsonHorizonCrewPanel" style="margin-top:12px;"' + (game.chcOpen ? ' open' : '') + ' ontoggle="game.chcOpen = this.open"><summary class="panel-title" style="cursor:pointer;">🌅 Crimson Horizon Crew</summary>' +
-      '<p style="font-size:.76rem;opacity:.75;margin:6px 0;">The sequel\'s two-sided crew. Jade\'s side appears in the story chapters and is not fieldable in combat yet. Soel and the twins are boosters, not fighters.</p>';
+      '<p style="font-size:.76rem;opacity:.75;margin:6px 0;">' + (game.foundCompanions && game.foundCompanions.jade ? 'The sequel\'s two-sided crew. Jade\'s side is aboard: field them from the roster above. Soel and the twins are boosters in the story.' : 'The sequel\'s two-sided crew. Jade\'s side joins when the sequel\'s Prologue is read.') + '</p>';
     SIDES.forEach(function(side){
       h += '<div style="font-size:.8rem;color:var(--sand);margin-top:6px;">' + esc(side.title) + '</div><div class="chc-grid">' + side.members.map(chip).join('') + '</div>';
     });
