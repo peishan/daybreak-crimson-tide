@@ -53,6 +53,14 @@
   //     resident happiness/bond sweep (scripts/fair-tide-wider-
   //     residents.js) -- this deeper track is her relationship system,
   //     not that one.
+  //   - Sera     -> Arc XLII Ch.23, the chapter that brings her to Fair
+  //     Tide (same flag the Crossover tab's Wider Ally Network uses for
+  //     her). She is a guest, not a fielded party member (she was an
+  //     optional party member in Tribute), so like Joy's track she gets
+  //     the Bonds card, a Hang Out panel and Shared Moments -- but with
+  //     bonus:0 and members:[] for now, until a story chapter gives her
+  //     an active role. hideUntilUnlocked keeps her card off the Bonds
+  //     tab entirely until then (no spoiler card before she arrives).
   // -------------------------------------------------------------------
 
   window.BOND_TRACKS = window.BOND_TRACKS || {};
@@ -207,6 +215,31 @@
         {id: 'trade_remedies', icon: '📖', label: 'Trade Old Remedies',         flavor: "Jovie knows cures San's never heard of, from somewhere she can't place anymore."},
         {id: 'just_sit',       icon: '🌙', label: 'Just Sit With Her',          flavor: "Not every visit needs a reason. Jovie seems to need this one more than she'll say."}
       ]
+    },
+    {
+      key: 'san_sera', label: 'San & Sera', icon: '🍵', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Sera',
+      flavor: 'Lighter here than she lets herself be anywhere else.',
+      tiers: [
+        {threshold:0,    name:'A Guest From Lunareth',   bonus:0},
+        {threshold:50,   name:'Tea and Small Talk',      bonus:0},
+        {threshold:150,  name:'Lighter Here',            bonus:0},
+        {threshold:300,  name:'Someone to Tell',         bonus:0},
+        {threshold:600,  name:'Easy Company',            bonus:0},
+        {threshold:1000, name:'Always a Place at the Table', bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.comicProgress42 && game.comicProgress42[23]); },
+      handlerName: 'hangOutWithSera',
+      panelTitle: '🍵 Hang Out with Sera',
+      panelBlurb: 'Spend some time with Sera. This still uses today\'s San &amp; Sera time, same as above.',
+      activities: [
+        {id: 'tea',          icon: '🍵', label: 'Tea by the Harbour',      flavor: 'Sera brings the tea. San brings nothing but time, which turns out to be the right thing.'},
+        {id: 'quay_walk',    icon: '🚶', label: 'Walk the Quay',           flavor: 'Sera looks at everything like she is memorizing it to take home.'},
+        {id: 'souvenirs',    icon: '🛍️', label: 'Pick Out Souvenirs',      flavor: 'Sera is very serious about it. San carries the bags.'},
+        {id: 'home_stories', icon: '💭', label: 'Swap Stories About Home', flavor: 'Lunareth and Veyren, side by side. Sera keeps finding things they have in common.'},
+        {id: 'sunny_bench',  icon: '☀️', label: 'Sit in the Sun',          flavor: 'No agenda. Sera tips her face up to the light and does not pretend otherwise.'},
+        {id: 'harbour_lights', icon: '🏮', label: 'Watch the Harbour Lights', flavor: 'Dusk, and a quiet that nobody feels the need to fill.'}
+      ]
     }
   ];
   window.HANG_OUT_COMPANIONS = COMPANIONS;
@@ -259,7 +292,22 @@
 
   const oldRenderBondsTabForCompanions = window.renderBondsTab;
   window.renderBondsTab = function(){
-    if (oldRenderBondsTabForCompanions) oldRenderBondsTabForCompanions();
+    // Tracks flagged hideUntilUnlocked stay off the tab entirely until
+    // their unlock condition is met: hidden from BOND_TRACKS for the
+    // duration of the (synchronous) base render only, then restored --
+    // same trick hang-out-san-joy.js uses.
+    const hidden = {};
+    COMPANIONS.forEach(function(c){
+      if (c.hideUntilUnlocked && !c.unlockedFn() && window.BOND_TRACKS[c.key]) {
+        hidden[c.key] = window.BOND_TRACKS[c.key];
+        delete window.BOND_TRACKS[c.key];
+      }
+    });
+    try {
+      if (oldRenderBondsTabForCompanions) oldRenderBondsTabForCompanions();
+    } finally {
+      Object.keys(hidden).forEach(function(k){ window.BOND_TRACKS[k] = hidden[k]; });
+    }
     const el = document.getElementById('ft-tab-bonds');
     if (!el) return;
     // See the file-header note: every zero-bonus companion card the base
