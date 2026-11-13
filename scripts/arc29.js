@@ -109,7 +109,7 @@
 
   window.arc29ObjectiveState = function(){
     if (!game.arc28Complete) return null;
-    if (level() < 435) return null;
+    if (level() < 325) return null;
     game.comicProgress29 = game.comicProgress29 || {};
     for (const ch of ARC29_CHAPTERS) {
       if (!game.comicProgress29[ch.id]) return 'complete_arc29_chapter_' + ch.id;
@@ -169,7 +169,7 @@
       '<div class="story-act-tagline">A person can hide the truth without everything they show you being false.</div></div>';
     if (!arc29Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXIX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc28Complete ? 'Finish Arc XXVIII first.' : 'Reach Level 435 to begin.')+'</div></div></section>';
+        (!game.arc28Complete ? 'Finish Arc XXVIII first.' : 'Reach Level 325 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

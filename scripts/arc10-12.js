@@ -47,7 +47,7 @@
 
   window.arc10ObjectiveState = function(){
     if (!game.arc9Complete) return null;
-    if (level() < 150) return null;
+    if (level() < 135) return null;
     game.comicProgress10 = game.comicProgress10 || {};
     for (const ch of ARC10_CHAPTERS) {
       if (!game.comicProgress10[ch.id]) return 'complete_arc10_chapter_' + ch.id;
@@ -138,7 +138,7 @@
       '<div class="story-act-tagline">Chapters 1-'+ARC10_CHAPTERS.length+' of 24. Some horizons must be built before they can be crossed.</div></div>';
     if (!arc10Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc X Locked</div><div class="story-chapter-sub">'+
-        (!game.arc9Complete ? 'Finish Arc IX first.' : 'Reach Level 150 to begin.')+'</div></div></section>';
+        (!game.arc9Complete ? 'Finish Arc IX first.' : 'Reach Level 135 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
@@ -207,7 +207,7 @@
   window.arc11ObjectiveState = function(){
     if (!game.arc10Complete) return null;
     // Continues the +15-per-arc pace from Arc VIII (120) / IX (135) / X (150).
-    if (level() < 165) return null;
+    if (level() < 145) return null;
     game.comicProgress11 = game.comicProgress11 || {};
     for (const ch of ARC11_CHAPTERS) {
       if (!game.comicProgress11[ch.id]) return 'complete_arc11_chapter_' + ch.id;
@@ -297,7 +297,7 @@
       '<div class="story-act-tagline">Chapters 1-'+ARC11_CHAPTERS.length+' of 24. Seeing another world is not the same as reaching it.</div></div>';
     if (!arc11Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc10Complete ? 'Finish Arc X first.' : 'Reach Level 165 to begin.')+'</div></div></section>';
+        (!game.arc10Complete ? 'Finish Arc X first.' : 'Reach Level 145 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
@@ -365,7 +365,7 @@
   window.arc12ObjectiveState = function(){
     if (!game.arc11Complete) return null;
     // Continues the +15-per-arc pace from Arc IX (135) / X (150) / XI (165).
-    if (level() < 180) return null;
+    if (level() < 155) return null;
     game.comicProgress12 = game.comicProgress12 || {};
     for (const ch of ARC12_CHAPTERS) {
       if (!game.comicProgress12[ch.id]) return 'complete_arc12_chapter_' + ch.id;
@@ -447,7 +447,7 @@
       '<div class="story-act-tagline">Chapters 1-'+ARC12_CHAPTERS.length+' of 24. Every new world begins with someone taking the first step.</div></div>';
     if (!arc12Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc11Complete ? 'Finish Arc XI first.' : 'Reach Level 180 to begin.')+'</div></div></section>';
+        (!game.arc11Complete ? 'Finish Arc XI first.' : 'Reach Level 155 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

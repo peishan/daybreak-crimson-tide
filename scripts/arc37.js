@@ -121,7 +121,7 @@
 
   window.arc37ObjectiveState = function(){
     if (!game.arc36Complete) return null;
-    if (level() < 555) return null;
+    if (level() < 405) return null;
     game.comicProgress37 = game.comicProgress37 || {};
     for (const ch of ARC37_CHAPTERS) {
       if (!game.comicProgress37[ch.id]) return 'complete_arc37_chapter_' + ch.id;
@@ -181,7 +181,7 @@
       '<div class="story-act-tagline">Where you come from is part of you. It doesn\'t decide where you belong.</div></div>';
     if (!arc37Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXVII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc36Complete ? 'Finish Arc XXXVI first.' : 'Reach Level 555 to begin.')+'</div></div></section>';
+        (!game.arc36Complete ? 'Finish Arc XXXVI first.' : 'Reach Level 405 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

@@ -78,7 +78,7 @@
 
   window.arc40ObjectiveState = function(){
     if (!game.arc39Complete) return null;
-    if (level() < 600) return null;
+    if (level() < 435) return null;
     game.comicProgress40 = game.comicProgress40 || {};
     for (const ch of ARC40_CHAPTERS) {
       if (!game.comicProgress40[ch.id]) return 'complete_arc40_chapter_' + ch.id;
@@ -138,7 +138,7 @@
       '<div class="story-act-tagline">Some connections grow so familiar that neither person notices when understanding becomes something more.</div></div>';
     if (!arc40Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XL Locked</div><div class="story-chapter-sub">'+
-        (!game.arc39Complete ? 'Finish Arc XXXIX first.' : 'Reach Level 600 to begin.')+'</div></div></section>';
+        (!game.arc39Complete ? 'Finish Arc XXXIX first.' : 'Reach Level 435 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

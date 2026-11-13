@@ -103,7 +103,7 @@
 
   window.arc23ObjectiveState = function(){
     if (!game.arc22Complete) return null;
-    if (level() < 345) return null;
+    if (level() < 265) return null;
     game.comicProgress23 = game.comicProgress23 || {};
     for (const ch of ARC23_CHAPTERS) {
       if (!game.comicProgress23[ch.id]) return 'complete_arc23_chapter_' + ch.id;
@@ -163,7 +163,7 @@
       '<div class="story-act-tagline">A home becomes important when people beyond its walls begin to depend on it.</div></div>';
     if (!arc23Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc22Complete ? 'Finish Arc XXII first.' : 'Reach Level 345 to begin.')+'</div></div></section>';
+        (!game.arc22Complete ? 'Finish Arc XXII first.' : 'Reach Level 265 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

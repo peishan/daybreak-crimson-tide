@@ -73,7 +73,7 @@
 
   window.arc41InterludeObjectiveState = function(){
     if (!game.arc41Complete) return null;
-    if (level() < 630) return null;
+    if (level() < 455) return null;
     game.comicProgress41Interlude = game.comicProgress41Interlude || {};
     for (const ch of ARC41_INTERLUDE_CHAPTERS) {
       if (!game.comicProgress41Interlude[ch.id]) return 'complete_interlude41_chapter_' + ch.id;
@@ -117,7 +117,7 @@
       '<div class="story-act-tagline">Stories between horizons.</div></div>';
     if (!interludeReady) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Interlude Locked</div><div class="story-chapter-sub">'+
-        (!game.arc41Complete ? 'Finish Arc XLI first.' : 'Reach Level 630 to begin.')+'</div></div></section>';
+        (!game.arc41Complete ? 'Finish Arc XLI first.' : 'Reach Level 455 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

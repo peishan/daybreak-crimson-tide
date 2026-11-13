@@ -95,7 +95,7 @@
 
   window.arc25ObjectiveState = function(){
     if (!game.arc24Complete) return null;
-    if (level() < 375) return null;
+    if (level() < 285) return null;
     if (!(game.foundCompanions && game.foundCompanions.caelan)) return null;
     game.comicProgress25 = game.comicProgress25 || {};
     for (const ch of ARC25_CHAPTERS) {
@@ -156,7 +156,7 @@
       '<div class="story-act-tagline">Sometimes asking for help is harder than giving it.</div></div>';
     if (!arc25Ready) {
       const lockMsg = !game.arc24Complete ? 'Finish Arc XXIV first.'
-        : (level() < 375 ? 'Reach Level 375 to begin.'
+        : (level() < 285 ? 'Reach Level 285 to begin.'
         : 'Recruit Caelan first (Arc XX, Ch.13 — "A Stranger at Fair Tide").');
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXV Locked</div><div class="story-chapter-sub">'+
         lockMsg+'</div></div></section>';

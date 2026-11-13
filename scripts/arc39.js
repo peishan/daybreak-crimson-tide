@@ -102,7 +102,7 @@
 
   window.arc39ObjectiveState = function(){
     if (!game.arc38Complete) return null;
-    if (level() < 585) return null;
+    if (level() < 425) return null;
     game.comicProgress39 = game.comicProgress39 || {};
     for (const ch of ARC39_CHAPTERS) {
       if (!game.comicProgress39[ch.id]) return 'complete_arc39_chapter_' + ch.id;
@@ -162,7 +162,7 @@
       '<div class="story-act-tagline">People who once worked together can find different purposes when their circumstances change.</div></div>';
     if (!arc39Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXIX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc38Complete ? 'Finish Arc XXXVIII first.' : 'Reach Level 585 to begin.')+'</div></div></section>';
+        (!game.arc38Complete ? 'Finish Arc XXXVIII first.' : 'Reach Level 425 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

@@ -118,7 +118,7 @@
 
   window.arc24ObjectiveState = function(){
     if (!game.arc23Complete) return null;
-    if (level() < 360) return null;
+    if (level() < 275) return null;
     game.comicProgress24 = game.comicProgress24 || {};
     for (const ch of ARC24_CHAPTERS) {
       if (!game.comicProgress24[ch.id]) return 'complete_arc24_chapter_' + ch.id;
@@ -178,7 +178,7 @@
       '<div class="story-act-tagline">Not everyone who watches Fair Tide wants to be known.</div></div>';
     if (!arc24Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXIV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc23Complete ? 'Finish Arc XXIII first.' : 'Reach Level 360 to begin.')+'</div></div></section>';
+        (!game.arc23Complete ? 'Finish Arc XXIII first.' : 'Reach Level 275 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

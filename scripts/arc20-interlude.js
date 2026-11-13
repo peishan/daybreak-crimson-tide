@@ -70,7 +70,7 @@
 
   window.arc20InterludeObjectiveState = function(){
     if (!game.arc20Complete) return null;
-    if (level() < 315) return null;
+    if (level() < 245) return null;
     game.comicProgress20Interlude = game.comicProgress20Interlude || {};
     for (const ch of INTERLUDE_CHAPTERS) {
       if (!game.comicProgress20Interlude[ch.id]) return 'complete_interlude_chapter_' + ch.id;
@@ -113,7 +113,7 @@
       '<div class="story-act-tagline">Not every chapter needs a horizon to cross.</div></div>';
     if (!interludeReady) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Interlude Locked</div><div class="story-chapter-sub">'+
-        (!game.arc20Complete ? 'Finish Arc XX first.' : 'Reach Level 315 to begin.')+'</div></div></section>';
+        (!game.arc20Complete ? 'Finish Arc XX first.' : 'Reach Level 245 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

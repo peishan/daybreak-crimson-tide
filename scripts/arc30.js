@@ -123,7 +123,7 @@
 
   window.arc30ObjectiveState = function(){
     if (!game.arc29Complete) return null;
-    if (level() < 450) return null;
+    if (level() < 335) return null;
     game.comicProgress30 = game.comicProgress30 || {};
     for (const ch of ARC30_CHAPTERS) {
       if (!game.comicProgress30[ch.id]) return 'complete_arc30_chapter_' + ch.id;
@@ -185,7 +185,7 @@
       '<div class="story-act-tagline">What happens when the people inside the walls become the threat?</div></div>';
     if (!arc30Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc29Complete ? 'Finish Arc XXIX first.' : 'Reach Level 450 to begin.')+'</div></div></section>';
+        (!game.arc29Complete ? 'Finish Arc XXIX first.' : 'Reach Level 335 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

@@ -100,7 +100,7 @@
 
   window.arc20ObjectiveState = function(){
     if (!game.arc19Complete) return null;
-    if (level() < 300) return null;
+    if (level() < 235) return null;
     game.comicProgress20 = game.comicProgress20 || {};
     for (const ch of ARC20_CHAPTERS) {
       if (!game.comicProgress20[ch.id]) return 'complete_arc20_chapter_' + ch.id;
@@ -176,7 +176,7 @@
       '<div class="story-act-tagline">After everything — the people behind the adventures.</div></div>';
     if (!arc20Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc19Complete ? 'Finish Arc XIX first.' : 'Reach Level 300 to begin.')+'</div></div></section>';
+        (!game.arc19Complete ? 'Finish Arc XIX first.' : 'Reach Level 235 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

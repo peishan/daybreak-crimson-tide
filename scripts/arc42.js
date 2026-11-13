@@ -267,7 +267,7 @@
 
   window.arc42ObjectiveState = function(){
     if (!game.arc41BridgeComplete) return null;
-    if (level() < 630) return null;
+    if (level() < 455) return null;
     game.comicProgress42 = game.comicProgress42 || {};
     for (const ch of ARC42_CHAPTERS) {
       if (!game.comicProgress42[ch.id]) return 'complete_arc42_chapter_' + ch.id;
@@ -327,7 +327,7 @@
       '<div class="story-act-tagline">Some stories continue long after their writers stop writing.</div></div>';
     if (!arc42Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XLII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc41BridgeComplete ? 'Cross the Horizon to Lunareth first.' : 'Reach Level 630 to begin.')+'</div></div></section>';
+        (!game.arc41BridgeComplete ? 'Cross the Horizon to Lunareth first.' : 'Reach Level 455 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

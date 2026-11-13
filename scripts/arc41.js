@@ -86,7 +86,7 @@
 
   window.arc41ObjectiveState = function(){
     if (!game.arc40Complete) return null;
-    if (level() < 615) return null;
+    if (level() < 445) return null;
     game.comicProgress41 = game.comicProgress41 || {};
     for (const ch of ARC41_CHAPTERS) {
       if (!game.comicProgress41[ch.id]) return 'complete_arc41_chapter_' + ch.id;
@@ -156,7 +156,7 @@
       '<div class="story-act-tagline">Belonging isn\'t something you\'re given. Sometimes it\'s something you choose.</div></div>';
     if (!arc41Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XLI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc40Complete ? 'Finish Arc XL first.' : 'Reach Level 615 to begin.')+'</div></div></section>';
+        (!game.arc40Complete ? 'Finish Arc XL first.' : 'Reach Level 445 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

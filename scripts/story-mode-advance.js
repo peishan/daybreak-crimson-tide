@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V438 · Canon Five fieldable (Tribute kits) + late-recruit restore fix';
+window.__CT_BUILD__='V439 · Story pacing: bigger chapter XP, +10 level gates per arc';

@@ -112,7 +112,7 @@
 
   window.arc26ObjectiveState = function(){
     if (!game.arc25Complete) return null;
-    if (level() < 390) return null;
+    if (level() < 295) return null;
     game.comicProgress26 = game.comicProgress26 || {};
     for (const ch of ARC26_CHAPTERS) {
       if (!game.comicProgress26[ch.id]) return 'complete_arc26_chapter_' + ch.id;
@@ -172,7 +172,7 @@
       '<div class="story-act-tagline">Being independent means making difficult choices.</div></div>';
     if (!arc26Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXVI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc25Complete ? 'Finish Arc XXV first.' : 'Reach Level 390 to begin.')+'</div></div></section>';
+        (!game.arc25Complete ? 'Finish Arc XXV first.' : 'Reach Level 295 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

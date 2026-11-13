@@ -92,7 +92,7 @@
 
   window.arc17ObjectiveState = function(){
     if (!game.arc16Complete) return null;
-    if (level() < 255) return null;
+    if (level() < 205) return null;
     game.comicProgress17 = game.comicProgress17 || {};
     for (const ch of ARC17_CHAPTERS) {
       if (!game.comicProgress17[ch.id]) return 'complete_arc17_chapter_' + ch.id;
@@ -158,7 +158,7 @@
       '<div class="story-act-tagline">Some histories are older than the people who remember them.</div></div>';
     if (!arc17Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XVII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc16Complete ? 'Finish Arc XVI first.' : 'Reach Level 255 to begin.')+'</div></div></section>';
+        (!game.arc16Complete ? 'Finish Arc XVI first.' : 'Reach Level 205 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

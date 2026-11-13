@@ -109,7 +109,7 @@
 
   window.arc27ObjectiveState = function(){
     if (!game.arc26Complete) return null;
-    if (level() < 405) return null;
+    if (level() < 305) return null;
     game.comicProgress27 = game.comicProgress27 || {};
     for (const ch of ARC27_CHAPTERS) {
       if (!game.comicProgress27[ch.id]) return 'complete_arc27_chapter_' + ch.id;
@@ -169,7 +169,7 @@
       '<div class="story-act-tagline">The enemy isn\'t always the person standing in front of you.</div></div>';
     if (!arc27Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXVII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc26Complete ? 'Finish Arc XXVI first.' : 'Reach Level 405 to begin.')+'</div></div></section>';
+        (!game.arc26Complete ? 'Finish Arc XXVI first.' : 'Reach Level 305 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

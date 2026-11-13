@@ -49,7 +49,7 @@
 
   window.arc41BridgeObjectiveState = function(){
     if (!game.arc41Complete) return null;
-    if (level() < 630) return null;
+    if (level() < 455) return null;
     game.comicProgressArc41Bridge = game.comicProgressArc41Bridge || {};
     for (const ch of ARC41_BRIDGE_CHAPTERS) {
       if (!game.comicProgressArc41Bridge[ch.id]) return 'complete_arc41bridge_chapter_' + ch.id;
@@ -130,7 +130,7 @@
       '<div class="story-act-tagline">Every world has a history of its own, even one that began as a story.</div></div>';
     if (!bridgeReady) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Locked</div><div class="story-chapter-sub">'+
-        (!game.arc41Complete ? 'Finish Arc XLI first.' : 'Reach Level 630 to begin.')+'</div></div></section>';
+        (!game.arc41Complete ? 'Finish Arc XLI first.' : 'Reach Level 455 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

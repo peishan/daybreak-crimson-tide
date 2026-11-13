@@ -109,7 +109,7 @@
 
   window.arc31ObjectiveState = function(){
     if (!game.arc30Complete) return null;
-    if (level() < 465) return null;
+    if (level() < 345) return null;
     game.comicProgress31 = game.comicProgress31 || {};
     for (const ch of ARC31_CHAPTERS) {
       if (!game.comicProgress31[ch.id]) return 'complete_arc31_chapter_' + ch.id;
@@ -169,7 +169,7 @@
       '<div class="story-act-tagline">A home is worth defending.</div></div>';
     if (!arc31Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc30Complete ? 'Finish Arc XXX first.' : 'Reach Level 465 to begin.')+'</div></div></section>';
+        (!game.arc30Complete ? 'Finish Arc XXX first.' : 'Reach Level 345 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
