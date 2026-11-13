@@ -873,6 +873,8 @@
     // Ch.067 (id 68): the provisions run for the outer island is set up;
     // the next batch reads this when the outer island opens.
     if (id === 68) game.crimsonHorizonProvisionsRunReady = true;
+    // Prologue (id 1): Jade, Devon, Sky, Levi and Sally join the party (scripts/canon-five.js).
+    if (id === 1 && typeof window.grantCanonFiveIfDue === 'function') window.grantCanonFiveIfDue();
     // Ch.081 (id 82): the first Black Pearl briefing is held.
     if (id === 82 && typeof window.onPearlBriefingHeld === 'function') window.onPearlBriefingHeld();
     // Ch.089 (id 90): the first observations are filed.
