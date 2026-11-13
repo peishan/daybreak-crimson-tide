@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V443 · The Steady Reach crew settle at Fair Tide after Arc XXXIX';
+window.__CT_BUILD__='V444 · Arc XLII visitors are Fair Tide residents during their stay';
