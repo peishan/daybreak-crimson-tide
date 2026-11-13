@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V436 · Archive tabs, sequel objective banner, deeper raids';
+window.__CT_BUILD__='V437 · Compact Crew roster + sequel crew panel';
