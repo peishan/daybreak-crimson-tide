@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V430 · Black Pearl research round 1 (Custody Record) + briefing';
+window.__CT_BUILD__='V431 · San & Sera bond + hang out';
