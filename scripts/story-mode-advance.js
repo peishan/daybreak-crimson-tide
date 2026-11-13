@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V442 · Allies & Guests tab (residents and wider allies off the Roster)';
+window.__CT_BUILD__='V443 · The Steady Reach crew settle at Fair Tide after Arc XXXIX';

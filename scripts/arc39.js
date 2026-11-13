@@ -14,6 +14,10 @@
   // Jorvin (Tinkerer/Mechanic since Arc V Ch.21) is the other former
   // colleague already in Fair Tide's own roster.
   //
+  // (Superseded by San's later direction: once this arc completes, Lewis
+  // and the eight-strong crew settle at Fair Tide and join the Roster --
+  // see scripts/steady-reach-settles.js. This file still adds nobody
+  // itself.)
   // Per the outline's explicit restraint: this arc does NOT add Lewis's
   // crew (Aisy, Elva, Selina, Zul, Jonathan) as new Fair Tide residents.
   // They remain Lewis's own crew, aboard his own ship -- the story
