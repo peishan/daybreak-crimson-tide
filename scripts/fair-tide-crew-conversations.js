@@ -137,7 +137,14 @@
     if (token === 'maera_roster') return !!(game.fairTideRoster && game.fairTideRoster.maera);
     if (token === 'children_unlocked') return !!(typeof window.fairTideChildrenUnlocked === 'function' && window.fairTideChildrenUnlocked());
     if (token === 'soel_unlocked') return !!(typeof level === 'function' && level() >= 10);
-    if (token.slice(-5) === '_ally') return allyNetworkEligible(token.slice(0, -5));
+    if (token.slice(-5) === '_ally') {
+      const id = token.slice(0, -5);
+      if (allyNetworkEligible(id)) return true;
+      // Lewis and the Steady Reach crew move to the Roster after Arc XXXIX
+      // (steady-reach-settles.js) and leave the Wider Ally Network, but their
+      // banter should carry on.
+      return !!(game.fairTideRoster && game.fairTideRoster[id] && window.STEADY_REACH_CREW && window.STEADY_REACH_CREW.some(function(c){ return c.id === id; }));
+    }
     return !!(game.foundCompanions && game.foundCompanions[token]);
   }
 

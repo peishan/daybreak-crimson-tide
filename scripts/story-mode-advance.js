@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V450 · Off-page Cold Spring visits left unsaid';
+window.__CT_BUILD__='V451 · TM colleagues appear after Arc XXXIX Ch.13; Steady Reach banter kept';
