@@ -26,14 +26,22 @@
   // record what is known, what is verifiable, and what is safe to try.
   // The Pearl's larger answers are left for later Fair Tide visits.
   //
-  // PROVISIONAL: the story gate for the first briefing is Crimson Horizon
-  // Ch.074 ("A Route Worth Keeping", id 75), the end of the current island
-  // voyage. Change BRIEFING_1_AFTER_CH_ID to move it.
+  // The briefing is ready once Erynn's and Fen's reports are in, Ch.080 is
+  // read, and the player is at Fair Tide.
+  //
+  // SECOND ROUND (after the briefing): Renn (baseline instrument readings)
+  // and Mimi (a quiet listening) begin technical observation and
+  // divination. Their findings are deliberately non-committal -- a
+  // baseline and a record of impressions, never a conclusion about what
+  // the Pearl is.
   // -------------------------------------------------------------------
 
-  const BRIEFING_1_AFTER_CH_ID = 75;
-  const BRIEFING_1_AFTER_LABEL = 'A Route Worth Keeping';
-  const BRIEFING_1_XP = 540;
+  // The first briefing is Crimson Horizon Ch.081 ("What Devon Entrusted",
+  // id 82), a SIDE chapter (see CH_SIDE in crimson-horizon-sequel.js): it
+  // opens from the Black Pearl Study panel, never blocks the story chain,
+  // and awards its chapter XP through the normal chapter flow.
+  const BRIEFING_1_CH_ID = 82;
+  const BRIEFING_1_AFTER_CH_ID = 81;   // Ch.080 "A Place at the Table", back at Fair Tide
 
   function bpState(){ return (typeof window.blackPearlInvestigationState === 'function') ? window.blackPearlInvestigationState() : null; }
   function pearlOpen(){
@@ -97,92 +105,100 @@
     };
   }
 
+  // ---- Second round: opens once the first briefing is held ----
+  if (R.renn && !R.renn.projects.some(function(p){ return p.key === 'pearl_baseline_readings'; })) {
+    R.renn.projects.push({
+      key: 'pearl_baseline_readings', durationDays: 4, available: function(){ return pearlOpen() && briefingHeld(); },
+      title: 'Baseline Instrument Readings',
+      desc: "Renn sets up Fair Tide's instruments around the Pearl's case and records a baseline, following Adrian's protocol. Observation only: nothing touches the Pearl.",
+      finding: "Renn records a full baseline under Adrian's protocol: what each instrument reads with the Pearl in its case, and how far those readings drift on their own. It is a reference, not a result. Any later test can be measured against it.",
+      onComplete: function(){
+        pearlNote('pearl_baseline_readings', "Renn recorded a baseline of Fair Tide's instrument readings with the Pearl in its case. It is a reference point for any later test, not a finding.");
+      }
+    });
+  }
+  if (R.mimi && !R.mimi.projects.some(function(p){ return p.key === 'pearl_quiet_listening'; })) {
+    R.mimi.projects.push({
+      key: 'pearl_quiet_listening', durationDays: 3, available: function(){ return pearlOpen() && briefingHeld(); },
+      title: 'A Quiet Listening',
+      desc: "Mimi sits with the Pearl and writes down exactly what she perceives, and how sure she is of each impression, without trying to interpret any of it.",
+      finding: "Mimi writes down every impression and how sure she is of each one. She marks which she trusts, which she doesn't, and which could just be her own nerves. She won't call any of it a finding yet.",
+      onComplete: function(){
+        pearlNote('pearl_quiet_listening', "Mimi recorded her first impressions of the Pearl and how sure she is of each. None is being treated as a finding yet.");
+      }
+    });
+  }
+
   // ---- The briefing ----
   const REPORTS = [
     { rid: 'erynn',  key: 'pearl_devons_account',     short: 'Erynn', required: true },
     { rid: 'fen',    key: 'pearl_dragonvale_records', short: 'Fen',   required: true },
-    { rid: 'adrian', key: 'pearl_safe_protocol',      short: 'Adrian', required: false }
+    { rid: 'adrian', key: 'pearl_safe_protocol',      short: 'Adrian', required: false },
+    { rid: 'renn',   key: 'pearl_baseline_readings',  short: 'Renn',  required: false, round2: true },
+    { rid: 'mimi',   key: 'pearl_quiet_listening',    short: 'Mimi',  required: false, round2: true }
   ];
   function reportDone(r){
     const st = window.archiveResearchState();
     return !!(st[r.rid] && st[r.rid].completedKeys.indexOf(r.key) !== -1);
   }
-  function briefingHeld(){ return !!(game.blackPearlBriefings && game.blackPearlBriefings[1]); }
-  function storyGateReached(){ return !!(game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[BRIEFING_1_AFTER_CH_ID]); }
+  function chProgress(id){ return !!(game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[id]); }
+  function briefingHeld(){
+    // A save that held the briefing before it became Ch.081 keeps its
+    // progress: mark the chapter read (its XP was already granted then).
+    if (game.blackPearlBriefings && game.blackPearlBriefings[1] && !chProgress(BRIEFING_1_CH_ID)) {
+      game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
+      game.comicProgressCrimsonHorizon[BRIEFING_1_CH_ID] = true;
+    }
+    return chProgress(BRIEFING_1_CH_ID) || !!(game.blackPearlBriefings && game.blackPearlBriefings[1]);
+  }
   function briefingStatus(){
     if (briefingHeld()) return 'held';
     if (!REPORTS.filter(function(r){ return r.required; }).every(reportDone)) return 'waiting_reports';
-    if (!storyGateReached()) return 'waiting_story';
+    if (!chProgress(BRIEFING_1_AFTER_CH_ID)) return 'waiting_story';
+    if (game.location !== 'fair_tide') return 'waiting_location';
     return 'ready';
   }
   window.blackPearlBriefingStatus = briefingStatus;
+  window.blackPearlBriefingReady = function(){ return briefingStatus() === 'ready'; };
+  window.blackPearlBriefingReason = function(){
+    switch (briefingStatus()) {
+      case 'waiting_reports': return 'Needs the reports from Erynn and Fen first.';
+      case 'waiting_story': return 'Opens after Chapter 080, back at Fair Tide.';
+      case 'waiting_location': return 'Return to Fair Tide to attend the briefing.';
+      case 'held': return 'The first briefing has been held.';
+      default: return 'The briefing is ready.';
+    }
+  };
+
+  // Called by the chapter flow when Ch.081 is completed.
+  window.onPearlBriefingHeld = function(){
+    game.blackPearlBriefings = game.blackPearlBriefings || {};
+    game.blackPearlBriefings[1] = true;
+    pearlNote('briefing_1', "First briefing: San and Joel agreed the study begins with observation. Adrian's protocol is the starting point for Renn and Mimi, and every finding is copied for Devon.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
 
   // HTML for the top of the Black Pearl Study panel (Research Team tab).
   window.blackPearlStudyHtml = function(){
     if (!pearlOpen()) return '';
-    const reports = REPORTS.map(function(r){
+    const status = briefingStatus();
+    const reports = REPORTS.filter(function(r){ return !r.round2 || status === 'held'; }).map(function(r){
       return (reportDone(r) ? '✓ ' : '○ ') + r.short + (r.required ? '' : ' (optional)');
     }).join(' · ');
-    const status = briefingStatus();
     let line;
-    if (status === 'held') line = '✓ First briefing held.';
+    if (status === 'held') line = '✓ First briefing held. Renn and Mimi can start the next round.';
     else if (status === 'ready') line = '<button class="btn btn-small btn-magic" onclick="__ctAttendPearlBriefing()">📋 Attend Briefing</button> <span>The first team briefing is ready.</span>';
-    else if (status === 'waiting_story') line = 'Required reports are in. The briefing opens once the story reaches ' + esc(BRIEFING_1_AFTER_LABEL) + '.';
+    else if (status === 'waiting_story') line = 'Required reports are in. The briefing opens after Chapter 080, back at Fair Tide.';
+    else if (status === 'waiting_location') line = 'Required reports are in. Return to Fair Tide to attend the briefing.';
     else line = 'The first briefing needs reports from Erynn and Fen.';
     return '<div class="rt-status" style="margin-top:4px;">Reports: ' + reports + '</div>' +
       '<div class="rt-status" style="margin-top:4px;">' + line + '</div>';
   };
 
-  function briefingScene(){
-    let s = 'The research room at Fair Tide is quiet at this hour. The lamps are low, and two folders sit side by side on the long table: Erynn\'s record of what Devon told him, and Fen\'s cross-check against the Dragonvale records and charts.<br><br>' +
-      'San reads Erynn\'s pages first. Devon\'s account is careful, and Erynn has marked the exact line where the written record ends. After it, there is only what Devon remembers, and Devon says so himself.<br><br>' +
-      'Joel takes Fen\'s folder. "Some of it checks out," Joel says, turning a page. "A lot of it can\'t be checked either way. Fen has marked every reference twice: verified, and not verifiable. The second list is longer."<br><br>' +
-      '"So what we actually know," San says, "is what Devon told us, and a handful of things that match."<br><br>' +
-      '"And a gap," Joel says.<br><br>' +
-      '"And a gap." San closes the folder. "Devon trusted us with it. That means how it gets studied is our decision now."<br><br>' +
-      '"Then we start small," Joel says. "Whatever we try first, it should be something we can stop."<br><br>' +
-      'They settle on it quickly. The first safe test is observation only. The Pearl stays in its case, nothing is done to it, and nothing goes near the Horizon Engine. Fair Tide watches what it does on its own, with the instruments already on hand, and writes it all down.<br><br>';
-    if (reportDone(REPORTS[2])) s += 'Adrian\'s draft protocol is already on the table. It fits.<br><br>';
-    s += 'Renn and Mimi can take the next look once the first readings are in.';
-    return s;
-  }
-
-  function openObjective(checked){
-    const title = 'The Custody Briefing';
-    const objective = 'Review what Devon entrusted to you and agree on the first safe test.';
-    let html = '<div style="font-size:.78rem;opacity:.75;margin-bottom:8px;">⚓ Fair Tide · Black Pearl Study</div>' +
-      '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>The Pearl was handed to San and Joel, so how it is studied is their decision. Decide where to begin.</div>' +
-      '<div><strong>Objective</strong><br>' + esc(objective) + '</div>';
-    if (checked) html += '<div style="margin-top:10px;">' + esc('The record is clear about what is known, what is verified, and where it stops. The first test is observation only: watch the Pearl, touch nothing.') + '</div>';
-    const buttons = [];
-    if (!checked) buttons.push({ text: '📋 Review the Custody Record', action: function(){ openObjective(true); } });
-    buttons.push({ text: 'Continue', action: function(){ if (typeof closeModal === 'function') closeModal(); completeBriefing(); } });
-    showModal('Objective · ' + title, html, buttons);
-    if (!checked) {
-      const btns = document.querySelectorAll('#modalButtons button');
-      const cont = btns[btns.length - 1];
-      if (cont) { cont.disabled = true; cont.style.opacity = '.45'; }
-    }
-  }
-
-  function completeBriefing(){
-    if (briefingStatus() !== 'ready') return;
-    game.blackPearlBriefings = game.blackPearlBriefings || {};
-    game.blackPearlBriefings[1] = true;
-    pearlNote('briefing_1', 'First briefing: San and Joel agreed that the first safe test is observation only. The Pearl stays in its case, and Fair Tide records what it does on its own.');
-    gainXP(BRIEFING_1_XP);
-    toast('📋 The Custody Briefing — +' + BRIEFING_1_XP + ' Story XP', 3600);
-    if (typeof saveGameQuiet === 'function') saveGameQuiet();
-    if (typeof updateUI === 'function') updateUI();
-    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
-    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
-  }
-
+  // Attend Briefing plays Ch.081 through the normal chapter flow: scene
+  // modal, objective modal, Continue.
   window.__ctAttendPearlBriefing = function(){
-    if (briefingStatus() !== 'ready') { toast('The briefing isn\'t ready yet.'); return; }
-    showModal('The Custody Briefing', briefingScene(), [{ text: 'Continue', action: function(){
-      if (typeof closeModal === 'function') closeModal();
-      setTimeout(function(){ openObjective(false); }, 250);
-    }}]);
+    if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(BRIEFING_1_CH_ID);
   };
 })();

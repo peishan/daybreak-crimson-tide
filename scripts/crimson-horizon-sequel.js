@@ -189,6 +189,25 @@
   // substantial Black Pearl development belongs at Fair Tide.
   // -------------------------------------------------------------------
 
+  // -------------------------------------------------------------------
+  // CRIMSON HORIZON · ARC VIII -- A HARBOR FOR EVERYONE (075-082) [BUILT,
+  // text-first]. Immediately after 074. The crew explores the next island
+  // along the sheltered channel, helps reopen its public landing, and
+  // returns to Fair Tide for the first Black Pearl briefing.
+  //   075 Across the Sheltered Channel -- deepwater quay; the small boats circle; the public landing lost its gangway.
+  //   076 The Price of a Berth -- the berth fee; San offers the tender; what would it take to reopen the landing?
+  //   077 The Boatbuilder's Yard -- a finished gangway the workboat can't carry; Joel's tackle; she comes along.
+  //   078 A Landing of Their Own -- the gangway set in place; the first boat in is late for lunch; provisions.
+  //   079 The Cabin Across the Hall -- on the way back: where Jade and Sally would each want to stay.
+  //   080 A Place at the Table -- Sera, Jade and Sally at Fair Tide; the parcel from the island market.
+  //   081 What Devon Entrusted -- the first Black Pearl briefing. A SIDE chapter (CH_SIDE): opens from
+  //       Research Team -> Black Pearl Study when Erynn's and Fen's reports are in and the player is at
+  //       Fair Tide, so research time never holds up 082 or the next voyage.
+  //   082 The Next Sailing -- the chart, the three places beyond the Central Gate, a copy for the harbor office.
+  // Game: Channel Island (working name) is sailable after 074 and a regular port after 075; 075-078 play
+  // there. 079 plays at sea on the way to Fair Tide and chains into 080; 080-082 play at Fair Tide.
+  // -------------------------------------------------------------------
+
   const CRIMSON_HORIZON_CHAPTERS = [
     {id:1, arc:1, title:'Prologue — A New Voyage', focus:"Aboard the Crimson Tide, San and Joel look out over a new horizon — one chapter closed, a wider world still waiting. The Black Pearl remains in their guardianship, its true nature still unknown. They decide to meet whatever comes next together, as one unified crew.", image:'assets/comics/sequel/prologue-a-new-voyage.webp', xp:400, action:'🌅 Set Sail Toward the Horizon'},
     {id:2, arc:1, title:'001 · The First Storm', focus:"The Crimson Tide's new voyage opens with a fierce, chaotic storm — their first battle sooner than expected. In its wake comes quieter news: several of the crew are expecting, each pregnancy its own long Veyren road, with the whole crew pacing missions around it together.", image:'assets/comics/sequel/ch01-the-first-storm.webp', xp:410, action:'⚡ Weather the First Storm'},
@@ -264,7 +283,15 @@
     {id:72, arc:7, title:"071 · Two Dates on the Calendar", focus:"After the cargo is unloaded, Jade tells Devon that she and Sally might go into labour around the same time, and Sally tells Levi separately. Their conversations turn to where they'd each want to be when the time comes, and who they'd want nearby.", image:'assets/comics/sequel/ch71-two-dates-on-the-calendar.webp', xp:520, action:'📖 Read Chapter'},
     {id:73, arc:7, title:"072 · The Road Over the Ridge", focus:"Aisyah heads inland to see what the island trades, and San and Joel walk with her to the ridge market. From the top they can see boats working a sheltered channel toward the neighbouring islands, and the skipper asks if they'll take her outgoing mail back to the harbor.", image:'assets/comics/sequel/ch72-the-road-over-the-ridge.webp', xp:525, action:'📖 Read Chapter'},
     {id:74, arc:7, title:"073 · How It Began", focus:"Back aboard, San tells Jade how the earliest version of Imperial Guard Meets Runaway Prince began. Jade listens until San reaches the first decision she remembers making differently, then tells San what she remembers and why she made that choice.", image:'assets/comics/sequel/ch73-how-it-began.webp', xp:545, action:'📖 Read Chapter'},
-    {id:75, arc:7, title:"074 · A Route Worth Keeping", focus:"The Crimson Tide returns to the harbor with the mail. Aisyah asks which market days are worth sailing back for, and before they cast off again Joel marks the sheltered channel on their chart and asks San where she wants to go next.", image:'assets/comics/sequel/ch74-a-route-worth-keeping.webp', xp:530, action:'📖 Read Chapter'}
+    {id:75, arc:7, title:"074 · A Route Worth Keeping", focus:"The Crimson Tide returns to the harbor with the mail. Aisyah asks which market days are worth sailing back for, and before they cast off again Joel marks the sheltered channel on their chart and asks San where she wants to go next.", image:'assets/comics/sequel/ch74-a-route-worth-keeping.webp', xp:530, action:'📖 Read Chapter'},
+    {id:76, arc:8, title:"075 · Across the Sheltered Channel", focus:"Joel follows the route charted in 074 to the neighbouring island. Its deepwater quay is busy, but the smaller boats are circling offshore, because the public landing lost its gangway in the last heavy swell.", image:'assets/comics/sequel/ch75-across-the-sheltered-channel.webp', xp:535, action:'📖 Read Chapter'},
+    {id:77, arc:8, title:"076 · The Price of a Berth", focus:"At the market, Aisyah sees a fish seller turn away a customer because her brother's catch is still aboard their boat. San offers to bring the fish ashore in the ship's tender, then asks the harbor pilot what it would take to reopen the public landing.", image:'assets/comics/sequel/ch76-the-price-of-a-berth.webp', xp:535, action:'📖 Read Chapter'},
+    {id:78, arc:8, title:"077 · The Boatbuilder’s Yard", focus:"The local boatbuilder has a replacement gangway ready, but her yard sits across the bay and her workboat can't carry it in one piece. Joel offers the Crimson Tide's tackle, and the boatbuilder insists on coming along to fit it herself.", image:'assets/comics/sequel/ch77-the-boatbuilders-yard.webp', xp:540, action:'📖 Read Chapter'},
+    {id:79, arc:8, title:"078 · A Landing of Their Own", focus:"Joel holds the ship steady while the boatbuilder guides the gangway into place and the islanders secure it from shore. The fish seller's brother brings in the first boat, and Aisyah buys provisions from the stalls that can finally restock.", image:'assets/comics/sequel/ch78-a-landing-of-their-own.webp', xp:540, action:'📖 Read Chapter'},
+    {id:80, arc:8, title:"079 · The Cabin Across the Hall", focus:"On the way back to Fair Tide, Devon asks Jade where she'd want to stay if her due window does overlap with Sally's. Sally tells Levi she wants a room of her own and Jade close enough to complain through the wall.", image:'assets/comics/sequel/ch79-the-cabin-across-the-hall.webp', xp:545, action:'📖 Read Chapter'},
+    {id:81, arc:8, title:"080 · A Place at the Table", focus:"At Fair Tide, Sera joins Jade and Sally for a meal while the others unload. She says she's grown fond of deciding how to spend a day before anyone else decides for her, and Sally hands her a parcel from the island market.", image:'assets/comics/sequel/ch80-a-place-at-the-table.webp', xp:545, action:'📖 Read Chapter'},
+    {id:82, arc:8, title:"081 · What Devon Entrusted", focus:"At the first Black Pearl briefing, Erynn presents Devon's account and Fen shows which parts she can corroborate in Dragonvale's records. San and Joel agree that the study should begin with observation.", image:'assets/comics/sequel/ch81-what-devon-entrusted.webp', xp:540, action:'📖 Read Chapter'},
+    {id:83, arc:8, title:"082 · The Next Sailing", focus:"San and Joel look over the chart at Fair Tide. They now have three places they can sail back to beyond the Central Gate, and San asks Joel to leave a copy of the route with the harbor office for the next captain.", image:'assets/comics/sequel/ch82-the-next-sailing.webp', xp:550, action:'📖 Read Chapter'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
@@ -275,7 +302,8 @@
     4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'},
     5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'},
     6: {cover:null, kicker:'Crimson Horizon · Arc VI', title:'A Place to Come Home To', tagline:'Finding somewhere new can change what you want to come home to.'},
-    7: {cover:null, kicker:'Crimson Horizon · Arc VII', title:'The Outer Island Run', tagline:'A delivery, a ridge road, and the shape of a future home.'}
+    7: {cover:null, kicker:'Crimson Horizon · Arc VII', title:'The Outer Island Run', tagline:'A delivery, a ridge road, and the shape of a future home.'},
+    8: {cover:null, kicker:'Crimson Horizon · Arc VIII', title:'A Harbor for Everyone', tagline:'A harbor is only as good as the people who can reach it.'}
   };
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
@@ -353,7 +381,15 @@
     72: "By evening the cargo is stacked in the island storehouse, and the Crimson Tide rides quietly at anchor. Jade finds Devon at the stern rail, watching the lights come on along the beach.<br><br>\"I need to tell you something,\" she says. \"About Sally and me.\"<br><br>Devon turns, at once serious. \"Is something wrong?\"<br><br>\"No. We've been comparing dates. Mine is around three years. Hers is closer to two and a half. They're estimates, nothing is certain.\" She watches his face. \"But it's close enough that we could go into labour around the same time.\"<br><br>Devon opens his mouth, closes it, and starts to count on his fingers. \"Thirty-six months for you. Thirty for Sally. So that's... no. If hers runs long and yours runs short, then...\" He keeps going, under his breath, and then out loud.<br><br>Jade presses her lips together. It is exactly the reaction she wanted to see.<br><br>\"Jade,\" Devon says, \"you're enjoying this.\"<br><br>\"Very much.\"<br><br>Down on the quay, San and Joel are checking the last of the lashings. The sound of Devon counting carries across the water.<br><br>\"He's counting out loud,\" Joel says.<br><br>\"He's counting out loud,\" San agrees.<br><br>On the beach, Sally sits with Levi on an upturned boat, telling him the same news in fewer words. They talk for a long while afterward, about where they'd each want to be when the time comes. Somewhere steady, they decide. Not a ship in a storm. Somewhere with people close enough to hear if anyone shouted.<br><br>\"Who do you want nearby?\" Levi asks.<br><br>\"Sky,\" Sally says. \"And Jade. And you, obviously.\"<br><br>\"I'll be there before Sky is.\"<br><br>Both conversations end the same way, with the question of where home will be.",
     73: "The island's ridge market sits at the top of a long, switchbacked road, a scatter of stalls under cloth awnings with the whole sea laid out below. Aisyah goes from stall to stall, asking what the island trades and what it can't get, with the notebook already open.<br><br>San and Joel walk up with her, a little out of breath on the steeper turns.<br><br>\"This is not a small island,\" Joel says, when they reach the top.<br><br>From the ridge, they can see the sheltered channel curving away to the north, with boats working it toward a scatter of neighbouring islands. Sails are patched and bright against the blue.<br><br>\"That's the route I usually run,\" the skipper says, joining them at the wall. \"Provisions, mostly. But I carry letters too, and market orders. Anything that needs to get from one island to the next.\"<br><br>\"All of it, on the same boat?\" San asks.<br><br>\"It's the same boat. It's the same <i>sea</i>.\" The skipper pats the satchel at her hip. \"I've got a stack of outgoing letters. Would you take them back to the harbor while my boat's being repaired? There'll be someone there to sort them.\"<br><br>San looks at Joel, and Joel shrugs. \"We're going back anyway,\" he says.<br><br>\"We'll take them,\" San says.<br><br>The mail travels with the crew.",
     74: "Back aboard, with the lamps lit and the beach quiet, San finds Jade in the stern cabin with the window open to the sea.<br><br>\"You said you'd like to hear how it begins,\" San says.<br><br>\"I did.\"<br><br>San tells her. She tells it the way she first wrote it, slowly and a little out of order, and she keeps stopping to say \"no, that's not how it went.\" Jade doesn't interrupt. She listens the way she listens to a report, and then she listens differently, with her whole attention.<br><br>San gets as far as the first decision she remembers making differently from what she wrote, and she stops.<br><br>\"That's the one,\" Jade says.<br><br>\"How do you know?\"<br><br>\"Because I remember it.\" Jade folds her hands. \"Not the way you wrote it. I'd like to tell you what I remember.\"<br><br>She tells San what she remembers, and why she made that choice. San listens without writing any of it down. When Jade is finished, neither of them says anything for a while.<br><br>A knock comes at the cabin door. Devon looks in. \"I was looking for the two of you. Am I interrupting?\"<br><br>Jade looks at San, and then at him. \"Stay,\" she says. \"Sit down. I want you to hear my version.\"<br><br>Devon sits.",
-    75: "The Crimson Tide slips back into Island Harbor on the morning tide with the outgoing mail stowed in a dry locker. A clerk at the quay takes it with a delighted exclamation, and the first sack is open before the gangway is down.<br><br>A boatman is waiting at the quay with a note. \"You'd be the Crimson Tide,\" the boatman says. \"The skipper sent word ahead. She's arranged for me to cover her next run.\"<br><br>\"Of course she did,\" San says, reading the note over Joel's shoulder.<br><br>Aisyah comes down the gangway with her notebook open. \"Which market days are worth sailing back for?\" she asks a stallholder. \"Not the quiet ones. The ones where people argue about the price.\"<br><br>\"Fourth day and seventh,\" the stallholder says. \"Come hungry.\"<br><br>Aisyah writes it down, underlines it twice, and tucks the notebook away.<br><br>Before they cast off again, Joel spreads the chart across the helm and marks the sheltered channel in ink: the reef lead, the quay, the long curve north.<br><br>\"Harbor and the outer island both stay on the chart,\" he says. \"We can come back any time.\" He looks up. \"Where do you want to go next?\"<br><br>San thinks about the ridge, the patched sails, the scatter of islands in the haze. She points to one of them.<br><br>\"That one,\" she says.<br><br>The channel is charted."
+    75: "The Crimson Tide slips back into Island Harbor on the morning tide with the outgoing mail stowed in a dry locker. A clerk at the quay takes it with a delighted exclamation, and the first sack is open before the gangway is down.<br><br>A boatman is waiting at the quay with a note. \"You'd be the Crimson Tide,\" the boatman says. \"The skipper sent word ahead. She's arranged for me to cover her next run.\"<br><br>\"Of course she did,\" San says, reading the note over Joel's shoulder.<br><br>Aisyah comes down the gangway with her notebook open. \"Which market days are worth sailing back for?\" she asks a stallholder. \"Not the quiet ones. The ones where people argue about the price.\"<br><br>\"Fourth day and seventh,\" the stallholder says. \"Come hungry.\"<br><br>Aisyah writes it down, underlines it twice, and tucks the notebook away.<br><br>Before they cast off again, Joel spreads the chart across the helm and marks the sheltered channel in ink: the reef lead, the quay, the long curve north.<br><br>\"Harbor and the outer island both stay on the chart,\" he says. \"We can come back any time.\" He looks up. \"Where do you want to go next?\"<br><br>San thinks about the ridge, the patched sails, the scatter of islands in the haze. She points to one of them.<br><br>\"That one,\" she says.<br><br>The channel is charted.",
+    76: "Joel takes the Crimson Tide out along the sheltered channel at first light, following the route marked on the chart. The water is calm and green, and the patched sails of the local boats come and go around them like gulls.<br><br>The neighbouring island shows itself in stages: a headland, a line of white houses, and then a deepwater quay with three big traders tied along it and cranes swinging cargo. Out in the bay, a scatter of smaller boats is circling. None of them is heading in.<br><br>\"They're not even trying for the quay,\" Joel says. \"They're just waiting.\"<br><br>A harbor pilot comes out in a skiff and hails them. \"You'll want the main quay! Plenty of room at the north end.\"<br><br>\"What about the little boats?\" San asks. \"Why are they circling?\"<br><br>\"Public landing's down. The last heavy swell took the gangway clean off.\" The pilot shrugs. \"They can use the main quay like anyone else, if they pay for a berth.\"<br><br>San watches the circling boats a moment longer. Then she nods. \"We'll take the north end.\"<br><br>The Crimson Tide berths at the main quay, and the crew goes ashore.",
+    77: "The market runs along the back of the quay, stall after stall under striped awnings. Aisyah is three stalls in, haggling over lemons, when she stops in the middle of a sentence.<br><br>At the next stall, a fish seller is shaking her head at a customer. \"Sorry. I've got nothing today. My brother's catch is still on his boat.\"<br><br>\"Then why doesn't he bring it in?\" the customer asks.<br><br>\"Because the landing's down. He'd have to tie up at the main quay, and the berth fee would eat most of what we make this morning.\" The fish seller nods at the bay. \"So he's circling. Waiting for a better answer.\"<br><br>Aisyah listens to all of it, then goes to find San on the quay.<br><br>\"It isn't a mystery,\" Aisyah says. \"It's a fee.\"<br><br>San has already seen the circling boats. She finds the fish seller again. \"We have a tender,\" she says. \"We can bring your brother's catch ashore. No berth, no fee.\"<br><br>\"You'd do that?\" the fish seller says. \"You don't know us.\"<br><br>\"We'd like to know what it would take to fix the landing, too,\" San says. She walks to the end of the quay and asks the harbor pilot.<br><br>\"A proper gangway,\" the pilot says. \"And a way to get it here. Try the boatbuilder, across the bay.\"",
+    78: "The boatbuilder's yard is a long shed open to the water, with hulls in every stage of planking. The boatbuilder meets San and Joel at the slip with sawdust in her hair and a pencil tucked behind each ear.<br><br>\"The gangway?\" she says. \"It's finished. Has been for two weeks. Ironwood, brass fittings, the lot.\" She points.<br><br>It lies along the back wall, longer than the shed's biggest hull is wide.<br><br>\"The trouble is getting it across,\" she says. \"My workboat can't carry it in one piece, and I won't cut it. A gangway in two halves is a gangway that fails the first time someone carries a barrel over it.\"<br><br>Joel walks its length, rapping the frame and checking the lifting points. \"It's sound,\" he says. \"Four good points. The Crimson Tide has tackle that can take it. We lift it clear, lay it on deck, and carry it across.\"<br><br>\"Deck space,\" Aisyah says, arriving at San's elbow with her notebook open. \"I've been over the plan. Between the forward hatch and the boat cradles, there's room. I just need the boatbuilder to tell me how it should lie.\"<br><br>\"On its side, padded at the points,\" the boatbuilder says at once. Then, firmly: \"And I'm coming with it.\"<br><br>\"There's no need,\" San begins.<br><br>\"I built it. I'll fit it.\" The boatbuilder takes one of the pencils from behind her ear. \"Nobody else is putting my gangway in crooked.\"<br><br>Joel catches San's eye, and neither of them argues.",
+    79: "Joel holds the Crimson Tide in the swell off the public landing, bow to the wind, steady as a pier. The tackle swings the gangway out over the water, and the boatbuilder walks along it with one hand on the rail, calling the lay of it one inch at a time.<br><br>\"Left. Left. Hold. Down, slow, slow!\"<br><br>On the landing, the islanders are waiting with ropes and iron pins, and they secure the far end as soon as it touches the stone. The boatbuilder checks every fitting, tests the rail with her whole weight, and steps back.<br><br>\"Well,\" she says. \"That'll do.\"<br><br>A cheer goes up along the shore, and for a moment nobody quite knows what to do. Then one of the circling boats turns for the landing.<br><br>It's the fish seller's brother, standing in the stern with his catch heaped in the bow. He ties up at the new landing, steps onto the gangway, and finds his sister waiting at the top with her arms folded.<br><br>\"You're late for lunch,\" she tells him.<br><br>\"I was circling!\"<br><br>\"Then circle faster.\"<br><br>Before the crew leaves, Aisyah walks the market once more. The stalls that couldn't restock for weeks are finally open, and she comes back down the quay with her arms full of provisions for the voyage home.<br><br>The island's landing is open to everyone again.",
+    80: "The Crimson Tide is a day out from the island when San, passing along the lower deck, hears Devon's voice through a half-open cabin door.<br><br>\"If your window does overlap with Sally's,\" Devon says, \"where would you want to stay?\"<br><br>\"Near Sky,\" Jade says at once. \"And the infirmary. Close enough that nobody has to run.\" There is a pause. \"I'd like Sally nearby, if she wants the same.\"<br><br>San keeps walking, and finds Joel at the end of the passage, trying very hard not to be caught listening to the next cabin.<br><br>\"A room of my own,\" Sally is saying, in the cabin beyond. \"That's what I want. With Jade close enough that I can hear her complain.\"<br><br>\"Through the wall?\" Levi asks.<br><br>\"Through the wall. I'd feel better knowing she's right there.\"<br><br>\"She'll complain about the noise from your side.\"<br><br>\"I'm counting on it.\"<br><br>San and Joel look at each other. Joel mouths something that might be <i>a cabin across the hall</i>. San nods.<br><br>By the time the Crimson Tide raises Fair Tide, both couples have agreed to look at rooms when they get home. The due windows are still only estimates.",
+    81: "Fair Tide in the late afternoon is a different kind of busy. Crates come down the gangway in a steady line, and Joel keeps the count. San is somewhere in the middle of it with a list.<br><br>At a long table by the window, Sera has joined Jade and Sally for a meal, with bowls of something warm and far too much bread.<br><br>\"What do you like about staying here?\" Jade asks. \"Honestly. Not the polite answer.\"<br><br>Sera thinks about it. \"That I get to decide how to spend a day,\" she says, \"before anyone else has decided it for me.\"<br><br>Jade laughs, softly and without surprise. \"That's a good answer.\"<br><br>\"It's a rare thing, where I'm from,\" Sera says. \"Here it feels very ordinary. I'm fond of how ordinary it is.\"<br><br>\"You should stay as long as you like,\" Sally says.<br><br>\"I might.\" Sera turns her cup between her hands. \"If you go back to that island, would you bring something from the market for me? Next time?\"<br><br>Sally reaches under the bench and sets a small wrapped parcel on the table. \"I already did.\"<br><br>Sera stares at it, and then, slowly, she smiles.",
+    82: "The research room at Fair Tide has been cleared for the briefing. A long table, a lamp, and a stack of folders squared to the table's edge.<br><br>Erynn goes first. He presents Devon's account in order, from the first custody he can name to the last. Then he lays a hand flat on the page where the written record ends. \"After this line,\" Erynn says, \"there is only what Devon remembers. He told me so himself.\"<br><br>Fen follows, with the Dragonvale records and charts spread beside it. \"Some of it I can corroborate,\" she says, pointing. \"These references hold up against the records. These can't be confirmed either way. I've marked both.\"<br><br>San reads the two lists side by side. \"A handful of things that match,\" she says, \"and a gap.\"<br><br>\"Devon trusted us with it,\" Joel says. \"So the study is ours to set up.\"<br><br>\"Then we begin with observation,\" San says. \"The Pearl stays in its case, we touch nothing, and nothing goes near the Horizon Engine.\"<br><br>Adrian's protocol sits at the end of the table, a proposal for a baseline. \"It gives Renn and Mimi a place to start,\" Erynn says. \"Technical observation and divination, for the next round.\"<br><br>\"One request,\" Joel says. \"Every finding gets copied for Devon. He handed us the Pearl. He should be able to follow the work.\"<br><br>\"Of course,\" Fen says, and starts a new folder.",
+    83: "Late that night, San and Joel spread the chart across the table at Fair Tide, under the same lamp that lit the briefing.<br><br>The Central Gate sits at the top of the page. Beyond it, three places are inked in Joel's careful hand: the island harbor, the outer island, and the neighbouring island with its new landing. Down one margin, in Aisyah's tidy script, are the market days. Fourth and seventh. Argue about the price.<br><br>\"Three places we can sail back to,\" San says. \"Not so long ago, I didn't know the Gate had an island behind it.\"<br><br>\"Calm water between all three,\" Joel says. \"If the weather holds.\"<br><br>San traces the route with one finger, from the Gate to the harbor, along the channel, and out to the island with the gangway. \"Will you make a copy of this? For the harbor office. For whoever the next captain is who wants to make the crossing.\"<br><br>\"The route, and the market days?\"<br><br>\"The market days especially,\" San says. \"They'll thank us for those.\"<br><br>Joel starts the copy that night. The chart stays open on the table, and every discovered destination stays open on the travel list."
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -362,6 +398,7 @@
     if (level() < 645) return null;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
     for (const ch of CRIMSON_HORIZON_CHAPTERS) {
+      if (CH_SIDE[ch.id]) continue; // side chapters never hold up the chain
       if (!game.comicProgressCrimsonHorizon[ch.id]) return 'complete_crimson_horizon_chapter_' + ch.id;
     }
     return 'crimson_horizon_part1_complete_for_now';
@@ -412,7 +449,11 @@
     {id:'outer_island', name:'Outer Island', icon:'🏖️', danger:3, specialties:['rice','tea','timber'],
       desc:'A green outer island behind a reef, with a small quay, a lee anchorage and a ridge market. (Working name.)',
       blurb:'The island the provisions were bound for. Until the cargo is delivered this is a provisions run, not a regular port.',
-      tradeReady:function(){ return !!prog()[71]; }}
+      tradeReady:function(){ return !!prog()[71]; }},
+    {id:'channel_island', name:'Channel Island', icon:'⛵', danger:3, specialties:['spices','silk','timber'],
+      desc:'The neighbouring island along the sheltered channel, with a deepwater quay and a public landing worth keeping. (Working name.)',
+      blurb:'A busy deepwater quay, a market under striped awnings, and a public landing the islanders can use again.',
+      tradeReady:function(){ return !!prog()[76]; }}
   ];
   const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
   window.CRIMSON_HORIZON_PORTS = CH_PORTS;
@@ -425,7 +466,8 @@
     south_gate:  function(){ return !!prog()[49]; },     // Ch.048 read
     central_gate:function(){ return !!prog()[65]; },     // Ch.064 read: selectable, Ch.065 plays here
     island_harbor:function(){ return !!prog()[66]; },    // Ch.065 read (Make Landfall)
-    outer_island: function(){ return !!prog()[70]; }     // Ch.069 read: provisions run; regular port after Ch.070
+    outer_island: function(){ return !!prog()[70]; },    // Ch.069 read: provisions run; regular port after Ch.070
+    channel_island: function(){ return !!prog()[75]; }   // Ch.074 read: sailable; regular port after Ch.075
   };
 
   function registerCrimsonHorizonPorts(){
@@ -478,10 +520,11 @@
   };
 
   function chapterPortId(id){
-    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : id <= 66 ? 'central_gate' : id <= 70 ? 'island_harbor' : id <= 74 ? 'outer_island' : id <= 75 ? 'island_harbor' : null;
+    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : id <= 66 ? 'central_gate' : id <= 70 ? 'island_harbor' : id <= 74 ? 'outer_island' : id <= 75 ? 'island_harbor' : id <= 79 ? 'channel_island' : id <= 83 ? 'fair_tide' : null;
   }
   function chPortName(portId){
-    const p = CH_PORTS.find(function(x){ return x.id === portId; });
+    const p = CH_PORTS.find(function(x){ return x.id === portId; }) ||
+      ((typeof PORTS !== 'undefined') ? PORTS.find(function(x){ return x.id === portId; }) : null);
     return p ? p.name : portId;
   }
   function chapterPlace(id){
@@ -492,6 +535,10 @@
     if (id >= 67 && id <= 70) return '⚓ Island Harbor · A New Shore';
     if (id >= 71 && id <= 74) return '⚓ Outer Island · The Outer Island Run';
     if (id === 75) return '⚓ Island Harbor · The Outer Island Run';
+    if (id >= 76 && id <= 79) return '⚓ Channel Island · A Harbor for Everyone';
+    if (id === 80) return '⛵ At sea — on the way back to Fair Tide';
+    if (id === 82) return '⚓ Fair Tide · Black Pearl Study (research chapter)';
+    if (id === 81 || id === 83) return '⚓ Fair Tide · A Harbor for Everyone';
     return '⚓ ' + chPortName(chapterPortId(id));
   }
   window.crimsonHorizonChapterPort = chapterPortId;
@@ -506,7 +553,9 @@
     65: 'The Central Gate is now open. Sail through it to continue the voyage.',
     66: 'Island Harbor is now on your charts, with standard port and trade interactions.',
     70: 'Outer Island is now on your charts for the provisions run. Sail there to deliver the cargo.',
-    71: 'The provisions are delivered. Outer Island is now a regular port, open for return visits and trade.'
+    71: 'The provisions are delivered. Outer Island is now a regular port, open for return visits and trade.',
+    75: 'Channel Island, the neighbouring island, is now on your charts. Sail there to continue.',
+    76: 'Channel Island is now a regular port, open for return visits and trade.'
   };
 
   // ===================================================================
@@ -569,11 +618,44 @@
          result:'San tells the opening up to the first decision she remembers making differently. Jade tells her what she remembers, and why. When Devon comes looking, Jade asks him to stay and hear her version.'},
     75: {label:'🧭 Chart the Channel', objective:'Deliver the mail, learn the market days, and mark the sheltered channel on the chart.',
          result:'The mail is delivered, and Aisyah has the market days written down. Joel inks the sheltered channel on the chart. The harbor and the Outer Island both stay open for return visits, and San points to the next island.'},
+    76: {label:'⚓ Enter Harbor', objective:'Follow the charted route to the neighbouring island and berth at the main quay.',
+         result:'Joel follows the route charted in the last chapter. The deepwater quay is busy, the small boats are circling offshore, and the Crimson Tide takes a berth at the north end of the main quay.'},
+    77: {label:'🛒 Visit the Market', objective:'Walk the market and find out why the small boats are circling.',
+         result:'A fish seller has nothing to sell because her brother cannot land his catch without paying a berth fee that would take most of the morning\'s earnings. San offers the ship\'s tender, and asks the harbor pilot what it would take to reopen the landing.'},
+    78: {label:'🔨 Visit the Boatyard', objective:'Find the replacement gangway and work out how to carry it across the bay.',
+         result:'The gangway is finished, but the boatbuilder\'s workboat cannot carry it in one piece. Joel checks the lifting points and offers the Crimson Tide\'s tackle, and the boatbuilder comes along to fit it herself.'},
+    79: {label:'⚓ Reopen the Landing', objective:'Hold the ship steady while the gangway is set in place.',
+         result:'The gangway goes into place at the first try, and the islanders secure it from shore. The first boat in is the fish seller\'s brother, late for lunch. Aisyah restocks from the stalls that can finally supply the voyage home.'},
+    80: {label:'🗣️ Talk Below Deck', objective:'Listen in on the quiet plans being made on the voyage back to Fair Tide.',
+         result:'Jade wants to be near Sky and the infirmary, with Sally nearby if she wants the same. Sally wants a room of her own and Jade close enough to complain through the wall. Both couples agree to look at rooms at Fair Tide. The due windows are still only estimates.'},
+    81: {label:'🏮 Return to Fair Tide', objective:'Bring the Crimson Tide home and join Sera, Jade and Sally for a meal.',
+         result:'Fair Tide is busy with unloading. At the long table, Sera says what she likes about staying here, and Sally hands over the parcel she already bought from the island market.'},
+    82: {label:'📋 Review the Findings', objective:"Hear Erynn's and Fen's reports and decide how the study begins.",
+         result:"Erynn's record of Devon's account and Fen's cross-check are on the table. San and Joel agree the study begins with observation, with Adrian's protocol as the starting point for Renn and Mimi. Every finding will be copied for Devon."},
+    83: {label:'🧭 Review the Chart', objective:'Look over the chart and decide what to leave for the next captain.',
+         result:'Three places beyond the Central Gate are marked on the chart, with Aisyah\'s market days in the margin. Joel starts a copy for the harbor office, and every discovered destination stays on the travel list.'},
     63: {label:'📖 Match the Records', objective:"Match the Keeper's dispatch book to the West Gate records.",
          result:'The same operation bought the Storm Shelf coupling and held the South Gate order under SV-7740. A separate entry schedules a service delivery at the Central Gate. The coupling investigation is closed, and the Central Gate lead is open.'}
   };
 
   // Objective text for chapters with no check button or fight.
+  // Side chapters: read from somewhere other than the story chain, so
+  // they never block it. Ch.081 (id 82) is the first Black Pearl
+  // briefing: it opens from Research Team -> Black Pearl Study once the
+  // reports are in and the player is at Fair Tide, so the research timer
+  // never holds up Ch.082 or the next voyage. (black-pearl-research.js
+  // supplies ready()/reason().)
+  const CH_SIDE = {
+    82: {
+      ready: function(){ return typeof window.blackPearlBriefingReady === 'function' && window.blackPearlBriefingReady(); },
+      reason: function(){ return (typeof window.blackPearlBriefingReason === 'function') ? window.blackPearlBriefingReason() : 'Not ready yet.'; }
+    }
+  };
+  window.CRIMSON_HORIZON_SIDE_IDS = Object.keys(CH_SIDE).map(Number);
+  // Chapters that open the next one automatically: the Prologue-003 run at
+  // sea, then landfall (004); and the voyage home (079) into Fair Tide (080).
+  const CH_CHAIN = [1, 2, 3, 4, 80];
+
   const CH_NOTES = {
     69: 'Stay on deck after the others go below, and tell Jade about the manuscript.'
   };
@@ -658,8 +740,7 @@
 
   function completeChapter(id){
     window.markCrimsonHorizonChapterRead(id);
-    // The Prologue-003 sequence plays at sea, in order, then landfall (004).
-    if (id >= 1 && id <= 4) {
+    if (CH_CHAIN.indexOf(id) !== -1) {
       setTimeout(function(){
         if (window.crimsonHorizonObjectiveState() === ('complete_crimson_horizon_chapter_' + (id + 1))) window.__ctReadCrimsonHorizonChapter(id + 1);
       }, 900);
@@ -672,7 +753,10 @@
     if (!ch) return;
     const done = !!prog()[id];
     if (!done) {
-      if (window.crimsonHorizonObjectiveState() !== ('complete_crimson_horizon_chapter_' + id)) { toast('🔒 Follow the current Objective first.'); return; }
+      const side = CH_SIDE[id];
+      if (side) {
+        if (window.crimsonHorizonObjectiveState() === null || !side.ready()) { toast(side.reason(), 3600); return; }
+      } else if (window.crimsonHorizonObjectiveState() !== ('complete_crimson_horizon_chapter_' + id)) { toast('🔒 Follow the current Objective first.'); return; }
       const portId = chapterPortId(id);
       if (portId && game.location !== portId && !(id <= 4 && game.location === 'harbor_beyond_charts')) {
         toast('⚓ Sail to ' + chPortName(portId) + ' to continue this chapter.', 3600);
@@ -703,7 +787,8 @@
 
   window.markCrimsonHorizonChapterRead = function(id){
     const so = window.crimsonHorizonObjectiveState();
-    if (so !== ('complete_crimson_horizon_chapter_' + id)) return;
+    const sideOk = !!(CH_SIDE[id] && so !== null && !(game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[id]) && CH_SIDE[id].ready());
+    if (so !== ('complete_crimson_horizon_chapter_' + id) && !sideOk) return;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
     game.comicProgressCrimsonHorizon[id] = true;
     const ch = chById(id);
@@ -714,6 +799,8 @@
     // Ch.067 (id 68): the provisions run for the outer island is set up;
     // the next batch reads this when the outer island opens.
     if (id === 68) game.crimsonHorizonProvisionsRunReady = true;
+    // Ch.081 (id 82): the first Black Pearl briefing is held.
+    if (id === 82 && typeof window.onPearlBriefingHeld === 'function') window.onPearlBriefingHeld();
     // Ch.074 (id 75): San points at a neighbouring island seen from the
     // ridge; reserved for a future arrival (not a port yet).
     if (id === 75) game.crimsonHorizonNeighbourIslandSet = true;
@@ -736,7 +823,7 @@
   const oldTriggerArrivalStoryForCH = window.triggerArrivalStory;
   window.triggerArrivalStory = function(portId){
     if (oldTriggerArrivalStoryForCH) oldTriggerArrivalStoryForCH.apply(this, arguments);
-    if (CH_PORT_IDS.indexOf(portId) === -1) return;
+    if (CH_PORT_IDS.indexOf(portId) === -1 && portId !== 'fair_tide') return;
     setTimeout(function(){
       const ch = currentChapter();
       if (ch && game.location === portId && chapterPortId(ch.id) === portId) window.__ctReadCrimsonHorizonChapter(ch.id);
@@ -782,14 +869,16 @@
     }
     CRIMSON_HORIZON_CHAPTERS.forEach(function(ch){
       const done = !!prog()[ch.id];
-      const ready = !done && so === ('complete_crimson_horizon_chapter_' + ch.id);
+      const side = CH_SIDE[ch.id];
+      const ready = !done && (side ? (so !== null && side.ready()) : so === ('complete_crimson_horizon_chapter_' + ch.id));
       const portId = chapterPortId(ch.id);
       const docked = !portId || game.location === portId || (ch.id <= 4 && game.location === 'harbor_beyond_charts');
-      const status = done ? '✓ COMPLETE' : (ready ? 'CURRENT' : '🔒 LOCKED');
+      const status = done ? '✓ COMPLETE' : (ready ? (side ? 'AVAILABLE' : 'CURRENT') : (side ? '⏳ WAITING' : '🔒 LOCKED'));
       let action;
       if (done) action = '<button class="btn btn-small" onclick="__ctReadCrimsonHorizonChapter(' + ch.id + ')">↺ Replay</button>';
       else if (ready && docked) action = '<button class="btn btn-small btn-success" onclick="__ctReadCrimsonHorizonChapter(' + ch.id + ')">📖 Read Chapter</button>';
       else if (ready) action = '<button class="btn btn-small btn-magic" onclick="sailTo(\'' + portId + '\')">⛵ Sail to ' + esc(chPortName(portId)) + '</button>';
+      else if (side) action = '<div class="story-chip">' + esc(side.reason()) + '</div>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item ' + (done ? 'completed' : (ready ? 'active' : '')) + '"><strong>' + esc(ch.title) + '</strong><br>' +
         '<span style="font-size:.74rem;opacity:.7;">' + esc(chapterPlace(ch.id)) + '</span><br>' +
@@ -797,7 +886,7 @@
         '<span style="font-size:.78rem;">' + status + '</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +' + ch.xp + '</span><div class="story-actions">' + action + '</div></article>';
     });
     if (so === 'crimson_horizon_part1_complete_for_now') {
-      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. The neighbouring island is next — check back soon.</div></div>';
+      html += '<div class="story-chapter" style="margin-top:8px;"><div class="story-chapter-sub">✓ All available Crimson Horizon chapters read so far. The next voyage is next — check back soon.</div></div>';
     }
     html += '</section>';
     container.insertAdjacentHTML('beforeend', html);
