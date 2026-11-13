@@ -88,7 +88,7 @@
 
   window.arc18ObjectiveState = function(){
     if (!game.arc17Complete) return null;
-    if (level() < 270) return null;
+    if (level() < 215) return null;
     game.comicProgress18 = game.comicProgress18 || {};
     for (const ch of ARC18_CHAPTERS) {
       if (!game.comicProgress18[ch.id]) return 'complete_arc18_chapter_' + ch.id;
@@ -175,7 +175,7 @@
       '<div class="story-act-tagline">If we discover a way between worlds, who has the right to decide where it leads?</div></div>';
     if (!arc18Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XVIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc17Complete ? 'Finish Arc XVII first.' : 'Reach Level 270 to begin.')+'</div></div></section>';
+        (!game.arc17Complete ? 'Finish Arc XVII first.' : 'Reach Level 215 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

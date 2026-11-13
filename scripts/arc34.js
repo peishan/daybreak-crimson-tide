@@ -112,7 +112,7 @@
 
   window.arc34ObjectiveState = function(){
     if (!game.arc33Complete) return null;
-    if (level() < 510) return null;
+    if (level() < 375) return null;
     game.comicProgress34 = game.comicProgress34 || {};
     for (const ch of ARC34_CHAPTERS) {
       if (!game.comicProgress34[ch.id]) return 'complete_arc34_chapter_' + ch.id;
@@ -172,7 +172,7 @@
       '<div class="story-act-tagline">Two lives, already part of the family.</div></div>';
     if (!arc34Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXIV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc33Complete ? 'Finish Arc XXXIII first.' : 'Reach Level 510 to begin.')+'</div></div></section>';
+        (!game.arc33Complete ? 'Finish Arc XXXIII first.' : 'Reach Level 375 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

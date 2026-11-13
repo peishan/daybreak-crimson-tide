@@ -102,7 +102,7 @@
 
   window.arc38ObjectiveState = function(){
     if (!game.arc37Complete) return null;
-    if (level() < 570) return null;
+    if (level() < 415) return null;
     game.comicProgress38 = game.comicProgress38 || {};
     for (const ch of ARC38_CHAPTERS) {
       if (!game.comicProgress38[ch.id]) return 'complete_arc38_chapter_' + ch.id;
@@ -162,7 +162,7 @@
       '<div class="story-act-tagline">A life that never happened can still teach us something about the one we chose.</div></div>';
     if (!arc38Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXVIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc37Complete ? 'Finish Arc XXXVII first.' : 'Reach Level 570 to begin.')+'</div></div></section>';
+        (!game.arc37Complete ? 'Finish Arc XXXVII first.' : 'Reach Level 415 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

@@ -98,7 +98,7 @@
 
   window.arc33ObjectiveState = function(){
     if (!game.arc32Complete) return null;
-    if (level() < 495) return null;
+    if (level() < 365) return null;
     game.comicProgress33 = game.comicProgress33 || {};
     for (const ch of ARC33_CHAPTERS) {
       if (!game.comicProgress33[ch.id]) return 'complete_arc33_chapter_' + ch.id;
@@ -158,7 +158,7 @@
       '<div class="story-act-tagline">Family isn\'t just who you were born with.</div></div>';
     if (!arc33Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc32Complete ? 'Finish Arc XXXII first.' : 'Reach Level 495 to begin.')+'</div></div></section>';
+        (!game.arc32Complete ? 'Finish Arc XXXII first.' : 'Reach Level 365 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

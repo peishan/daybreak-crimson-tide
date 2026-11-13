@@ -129,7 +129,7 @@
 
   window.arc28ObjectiveState = function(){
     if (!game.arc27Complete) return null;
-    if (level() < 420) return null;
+    if (level() < 315) return null;
     game.comicProgress28 = game.comicProgress28 || {};
     for (const ch of ARC28_CHAPTERS) {
       if (!game.comicProgress28[ch.id]) return 'complete_arc28_chapter_' + ch.id;
@@ -189,7 +189,7 @@
       '<div class="story-act-tagline">Forgiveness does not automatically restore trust.</div></div>';
     if (!arc28Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXVIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc27Complete ? 'Finish Arc XXVII first.' : 'Reach Level 420 to begin.')+'</div></div></section>';
+        (!game.arc27Complete ? 'Finish Arc XXVII first.' : 'Reach Level 315 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

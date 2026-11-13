@@ -46,7 +46,7 @@
   window.arc9ObjectiveState = function(){
     if (!game.arc8Complete) return null;
     // Continues the +15-per-arc pace from Arc VI (90) / VII (105) / VIII (120).
-    if (level() < 135) return null;
+    if (level() < 125) return null;
     game.comicProgress9 = game.comicProgress9 || {};
     for (const ch of ARC9_CHAPTERS) {
       if (!game.comicProgress9[ch.id]) return 'complete_arc9_chapter_' + ch.id;
@@ -159,7 +159,7 @@
   // Difficulty reuses the 'guardian' story-scaling curve in
   // scaleCrimsonEnemy() (tuned to a fixed story level rather than
   // whatever level the player happens to be at by the time they reach
-  // this chapter) pinned to Arc IX's own level gate (135), since this
+  // this chapter) pinned to Arc IX's own level gate (125), since this
   // is a guardian-tier spiritual threat in every way that matters
   // except the recruit-a-companion payoff guardians normally have.
   // -------------------------------------------------------------------
@@ -172,7 +172,7 @@
   window.startArc9Ch12Battle = function(){
     if (game.comicProgress9?.[12]) { toast('✓ Already complete.'); return; }
     if (window.arc9ObjectiveState() !== 'complete_arc9_chapter_12') { toast('🔒 Follow the current Objective first.'); return; }
-    const enemy = scaleCrimsonEnemy(ARC9_CH12_ENEMY, 'guardian', 135);
+    const enemy = scaleCrimsonEnemy(ARC9_CH12_ENEMY, 'guardian', 125);
     startCombat({ kind: 'arc9_ch12', key: 'arc9_ch12', enemy });
   };
 
@@ -207,7 +207,7 @@
       '<div class="story-act-tagline">Chapters 1-'+ARC9_CHAPTERS.length+' of 26. Some mysteries were beside us all along.</div></div>';
     if(!arc9Ready){
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc IX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc8Complete ? 'Finish Arc VIII first.' : 'Reach Level 135 to begin.')+'</div></div></section>';
+        (!game.arc8Complete ? 'Finish Arc VIII first.' : 'Reach Level 125 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

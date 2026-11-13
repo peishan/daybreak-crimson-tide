@@ -101,7 +101,7 @@
 
   window.arc32ObjectiveState = function(){
     if (!game.arc31Complete) return null;
-    if (level() < 480) return null;
+    if (level() < 355) return null;
     game.comicProgress32 = game.comicProgress32 || {};
     for (const ch of ARC32_CHAPTERS) {
       if (!game.comicProgress32[ch.id]) return 'complete_arc32_chapter_' + ch.id;
@@ -161,7 +161,7 @@
       '<div class="story-act-tagline">Life continues while the world changes.</div></div>';
     if (!arc32Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc31Complete ? 'Finish Arc XXXI first.' : 'Reach Level 480 to begin.')+'</div></div></section>';
+        (!game.arc31Complete ? 'Finish Arc XXXI first.' : 'Reach Level 355 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

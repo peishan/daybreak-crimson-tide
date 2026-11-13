@@ -100,7 +100,7 @@
 
   window.arc21ObjectiveState = function(){
     if (!game.arc20Complete) return null;
-    if (level() < 315) return null;
+    if (level() < 245) return null;
     game.comicProgress21 = game.comicProgress21 || {};
     for (const ch of ARC21_CHAPTERS) {
       if (!game.comicProgress21[ch.id]) return 'complete_arc21_chapter_' + ch.id;
@@ -160,7 +160,7 @@
       '<div class="story-act-tagline">A home isn\'t just a place you return to. It\'s a place that can keep going when you leave.</div></div>';
     if (!arc21Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc20Complete ? 'Finish Arc XX first.' : 'Reach Level 315 to begin.')+'</div></div></section>';
+        (!game.arc20Complete ? 'Finish Arc XX first.' : 'Reach Level 245 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

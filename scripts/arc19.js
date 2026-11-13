@@ -70,7 +70,7 @@
 
   window.arc19ObjectiveState = function(){
     if (!game.arc18Complete) return null;
-    if (level() < 285) return null;
+    if (level() < 225) return null;
     game.comicProgress19 = game.comicProgress19 || {};
     for (const ch of ARC19_CHAPTERS) {
       if (!game.comicProgress19[ch.id]) return 'complete_arc19_chapter_' + ch.id;
@@ -130,7 +130,7 @@
       '<div class="story-act-tagline">Before anything new — everything they never finished.</div></div>';
     if (!arc19Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XIX Locked</div><div class="story-chapter-sub">'+
-        (!game.arc18Complete ? 'Finish Arc XVIII first.' : 'Reach Level 285 to begin.')+'</div></div></section>';
+        (!game.arc18Complete ? 'Finish Arc XVIII first.' : 'Reach Level 225 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

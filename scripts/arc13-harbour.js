@@ -44,7 +44,7 @@
 
   window.arc13ObjectiveState = function(){
     if (!game.arc12Complete) return null;
-    if (level() < 195) return null;
+    if (level() < 165) return null;
     game.comicProgress13 = game.comicProgress13 || {};
     for (const ch of ARC13_CHAPTERS) {
       if (!game.comicProgress13[ch.id]) return 'complete_arc13_chapter_' + ch.id;
@@ -143,7 +143,7 @@
       '<div class="story-act-tagline">A world is not a backdrop. It is someone\'s home.</div></div>';
     if (!arc13Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc12Complete ? 'Finish Arc XII first.' : 'Reach Level 195 to begin.')+'</div></div></section>';
+        (!game.arc12Complete ? 'Finish Arc XII first.' : 'Reach Level 165 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

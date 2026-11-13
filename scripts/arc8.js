@@ -49,7 +49,7 @@
   window.arc8ObjectiveState = function(){
     if (!game.arc7Complete) return null;
     // Continues the +15-per-arc pace from Arc V (75) / VI (90) / VII (105).
-    if (level() < 120) return null;
+    if (level() < 115) return null;
     game.comicProgress8 = game.comicProgress8 || {};
     for (const ch of ARC8_CHAPTERS) {
       if (!game.comicProgress8[ch.id]) return 'complete_arc8_chapter_' + ch.id;
@@ -156,7 +156,7 @@
       '<div class="story-act-tagline">Chapters 1-'+ARC8_CHAPTERS.length+' of 24. The world is larger than the map.</div></div>';
     if(!arc8Ready){
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc VIII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc7Complete ? 'Finish Arc VII first.' : 'Reach Level 120 to begin.')+'</div></div></section>';
+        (!game.arc7Complete ? 'Finish Arc VII first.' : 'Reach Level 115 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

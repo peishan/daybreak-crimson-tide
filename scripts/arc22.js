@@ -110,7 +110,7 @@
 
   window.arc22ObjectiveState = function(){
     if (!game.arc21Complete) return null;
-    if (level() < 330) return null;
+    if (level() < 255) return null;
     game.comicProgress22 = game.comicProgress22 || {};
     for (const ch of ARC22_CHAPTERS) {
       if (!game.comicProgress22[ch.id]) return 'complete_arc22_chapter_' + ch.id;
@@ -170,7 +170,7 @@
       '<div class="story-act-tagline">Something new is growing.</div></div>';
     if (!arc22Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXII Locked</div><div class="story-chapter-sub">'+
-        (!game.arc21Complete ? 'Finish Arc XXI first.' : 'Reach Level 330 to begin.')+'</div></div></section>';
+        (!game.arc21Complete ? 'Finish Arc XXI first.' : 'Reach Level 255 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

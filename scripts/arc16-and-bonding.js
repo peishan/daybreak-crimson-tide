@@ -64,7 +64,7 @@
 
   window.arc16ObjectiveState = function(){
     if (!game.arc15Complete) return null;
-    if (level() < 240) return null;
+    if (level() < 195) return null;
     game.comicProgress16 = game.comicProgress16 || {};
     for (const ch of ARC16_CHAPTERS) {
       if (!game.comicProgress16[ch.id]) return 'complete_arc16_chapter_' + ch.id;
@@ -196,7 +196,7 @@
       '<div class="story-act-tagline">Just because we can take something, does that mean we should?</div></div>';
     if (!arc16Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XVI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc15Complete ? 'Finish Arc XV first.' : 'Reach Level 240 to begin.')+'</div></div></section>';
+        (!game.arc15Complete ? 'Finish Arc XV first.' : 'Reach Level 195 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

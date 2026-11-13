@@ -3,7 +3,7 @@
   // CRIMSON HORIZON -- ADVENTURES OF SAN AND JADE. The sequel proper,
   // picking up immediately after Crimson Tide's main campaign closes at
   // Arc XLII (game.arc42Complete, set by markArc42ChapterRead() at
-  // Ch.45). Gated at arc42Complete + Level 645 -- the next rung on the
+  // Ch.45). Gated at arc42Complete + Level 465 -- the next rung on the
   // same 15-per-arc ladder every arc since Arc XVII uses (Arc XLII itself
   // stayed at 630, same as the bridge chapter it continues directly
   // from; this is the first genuinely new threshold since). One single
@@ -123,7 +123,7 @@
   // arc4-cover-the-mist-straits.webp are each arc's own cover (ARC_META below, used in the act header);
   // crimson-horizon-cover.webp is the separate one-time splash
   // announcing the sequel, shown the instant Arc XLII completes
-  // regardless of the Level 645 chapter gate -- see
+  // regardless of the Level 465 chapter gate -- see
   // __ctShowCrimsonHorizonSplash below. Portraits for this sequel's new
   // look (San, Joel, Jade, Devon, Sky, Levi, Sally) live separately under
   // assets/portraits/sequel/, not yet wired into ALL_PARTY/CLASS_KIT.
@@ -431,7 +431,7 @@
 
   window.crimsonHorizonObjectiveState = function(){
     if (!game.arc42Complete) return null;
-    if (level() < 645) return null;
+    if (level() < 465) return null;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
     for (const ch of CRIMSON_HORIZON_CHAPTERS) {
       if (CH_SIDE[ch.id]) continue; // side chapters never hold up the chain
@@ -447,7 +447,7 @@
   // modals when the crew docks there; finishing a stage unlocks the
   // next destination.
   //
-  //   The Harbor Beyond the Charts  Prologue, 001-010  (Arc 42 + Lv 645)
+  //   The Harbor Beyond the Charts  Prologue, 001-010  (Arc 42 + Lv 465)
   //   Storm Shelf                   011-018, then 019-032 (second story
   //                                 stage, "Beneath the Storm Shelf")
   //   West Gate · Mist Straits      033-048
@@ -508,7 +508,7 @@
 
   function prog(){ return (game && game.comicProgressCrimsonHorizon) || {}; }
   const CH_PORT_UNLOCK = {
-    harbor_beyond_charts: function(){ return !!game.arc42Complete && level() >= 645; },
+    harbor_beyond_charts: function(){ return !!game.arc42Complete && level() >= 465; },
     storm_shelf: function(){ return !!prog()[11]; },     // Ch.010 read
     west_gate:   function(){ return !!prog()[33]; },     // Ch.032 read
     south_gate:  function(){ return !!prog()[49]; },     // Ch.048 read
@@ -769,7 +769,7 @@
     const f = CH_FIGHTS[id];
     if (!f || typeof startCombat !== 'function') return;
     if (typeof closeModal === 'function') closeModal();
-    const enemy = scaleCrimsonEnemy(f.enemy, 'guardian', 645);
+    const enemy = scaleCrimsonEnemy(f.enemy, 'guardian', 465);
     startCombat({ kind: 'crimson_horizon', key: String(id), enemy: enemy });
   }
 
@@ -927,7 +927,7 @@
     const container = document.getElementById('storyContent');
     if (!container) return;
     // The splash is purely an announcement the moment the main campaign
-    // ends -- independent of the Level 645 chapter gate below.
+    // ends -- independent of the Level 465 chapter gate below.
     const sequelAnnounced = !!game.arc42Complete;
     if (sequelAnnounced && !game.crimsonHorizonSplashSeen && typeof window.__ctShowCrimsonHorizonSplash === 'function') {
       window.__ctShowCrimsonHorizonSplash();
@@ -943,7 +943,7 @@
       '<div class="story-act-kicker">' + esc(meta.kicker) + '</div><div class="story-act-title">' + esc(meta.title) + '</div>' +
       '<div class="story-act-tagline">' + esc(meta.tagline) + '</div></div>';
     if (!chReady) {
-      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Crimson Horizon Locked</div><div class="story-chapter-sub">Reach Level 645 to begin.</div></div></section>';
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Crimson Horizon Locked</div><div class="story-chapter-sub">Reach Level 465 to begin.</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

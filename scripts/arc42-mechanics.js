@@ -37,7 +37,7 @@
   // ===========================================================================
   // 1. FRONTIER FIGHT
   // ===========================================================================
-  const ARC42_FRONTIER_LEVEL = 630;
+  const ARC42_FRONTIER_LEVEL = 455;
   const ARC42_FRONTIER_ENEMY = {
     name: 'Something Restless at the Frontier', icon: '🐺', hp: 1200, dmg: 45, xp: 620, gold: 320,
     desc: "Territorial, not malicious -- the kind of trouble a frontier always has a little of. Nothing Lunareth's own heaviest hitters would bother clearing their schedule for, but real enough to actually test how two crews fight side by side."

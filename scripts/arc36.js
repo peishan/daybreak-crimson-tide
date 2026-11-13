@@ -101,7 +101,7 @@
 
   window.arc36ObjectiveState = function(){
     if (!game.arc35Complete) return null;
-    if (level() < 540) return null;
+    if (level() < 395) return null;
     game.comicProgress36 = game.comicProgress36 || {};
     for (const ch of ARC36_CHAPTERS) {
       if (!game.comicProgress36[ch.id]) return 'complete_arc36_chapter_' + ch.id;
@@ -161,7 +161,7 @@
       '<div class="story-act-tagline">Children change a home simply by growing within it.</div></div>';
     if (!arc36Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXVI Locked</div><div class="story-chapter-sub">'+
-        (!game.arc35Complete ? 'Finish Arc XXXV first.' : 'Reach Level 540 to begin.')+'</div></div></section>';
+        (!game.arc35Complete ? 'Finish Arc XXXV first.' : 'Reach Level 395 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

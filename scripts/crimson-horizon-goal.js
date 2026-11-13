@@ -3,7 +3,7 @@
   // CRIMSON HORIZON OBJECTIVE BANNER -- the Current Objective banner's
   // chain of arc labels ends at Arc XLII, so after the main story it gave
   // no hint of what to do next. Once Arc XLII is complete this shows the
-  // sequel's next step instead: reach Level 645, sail to the chapter's
+  // sequel's next step instead: reach Level 465, sail to the chapter's
   // port, or open Story. It runs after the existing banner has rendered
   // and only replaces it in that situation.
   // -------------------------------------------------------------------
@@ -20,8 +20,8 @@
     const so = window.crimsonHorizonObjectiveState();
     let title, text, button = '';
     if (so === null) {
-      title = 'Crimson Horizon — Reach Level 645';
-      text = 'Level ' + level() + ' / 645. The next voyage opens at Level 645: earn XP from the Reach, raids, bounties and trading.';
+      title = 'Crimson Horizon — Reach Level 465';
+      text = 'Level ' + level() + ' / 465. The next voyage opens at Level 465: earn XP from the Reach, raids, bounties and trading.';
     } else if (so === 'crimson_horizon_part1_complete_for_now') {
       title = 'Crimson Horizon — All Caught Up';
       text = 'Every available chapter is read. More is on the way.';

@@ -200,7 +200,7 @@
 
   window.arc14ObjectiveState = function(){
     if (!game.arc13Complete) return null;
-    if (level() < 210) return null;
+    if (level() < 175) return null;
     game.comicProgress14 = game.comicProgress14 || {};
     for (const ch of ARC14_CHAPTERS) {
       if (!game.comicProgress14[ch.id]) return 'complete_arc14_chapter_' + ch.id;
@@ -291,7 +291,7 @@
       '<div class="story-act-tagline">The sea is not empty. It is home to someone.</div></div>';
     if (!arc14Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XIV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc13Complete ? 'Finish Arc XIII first.' : 'Reach Level 210 to begin.')+'</div></div></section>';
+        (!game.arc13Complete ? 'Finish Arc XIII first.' : 'Reach Level 175 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

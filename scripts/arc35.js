@@ -104,7 +104,7 @@
 
   window.arc35ObjectiveState = function(){
     if (!game.arc34Complete) return null;
-    if (level() < 525) return null;
+    if (level() < 385) return null;
     game.comicProgress35 = game.comicProgress35 || {};
     for (const ch of ARC35_CHAPTERS) {
       if (!game.comicProgress35[ch.id]) return 'complete_arc35_chapter_' + ch.id;
@@ -164,7 +164,7 @@
       '<div class="story-act-tagline">A new generation begins.</div></div>';
     if (!arc35Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XXXV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc34Complete ? 'Finish Arc XXXIV first.' : 'Reach Level 525 to begin.')+'</div></div></section>';
+        (!game.arc34Complete ? 'Finish Arc XXXIV first.' : 'Reach Level 385 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }

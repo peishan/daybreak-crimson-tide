@@ -43,7 +43,7 @@
 
   window.arc15ObjectiveState = function(){
     if (!game.arc14Complete) return null;
-    if (level() < 225) return null;
+    if (level() < 185) return null;
     game.comicProgress15 = game.comicProgress15 || {};
     for (const ch of ARC15_CHAPTERS) {
       if (!game.comicProgress15[ch.id]) return 'complete_arc15_chapter_' + ch.id;
@@ -131,7 +131,7 @@
       '<div class="story-act-tagline">A people are more than the shape they take.</div></div>';
     if (!arc15Ready) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc XV Locked</div><div class="story-chapter-sub">'+
-        (!game.arc14Complete ? 'Finish Arc XIV first.' : 'Reach Level 225 to begin.')+'</div></div></section>';
+        (!game.arc14Complete ? 'Finish Arc XIV first.' : 'Reach Level 185 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
