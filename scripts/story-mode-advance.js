@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V427 · Crimson Horizon Arc VII Ch.070-074 (The Outer Island Run)';
+window.__CT_BUILD__='V428 · Fair Tide Research Team tab + Fen/Adrian portraits';

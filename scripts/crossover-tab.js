@@ -122,13 +122,18 @@
   ];
   window.TRIBUTE_CROSSOVER_CAST = TRIBUTE_CROSSOVER_CAST;
 
+  // Portraits drawn so far (everyone else keeps the emoji icon).
+  const CROSSOVER_PORTRAITS = { fen:'assets/portraits/fen.png', adrian:'assets/portraits/adrian.png' };
+
   function renderTributeRosterPanel(){
     const visible = TRIBUTE_CROSSOVER_CAST.filter(function(c){ return !c.eligible || c.eligible(); });
     if (!visible.length) return '';
     let html = '<div class="panel-title" style="margin-top:16px;">🌉 Lunareth — The Tribute Cast</div>'+
       '<p style="font-size:.8rem;opacity:.75;margin-bottom:8px;">Not recruited, not relocated — trusted friends on the other side of the Horizon.</p>';
     visible.forEach(function(c){
-      html += '<article class="quest-item"><strong>'+c.icon+' '+esc(c.name)+'</strong> — <span style="opacity:.8;">'+esc(c.connection)+'</span><br>'+
+      const pt = CROSSOVER_PORTRAITS[c.id];
+      const ptHtml = pt ? '<img src="'+pt+'" alt="" onerror="this.remove()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 20%;float:left;margin:0 10px 4px 0;">' : '';
+      html += '<article class="quest-item">'+ptHtml+'<strong>'+(pt ? '' : c.icon+' ')+esc(c.name)+'</strong> — <span style="opacity:.8;">'+esc(c.connection)+'</span><br>'+
         '<span style="font-size:.8rem;opacity:.8;">'+esc(c.desc)+'</span></article>';
     });
     return html;
