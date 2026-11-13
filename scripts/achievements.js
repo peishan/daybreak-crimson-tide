@@ -144,10 +144,11 @@
     {id:'a_gift_shared', name:'A Gift Shared', icon:'⏳', desc:"Five of the crew, rejuvenated — the Fountain wasn't just for the two who found it first.",
       check: function(){ return !!(game.rejuvenated && Object.keys(game.rejuvenated).filter(function(id){ return game.rejuvenated[id]; }).length >= 5); }},
 
-    // --- A level milestone past every arc's own gate (Arc XXIII, the
-    // highest current gate, only asks for 345) ---
-    {id:'past_every_gate', name:'Past Every Gate', icon:'⭐', desc:'Level 400 — further than any story gate has asked San to go.',
-      check: function(){ return (typeof level === 'function' ? level() : 0) >= 400; }},
+    // --- A level milestone past every story gate (the highest, Crimson
+    // Horizon, asks for 465; see story-xp-rebalance.js). Already-earned
+    // achievements stay earned. ---
+    {id:'past_every_gate', name:'Past Every Gate', icon:'⭐', desc:'Level 500 — further than any story gate has asked San to go.',
+      check: function(){ return (typeof level === 'function' ? level() : 0) >= 500; }},
 
     // --- Arc completions, VI through XXIII (Arcs I-V predate the
     // arcNComplete flag convention and don't have a single clean "done"

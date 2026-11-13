@@ -34,11 +34,9 @@
   // Suzie, Chiu May, and Intan ("Tan" -- Mimi's own nickname for her,
   // not her choice) are explicitly NOT Steady Reach crew -- former TM
   // colleagues who appear from Arc XXXIX onwards per San's own note.
-  // No dedicated introduction chapter exists yet to gate them on, so
-  // they share the same game.lewisAllyCaptain gate as the rest of this
-  // network for now (the earliest point this whole "former colleagues"
-  // thread is actually live) -- re-gate to their own chapter flag once
-  // one exists. Kept deliberately light on personality, same restraint
+  // They are introduced in Arc XXXIX Ch.13 ("Chiu May"), so they appear
+  // here once that chapter is read (comicProgress39[13]), not as soon as
+  // Lewis arrives. Kept deliberately light on personality, same restraint
   // as Wei Liang's own "not yet fully established" -- nothing invented
   // beyond what San's own note actually said about them.
   //
@@ -96,15 +94,15 @@
     {id:'suzie', name:'Suzie', icon:'🧾',
       connection:"A former TM colleague — not part of Lewis's crew.",
       desc:"Her own place in Veyren is still taking shape.",
-      eligible: function(){ return !!game.lewisAllyCaptain; }},
+      eligible: function(){ return !!(game.comicProgress39 && game.comicProgress39[13]); }},
     {id:'chiu_may', name:'Chiu May', icon:'🗂️',
       connection:"A former manager at TM, from the same old workplace.",
       desc:"Carries herself with the same quiet authority she always did.",
-      eligible: function(){ return !!game.lewisAllyCaptain; }},
+      eligible: function(){ return !!(game.comicProgress39 && game.comicProgress39[13]); }},
     {id:'intan', name:'Intan', icon:'🏷️',
       connection:"Part of Suzie's circle back at TM.",
       desc:"Still gets called \"Tan\" by anyone who already knew her before Veyren — Mimi's nickname for her, never her own choice.",
-      eligible: function(){ return !!game.lewisAllyCaptain; }}
+      eligible: function(){ return !!(game.comicProgress39 && game.comicProgress39[13]); }}
   ];
   window.FAIR_TIDE_ALLY_NETWORK = FAIR_TIDE_ALLY_NETWORK;
 
