@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V432 · Combat header + Quests tab overlap fixes';
+window.__CT_BUILD__='V433 · Crimson Horizon Arc VIII Ch.075-082 + Pearl briefing as Ch.081 + round 2';
