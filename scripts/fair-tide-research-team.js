@@ -11,10 +11,11 @@
   //     identical to doing it on the Archive screen, nothing is
   //     duplicated or reset.
   //   Fen, Adrian -- the research-team additions the sequel leans on.
-  //     They have no project list yet; their rows show who they are until
-  //     Black Pearl projects exist. Nothing about the Pearl is invented
-  //     here -- the log below is the existing Black Pearl log
-  //     (arc42-mechanics.js), unchanged.
+  //     They are researchers too (scripts/black-pearl-research.js adds
+  //     them to the same system with their Black Pearl assignments), shown
+  //     once they have arrived. The Black Pearl Study panel below is the
+  //     Black Pearl log (arc42-mechanics.js) plus the report checklist and
+  //     the Attend Briefing button.
   //
   // Sera is a guest, not part of the team, so she is not listed here.
   //
@@ -28,10 +29,10 @@
     {id:'renn',   name:'Renn',   icon:'🔧', portrait:'assets/portraits/renn.png',   field:'', researcher:true},
     {id:'erynn',  name:'Erynn',  icon:'📜', portrait:'assets/portraits/erynn.png',  field:'', researcher:true},
     {id:'mimi',   name:'Mimi',   icon:'🔍', portrait:'assets/portraits/mimi.png',   field:'', researcher:true},
-    {id:'fen',    name:'Fen',    icon:'⚙️', portrait:'assets/portraits/fen.png',    field:'Records & charts',
+    {id:'fen',    name:'Fen',    icon:'⚙️', portrait:'assets/portraits/fen.png',    field:'Records & charts', researcher:true,
       note:'Traces couplings and old charts back to their source.',
       eligible:function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
-    {id:'adrian', name:'Adrian', icon:'🔧', portrait:'assets/portraits/adrian.png', field:'Scholar · R&D',
+    {id:'adrian', name:'Adrian', icon:'🔧', portrait:'assets/portraits/adrian.png', field:'Scholar · R&D', researcher:true,
       note:'A scholar\'s head for how the Horizon Engine actually works.',
       eligible:function(){ return !!(game.comicProgress42 && game.comicProgress42[31]); }}
   ];
@@ -108,6 +109,7 @@
     if (!bp || !bp.started || !bp.log.length) {
       return html + '<div class="rt-status" style="margin-top:4px;">Not opened yet. It begins once the Pearl is raised with Fair Tide\'s researchers.</div></div>';
     }
+    html += (typeof window.blackPearlStudyHtml === 'function') ? window.blackPearlStudyHtml() : '';
     const log = bp.log.slice().reverse();
     html += '<div class="rt-status" style="margin-top:4px;">' + esc(log[0].text) + '</div>';
     if (log.length > 1) {
