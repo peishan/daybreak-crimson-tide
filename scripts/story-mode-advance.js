@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V441 · Raid unlock levels rescaled to the new gate ladder';
+window.__CT_BUILD__='V442 · Allies & Guests tab (residents and wider allies off the Roster)';
