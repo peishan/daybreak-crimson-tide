@@ -2677,6 +2677,22 @@ body{
 <script src="scripts/stories-from-other-worlds.js"></script>
 <script src="scripts/ship-personality.js"></script>
 
+<style id="crewCardStyle">
+.roster-card{padding:10px 12px !important;margin-bottom:8px}
+.crew-row{display:flex;gap:10px;align-items:center}
+.roster-card .party-portrait-frame{width:56px;height:56px;border-radius:10px}
+.crew-main{flex:1;min-width:0}
+.crew-name{font-family:'Cinzel',serif;color:var(--gold);font-size:.95rem}
+.crew-chip{font-family:Lato,sans-serif;font-size:.62rem;margin-left:4px}
+.crew-sub{font-size:.72rem;opacity:.75}
+.crew-bars{display:flex;align-items:center;gap:6px;font-size:.64rem;margin-top:3px}
+.crew-bars .ship-stat-bar{flex:1;width:auto !important;height:6px;margin:0}
+.crew-act{flex:none;max-width:104px;text-align:right}
+.crew-act .btn{font-size:.66rem;padding:5px 8px;white-space:normal}
+.crew-act > div{font-size:.58rem !important;line-height:1.25;margin-top:3px !important}
+.crew-note{font-size:.72rem;margin-top:6px}
+.crew-more summary{font-size:.74rem;opacity:.7;cursor:pointer;margin-top:6px}
+</style>
 <style id="uiTightStyle">
 /* ============================================================
    UI TIGHTENING (phone) -- San: "a little big", too much scrolling.
@@ -2727,6 +2743,7 @@ body{
   body:has(#combatScreen.active) #ctQuestTrackerTab{display:none !important}
 }
 </style>
+<script src="scripts/crimson-horizon-crew.js"></script>
 <script src="scripts/crimson-horizon-goal.js"></script>
 <script src="scripts/archive-tabs.js"></script>
 <script src="scripts/auto-reach.js"></script>

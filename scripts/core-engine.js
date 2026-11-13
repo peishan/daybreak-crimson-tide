@@ -6569,24 +6569,35 @@ function renderPartyScreen() {
         ? `<div style="font-size:.72rem;opacity:.7;margin-top:4px;">${m.id === 'soel' ? '🐾 A familiar' : '💞 Bonded to San'} — never counts against the fielding cap.</div>`
         : '';
 
-      return `<div class="panel" style="${fielded?'':'opacity:.72;'}">
-        <div class="panel-title">${m.portrait} ${m.name} ${isTrainingLocked ? '<span style="font-size:.7rem;opacity:.7;">🎓 In Training</span>' : fielded ? '<span style="font-size:.7rem;color:var(--success);">⚔️ Fielded</span>' : '<span style="font-size:.7rem;opacity:.7;">⚓ At Fair Tide</span>'}</div>
-        <p style="font-size:0.85rem;opacity:0.8;margin-bottom:10px;">${m.desc}</p>
-        <div style="display:flex;gap:15px;margin-bottom:10px;">
-        <div style="flex:1;"><div style="font-size:0.8rem;color:var(--sand);">HP</div>
-        <div class="ship-stat-bar" style="width:100%;"><div class="ship-stat-fill" style="width:${hp/maxHp*100}%;background:#e74c3c;"></div></div>
-        <div style="font-size:0.75rem;">${hp}/${maxHp}</div></div>
-        ${m.mp > 0 ? `<div style="flex:1;"><div style="font-size:0.8rem;color:var(--sand);">MP</div>
-        <div class="ship-stat-bar" style="width:100%;"><div class="ship-stat-fill" style="width:${mp/maxMp*100}%;background:#3498db;"></div></div>
-        <div style="font-size:0.75rem;">${mp}/${maxMp}</div></div>` : ''}
+      // Compact roster card: portrait, status, bars and the fielding button on
+      // one row, everything else behind "Details" (phone-friendly; San: the
+      // long per-member panels meant a lot of scrolling).
+      const statusChip = isTrainingLocked ? '🎓 In Training' : fielded ? '⚔️ Fielded' : '⚓ At Fair Tide';
+      const statusColor = isTrainingLocked ? 'opacity:.7;' : fielded ? 'color:var(--success);' : 'opacity:.7;';
+      const lvText = (m.id !== 'soel' && typeof characterLevel === 'function') ? ' · Lv.' + characterLevel(m.id) : '';
+      const actionHtml = (isSan ? '' : isTrainingLocked ? `<div style="font-size:.78rem;opacity:.75;">🎓 ${(typeof window.trainingLockLabel === 'function' ? window.trainingLockLabel(m.id) : 'Not fieldable yet.')}</div>` : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' + freeSlotHint : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${freeSlotHint}`);
+      const isNote = actionHtml.indexOf('<button') === -1;
+      return `<div class="panel roster-card" style="${fielded?'':'opacity:.72;'}">
+        <div class="crew-row">
+          ${portraitMarkup(m, 'party')}
+          <div class="crew-main">
+            <div class="crew-name">${m.name} <span class="crew-chip" style="${statusColor}">${statusChip}</span></div>
+            <div class="crew-sub">${m.combatRole || m.role}${lvText}</div>
+            <div class="crew-bars"><div class="ship-stat-bar"><div class="ship-stat-fill" style="width:${hp/maxHp*100}%;background:#e74c3c;"></div></div><span>${hp}/${maxHp}</span></div>
+            ${m.mp > 0 ? `<div class="crew-bars"><div class="ship-stat-bar"><div class="ship-stat-fill" style="width:${mp/maxMp*100}%;background:#3498db;"></div></div><span>${mp}/${maxMp}</span></div>` : ''}
+          </div>
+          ${isNote ? '' : `<div class="crew-act">${actionHtml}</div>`}
         </div>
-        <div style="font-size:0.85rem;margin-bottom:8px;"><strong>Role:</strong> ${m.role} · ${m.combatRole}</div>
-        ${kit.skill ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Skill:</strong> ${kit.skill.icon} ${kit.skill.name}</div>` : ''}
-        ${spells.length ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Spells:</strong> ${spells.slice(0, 4).map(s => s.icon + ' ' + s.name).join(', ')}${spells.length > 4 ? '...' : ''}</div>` : ''}
-        ${affinity.n ? `<div style="font-size:0.85rem;margin-bottom:8px;color:#e8c96a;"><strong>Affinity:</strong> ${affinity.n}</div>` : ''}
-        ${trophy ? `<div style="font-size:0.85rem;margin-bottom:8px;"><strong>Equipped:</strong> ${trophy.icon} ${trophy.name} (${(TRINKET_BONUS[trophy.icon] && TRINKET_BONUS[trophy.icon].label) || ''})</div>` : ''}
-        ${isSan ? '' : isTrainingLocked ? `<div style="font-size:.78rem;opacity:.75;">🎓 ${(typeof window.trainingLockLabel === 'function' ? window.trainingLockLabel(m.id) : 'Not fieldable yet.')}</div>` : isRequired ? '<div style="font-size:.78rem;opacity:.75;">📖 Essential to the current story — can\'t be sent to Fair Tide right now.</div>' + freeSlotHint : `<button class="btn btn-small ${fielded?'btn-danger':'btn-success'}" onclick="toggleFielded('${m.id}')">${fielded ? '⚓ Send to Fair Tide' : '⚔️ Field for the Voyage'}</button>${freeSlotHint}`}
-        </div>`;
+        ${isNote && actionHtml ? `<div class="crew-note">${actionHtml}</div>` : ''}
+        <details class="crew-more"><summary>Details</summary>
+          <p style="font-size:0.85rem;opacity:0.8;margin:6px 0;">${m.desc}</p>
+          <div style="font-size:0.85rem;margin-bottom:6px;"><strong>Role:</strong> ${m.role} · ${m.combatRole}</div>
+          ${kit.skill ? `<div style="font-size:0.85rem;margin-bottom:6px;"><strong>Skill:</strong> ${kit.skill.icon} ${kit.skill.name}</div>` : ''}
+          ${spells.length ? `<div style="font-size:0.85rem;margin-bottom:6px;"><strong>Spells:</strong> ${spells.slice(0, 4).map(s => s.icon + ' ' + s.name).join(', ')}${spells.length > 4 ? '...' : ''}</div>` : ''}
+          ${affinity.n ? `<div style="font-size:0.85rem;margin-bottom:6px;color:#e8c96a;"><strong>Affinity:</strong> ${affinity.n}</div>` : ''}
+          ${trophy ? `<div style="font-size:0.85rem;margin-bottom:6px;"><strong>Equipped:</strong> ${trophy.icon} ${trophy.name} (${(TRINKET_BONUS[trophy.icon] && TRINKET_BONUS[trophy.icon].label) || ''})</div>` : ''}
+        </details>
+      </div>`;
     }).join('') + '</div>';
   container.innerHTML = html;
 }
