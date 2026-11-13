@@ -337,7 +337,7 @@
     if(game.comicProgress4[id]){ toast('✓ Already marked read.'); return; }
     if(window.arc4ObjectiveState() !== 'complete_arc4_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress4[id] = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0)+1;
     logEvent('📖 Arc 4 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

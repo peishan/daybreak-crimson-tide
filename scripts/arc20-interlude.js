@@ -86,7 +86,7 @@
     if (id === INTERLUDE_CHAPTERS.length) game.arc20InterludeComplete = true;
     const ch = INTERLUDE_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     if (INTERLUDE_CHAPTER_SCENES[id]) {

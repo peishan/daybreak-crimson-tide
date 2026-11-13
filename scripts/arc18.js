@@ -133,7 +133,7 @@
     }
     const ch = ARC18_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     if (ARC18_CHAPTER_SCENES[id]) {

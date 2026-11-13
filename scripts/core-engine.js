@@ -4419,7 +4419,7 @@ function upgradeShip(type, cost) {
 // ---------------------------------------------------------------------------
 // XP / LEVEL
 // ---------------------------------------------------------------------------
-function gainXP(amount) {
+function gainXP(amount, opts) {
   const before = level();
   const beforeObjective = objectiveState();
   // Reputation rank XP bonus (see ct-build-v91-reputation-ranks) — applied
@@ -4428,7 +4428,10 @@ function gainXP(amount) {
   // in practice no chapter/boss grant is anywhere near 5000 to begin with.
   const xpBonus = (typeof window.getReputationBonus === 'function') ? window.getReputationBonus('xpBonus') : 0;
   if (xpBonus > 0) amount = Math.round(amount * (1 + xpBonus));
-  game.xpTotal += Math.max(0, Math.min(amount, 5000));
+  // Story chapter grants pass {uncapped:true} (see gainStoryXP): chapter XP is sized
+  // to the arc's level band and can exceed the 5000 single-grant cap that still
+  // applies to everything else (raids, bounties, auto-reach...).
+  game.xpTotal += Math.max(0, (opts && opts.uncapped) ? amount : Math.min(amount, 5000));
   const after = level();
   if (after > before) {
     logEvent('⭐ LEVEL UP! Now level ' + after + '!', 'gold');
@@ -4447,6 +4450,8 @@ function gainXP(amount) {
   try { if (document.getElementById('storyScreen')?.classList.contains('active')) renderStory(); } catch(e) {}
   saveGameQuiet();
 }
+
+function gainStoryXP(amount) { return gainXP(amount, {uncapped:true}); }
 
 // ---------------------------------------------------------------------------
 // COMBAT SYSTEM

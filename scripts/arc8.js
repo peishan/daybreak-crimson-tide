@@ -114,7 +114,7 @@
     if (id === 18) game.arc8Residue = true; // the magical residue brought back from the island
     if (id === 23) game.horizonEngineNamed = true; // the research project has a name, nothing built yet
     if (id === 24) { game.arc8Complete = true; game.arc8DragonVisionSeen = true; }
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
     logEvent('📖 Arc 8 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

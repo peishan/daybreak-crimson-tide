@@ -100,7 +100,7 @@
       game.arc10Complete = true;
       game.horizonEnginePrototype = true; // "Arc 10 unlock: Horizon Engine — Prototype" per the outline's stated outcome
     }
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
     logEvent('📖 Arc X Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
@@ -258,7 +258,7 @@
     if (id === 18) game.destinationAnchorRequired = true; // can't build the anchor from Veyren's side alone
     if (id === 19) game.firstOneWayTransferSuccess = true; // the metal plate — first thing sent through that didn't just bounce back
     if (id === 20) game.otherSideRespondedDeliberately = true; // the second symbol, and Mimi's "wait"
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
     if (id === 24) game.arc11Complete = true; // "Arc 11 unlock" — ready for Arc 12: The First Crossing
     logEvent('📖 Arc XI Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
@@ -409,7 +409,7 @@
     if(window.arc12ObjectiveState() !== 'complete_arc12_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress12[id] = true;
     if (id === 24) game.arc12Complete = true; // "Arc 12 unlock" — ready for Arc XIII
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XII Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
@@ -634,7 +634,7 @@
     if (game.comicProgressMemoryArchive[id]) { toast('✓ Already marked read.'); return; }
     if (window.memoryArchiveObjectiveState() !== 'complete_memoryarchive_chapter_' + id) { toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgressMemoryArchive[id] = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation || 0) + 1;
     logEvent('📖 Memory Archive · Chapter ' + id + ' complete: ' + ch.title + ' · +' + ch.xp + ' XP', 'gold');
     toast('📖 Chapter ' + id + ' complete! +' + ch.xp + ' Story XP');

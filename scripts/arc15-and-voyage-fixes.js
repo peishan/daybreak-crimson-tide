@@ -93,7 +93,7 @@
     if (id === 10 && typeof window.unlockClanSection === 'function') window.unlockClanSection('community'); // "The Festival of Forms" — scene text: "families gathered", a genuine communal celebration
     if (id === 17 && typeof window.unlockClanSection === 'function') window.unlockClanSection('requests'); // "A Problem Between Neighbours" — scene text explicitly opens with "The request comes..."
     if (id === 24) game.arc15Complete = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XV Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

@@ -105,7 +105,7 @@
       game.arc13Complete = true;
       if (typeof window.unlockHarbourSection === 'function') { window.unlockHarbourSection('market'); window.unlockHarbourSection('trade'); }
     }
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XIII Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

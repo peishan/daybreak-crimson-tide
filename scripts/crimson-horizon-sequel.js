@@ -867,7 +867,7 @@
     game.comicProgressCrimsonHorizon[id] = true;
     const ch = chById(id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     // Ch.067 (id 68): the provisions run for the outer island is set up;

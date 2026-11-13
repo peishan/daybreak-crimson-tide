@@ -93,7 +93,7 @@
     const state = window.arc2ObjectiveState();
     if(state !== 'complete_arc2_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress2[id] = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0)+1;
     logEvent('📖 Arc 2 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

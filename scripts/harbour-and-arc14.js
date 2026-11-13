@@ -253,7 +253,7 @@
     if (id === 9) game.soelSpiritCurrentContext = true; // new framing for Soel's abilities, from outside the Farseer records entirely
     if (id === 22) game.soelRecognizedAsUnusual = true; // the aquatic people's own read on him — not one of theirs, not an ordinary surface animal, origin still unknown
     if (id === 24) game.arc14Complete = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XIV Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

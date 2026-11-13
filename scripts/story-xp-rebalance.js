@@ -3,29 +3,33 @@
   // STORY XP REBALANCE.
   //
   // The early story arcs were written with token chapter XP (150-560 per
-  // chapter), which is ~1-2% of what it costs to climb to the next arc's
-  // level gate. Reading the story should be a real part of levelling, so
-  // this rewrites each chapter's `xp` at load: every arc is given a share
-  // (SHARE) of the XP between its own level gate and the next one, spread
-  // over its chapters in proportion to their original weights.
+  // chapter), roughly 1-2% of what it costs to climb to the next arc's level
+  // gate. Crimson Moon and Tribute size story XP so that reading the story
+  // IS the level curve (Crimson Moon: STORY_PACE, one level per chapter);
+  // grinding and side content are the optional way to get ahead. This does
+  // the same here: each arc's chapters together pay the full XP between the
+  // arc's own level gate and the next one (SHARE = 1), split by the original
+  // chapter weights. Read an arc start to finish and you arrive at the next
+  // gate; fight, trade and raid and you arrive ahead of it.
   //
   //   * Runs at load, after every arc script. The arc scripts keep their
-  //     own `xp` literals and read `ch.xp` at the moment a chapter is
-  //     claimed, so the in-chapter "Story XP: +N" follows automatically.
-  //   * Chapters already claimed in a save stay claimed; nothing is
-  //     re-granted or clawed back. Only chapters read from now on pay more.
-  //   * No chapter ever drops below its original XP, and none exceeds
-  //     PER_CHAPTER_CAP -- the same 5000 ceiling gainXP() applies to any
-  //     single grant, so nothing is silently wasted.
-  //   * Short arcs hit the cap before they hit their share; that is
-  //     intended (the cap is the limit, not the share).
+  //     own `xp` literals and read `ch.xp` when a chapter is claimed, so the
+  //     in-chapter "Story XP: +N" follows automatically.
+  //   * Chapter grants use gainStoryXP (core-engine), which skips the
+  //     5000-per-grant cap. That cap is unchanged for everything else.
+  //   * No chapter ever drops below its original XP.
+  //   * Version 1 of this (35% share, 5000 cap) shipped first; its values
+  //     are still computed so saves that already received that catch-up are
+  //     only paid the difference.
   //
-  // Level gates themselves sit in the arc scripts (+10 levels per arc from
+  // Per-arc level gates sit in the arc scripts (+10 levels per arc from
   // Arc VII at Level 105 up to Arc XLII at Level 455, Crimson Horizon at
   // 465).
   // -------------------------------------------------------------------
-  const SHARE = 0.35;
-  const PER_CHAPTER_CAP = 5000;
+  const SHARE = 1.0;
+  const PER_CHAPTER_CAP = 100000;      // sanity bound only
+  const V1_SHARE = 0.35, V1_CAP = 5000; // the first version, for catch-up maths
+  const VERSION = 2;
   const ROUND_TO = 10;
 
   function xpTo(l){ return 50 * (l - 1) * l; }   // matches core-engine xpForLevel
@@ -66,32 +70,34 @@
     const lists = seg.names.map(function(n){ return window[n]; }).filter(function(a){ return Array.isArray(a) && a.length; });
     if (!lists.length) return;
     let weight = 0;
-    lists.forEach(function(a){ a.forEach(function(ch){ weight += (+ch.xp || 0); }); });
+    lists.forEach(function(a){ a.forEach(function(ch){ if (ch.__xpOrig == null) ch.__xpOrig = +ch.xp || 0; weight += ch.__xpOrig; }); });
     if (!weight) return;
-    const budget = SHARE * (xpTo(seg.hi) - xpTo(seg.lo));
+    const band = xpTo(seg.hi) - xpTo(seg.lo);
     let total = 0;
     lists.forEach(function(a){
       a.forEach(function(ch){
-        const orig = +ch.xp || 0;
-        if (!orig) return;
-        if (ch.__xpOrig == null) ch.__xpOrig = orig;       // idempotent if loaded twice
-        const base = ch.__xpOrig;
-        const next = Math.min(PER_CHAPTER_CAP, Math.max(base, round(budget * base / weight)));
-        ch.xp = next;
-        total += next;
+        const base = ch.__xpOrig;                        // idempotent if loaded twice
+        if (!base) return;
+        ch.__xpV1 = Math.min(V1_CAP, Math.max(base, round(V1_SHARE * band * base / weight)));
+        ch.xp = Math.min(PER_CHAPTER_CAP, Math.max(base, round(SHARE * band * base / weight)));
+        total += ch.xp;
       });
     });
-    report.push({lo:seg.lo, hi:seg.hi, arrays:seg.names.join('+'), total:total, budget:Math.round(budget)});
+    report.push({lo:seg.lo, hi:seg.hi, arrays:seg.names.join('+'), total:total, budget:Math.round(SHARE * band)});
   });
-  window.STORY_XP_REBALANCE = {share:SHARE, perChapterCap:PER_CHAPTER_CAP, segments:report};
+  window.STORY_XP_REBALANCE = {share:SHARE, version:VERSION, segments:report};
 
   // -------------------------------------------------------------------
   // ONE-TIME CATCH-UP for saves made before this rebalance.
   //
-  // A chapter that was already read paid its old (small) XP. The first
-  // time such a save is shown after loading, it is paid the difference
-  // (new XP minus original XP) for every chapter it has already read, then
-  // `game.storyXpRebalanced` is set so it never runs again.
+  // A chapter that was already read paid its old XP. The first time such a
+  // save is shown after loading, it is paid the difference between the
+  // current chapter XP and what that chapter paid, for every chapter it has
+  // already read, then `game.storyXpRebalanced` is set to VERSION so it
+  // never runs again.
+  //   flag missing  -> chapters paid their original XP
+  //   flag === true -> version 1 (35% share) already paid its catch-up, and
+  //                    chapters read since paid the version 1 amounts
   //
   // A brand-new voyage has no read chapters on its first refresh, so it
   // simply gets the flag with nothing to pay -- and everything it reads
@@ -121,7 +127,8 @@
         if (!Array.isArray(list) || !done) return;
         list.forEach(function(ch){
           if (!done[ch.id] || ch.__xpOrig == null) return;
-          owed += Math.max(0, (+ch.xp || 0) - ch.__xpOrig);
+          const paid = (game.storyXpRebalanced === true) ? ch.__xpV1 : ch.__xpOrig;
+          owed += Math.max(0, (+ch.xp || 0) - (paid || ch.__xpOrig));
         });
       });
     });
@@ -129,9 +136,9 @@
   };
 
   window.applyStoryXpCatchup = function(){
-    if (typeof game === 'undefined' || !game || game.storyXpRebalanced) return 0;
+    if (typeof game === 'undefined' || !game || game.storyXpRebalanced === VERSION) return 0;
     const owed = window.storyXpCatchupOwed();
-    game.storyXpRebalanced = true;
+    game.storyXpRebalanced = VERSION;
     if (owed > 0) {
       const before = (typeof level === 'function') ? level() : 0;
       game.xpTotal = (Number(game.xpTotal) || 0) + owed;
@@ -150,7 +157,7 @@
   const oldUpdateUI = window.updateUI;
   if (typeof oldUpdateUI === 'function') {
     window.updateUI = function(){
-      try { if (typeof gameSessionActive !== 'undefined' && gameSessionActive && !game.storyXpRebalanced) window.applyStoryXpCatchup(); } catch(e) {}
+      try { if (typeof gameSessionActive !== 'undefined' && gameSessionActive && game.storyXpRebalanced !== VERSION) window.applyStoryXpCatchup(); } catch(e) {}
       return oldUpdateUI.apply(this, arguments);
     };
   }

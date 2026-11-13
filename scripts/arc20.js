@@ -134,7 +134,7 @@
     if (id === 24) game.arc20Complete = true;
     const ch = ARC20_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     if (ARC20_CHAPTER_SCENES[id]) {

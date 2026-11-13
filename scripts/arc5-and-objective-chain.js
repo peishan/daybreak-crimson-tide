@@ -102,7 +102,7 @@
     if(game.comicProgress5[id]){ toast('✓ Already marked read.'); return; }
     if(window.arc5ObjectiveState() !== 'complete_arc5_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress5[id] = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0)+1;
     logEvent('📖 Arc 5 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

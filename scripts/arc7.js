@@ -89,7 +89,7 @@
     if(window.arc7ObjectiveState() !== 'complete_arc7_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress7[id] = true;
     if (id === 24) game.arc7Complete = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + (id === 24 ? 5 : 1);
     logEvent('📖 Arc 7 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
