@@ -77,7 +77,7 @@
 
   RAIDS.push(
     {
-      id: 'the_light_that_isnt', name: "The Light That Isn't", icon: '🏮', unlockLevel: 560,
+      id: 'the_light_that_isnt', name: "The Light That Isn't", icon: '🏮', unlockLevel: 425,
       requires: function(){ return cp(49); }, requiresText: 'Finish Crimson Horizon Chapter 048',
       desc: "The Mist Straits taught the crew that a light is not always a way home. This is what is left of the lesson.",
       checkpointAfter: 3,
@@ -90,7 +90,7 @@
       ])
     },
     {
-      id: 'the_passage_in_the_cliff', name: 'The Passage in the Cliff', icon: '⚓', unlockLevel: 620,
+      id: 'the_passage_in_the_cliff', name: 'The Passage in the Cliff', icon: '⚓', unlockLevel: 465,
       requires: function(){ return cp(65); }, requiresText: 'Finish Crimson Horizon Chapter 064',
       desc: "A hidden berth, a rope pulled taut into water too deep for any dock, and a gate that was never meant to open for the wrong hands.",
       checkpointAfter: 3,
@@ -103,7 +103,7 @@
       ])
     },
     {
-      id: 'what_answered_first', name: 'What Answered First', icon: '🧭', unlockLevel: 680,
+      id: 'what_answered_first', name: 'What Answered First', icon: '🧭', unlockLevel: 505,
       requires: function(){ return cp(66); }, requiresText: 'Finish Crimson Horizon Chapter 065',
       desc: "The Central Gate answered before the crew had asked. Whatever did that is still out there.",
       checkpointAfter: 3,

@@ -20,10 +20,11 @@
   // and read whichever raid was entered — none of them needed to change
   // to support this.
   //
-  // Level curve: every current story arc gates at or below 345 (Arc
-  // XXIII, the highest), so unlockLevel 300-500 here is genuine post-game
-  // content, same relationship Daybreak's own raid ladder (game-121.js)
-  // has to its own story gates. Only guardian_trial carries an
+  // Level curve: raid unlock levels sit on the same ladder as the story
+  // gates (+10 levels per arc from Arc VII at 105; see
+  // story-xp-rebalance.js): 235 is the Arc XX gate, 385 the Arc XXXVIII
+  // area, and raid-depth.js's three run 425-505, up to the sequel's first
+  // band. Raid enemies scale to unlockLevel, so these set difficulty too. Only guardian_trial carries an
   // onComplete marker — the other five are plain raids, first-clear
   // XP/gold reward with no special completion effect, exactly what a
   // raid with no onComplete should do.
@@ -47,9 +48,9 @@
   // === RAIDS ===
   const RAIDS = [
     {
-      id: 'guardian_trial', name: "The Guardian's Trial", icon: '⏳', unlockLevel: 300,
+      id: 'guardian_trial', name: "The Guardian's Trial", icon: '⏳', unlockLevel: 235,
       onComplete: 'fountain',
-      // Solely a gameplay mechanic (San's direction): Level 300 alone
+      // Solely a gameplay mechanic (San's direction): Level 235 alone
       // unlocks this, with no story-chapter dependency at all. An earlier
       // pass briefly chapter-gated this against Arc XIX Ch.13, but no
       // chapter art for that exists — reverted so the Fountain stays
@@ -68,7 +69,7 @@
       ]
     },
     {
-      id: 'captains_unending', name: "The Captains Who Don't Stop Coming", icon: '🏴‍☠️', unlockLevel: 340,
+      id: 'captains_unending', name: "The Captains Who Don't Stop Coming", icon: '🏴‍☠️', unlockLevel: 265,
       desc: "The fixed names ran out a long time ago. Whatever's left isn't organized, exactly — but it keeps finding replacements, and it hasn't run out yet.",
       stages: [
         { id: 1, type: 'elite', key: 'unclaimed_flotilla', name: 'An Unclaimed Flotilla', art: '🚩',
@@ -83,7 +84,7 @@
       ]
     },
     {
-      id: 'archive_depths', name: 'What the Archive Kept Back', icon: '📜', unlockLevel: 380,
+      id: 'archive_depths', name: 'What the Archive Kept Back', icon: '📜', unlockLevel: 295,
       desc: "Every record the Archive ever surfaced came from somewhere. Somewhere further down, apparently, is still full.",
       stages: [
         { id: 1, type: 'elite', key: 'unfiled_record', name: 'An Unfiled Record', art: '📖',
@@ -98,7 +99,7 @@
       ]
     },
     {
-      id: 'five_harbours_reckoning', name: 'The Five Harbours, Together', icon: '🌍', unlockLevel: 420,
+      id: 'five_harbours_reckoning', name: 'The Five Harbours, Together', icon: '🌍', unlockLevel: 325,
       desc: "Forest Coast, Dragon Coast, Mountain Port, Crystal Coast, Old Harbour — five worlds the crew earned trust in, one honest relationship at a time. This is what happens when all five call in the same favor at once.",
       stages: [
         { id: 1, type: 'elite', key: 'the_five_wardens', name: 'The Five Wardens', art: '🐉',
@@ -113,7 +114,7 @@
       ]
     },
     {
-      id: 'beyond_every_door', name: 'Beyond Every Door', icon: '🌌', unlockLevel: 460,
+      id: 'beyond_every_door', name: 'Beyond Every Door', icon: '🌌', unlockLevel: 355,
       desc: "Every inter-world crossing so far led somewhere the crew could eventually make sense of. This one doesn't resolve that easily.",
       stages: [
         { id: 1, type: 'elite', key: 'something_that_moved_wrong_again', name: 'Something That Moved Wrong, Again', art: '👁️',
@@ -128,7 +129,7 @@
       ]
     },
     {
-      id: 'where_every_tide_meets', name: 'Where Every Tide Meets', icon: '🌐', unlockLevel: 500,
+      id: 'where_every_tide_meets', name: 'Where Every Tide Meets', icon: '🌐', unlockLevel: 385,
       desc: "Beyond the Horizon, the Archive, the five harbours, the endless pool of captains, the Fountain itself — every thread the crew has ever pulled, converging at once. Nobody built this on purpose. It's just what's left once you've pulled on enough of them.",
       stages: [
         { id: 1, type: 'elite', key: 'everything_the_crew_has_faced', name: 'Everything the Crew Has Faced', art: '⚔️',

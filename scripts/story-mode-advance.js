@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V440 · Story XP parity with Crimson Moon: each arc chapters pay the climb to the next gate';
+window.__CT_BUILD__='V441 · Raid unlock levels rescaled to the new gate ladder';
