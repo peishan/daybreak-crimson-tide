@@ -135,19 +135,8 @@
   }
   window.renderAllyNetworkPanel = renderAllyNetworkPanel;
 
-  const oldRenderFairTideHubForAllyNetwork = window.renderFairTideHub;
-  window.renderFairTideHub = function(){
-    if (oldRenderFairTideHubForAllyNetwork) oldRenderFairTideHubForAllyNetwork();
-    const tab = game.fairTideActiveTab || 'buildings';
-    if (tab !== 'roster') return;
-    const container = document.getElementById('ft-tab-roster');
-    if (!container) return;
-    const existing = document.getElementById('allyNetworkPanelWrap');
-    if (existing) existing.remove();
-    const panel = renderAllyNetworkPanel();
-    if (!panel) return;
-    container.insertAdjacentHTML('beforeend', '<div id="allyNetworkPanelWrap">'+panel+'</div>');
-  };
+  // The panel is rendered by the Allies & Guests tab (scripts/fair-tide-allies-tab.js);
+  // it no longer sits at the bottom of the Roster tab.
 
   if (typeof window.FAIR_TIDE_FLAVOUR_EVENTS !== 'undefined') {
     window.FAIR_TIDE_FLAVOUR_EVENTS.push(

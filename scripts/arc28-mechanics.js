@@ -745,6 +745,23 @@
   }
   window.renderFairTideResidentsPanel = renderFairTideResidentsPanel;
 
+  // "Check In With Everyone" button markup (roster, residents and wider
+  // allies together). Shown at the top of both the Roster tab and the
+  // Allies & Guests tab (scripts/fair-tide-allies-tab.js).
+  function checkInAllButtonHtml(){
+    const targets = checkInTargetIds();
+    if (!targets.length) return '';
+    const dueCount = targets.filter(function(id){ return window.canCheckInOnResident(id); }).length;
+    return '<div id="checkInAllWrap" style="margin-bottom:10px;">'+
+      '<button class="btn btn-small btn-magic" onclick="checkInAllResidents()" '+(dueCount?'':'disabled')+'>💬 '+
+      (dueCount ? 'Check In With Everyone ('+dueCount+')' : 'Everyone Checked In Today')+'</button></div>';
+  }
+  window.checkInAllButtonHtml = checkInAllButtonHtml;
+
+  // The Fair Tide Residents panel and the Wider Ally Network panel moved
+  // off the (long, and growing with the sequel's Tribute crew) Roster tab
+  // onto their own Allies & Guests tab; the Roster tab keeps the
+  // check-in button only.
   const oldRenderFairTideHubForResidents = window.renderFairTideHub;
   window.renderFairTideHub = function(){
     if (oldRenderFairTideHubForResidents) oldRenderFairTideHubForResidents();
@@ -754,17 +771,7 @@
     if (!container) return;
     const existingBtn = document.getElementById('checkInAllWrap');
     if (existingBtn) existingBtn.remove();
-    const targets = checkInTargetIds();
-    if (targets.length) {
-      const dueCount = targets.filter(function(id){ return window.canCheckInOnResident(id); }).length;
-      container.insertAdjacentHTML('afterbegin', '<div id="checkInAllWrap" style="margin-bottom:10px;">'+
-        '<button class="btn btn-small btn-magic" onclick="checkInAllResidents()" '+(dueCount?'':'disabled')+'>💬 '+
-        (dueCount ? 'Check In With Everyone ('+dueCount+')' : 'Everyone Checked In Today')+'</button></div>');
-    }
-    const existing = document.getElementById('fairTideResidentsPanelWrap');
-    if (existing) existing.remove();
-    const panel = renderFairTideResidentsPanel();
-    if (!panel) return;
-    container.insertAdjacentHTML('beforeend', '<div id="fairTideResidentsPanelWrap">'+panel+'</div>');
+    const btn = checkInAllButtonHtml();
+    if (btn) container.insertAdjacentHTML('afterbegin', btn);
   };
 })();
