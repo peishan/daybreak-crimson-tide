@@ -608,6 +608,8 @@
     };
   }
 
+  window.generateUnchartedEnemy = generateUnchartedEnemy; // used by auto-reach.js's away simulation
+
   window.spawnUnchartedWave = function(){
     const uc = ucState();
     uc.active = true;
