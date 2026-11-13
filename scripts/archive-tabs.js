@@ -18,11 +18,13 @@
     { key: 'council', icon: '🏛️', label: 'Council' },
     { key: 'harbour', icon: '⚓', label: 'Harbour' },
     { key: 'life',    icon: '🌊', label: 'Fair Tide Life' },
+    { key: 'tribute', icon: '📖', label: 'Tribute Chronicle' },
     { key: 'family',  icon: '💞', label: 'Family' },
     { key: 'more',    icon: '📂', label: 'More' }
   ];
   // Ordered: the first rule that matches an id wins.
   const RULES = [
+    ['tribute', /tributechronicle/i],
     ['raids',   /raid/i],
     ['records', /research|renn|farseer|catalogue|blackpearl|crosscheck|dossier|intel|verification|investigat|integrity/i],
     ['family',  /family|twin|legacy|resonance|growth|maera|child|thought|bond|livinghorizons|veyrenlife/i],

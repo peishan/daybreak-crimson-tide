@@ -16,6 +16,9 @@
   // the Fountain: arc42.js's own note stands that its restorative effects
   // are not activated (they stay narrative).
   //
+  // Fountain: everyone who stayed goes to the Cold Spring except Jenika
+  // (by choice) -- shown as a line on their resident card. Narrative only.
+  //
   // Not work-assignable (the default in residentWorkUnlocked), and no
   // wages: they are guests, not workers.
   //
@@ -76,6 +79,10 @@
         if (over) {
           if (rec.status !== 'departed') changed = true;
           rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = names.length ? names.join(', ') : 'Family';
+          // Everyone who stayed took the waters at the Cold Spring (the Fountain of
+          // Youth) except Jenika, who skipped it by choice. Jade and Devon's first,
+          // short visit (g1a) ended before the spring was visited.
+          if (v.key !== 'g1a') rec.note = (id === 'jenika') ? 'Skipped the Cold Spring by choice.' : '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
           logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
         } else {
           if (rec.status !== 'resident') changed = true;
