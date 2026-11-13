@@ -2674,6 +2674,44 @@ body{
 <script src="scripts/stories-from-other-worlds.js"></script>
 <script src="scripts/ship-personality.js"></script>
 
+<style id="uiTightStyle">
+/* ============================================================
+   UI TIGHTENING (phone) -- San: "a little big", too much scrolling.
+   Mobile only. Tab rows become one swipeable strip instead of
+   wrapping into many rows; the nav bar is 4-up and shorter;
+   combat shows the enemy and crew in about half the height.
+   ============================================================ */
+@media (max-width:700px){
+  .nav-bar{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:4px !important;padding:4px !important;margin-bottom:8px !important}
+  .nav-btn{min-height:34px !important;padding:4px 2px !important;font-size:.64rem !important}
+
+  .tabs{flex-wrap:nowrap !important;overflow-x:auto;gap:5px !important;margin-bottom:8px !important;padding-bottom:4px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs .tab-btn{flex:0 0 auto;min-height:0 !important;padding:7px 11px !important;font-size:.7rem !important;white-space:nowrap;border-radius:8px !important}
+
+  #fairTideScreen .header{margin-bottom:4px}
+  #fairTidePopulationDisplay{margin:2px 0 !important}
+  #fairTideSpiritDisplay{font-size:.72rem !important;margin:2px 0 6px !important;line-height:1.3}
+
+  .combat-screen{padding:8px !important}
+  .combat-header{margin-bottom:6px !important}
+  .combat-enemy{padding:8px 10px !important;margin-bottom:8px !important;border-radius:12px !important}
+  .combat-enemy-art{font-size:2.4rem !important;margin:0 !important;line-height:1.1}
+  .combat-enemy-art img{max-height:84px;width:auto}
+  .combat-enemy-name{font-size:1rem !important;margin-bottom:2px !important}
+  .combat-enemy-hp{font-size:.78rem !important;margin-bottom:4px !important}
+  .combat-enemy-hp-bar{height:12px !important}
+  .combat-party-grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:5px !important;margin-bottom:8px !important}
+  .combat-party-card{padding:4px !important;border-radius:8px !important}
+  .combat-party-card .name{font-size:.66rem !important;letter-spacing:0 !important}
+  .combat-party-card div[style*="font-size:0.7rem"]{font-size:.6rem !important;line-height:1.25}
+  .combat-party-card .hp-text{font-size:.6rem !important}
+  .combat-party-card .combat-portrait-frame{border-radius:7px}
+  .combat-actions{margin-bottom:10px !important}
+}
+</style>
+<script src="scripts/ui-tighten.js"></script>
 </body>
 </html>
 
