@@ -41,6 +41,18 @@
   ];
   window.ARC42_VISITS = VISITS;
 
+  // Cold Spring (the Fountain of Youth) lines for the resident card. Only the
+  // Canon Five (Tribute ch.960-964) and Hugh and Sera (Arc XLII Ch.27, "The
+  // Cooling Spring") are shown at the spring in the chapters. For everyone else
+  // it happened off the page, at San's invitation. Jenika's follows the chapters:
+  // her visit is with the medical team (Ch.34-35, Tribute 955/975).
+  const SPRING_ON_PAGE = ['jade','devon','sky','levi','sally','hugh','sera'];
+  function springNote(id){
+    if (id === 'jenika') return 'Spent her visit with Fair Tide\'s medical team, comparing notes.';
+    if (SPRING_ON_PAGE.indexOf(id) !== -1) return '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
+    return '♨️ Took San up on her invitation to the Cold Spring, off the page.';
+  }
+
   function cast(id){
     return (window.TRIBUTE_CROSSOVER_CAST || []).find(function(c){ return c.id === id; }) || {id:id, name:id.charAt(0).toUpperCase() + id.slice(1), icon:'👤'};
   }
@@ -79,12 +91,9 @@
         if (over) {
           if (rec.status !== 'departed') changed = true;
           rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = names.length ? names.join(', ') : 'Family';
-          // Everyone who stayed took the waters at the Cold Spring (the Fountain of
-          // Youth) except Jenika. Her note follows the chapters (Arc XLII Ch.34-35,
-          // Tribute 955/975): she spends her visit with Fair Tide's medical team,
-          // and no chapter puts her at the spring. Jade and Devon's first,
-          // short visit (g1a) ended before the spring was visited.
-          if (v.key !== 'g1a') rec.note = (id === 'jenika') ? 'Spent her visit with Fair Tide\'s medical team, comparing notes.' : '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
+          // Cold Spring note (see springNote). Jade and Devon's first, short visit (g1a)
+          // ended before the spring came up.
+          if (v.key !== 'g1a') rec.note = springNote(id);
           logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
         } else {
           if (rec.status !== 'resident') changed = true;
