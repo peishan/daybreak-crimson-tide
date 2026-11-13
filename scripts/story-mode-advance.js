@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V445 · Tribute Chronicle archive tab; Cold Spring notes for Arc XLII visitors';
+window.__CT_BUILD__='V446 · Jenika Cold Spring note reworded';
