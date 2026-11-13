@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V446 · Jenika Cold Spring note reworded';
+window.__CT_BUILD__='V447 · Tribute Chronicle: design-note tails removed';

@@ -9,7 +9,8 @@
   // other side; the text here is Tribute's own, unedited.
   //
   // Data: scripts/tribute-chronicle-data.js (generated from Tribute's
-  // chapters.js). Read-only: no XP, no flags, nothing to claim.
+  // chapters.js; the trailing 'Key takeaways' design notes are left out, so the
+  // text is the story itself). Read-only: no XP, no flags, nothing to claim.
   //
   // Unlocks (so it never gets ahead of the DCT story):
   //   Part I   Allies Across Worlds   once Jade is met (Arc XLII Ch.2)
