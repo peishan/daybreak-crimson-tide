@@ -203,6 +203,39 @@
     if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(OBS_CH_ID);
   };
 
+  // ---- First report (Crimson Horizon Ch.098, id 99, a SIDE chapter) ----
+  // Devon reads Renn and Mimi's first observation report and annotates it.
+  // Opens once Ch.097 is read and the Ch.089 observations are filed, whenever
+  // the player is at Fair Tide, so Ch.099-100 never wait on it.
+  const REPORT_CH_ID = 99;
+  const REPORT_AFTER_CH_ID = 98;   // Ch.097 "The Return Cargo"
+  function reportStatus(){
+    if (chProgress(REPORT_CH_ID)) return 'read';
+    if (!chProgress(OBS_CH_ID)) return 'waiting_observations';
+    if (!chProgress(REPORT_AFTER_CH_ID)) return 'waiting_story';
+    if (game.location !== 'fair_tide') return 'waiting_location';
+    return 'ready';
+  }
+  window.blackPearlReportStatus = reportStatus;
+  window.blackPearlReportReady = function(){ return reportStatus() === 'ready'; };
+  window.blackPearlReportReason = function(){
+    switch (reportStatus()) {
+      case 'waiting_observations': return 'Opens after the first observations are filed.';
+      case 'waiting_story': return 'Opens after Chapter 097, back at Fair Tide.';
+      case 'waiting_location': return 'Return to Fair Tide to review the report.';
+      case 'read': return "Devon's notes are filed with the first report.";
+      default: return 'The report is ready.';
+    }
+  };
+  window.onPearlReportRead = function(){
+    pearlNote('report_1', "First report: Devon read Renn's and Mimi's first observation report and marked where his own account rests on memory. He is annotating it for the archive, and his notes are kept with the study. The Pearl stays in San and Joel's custody.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  window.__ctReadPearlReport = function(){
+    if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(REPORT_CH_ID);
+  };
+
   // Called by the chapter flow when Ch.081 is completed.
   window.onPearlBriefingHeld = function(){
     game.blackPearlBriefings = game.blackPearlBriefings || {};
@@ -232,6 +265,13 @@
       else if (os === 'ready') obsLine = '<button class="btn btn-small btn-magic" onclick="__ctReadPearlObservations()">📖 Read the Observations</button> <span>Renn\'s and Mimi\'s accounts are ready to compare.</span>';
       else if (os === 'waiting_location') obsLine = 'Observations are ready. Return to Fair Tide to read them.';
       else obsLine = 'The first observations are waiting on Renn\'s and Mimi\'s assignments.';
+      if (os === 'read') {
+        const rs = reportStatus();
+        if (rs === 'read') obsLine += '<br>✓ Devon\'s notes are filed with the first report.';
+        else if (rs === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlReport()">📖 Review the Pearl Report</button> <span>Devon has read the first report.</span>';
+        else if (rs === 'waiting_location') obsLine += '<br>The report is ready for Devon. Return to Fair Tide to review it.';
+        else obsLine += '<br>Devon\'s review of the first report opens after Chapter 097.';
+      }
     }
     return '<div class="rt-status" style="margin-top:4px;">Reports: ' + reports + '</div>' +
       '<div class="rt-status" style="margin-top:4px;">' + line + '</div>' +
