@@ -1139,7 +1139,7 @@
     if (game.comicProgress6[id]) { toast('✓ Already marked read.'); return; }
     if (window.arc6ObjectiveState() !== 'complete_arc6_chapter_'+id) { toast('🔒 Follow the current Objective first.'); return; }
     game.comicProgress6[id] = true;
-    if (typeof gainXP==='function') gainXP(ch.xp);
+    if (typeof gainXP==='function') gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc 6 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP', 'gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

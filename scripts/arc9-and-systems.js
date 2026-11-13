@@ -125,7 +125,7 @@
     }
     if (id === 23) game.soelTrueNatureKnown = true; // "not a god" — the broad reveal
     if (id === 26) { game.arc9Complete = true; }
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + (id === 26 ? 5 : 1);
     logEvent('📖 Arc 9 Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');

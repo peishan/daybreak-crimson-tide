@@ -107,7 +107,7 @@
     game.comicProgress17[id] = true;
     const ch = ARC17_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     // Per San's note: the Archive Hub is set to become known at Ch.4,

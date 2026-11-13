@@ -285,7 +285,7 @@
     if (id === 45) game.arc42Complete = true;
     const ch = ARC42_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     if (ARC42_CHAPTER_SCENES[id]) {

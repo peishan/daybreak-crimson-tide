@@ -120,7 +120,7 @@
     if (id === 24) game.arc38Complete = true;
     const ch = ARC38_CHAPTERS.find(c => c.id === id);
     if (ch) {
-      gainXP(ch.xp);
+      gainStoryXP(ch.xp);
       toast('📖 ' + ch.title + ' — +' + ch.xp + ' Story XP', 3200);
     }
     if (ARC38_CHAPTER_SCENES[id]) {

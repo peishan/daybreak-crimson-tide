@@ -158,7 +158,7 @@
     // disagreement/repair system would never fire at all.
     if (id === 14 && typeof window.triggerSanJoelDisagreement === 'function') window.triggerSanJoelDisagreement();
     if (id === 25) game.arc16Complete = true;
-    gainXP(ch.xp);
+    gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0) + 1;
     logEvent('📖 Arc XVI Chapter '+id+' complete: '+ch.title+' · +'+ch.xp+' XP','gold');
     toast('📖 Chapter '+id+' complete! +'+ch.xp+' Story XP');
