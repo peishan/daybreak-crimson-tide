@@ -123,6 +123,9 @@
   function projectAvailable(researcherId, project){
     const rs = researchState()[researcherId];
     if (rs.completedKeys.indexOf(project.key) !== -1) return false; // already done
+    // Projects that aren't tied to an Archive record (the Black Pearl
+    // assignments, scripts/black-pearl-research.js) gate themselves.
+    if (typeof project.available === 'function') return !!project.available();
     return recordAtLeast(project.tiedRecord, project.minStatus);
   }
 
@@ -179,6 +182,7 @@
     rs.lastAdvancedDay = game.day;
     if (rs.progressDays >= effectiveResearchDuration(project.durationDays)) {
       rs.completedKeys.push(project.key);
+      if (typeof project.onComplete === 'function') project.onComplete();
       rs.activeProjectKey = null;
       rs.progressDays = 0;
       logEvent('🔬 ' + researcher.icon + ' ' + researcher.name + ' completes research: ' + project.title + '.', 'gold');
@@ -203,9 +207,10 @@
 
   function renderResearchPanel(){
     let html = '<div class="panel-title" style="margin-top:16px;">🔬 Research</div>'+
-      '<p style="font-size:.8rem;opacity:.7;margin-bottom:10px;">Renn, Erynn, and Mimi can each dig deeper into something the crew has already found — one project at a time, checked in on once a day.</p>';
+      '<p style="font-size:.8rem;opacity:.7;margin-bottom:10px;">Fair Tide\'s researchers can each dig deeper into something the crew has already found — one project at a time, checked in on once a day.</p>';
     Object.keys(RESEARCHERS).forEach(function(rid){
       const researcher = RESEARCHERS[rid];
+      if (typeof researcher.visible === 'function' && !researcher.visible()) return; // not arrived yet
       const rs = researchState()[rid];
       html += '<article class="quest-item"><div style="display:flex;gap:10px;align-items:flex-start;">'+
         '<div style="font-size:1.4rem;">'+researcher.icon+'</div><div style="flex:1;">'+
