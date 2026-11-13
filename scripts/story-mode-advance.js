@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V431 · San & Sera bond + hang out';
+window.__CT_BUILD__='V432 · Combat header + Quests tab overlap fixes';
