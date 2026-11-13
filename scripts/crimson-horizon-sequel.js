@@ -208,6 +208,25 @@
   // there. 079 plays at sea on the way to Fair Tide and chains into 080; 080-082 play at Fair Tide.
   // -------------------------------------------------------------------
 
+  // -------------------------------------------------------------------
+  // CRIMSON HORIZON · ARC IX -- THE FAR SIDE OF THE HEADLAND (083-090)
+  // [BUILT, text-first]. After 082, as the Crimson Tide prepares to leave
+  // Fair Tide. The crew opens a route to a cliffside trading port, and
+  // Sairen and Jovie begin talking about what they want from each other
+  // between voyages.
+  //   083 Before the Tide Turns -- Jovie, the infirmary stores, "I'll write." (Fair Tide)
+  //   084 Beyond the Headland -- a cloth trader guides the crew around the headland (Channel Island)
+  //   085 The Market on the Steps -- the stair market; one working hoist (cliffside port)
+  //   086 Room on the Quay -- the gust; Joel takes the arriving ship's line with the tender
+  //   087 A Letter with No Report in It -- Sairen's letter to Jovie
+  //   088 The Lower Market -- Aisyah's standing order opens quay-level trade
+  //   089 The First Observations -- SIDE chapter (Fair Tide): Renn and Mimi's accounts, compared by Adrian
+  //   090 When You're Back -- home; Jovie got the letter; "take me there someday"
+  // DRAFT ADDITIONS (for review): the cliffside port (Terrace Harbor, working name) and its trade goods
+  // (Sailcloth, Dried Fruit); Sairen's letter kept in the Bonds tab; the observation scene, which leaves
+  // the Pearl's properties and eventual return open.
+  // -------------------------------------------------------------------
+
   const CRIMSON_HORIZON_CHAPTERS = [
     {id:1, arc:1, title:'Prologue — A New Voyage', focus:"Aboard the Crimson Tide, San and Joel look out over a new horizon — one chapter closed, a wider world still waiting. The Black Pearl remains in their guardianship, its true nature still unknown. They decide to meet whatever comes next together, as one unified crew.", image:'assets/comics/sequel/prologue-a-new-voyage.webp', xp:400, action:'🌅 Set Sail Toward the Horizon'},
     {id:2, arc:1, title:'001 · The First Storm', focus:"The Crimson Tide's new voyage opens with a fierce, chaotic storm — their first battle sooner than expected. In its wake comes quieter news: several of the crew are expecting, each pregnancy its own long Veyren road, with the whole crew pacing missions around it together.", image:'assets/comics/sequel/ch01-the-first-storm.webp', xp:410, action:'⚡ Weather the First Storm'},
@@ -291,7 +310,15 @@
     {id:80, arc:8, title:"079 · The Cabin Across the Hall", focus:"On the way back to Fair Tide, Devon asks Jade where she'd want to stay if her due window does overlap with Sally's. Sally tells Levi she wants a room of her own and Jade close enough to complain through the wall.", image:'assets/comics/sequel/ch79-the-cabin-across-the-hall.webp', xp:545, action:'📖 Read Chapter'},
     {id:81, arc:8, title:"080 · A Place at the Table", focus:"At Fair Tide, Sera joins Jade and Sally for a meal while the others unload. She says she's grown fond of deciding how to spend a day before anyone else decides for her, and Sally hands her a parcel from the island market.", image:'assets/comics/sequel/ch80-a-place-at-the-table.webp', xp:545, action:'📖 Read Chapter'},
     {id:82, arc:8, title:"081 · What Devon Entrusted", focus:"At the first Black Pearl briefing, Erynn presents Devon's account and Fen shows which parts she can corroborate in Dragonvale's records. San and Joel agree that the study should begin with observation.", image:'assets/comics/sequel/ch81-what-devon-entrusted.webp', xp:540, action:'📖 Read Chapter'},
-    {id:83, arc:8, title:"082 · The Next Sailing", focus:"San and Joel look over the chart at Fair Tide. They now have three places they can sail back to beyond the Central Gate, and San asks Joel to leave a copy of the route with the harbor office for the next captain.", image:'assets/comics/sequel/ch82-the-next-sailing.webp', xp:550, action:'📖 Read Chapter'}
+    {id:83, arc:8, title:"082 · The Next Sailing", focus:"San and Joel look over the chart at Fair Tide. They now have three places they can sail back to beyond the Central Gate, and San asks Joel to leave a copy of the route with the harbor office for the next captain.", image:'assets/comics/sequel/ch82-the-next-sailing.webp', xp:550, action:'📖 Read Chapter'},
+    {id:84, arc:9, title:"083 · Before the Tide Turns", focus:"Jovie brings the infirmary's supplies to the ship and finds Sairen checking the boarding ramp. She asks when he expects to be back, and he promises to write if the voyage runs long.", image:'assets/comics/sequel/ch83-before-the-tide-turns.webp', xp:555, action:'📖 Read Chapter'},
+    {id:85, arc:9, title:"084 · Beyond the Headland", focus:"At the public landing the crew helped reopen, Aisyah meets a cloth trader bound for a port beyond the headland. She offers to guide them there, and Joel follows her directions to a deepwater harbor beneath terraced gardens.", image:'assets/comics/sequel/ch84-beyond-the-headland.webp', xp:555, action:'📖 Read Chapter'},
+    {id:86, arc:9, title:"085 · The Market on the Steps", focus:"Aisyah follows the trader up to the market, where sailors buy sailcloth and garden growers trade dried fruit. San sees that the upper market has room for both, while the lower quay is packed with cargo waiting to go uphill.", image:'assets/comics/sequel/ch85-the-market-on-the-steps.webp', xp:560, action:'📖 Read Chapter'},
+    {id:87, arc:9, title:"086 · Room on the Quay", focus:"The harbor master asks Joel to move the Crimson Tide to the outer anchorage. When the arriving ship is pushed toward the quay by a hard gust, Joel brings the tender alongside and takes its line in.", image:'assets/comics/sequel/ch86-room-on-the-quay.webp', xp:565, action:'📖 Read Chapter'},
+    {id:88, arc:9, title:"087 · A Letter with No Report in It", focus:"Once the quay settles, Sairen sits down to write to Jovie. His first attempt reads like a watch report, so he starts again and tells her about the market stairs, the view, and the stall he thinks she'd stop at first.", image:'assets/comics/sequel/ch87-a-letter-with-no-report-in-it.webp', xp:565, action:'📖 Read Chapter'},
+    {id:89, arc:9, title:"088 · The Lower Market", focus:"The cloth trader asks Aisyah to help her make a case for selling some goods at quay level on busy days. Aisyah puts in a standing order for sailcloth that can be collected there, giving the harbor master a reason to try it.", image:'assets/comics/sequel/ch88-the-lower-market.webp', xp:565, action:'📖 Read Chapter'},
+    {id:90, arc:9, title:"089 · The First Observations", focus:"At Fair Tide, Renn records the conditions around the Black Pearl while Mimi keeps a separate account of her impressions. Adrian has them compare notes only after both have finished.", image:'assets/comics/sequel/ch89-the-first-observations.webp', xp:545, action:'📖 Read Chapter'},
+    {id:91, arc:9, title:"090 · When You’re Back", focus:"The crew returns to Fair Tide with sailcloth for the ship and dried fruit for the galley. Jovie tells Sairen she got his letter and asks him to take her to the cliffside market someday.", image:'assets/comics/sequel/ch90-when-youre-back.webp', xp:580, action:'📖 Read Chapter'}
   ];
   window.CRIMSON_HORIZON_CHAPTERS = CRIMSON_HORIZON_CHAPTERS;
 
@@ -303,7 +330,8 @@
     5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'},
     6: {cover:null, kicker:'Crimson Horizon · Arc VI', title:'A Place to Come Home To', tagline:'Finding somewhere new can change what you want to come home to.'},
     7: {cover:null, kicker:'Crimson Horizon · Arc VII', title:'The Outer Island Run', tagline:'A delivery, a ridge road, and the shape of a future home.'},
-    8: {cover:null, kicker:'Crimson Horizon · Arc VIII', title:'A Harbor for Everyone', tagline:'A harbor is only as good as the people who can reach it.'}
+    8: {cover:null, kicker:'Crimson Horizon · Arc VIII', title:'A Harbor for Everyone', tagline:'A harbor is only as good as the people who can reach it.'},
+    9: {cover:null, kicker:'Crimson Horizon · Arc IX', title:'The Far Side of the Headland', tagline:'Some of the best markets are just around the point.'}
   };
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
@@ -389,7 +417,15 @@
     80: "The Crimson Tide is a day out from the island when San, passing along the lower deck, hears Devon's voice through a half-open cabin door.<br><br>\"If your window does overlap with Sally's,\" Devon says, \"where would you want to stay?\"<br><br>\"Near Sky,\" Jade says at once. \"And the infirmary. Close enough that nobody has to run.\" There is a pause. \"I'd like Sally nearby, if she wants the same.\"<br><br>San keeps walking, and finds Joel at the end of the passage, trying very hard not to be caught listening to the next cabin.<br><br>\"A room of my own,\" Sally is saying, in the cabin beyond. \"That's what I want. With Jade close enough that I can hear her complain.\"<br><br>\"Through the wall?\" Levi asks.<br><br>\"Through the wall. I'd feel better knowing she's right there.\"<br><br>\"She'll complain about the noise from your side.\"<br><br>\"I'm counting on it.\"<br><br>San and Joel look at each other. Joel mouths something that might be <i>a cabin across the hall</i>. San nods.<br><br>By the time the Crimson Tide raises Fair Tide, both couples have agreed to look at rooms when they get home. The due windows are still only estimates.",
     81: "Fair Tide in the late afternoon is a different kind of busy. Crates come down the gangway in a steady line, and Joel keeps the count. San is somewhere in the middle of it with a list.<br><br>At a long table by the window, Sera has joined Jade and Sally for a meal, with bowls of something warm and far too much bread.<br><br>\"What do you like about staying here?\" Jade asks. \"Honestly. Not the polite answer.\"<br><br>Sera thinks about it. \"That I get to decide how to spend a day,\" she says, \"before anyone else has decided it for me.\"<br><br>Jade laughs, softly and without surprise. \"That's a good answer.\"<br><br>\"It's a rare thing, where I'm from,\" Sera says. \"Here it feels very ordinary. I'm fond of how ordinary it is.\"<br><br>\"You should stay as long as you like,\" Sally says.<br><br>\"I might.\" Sera turns her cup between her hands. \"If you go back to that island, would you bring something from the market for me? Next time?\"<br><br>Sally reaches under the bench and sets a small wrapped parcel on the table. \"I already did.\"<br><br>Sera stares at it, and then, slowly, she smiles.",
     82: "The research room at Fair Tide has been cleared for the briefing. A long table, a lamp, and a stack of folders squared to the table's edge.<br><br>Erynn goes first. He presents Devon's account in order, from the first custody he can name to the last. Then he lays a hand flat on the page where the written record ends. \"After this line,\" Erynn says, \"there is only what Devon remembers. He told me so himself.\"<br><br>Fen follows, with the Dragonvale records and charts spread beside it. \"Some of it I can corroborate,\" she says, pointing. \"These references hold up against the records. These can't be confirmed either way. I've marked both.\"<br><br>San reads the two lists side by side. \"A handful of things that match,\" she says, \"and a gap.\"<br><br>\"Devon trusted us with it,\" Joel says. \"So the study is ours to set up.\"<br><br>\"Then we begin with observation,\" San says. \"The Pearl stays in its case, we touch nothing, and nothing goes near the Horizon Engine.\"<br><br>Adrian's protocol sits at the end of the table, a proposal for a baseline. \"It gives Renn and Mimi a place to start,\" Erynn says. \"Technical observation and divination, for the next round.\"<br><br>\"One request,\" Joel says. \"Every finding gets copied for Devon. He handed us the Pearl. He should be able to follow the work.\"<br><br>\"Of course,\" Fen says, and starts a new folder.",
-    83: "Late that night, San and Joel spread the chart across the table at Fair Tide, under the same lamp that lit the briefing.<br><br>The Central Gate sits at the top of the page. Beyond it, three places are inked in Joel's careful hand: the island harbor, the outer island, and the neighbouring island with its new landing. Down one margin, in Aisyah's tidy script, are the market days. Fourth and seventh. Argue about the price.<br><br>\"Three places we can sail back to,\" San says. \"Not so long ago, I didn't know the Gate had an island behind it.\"<br><br>\"Calm water between all three,\" Joel says. \"If the weather holds.\"<br><br>San traces the route with one finger, from the Gate to the harbor, along the channel, and out to the island with the gangway. \"Will you make a copy of this? For the harbor office. For whoever the next captain is who wants to make the crossing.\"<br><br>\"The route, and the market days?\"<br><br>\"The market days especially,\" San says. \"They'll thank us for those.\"<br><br>Joel starts the copy that night. The chart stays open on the table, and every discovered destination stays open on the travel list."
+    83: "Late that night, San and Joel spread the chart across the table at Fair Tide, under the same lamp that lit the briefing.<br><br>The Central Gate sits at the top of the page. Beyond it, three places are inked in Joel's careful hand: the island harbor, the outer island, and the neighbouring island with its new landing. Down one margin, in Aisyah's tidy script, are the market days. Fourth and seventh. Argue about the price.<br><br>\"Three places we can sail back to,\" San says. \"Not so long ago, I didn't know the Gate had an island behind it.\"<br><br>\"Calm water between all three,\" Joel says. \"If the weather holds.\"<br><br>San traces the route with one finger, from the Gate to the harbor, along the channel, and out to the island with the gangway. \"Will you make a copy of this? For the harbor office. For whoever the next captain is who wants to make the crossing.\"<br><br>\"The route, and the market days?\"<br><br>\"The market days especially,\" San says. \"They'll thank us for those.\"<br><br>Joel starts the copy that night. The chart stays open on the table, and every discovered destination stays open on the travel list.",
+    84: "The Crimson Tide is nearly ready to cast off, and the dock at Fair Tide is full of last-minute errands. Crates, rope, a barrel somebody swears is already aboard. San is at the rail with a list, and Joel is checking the lashings along the waist.<br><br>Jovie comes down the quay with a supply chest on her hip. \"Infirmary stores,\" she says. \"Bandages, salves, the willow bark. Sky said you'd forget them.\"<br><br>\"We'd have remembered,\" San says. \"Eventually.\"<br><br>At the foot of the boarding ramp, Sairen is testing the cleats. Jovie sets the chest down beside him.<br><br>\"When do you expect to be back?\" she asks.<br><br>\"The ship's best estimate is three weeks, give or take the wind.\" Sairen tugs a line, frowns at it, and looks up. Then he stops, because she hasn't looked at the ship once. \"You weren't asking about the ship.\"<br><br>\"No,\" Jovie says.<br><br>He is quiet for a moment. \"I'll write,\" he says. \"If the voyage runs long.\"<br><br>\"I'd like to hear from you,\" Jovie says, \"even if it doesn't.\"<br><br>Up on deck, Joel suddenly finds a great deal to do with the same length of rope. San studies her list very carefully.",
+    85: "At the public landing the crew helped reopen, the new gangway is already worn smooth by a week of boots and barrels. Aisyah is on the stone with her notebook when a woman in a dusty apron waves her over, with a bolt of sailcloth on her shoulder.<br><br>\"You're off the big ship,\" the cloth trader says. \"I'm bound for the port past the headland, and my own boat's in for caulking. I know the way. I can guide you there, if you'll carry me and two bolts of cloth.\"<br><br>\"What's past the headland?\" Aisyah asks.<br><br>\"Sailors who need cloth, and growers who need somebody to carry their fruit. Between them, a market.\" The trader grins. \"It's only half a day, and the water's deep all the way in.\"<br><br>Aisyah looks at San, and San looks at Joel.<br><br>\"Half a day,\" Joel says. \"Show me.\"<br><br>The trader stands at the bow and calls the headland one landmark at a time: the split rock, the pale cliff, the stand of wind-bent cedar. Joel follows every word. When the Crimson Tide rounds the last point, the water opens into a deepwater harbor, and above it the cliff is cut into green terraces, step after step of garden climbing toward the sky.<br><br>\"That,\" San says, \"is a lot of stairs.\"<br><br>The cliffside port is on your charts.",
+    86: "The market begins where the quay ends. A long stair climbs the cliff in flights, with a landing at every turn, and every landing is a stall: sailcloth hung to dry like banners, trays of dried fruit sweetening the air, baskets of fresh herbs from the gardens above.<br><br>Aisyah follows the cloth trader up, one flight at a time, and is soon holding three samples and an opinion.<br><br>San climbs more slowly, watching the market rather than the stalls. At the upper landings, sailors haggle for cloth, and the garden growers trade fruit among themselves with plenty of room to spare. Down on the lower quay, there is none. Crates and sacks are stacked three high, waiting for someone to carry them uphill.<br><br>\"They've got buyers at the top,\" San says. \"And goods at the bottom.\"<br><br>A porter leans on a hand-truck beside her, catching a breath. \"That's the hoist,\" the porter says, pointing. \"We've got the one. Next ship's already due, and she'll want it too.\"<br><br>\"One hoist,\" San says.<br><br>\"One hoist,\" the porter agrees. \"And a lot of stairs.\"",
+    87: "The harbor master finds Joel on the quay with a slate in one hand. \"You're in the best berth,\" the harbor master says. \"I need it. There's a ship rounding the headland. If you'd move to the outer anchorage, she can come straight in.\"<br><br>\"Of course,\" Joel says, and has the Crimson Tide moved before the slate is back in the harbor master's pocket.<br><br>The arriving ship comes around the headland under easy sail, with her crew already at the rail. Then the wind turns. A hard gust sweeps down off the terraces and shoves her toward the stone quay. Her crew scramble for a line, but she's drifting faster than anyone can get one ashore.<br><br>Joel is already moving. The Crimson Tide's tender goes over the side, and Joel brings it alongside the drifting ship's bow. \"Your line!\" Joel shouts. \"Throw it down!\"<br><br>The line comes down in a heavy coil. Joel takes it in, runs it ashore, and makes it fast to the nearest bollard. The ship's bow swings, hesitates, and comes to rest against the fenders.<br><br>On the quay, San is holding back the unloading crews with both arms out. \"Stay clear until both lines are fast!\" she calls. \"Everyone back!\"<br><br>They hold. The second line goes ashore. Then the third.<br><br>The quay lets out a long breath.",
+    88: "By evening the quay has settled. The arriving ship's cargo is coming off in a slow, orderly line, and the Crimson Tide rides at the outer anchorage with her lamps lit.<br><br>Sairen finds a coil of rope to sit on, a sheet of paper and a stub of pencil, and writes.<br><br><i>Day three. Wind fair. Quay crowded, one working hoist. Ship secure. Crew in good health.</i><br><br>He reads it back. He tears it in half.<br><br>\"That's a watch report,\" Joel says, passing with a bucket.<br><br>\"I know.\" Sairen takes a fresh sheet.<br><br>The second one takes longer. He writes about the long stair up the cliff and how he counted the steps twice and got two different answers. He writes about the view from the top, where the whole harbor lies under the gardens like a spilled jewel box. He writes about a stall near the third landing, selling dried fruit by the scoop, and how Jovie would certainly stop there first.<br><br>When he is done, he doesn't tear it up.<br><br>A homebound trader is loading at the next berth, bound for Fair Tide in a day. She agrees, with a shrug, to carry one letter.<br><br>The letter is on its way to Fair Tide.",
+    89: "The cloth trader finds Aisyah on the quay the next morning, wearing a very determined expression.<br><br>\"The harbor master says no to selling at the quay,\" the trader says. \"Too crowded, too many carts. But I've done the sums. On the busiest days, half the cloth that goes up the stairs could be sold at the bottom, to the sailors who haven't got time to climb.\"<br><br>\"Prove it,\" Aisyah says.<br><br>\"That's what I'm asking you to help with.\"<br><br>Aisyah thinks about it. Then she opens her notebook. \"A standing order,\" she says. \"Sailcloth for the Crimson Tide, collected here at the quay, every voyage. Twelve bolts. If the harbor master lets one stall sell at quay level, I'll make it worth the trouble.\"<br><br>The trader stares. \"You'd put that in writing?\"<br><br>\"I'd put it in the ledger.\"<br><br>The harbor master takes some persuading, and a long look at the ledger entry, and agrees to try it on the busiest days. The trader handles the arrangement with the local sellers, with a great deal of arm-waving and a great deal of laughing.<br><br>By midday, the first stall has come down to the quay. Aisyah buys a scoop of dried fruit from it, and then another, and brings them both back to the ship.<br><br>The lower market is open.",
+    90: "The research room at Fair Tide is quiet and unusually tidy. Two stools sit at opposite ends of a long bench, with a closed case between them and a partition of folded cloth in the middle of the room.<br><br>Renn is on the left stool, writing steadily. He records the conditions around the Pearl: the time, the tide, the temperature, each instrument and what it reads. When something doesn't change, he writes that down too, because a baseline is mostly things that don't change.<br><br>On the right stool, behind the cloth, Mimi keeps a separate account. She writes what she perceives, in her own words, and next to each line, how sure she is of it. Some lines she crosses out. Some she underlines.<br><br>Neither of them looks at the other's page. Adrian has made that a rule.<br><br>When both are finished, Adrian takes the two accounts and sets them side by side on the bench. \"Now,\" Adrian says. \"Compare.\"<br><br>They read in silence. Where the two accounts agree, they note it. Where they don't, they leave both versions on the page. Mimi circles one line twice and doesn't say why.<br><br>Nothing in either account says what the Pearl is. Neither says what it will do, and neither says where it will end up. Those questions stay open.<br><br>They file the two accounts together, and Renn copies both for Devon, as Joel asked at the first briefing.",
+    91: "The Crimson Tide comes back into Fair Tide with her holds full: sailcloth for the ship's spare rigging, and dried fruit for the galley, more of it than Aisyah will admit to buying.<br><br>On the quay, Jovie is waiting. She doesn't wave. She waits until Sairen is down the ramp.<br><br>\"I got your letter,\" she says.<br><br>\"It was meant to be short,\" Sairen says.<br><br>\"It was perfect.\" Jovie holds his gaze a moment longer than she needs to. \"The stall near the third landing. Is it real?\"<br><br>\"It's real. It's the best one.\"<br><br>\"Then take me there someday,\" Jovie says. \"To the cliffside market. I'd like to see the stairs you counted twice.\"<br><br>Sairen opens his mouth, closes it, and says: \"When are you next free?\"<br><br>Jovie laughs, quietly, and doesn't answer yet.<br><br>Across the quay, Aisyah is at the chart table with her notebook open. She finds the port past the headland, and writes its market day in the margin beside the others.<br><br>The cliffside port stays open for return voyages."
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
@@ -453,8 +489,20 @@
     {id:'channel_island', name:'Channel Island', icon:'⛵', danger:3, specialties:['spices','silk','timber'],
       desc:'The neighbouring island along the sheltered channel, with a deepwater quay and a public landing worth keeping. (Working name.)',
       blurb:'A busy deepwater quay, a market under striped awnings, and a public landing the islanders can use again.',
-      tradeReady:function(){ return !!prog()[76]; }}
+      tradeReady:function(){ return !!prog()[76]; }},
+    {id:'terrace_harbor', name:'Terrace Harbor', icon:'🌿', danger:3, specialties:['sailcloth','dried_fruit','textiles'],
+      desc:'A deepwater harbor beneath terraced gardens, with a market built up the cliff on one long stair. (Working name.)',
+      blurb:'Sailcloth and dried fruit, a stair of stalls climbing the cliff, and a lower quay that is finally allowed to trade.'}
   ];
+
+  // New trade goods for the cliffside port (draft, for review): both sell
+  // cheaper at Terrace Harbor, where they are specialties. Added to the
+  // existing GOODS table so the standard market, cargo and price systems
+  // handle them with no other changes.
+  if (typeof GOODS !== 'undefined') {
+    if (!GOODS.sailcloth) GOODS.sailcloth = { name: 'Sailcloth', icon: '⛵', basePrice: 42, weight: 1 };
+    if (!GOODS.dried_fruit) GOODS.dried_fruit = { name: 'Dried Fruit', icon: '🍇', basePrice: 26, weight: 1 };
+  }
   const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
   window.CRIMSON_HORIZON_PORTS = CH_PORTS;
 
@@ -467,7 +515,8 @@
     central_gate:function(){ return !!prog()[65]; },     // Ch.064 read: selectable, Ch.065 plays here
     island_harbor:function(){ return !!prog()[66]; },    // Ch.065 read (Make Landfall)
     outer_island: function(){ return !!prog()[70]; },    // Ch.069 read: provisions run; regular port after Ch.070
-    channel_island: function(){ return !!prog()[75]; }   // Ch.074 read: sailable; regular port after Ch.075
+    channel_island: function(){ return !!prog()[75]; },  // Ch.074 read: sailable; regular port after Ch.075
+    terrace_harbor: function(){ return !!prog()[85]; }   // Ch.084 read ("Enter Harbor"): sailable and a regular port
   };
 
   function registerCrimsonHorizonPorts(){
@@ -520,7 +569,7 @@
   };
 
   function chapterPortId(id){
-    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : id <= 66 ? 'central_gate' : id <= 70 ? 'island_harbor' : id <= 74 ? 'outer_island' : id <= 75 ? 'island_harbor' : id <= 79 ? 'channel_island' : id <= 83 ? 'fair_tide' : null;
+    return id <= 11 ? 'harbor_beyond_charts' : id <= 33 ? 'storm_shelf' : id <= 49 ? 'west_gate' : id <= 65 ? 'south_gate' : id <= 66 ? 'central_gate' : id <= 70 ? 'island_harbor' : id <= 74 ? 'outer_island' : id <= 75 ? 'island_harbor' : id <= 79 ? 'channel_island' : id <= 83 ? 'fair_tide' : id <= 84 ? 'fair_tide' : id <= 85 ? 'channel_island' : id <= 89 ? 'terrace_harbor' : id <= 91 ? 'fair_tide' : null;
   }
   function chPortName(portId){
     const p = CH_PORTS.find(function(x){ return x.id === portId; }) ||
@@ -538,6 +587,10 @@
     if (id >= 76 && id <= 79) return '⚓ Channel Island · A Harbor for Everyone';
     if (id === 80) return '⛵ At sea — on the way back to Fair Tide';
     if (id === 82) return '⚓ Fair Tide · Black Pearl Study (research chapter)';
+    if (id === 84 || id === 91) return '⚓ Fair Tide · The Far Side of the Headland';
+    if (id === 85) return '⚓ Channel Island · The Far Side of the Headland';
+    if (id >= 86 && id <= 89) return '⚓ Terrace Harbor · The Far Side of the Headland';
+    if (id === 90) return '⚓ Fair Tide · Black Pearl Study (research chapter)';
     if (id === 81 || id === 83) return '⚓ Fair Tide · A Harbor for Everyone';
     return '⚓ ' + chPortName(chapterPortId(id));
   }
@@ -555,7 +608,8 @@
     70: 'Outer Island is now on your charts for the provisions run. Sail there to deliver the cargo.',
     71: 'The provisions are delivered. Outer Island is now a regular port, open for return visits and trade.',
     75: 'Channel Island, the neighbouring island, is now on your charts. Sail there to continue.',
-    76: 'Channel Island is now a regular port, open for return visits and trade.'
+    76: 'Channel Island is now a regular port, open for return visits and trade.',
+    85: 'Terrace Harbor (working name), the cliffside port past the headland, is now on your charts as a regular port with trade. Sail there to continue.'
   };
 
   // ===================================================================
@@ -634,6 +688,22 @@
          result:"Erynn's record of Devon's account and Fen's cross-check are on the table. San and Joel agree the study begins with observation, with Adrian's protocol as the starting point for Renn and Mimi. Every finding will be copied for Devon."},
     83: {label:'🧭 Review the Chart', objective:'Look over the chart and decide what to leave for the next captain.',
          result:'Three places beyond the Central Gate are marked on the chart, with Aisyah\'s market days in the margin. Joel starts a copy for the harbor office, and every discovered destination stays on the travel list.'},
+    84: {label:'🎒 Prepare to Depart', objective:'Load the infirmary stores and make ready to leave Fair Tide.',
+         result:'The infirmary stores are aboard, the ramp is checked, and Sairen has promised to write if the voyage runs long. The Crimson Tide is ready to leave Fair Tide.'},
+    85: {label:'⚓ Enter Harbor', objective:'Follow the cloth trader\'s directions around the headland.',
+         result:'The cloth trader calls the landmarks one at a time and Joel follows each. Past the last point the water opens into a deepwater harbor beneath terraced gardens. The cliffside port is on your charts.'},
+    86: {label:'🛒 Visit the Market', objective:'Climb the stairs to the market and see what the port trades.',
+         result:'Sailors buy sailcloth and garden growers trade dried fruit. The upper market has room for both, but the lower quay is packed with cargo and there is only one working hoist.'},
+    87: {label:'🪢 Take the Line', objective:'Clear the berth, then help the arriving ship when the gust pushes it toward the quay.',
+         result:'Joel moves the Crimson Tide to the outer anchorage. When the arriving ship drifts, Joel brings the tender alongside and takes its line in, and San keeps the unloading crews clear until both ships are secure.'},
+    88: {label:'✉️ Send the Letter', objective:'Write to Jovie, and find someone to carry it to Fair Tide.',
+         result:'The first attempt reads like a watch report, so Sairen starts again. The second tells Jovie about the stairs, the view and the stall she would stop at first. A homebound trader agrees to carry it to Fair Tide.'},
+    89: {label:'⚖️ Trade at the Quay', objective:'Help the cloth trader make the case for selling at quay level.',
+         result:'Aisyah puts in a standing order for sailcloth that can be collected at the quay. The harbor master agrees to try it on busy days, and the first stall comes down to the lower quay.'},
+    90: {label:'📖 Read the Observations', objective:"Read Renn's conditions record and Mimi's separate account together.",
+         result:"Renn's record of conditions and Mimi's account of her impressions are compared only after both are finished, and filed together. Neither says what the Pearl is. A copy goes to Devon."},
+    91: {label:'🏠 Return to Fair Tide', objective:'Bring the sailcloth and dried fruit home, and see who is waiting on the quay.',
+         result:'Sailcloth for the ship, dried fruit for the galley, and a conversation on the quay. The cliffside port stays open for return voyages, and Aisyah adds its market day to the chart.'},
     63: {label:'📖 Match the Records', objective:"Match the Keeper's dispatch book to the West Gate records.",
          result:'The same operation bought the Storm Shelf coupling and held the South Gate order under SV-7740. A separate entry schedules a service delivery at the Central Gate. The coupling investigation is closed, and the Central Gate lead is open.'}
   };
@@ -646,6 +716,10 @@
   // never holds up Ch.082 or the next voyage. (black-pearl-research.js
   // supplies ready()/reason().)
   const CH_SIDE = {
+    90: {
+      ready: function(){ return typeof window.blackPearlObservationsReady === 'function' && window.blackPearlObservationsReady(); },
+      reason: function(){ return (typeof window.blackPearlObservationsReason === 'function') ? window.blackPearlObservationsReason() : 'Not ready yet.'; }
+    },
     82: {
       ready: function(){ return typeof window.blackPearlBriefingReady === 'function' && window.blackPearlBriefingReady(); },
       reason: function(){ return (typeof window.blackPearlBriefingReason === 'function') ? window.blackPearlBriefingReason() : 'Not ready yet.'; }
@@ -801,6 +875,10 @@
     if (id === 68) game.crimsonHorizonProvisionsRunReady = true;
     // Ch.081 (id 82): the first Black Pearl briefing is held.
     if (id === 82 && typeof window.onPearlBriefingHeld === 'function') window.onPearlBriefingHeld();
+    // Ch.089 (id 90): the first observations are filed.
+    if (id === 90 && typeof window.onPearlObservationsRead === 'function') window.onPearlObservationsRead();
+    // Ch.087 (id 88): Sairen's letter to Jovie is kept (Bonds tab, scripts/sairen-jovie-letters.js).
+    if (id === 88 && typeof window.recordSairenLetter === 'function') window.recordSairenLetter();
     // Ch.074 (id 75): San points at a neighbouring island seen from the
     // ridge; reserved for a future arrival (not a port yet).
     if (id === 75) game.crimsonHorizonNeighbourIslandSet = true;

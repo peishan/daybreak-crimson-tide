@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V434 · Auto-Reach: auto-continue, checkpoint rests, away farming';
+window.__CT_BUILD__='V435 · Crimson Horizon Arc IX Ch.083-090 (The Far Side of the Headland)';

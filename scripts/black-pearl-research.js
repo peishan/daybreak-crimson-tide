@@ -170,6 +170,39 @@
     }
   };
 
+  // ---- First observations (Crimson Horizon Ch.089, id 90, a SIDE chapter) ----
+  // Optional Fair Tide scene: opens once the 081 briefing is held and both
+  // Renn's and Mimi's observation assignments are complete, whenever the
+  // player is at Fair Tide. It never blocks the story chain.
+  const OBS_CH_ID = 90;
+  function roundTwoDone(){ return reportDone(REPORTS[3]) && reportDone(REPORTS[4]); }
+  function observationsStatus(){
+    if (chProgress(OBS_CH_ID)) return 'read';
+    if (!briefingHeld()) return 'waiting_briefing';
+    if (!roundTwoDone()) return 'waiting_reports';
+    if (game.location !== 'fair_tide') return 'waiting_location';
+    return 'ready';
+  }
+  window.blackPearlObservationsStatus = observationsStatus;
+  window.blackPearlObservationsReady = function(){ return observationsStatus() === 'ready'; };
+  window.blackPearlObservationsReason = function(){
+    switch (observationsStatus()) {
+      case 'waiting_briefing': return 'Opens after the first Black Pearl briefing.';
+      case 'waiting_reports': return "Waiting on Renn's and Mimi's observation assignments.";
+      case 'waiting_location': return 'Return to Fair Tide to read the observations.';
+      case 'read': return 'The first observations are filed.';
+      default: return 'The observations are ready.';
+    }
+  };
+  window.onPearlObservationsRead = function(){
+    pearlNote('observations_1', "First observations: Renn's record of conditions and Mimi's account of her impressions were compared only after both were finished, and filed together. A copy went to Devon. Neither account says what the Pearl is.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  window.__ctReadPearlObservations = function(){
+    if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(OBS_CH_ID);
+  };
+
   // Called by the chapter flow when Ch.081 is completed.
   window.onPearlBriefingHeld = function(){
     game.blackPearlBriefings = game.blackPearlBriefings || {};
@@ -192,8 +225,17 @@
     else if (status === 'waiting_story') line = 'Required reports are in. The briefing opens after Chapter 080, back at Fair Tide.';
     else if (status === 'waiting_location') line = 'Required reports are in. Return to Fair Tide to attend the briefing.';
     else line = 'The first briefing needs reports from Erynn and Fen.';
+    let obsLine = '';
+    if (status === 'held') {
+      const os = observationsStatus();
+      if (os === 'read') obsLine = '✓ First observations filed.';
+      else if (os === 'ready') obsLine = '<button class="btn btn-small btn-magic" onclick="__ctReadPearlObservations()">📖 Read the Observations</button> <span>Renn\'s and Mimi\'s accounts are ready to compare.</span>';
+      else if (os === 'waiting_location') obsLine = 'Observations are ready. Return to Fair Tide to read them.';
+      else obsLine = 'The first observations are waiting on Renn\'s and Mimi\'s assignments.';
+    }
     return '<div class="rt-status" style="margin-top:4px;">Reports: ' + reports + '</div>' +
-      '<div class="rt-status" style="margin-top:4px;">' + line + '</div>';
+      '<div class="rt-status" style="margin-top:4px;">' + line + '</div>' +
+      (obsLine ? '<div class="rt-status" style="margin-top:4px;">' + obsLine + '</div>' : '');
   };
 
   // Attend Briefing plays Ch.081 through the normal chapter flow: scene
