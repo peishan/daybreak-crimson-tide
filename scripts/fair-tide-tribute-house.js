@@ -86,6 +86,7 @@
   function wingLv(w){ return hs().wings[w] || 0; }
   function wingTotal(){ return WING_IDS.reduce(function(s, w){ return s + wingLv(w); }, 0); }
   function res(){ game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0}; return game.fairTideResources; }
+  function addRes(k, n){ const r = res(); const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999; const cur = r[k] || 0; if (cur < cap) r[k] = Math.min(cap, cur + n); }
   function residentsHere(){ return RESIDENTS.filter(function(r){ return !r.eligible || r.eligible(); }); }
   window.tributeHouseResidentIds = function(){ return unlocked() ? residentsHere().map(function(r){ return r.id; }) : []; };
 
@@ -152,9 +153,9 @@
     h.claim[w] = game.day;
     const L = wingLv(w), r = res(), t = WINGS[w].tender;
     let msg;
-    if (w === 'apothecary') { const n = 4 + 3 * L; r.food = (r.food || 0) + n; msg = '🌿 ' + t + ' brings in the day\'s herbs and broth: ' + RES_ICON.food + ' Food +' + n + '.'; }
-    else if (w === 'workshop') { const a = 3 + 2 * L, b = 2 + 2 * L; r.timber = (r.timber || 0) + a; r.stone = (r.stone || 0) + b; msg = '⚒️ ' + t + ' has the bench busy: ' + RES_ICON.timber + ' Timber +' + a + ', ' + RES_ICON.stone + ' Stone +' + b + '.'; }
-    else if (w === 'stables') { const n = 3 + 2 * L; r.trade = (r.trade || 0) + n; msg = '🐴 ' + t + ' hears what the carriers are saying: ' + RES_ICON.trade + ' Trade +' + n + '.'; }
+    if (w === 'apothecary') { const n = 4 + 3 * L; addRes('food', n); msg = '🌿 ' + t + ' brings in the day\'s herbs and broth: ' + RES_ICON.food + ' Food +' + n + '.'; }
+    else if (w === 'workshop') { const a = 3 + 2 * L, b = 2 + 2 * L; addRes('timber', a); addRes('stone', b); msg = '⚒️ ' + t + ' has the bench busy: ' + RES_ICON.timber + ' Timber +' + a + ', ' + RES_ICON.stone + ' Stone +' + b + '.'; }
+    else if (w === 'stables') { const n = 3 + 2 * L; addRes('trade', n); msg = '🐴 ' + t + ' hears what the carriers are saying: ' + RES_ICON.trade + ' Trade +' + n + '.'; }
     else if (w === 'yard') {
       const xp = Math.max(1, (typeof level === 'function' ? level() : 1) * L);
       msg = '🥋 ' + t + ' runs the party through drills: +' + xp.toLocaleString() + ' XP.';
