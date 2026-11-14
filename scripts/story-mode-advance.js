@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V456 · Captain Quarters home, building memories and tender mood';
+window.__CT_BUILD__='V457 · Tribute House workshop tended by Aster';
