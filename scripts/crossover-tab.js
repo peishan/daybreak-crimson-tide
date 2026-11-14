@@ -43,10 +43,12 @@
   // San's own reference sheets use he/she below (Jade, Devon, Sally,
   // Levi, Hugh, Sera, Adrian, Eve, Rheon, Mirelle, Fen -- Fen confirmed
   // via San's crossover research-team sheet: "Aster's wife"). Sky,
-  // Jenika, Roc, Delilah and Aster are never given a pronoun anywhere in
-  // the arc's text or the sheets seen so far (Aster is named only as
-  // Fen's spouse, never directly), so their entries still avoid
+  // Jenika, Roc and Delilah are never given a pronoun anywhere in the
+  // arc's text or the sheets seen so far, so their entries still avoid
   // guessing one -- flagged to San for confirmation rather than assumed.
+  // Aster is confirmed by San: he is the King of Dragonvale by the end of
+  // Tribute's main campaign (Fen's husband), very versatile, with hobbies
+  // despite being a king, and a master of disguise.
   //
   // Titles below (Mirelle/Rheon = Queen/King of Altan, Fen = Queen of
   // Dragonvale, Adrian = Prince-Consort/Royal Scholar of Tribute, Jenika
@@ -112,7 +114,7 @@
       desc:"Builds a life out of love rather than obligation — the kind San is openly delighted to see in another family.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'aster', name:'Aster', icon:'🗺️',
-      connection:"Dragonvale — Fen's spouse. Jade and Devon's sibling.",
+      connection:"Dragonvale — King of Dragonvale. Fen's husband. Jade and Devon's sibling.",
       desc:"Steady in conversation, contributes without needing to lead it, and still finds time to actually look around wherever the visit lands.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'fen', name:'Fen', icon:'⚙️',

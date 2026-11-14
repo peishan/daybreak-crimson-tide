@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V457 · Tribute House workshop tended by Aster';
+window.__CT_BUILD__='V458 · Aster lore: King of Dragonvale';
