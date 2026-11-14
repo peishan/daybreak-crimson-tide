@@ -120,7 +120,7 @@
   // Cover/chapter art is the real uploaded pages, not placeholders --
   // assets/comics/sequel/. arc1-cover-a-new-voyage.webp, arc2-cover-
   // storm-shelf.webp, arc3-cover-beneath-the-storm-shelf.webp and
-  // arc4-cover-the-mist-straits.webp are each arc's own cover (ARC_META below, used in the act header);
+  // arc4-cover-the-mist-straits.webp (and arc5-arc9 likewise) are each arc's own cover (ARC_META below, used in the act header);
   // crimson-horizon-cover.webp is the separate one-time splash
   // announcing the sequel, shown the instant Arc XLII completes
   // regardless of the Level 465 chapter gate -- see
@@ -360,11 +360,11 @@
     2: {cover:'assets/comics/sequel/arc2-cover-storm-shelf.webp', kicker:'Crimson Horizon · Arc II', title:'Storm Shelf', tagline:'Something beneath the Shelf has been waiting to be found.'},
     3: {cover:'assets/comics/sequel/arc3-cover-beneath-the-storm-shelf.webp', kicker:'Crimson Horizon · Arc III', title:'Beneath the Storm Shelf', tagline:'The signal was never random. Someone kept it active.'},
     4: {cover:'assets/comics/sequel/arc4-cover-the-mist-straits.webp', kicker:'Crimson Horizon · Arc IV', title:'The Mist Straits', tagline:'In the Straits, a light is not always a way home.'},
-    5: {cover:null, kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'},
-    6: {cover:null, kicker:'Crimson Horizon · Arc VI', title:'A Place to Come Home To', tagline:'Finding somewhere new can change what you want to come home to.'},
-    7: {cover:null, kicker:'Crimson Horizon · Arc VII', title:'The Outer Island Run', tagline:'A delivery, a ridge road, and the shape of a future home.'},
-    8: {cover:null, kicker:'Crimson Horizon · Arc VIII', title:'A Harbor for Everyone', tagline:'A harbor is only as good as the people who can reach it.'},
-    9: {cover:null, kicker:'Crimson Horizon · Arc IX', title:'The Far Side of the Headland', tagline:'Some of the best markets are just around the point.'},
+    5: {cover:'assets/comics/sequel/arc5-cover-the-deep-channel.webp', kicker:'Crimson Horizon · Arc V', title:'The Deep Channel', tagline:'Some channels are hidden because someone wants them used quietly.'},
+    6: {cover:'assets/comics/sequel/arc6-cover-a-place-to-come-home-to.webp', kicker:'Crimson Horizon · Arc VI', title:'A Place to Come Home To', tagline:'Finding somewhere new can change what you want to come home to.'},
+    7: {cover:'assets/comics/sequel/arc7-cover-the-outer-island-run.webp', kicker:'Crimson Horizon · Arc VII', title:'The Outer Island Run', tagline:'A delivery, a ridge road, and the shape of a future home.'},
+    8: {cover:'assets/comics/sequel/arc8-cover-a-harbor-for-everyone.webp', kicker:'Crimson Horizon · Arc VIII', title:'A Harbor for Everyone', tagline:'A harbor is only as good as the people who can reach it.'},
+    9: {cover:'assets/comics/sequel/arc9-cover-the-far-side-of-the-headland.webp', kicker:'Crimson Horizon · Arc IX', title:'The Far Side of the Headland', tagline:'Some of the best markets are just around the point.'},
     10: {cover:null, kicker:'Crimson Horizon · Arc X', title:'Where the River Meets the Sea', tagline:'A route is only real once it runs in both directions.'}
   };
 
