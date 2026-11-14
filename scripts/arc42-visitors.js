@@ -109,7 +109,7 @@
       const rec = ensure('sera');
       logOnce('sera:sequel:in', rec, 'join', 'Settles in at Fair Tide.');
       if (rec.status !== 'resident') changed = true;
-      rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null; rec.room = 'Guest Quarters';
+      rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null; rec.room = 'Tribute House';
     }
     if (changed && typeof saveGameQuiet === 'function') saveGameQuiet();
   };
