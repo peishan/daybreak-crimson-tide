@@ -32,6 +32,8 @@
   // Crimson Tide; once Ch.079 is read the house keeps the rooms they have
   // agreed to look at (they count toward rooms taken), nothing more.
   //
+  // Aster (King of Dragonvale, versatile, with hobbies) tends the Workshop as a hobby.
+  //
   // TRIBUTE_HOUSE_RESIDENTS is an array on purpose: each later Tribute
   // arrival is one more entry with its own eligibility.
   // -------------------------------------------------------------------
@@ -230,7 +232,7 @@
       when:function(){ return wingLv('study') >= 1; }},
     {id:'jars', icon:'🌿', t:"Sky's herb jars line the sill, labelled in two different hands.",
       when:function(){ return wingLv('apothecary') >= 1; }},
-    {id:'workshop_tools', icon:'⚒️', t:"Aster's tools hang in labelled rows above the workbench, and everyone else is careful about borrowing them.",
+    {id:'workshop_tools', icon:'⚒️', t:"Aster's tools hang in labelled rows above the workbench. It is a king's hobby, kept with a craftsman's care, and everyone else is careful about borrowing them.",
       when:function(){ return wingLv('workshop') >= 1; }},
     {id:'bow_rack', icon:'🏹', t:"A bow rack hangs by the door. Levi's is the one with the mended string.",
       when:function(){ return wingLv('stables') >= 1; }},

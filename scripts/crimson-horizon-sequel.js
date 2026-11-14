@@ -250,6 +250,11 @@
   // first Renn-Maera outing.
   // -------------------------------------------------------------------
 
+  // PLANNED (San): Aster is the King of Dragonvale by the end of Tribute's main
+  // campaign, very versatile, with hobbies despite being a king, and a master of
+  // disguise there. Later Crimson Horizon chapters can have him helping with
+  // disguises or working out strategies. Use he/him for Aster.
+
   const CRIMSON_HORIZON_CHAPTERS = [
     {id:1, arc:1, title:'Prologue — A New Voyage', focus:"Aboard the Crimson Tide, San and Joel look out over a new horizon — one chapter closed, a wider world still waiting. The Black Pearl remains in their guardianship, its true nature still unknown. They decide to meet whatever comes next together, as one unified crew.", image:'assets/comics/sequel/prologue-a-new-voyage.webp', xp:400, action:'🌅 Set Sail Toward the Horizon'},
     {id:2, arc:1, title:'001 · The First Storm', focus:"The Crimson Tide's new voyage opens with a fierce, chaotic storm — their first battle sooner than expected. In its wake comes quieter news: several of the crew are expecting, each pregnancy its own long Veyren road, with the whole crew pacing missions around it together.", image:'assets/comics/sequel/ch01-the-first-storm.webp', xp:410, action:'⚡ Weather the First Storm'},
