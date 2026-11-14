@@ -192,6 +192,8 @@
     (window.FAIR_TIDE_ALLY_NETWORK || []).forEach(function(a){
       if (!a.eligible || a.eligible()) add(a.id);
     });
+    // Tribute House residents (fair-tide-tribute-house.js) are looked after on their own tab.
+    (typeof window.tributeHouseResidentIds === 'function' ? window.tributeHouseResidentIds() : []).forEach(add);
     return ids;
   }
   window.checkInTargetIds = checkInTargetIds;

@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V453 · Crimson Horizon covers for Arcs V-IX (Arc VII added)';
+window.__CT_BUILD__='V454 · The Tribute House (Fair Tide building for Tribute people in the sequel)';
