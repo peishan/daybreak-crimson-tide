@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V458 · Aster lore: King of Dragonvale';
+window.__CT_BUILD__='V459 · Tribute House nursery: cots, early arrivals, births at Fair Tide';
