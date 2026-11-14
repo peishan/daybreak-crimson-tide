@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V452 · Crimson Horizon Arc X: Where the River Meets the Sea (091-100)';
+window.__CT_BUILD__='V453 · Crimson Horizon covers for Arcs V-IX (Arc VII added)';
