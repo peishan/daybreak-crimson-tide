@@ -86,7 +86,7 @@
   function wingLv(w){ return hs().wings[w] || 0; }
   function wingTotal(){ return WING_IDS.reduce(function(s, w){ return s + wingLv(w); }, 0); }
   function res(){ game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0}; return game.fairTideResources; }
-  function addRes(k, n){ const r = res(); const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999; r[k] = Math.min(cap, (r[k] || 0) + n); }
+  function addRes(k, n){ const r = res(); const cap = (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999; const cur = r[k] || 0; if (cur < cap) r[k] = Math.min(cap, cur + n); }
   function residentsHere(){ return RESIDENTS.filter(function(r){ return !r.eligible || r.eligible(); }); }
   window.tributeHouseResidentIds = function(){ return unlocked() ? residentsHere().map(function(r){ return r.id; }) : []; };
 

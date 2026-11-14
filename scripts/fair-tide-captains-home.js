@@ -54,7 +54,7 @@
   function wingTotal(){ return WING_IDS.reduce(function(s, w){ return s + wingLv(w); }, 0); }
   function res(){ game.fairTideResources = game.fairTideResources || {timber:0, stone:0, food:0, trade:0}; return game.fairTideResources; }
   function cap(){ return (typeof window.fairTideResourceCap === 'function') ? window.fairTideResourceCap() : 999999; }
-  function addRes(k, n){ const r = res(); r[k] = Math.min(cap(), (r[k] || 0) + n); }
+  function addRes(k, n){ const r = res(), c = cap(), cur = r[k] || 0; if (cur < c) r[k] = Math.min(c, cur + n); }
   function wingOpen(w){ return !WINGS[w].needsChildren || children(); }
 
   // ---- rooms and comfort ----
