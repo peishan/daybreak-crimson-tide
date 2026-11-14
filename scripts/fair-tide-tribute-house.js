@@ -34,6 +34,15 @@
   //
   // Aster (King of Dragonvale, versatile, with hobbies) tends the Workshop as a hobby.
   //
+  // NURSERY (sixth wing, Maera tends it): cots for the babies of the women who
+  // are expecting and for the Tribute cast's little ones while their parents are
+  // at Fair Tide. Sera (expecting, from Crimson Horizon 001), Jade and Sally (due
+  // windows that may overlap, from 069) each get a reserved cot, so that if a baby
+  // comes early it is born at Fair Tide and stays in the nursery. The births
+  // themselves belong to later chapters: they call
+  // window.recordTributeBirth(motherId, babyName) when one happens. Visible only
+  // after the sequel begins, like the rest of the house.
+  //
   // TRIBUTE_HOUSE_RESIDENTS is an array on purpose: each later Tribute
   // arrival is one more entry with its own eligibility.
   // -------------------------------------------------------------------
@@ -65,7 +74,9 @@
     stables:    {n:'Stables',      icon:'🐴', tender:'Levi',  names:['Hitching Post','Stable','Coach House','Road Stables','Royal Mews'],
                  d:'Once a day: a little Trade from carriers and caravans', cost:{timber:15, trade:10}},
     yard:       {n:'Training Yard',icon:'🥋', tender:'Jade',  names:['Sparring Patch','Practice Yard','Drill Court','Warriors\' Court','Phoenix Yard'],
-                 d:'Once a day: the party trains for a little XP', cost:{stone:15, food:10}}
+                 d:'Once a day: the party trains for a little XP', cost:{stone:15, food:10}},
+    nursery:    {n:'Nursery',      icon:'👶', tender:'Maera', names:['Crib Corner','The Little Room','Nursery','Nursery Wing','The Wide Nursery'],
+                 d:'Cots for expecting mothers and the Tribute cast\'s little ones: 3 at level 1, 2 more with each level', cost:{food:15, trade:10}}
   };
   const WING_IDS = Object.keys(WINGS);
   const RES_ICON = {timber:'🪵', stone:'🪨', food:'🍲', trade:'💱'};
@@ -149,7 +160,7 @@
   };
 
   window.claimTributeWing = function(w){
-    if (!unlocked() || !WINGS[w] || !wingLv(w) || w === 'study') return;
+    if (!unlocked() || !WINGS[w] || !wingLv(w) || w === 'study' || w === 'nursery') return;
     const h = hs();
     if (h.claim[w] === game.day) { toast('Already done here today.'); return; }
     h.claim[w] = game.day;
@@ -238,7 +249,11 @@
       when:function(){ return wingLv('stables') >= 1; }},
     {id:'yard_patch', icon:'🥋', t:'The practice yard has a worn patch where Jade keeps rehearsing the same turn.',
       when:function(){ return wingLv('yard') >= 1; }},
-    {id:'five_wings', icon:'🏡', t:'All five wings stand now, and the Tribute House no longer looks like a place for visitors.',
+    {id:'nursery_first', icon:'👶', t:'A nursery is ready at the Tribute House. Maera has checked the cots twice.',
+      when:function(){ return wingLv('nursery') >= 1; }},
+    {id:'nursery_blankets', icon:'🧺', t:'A pile of small blankets in several colours has appeared on the nursery shelf, with no note.',
+      when:function(){ return wingLv('nursery') >= 2; }},
+    {id:'five_wings', icon:'🏡', t:'Every wing stands now, and the Tribute House no longer looks like a place for visitors.',
       when:function(){ return WING_IDS.every(function(w){ return wingLv(w) >= 1; }); }}
   ];
   function syncMemories(){
@@ -251,6 +266,71 @@
     });
   }
   window.syncTributeHouse = function(){ if (typeof game === 'undefined' || !game || !unlocked()) return; syncHousehold(); syncMemories(); };
+
+  // ---- nursery ----
+  function cotsTotal(){ const L = wingLv('nursery'); return L ? 1 + 2 * L : 0; }
+  function babies(){ const h = hs(); if (!h.babies) h.babies = []; return h.babies; }
+  // The women expecting who will have a cot reserved. When each is known to the story:
+  const EXPECTING = [
+    {id:'sera',  name:'Sera',  with:'Hugh',  known:function(){ return ch(2); }},    // Crimson Horizon 001
+    {id:'jade',  name:'Jade',  with:'Devon', known:function(){ return ch(70); }},   // 069: the due windows may overlap
+    {id:'sally', name:'Sally', with:'Levi',  known:function(){ return ch(70); }}
+  ];
+  // Children of the Tribute cast who stay while their parents are at Fair Tide.
+  const NURSERY_KIDS = [
+    {id:'roc_delilah_twins', name:"Roc and Delilah's twins (Liora among them)", parents:['roc','delilah']}
+  ];
+  function kidsStaying(){
+    return NURSERY_KIDS.filter(function(k){
+      return k.parents.every(function(p){ const r = resRec(p); return !!(r && r.status === 'resident'); });
+    });
+  }
+  function expectingNow(){
+    const born = babies().map(function(b){ return b.mother; });
+    return EXPECTING.filter(function(e){ return e.known() && born.indexOf(e.id) === -1; });
+  }
+  function cotsUsed(){ return babies().length + kidsStaying().length + expectingNow().length; }
+  // Called by a later chapter when a baby is born at Fair Tide.
+  window.recordTributeBirth = function(motherId, babyName){
+    if (typeof game === 'undefined' || !game || !unlocked()) return false;
+    const e = EXPECTING.find(function(x){ return x.id === motherId; });
+    if (!e) return false;
+    if (babies().some(function(b){ return b.mother === motherId; })) return false;
+    babies().push({mother: motherId, father: e.with, name: babyName || ('Baby of ' + e.name + ' and ' + e.with), day: game.day || 0});
+    const text = (babyName ? babyName + ', ' : 'A baby, ') + 'born to ' + e.name + ' and ' + e.with + ', is staying in the Tribute House nursery.';
+    logEvent('👶 ' + text, 'gold');
+    if (typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry(text, '👶');
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    return true;
+  };
+  window.tributeHouseBabies = function(){ return babies().slice(); };
+
+  function nurseryHtml(){
+    const L = wingLv('nursery'), total = cotsTotal();
+    let html = '<div class="panel-title" style="font-size:.95rem;margin-top:12px;">👶 The Nursery</div>';
+    const exp = expectingNow(), born = babies(), kids = kidsStaying();
+    if (!L) {
+      html += '<div style="font-size:.78rem;opacity:.75;">No nursery yet. Build one (the Nursery wing above) so that if a baby comes early it is born at Fair Tide and has somewhere ready.</div>';
+      if (exp.length) html += '<div style="font-size:.76rem;opacity:.65;margin-top:4px;">Expecting: ' + exp.map(function(e){ return esc(e.name); }).join(', ') + '. Due windows are still only estimates.</div>';
+      return html;
+    }
+    html += '<div style="font-size:.8rem;opacity:.85;">' + cotsUsed() + ' of ' + total + ' cots in use · tended by Maera</div>';
+    let i = 0;
+    if (exp.length) {
+      html += '<div style="font-size:.78rem;margin-top:6px;"><strong>Reserved</strong></div>' + exp.map(function(e){
+        i++;
+        return '<div style="font-size:.8rem;opacity:.85;margin:3px 0;">' + (i <= total ? '🛏️' : '⏳') + ' ' + esc(e.name) + ' and ' + esc(e.with) + ': ' + (i <= total ? 'a cot is ready' : 'no cot free yet, improve the nursery') + '.</div>';
+      }).join('') + '<div style="font-size:.74rem;opacity:.6;margin-top:2px;">The due windows are still only estimates. If a baby comes early, Maera and the nursery are ready, and the baby stays at Fair Tide.</div>';
+    }
+    html += '<div style="font-size:.78rem;margin-top:8px;"><strong>Staying now</strong></div>';
+    const staying = [];
+    born.forEach(function(b){ staying.push('👶 ' + esc(b.name) + ' (' + esc(b.mother.charAt(0).toUpperCase() + b.mother.slice(1)) + ' and ' + esc(b.father) + ')'); });
+    kids.forEach(function(k){ staying.push('🧸 ' + esc(k.name)); });
+    html += staying.length ? staying.map(function(x){ return '<div style="font-size:.8rem;opacity:.85;margin:3px 0;">' + x + '</div>'; }).join('')
+                           : '<div style="font-size:.78rem;opacity:.6;">Nobody yet. The cots are for the babies, and for the cast\'s little ones while their parents are at Fair Tide.</div>';
+    return html;
+  }
 
   // ---- rendering ----
   function residentRow(r){
@@ -276,7 +356,7 @@
     const claimed = hs().claim[w] === game.day;
     let btns = '';
     if (next) btns += '<button class="btn btn-small ' + (ok ? 'btn-success' : '') + '" ' + (ok ? '' : 'disabled') + ' onclick="upgradeTributeWing(\'' + w + '\')">' + (L ? 'Improve' : 'Build') + '</button> ';
-    if (L && w !== 'study') btns += '<button class="btn btn-small" ' + (claimed ? 'disabled' : '') + ' onclick="claimTributeWing(\'' + w + '\')">' + (claimed ? 'Done today' : (w === 'yard' ? 'Train' : 'Collect')) + '</button>';
+    if (L && w !== 'study' && w !== 'nursery') btns += '<button class="btn btn-small" ' + (claimed ? 'disabled' : '') + ' onclick="claimTributeWing(\'' + w + '\')">' + (claimed ? 'Done today' : (w === 'yard' ? 'Train' : 'Collect')) + '</button>';
     return '<article class="quest-item"><strong>' + W.icon + ' ' + esc(L ? W.names[L - 1] : W.n) + '</strong> ' +
       '<span style="font-size:.76rem;opacity:.7;">Lv ' + L + '/' + WING_MAX + ' · tended by ' + esc(W.tender) + '</span><br>' +
       '<span style="font-size:.78rem;opacity:.8;">' + esc(W.d) + '</span>' +
@@ -322,7 +402,7 @@
     // wings
     html += '<div class="panel-title" style="font-size:.95rem;margin-top:12px;">🏗️ The house and its wings</div>' +
       '<div style="font-size:.74rem;opacity:.65;margin-bottom:4px;">Paid for with Fair Tide\'s stores. Effects are small.</div>' +
-      WING_IDS.map(wingRow).join('');
+      WING_IDS.map(wingRow).join('') + nurseryHtml();
 
     // memories
     const got = MEMORIES.filter(function(m){ return h.mem[m.id]; });
