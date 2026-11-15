@@ -11,6 +11,10 @@ Crimson Horizon soundtrack. These are royalty-free tracks added by San. Normalis
 | `ch-pearl.mp3` | Research Team / Black Pearl study | "Shadows Beneath the Roots (Fantasy Elvish Song, RPG)" by Kaazoom |
 | `ch-market.mp3` | The market: port Market tab (Crimson Horizon ports, Fair Tide) and Fair Tide's Trade tab | "The Market Square (Day Time, 2 min loop, RPG Music)" by Kaazoom |
 | `ch-tavern.mp3` | The tavern in the sequel | "The Travelling Maestro (Medieval Fantasy Music)" by Kaazoom |
+| `ch-harbor.mp3` | The new harbors (port screen, non-market tabs) | "By the Boathouse (Medieval Fantasy Music)" by Kaazoom |
+| `ch-mist.mp3` | West Gate and the Mist Straits | "Fog Over the Faerie Keep (Medieval Fantasy Music)" by Kaazoom |
+| `ch-channel.mp3` | South Gate, the Deep Channel and the Central Gate | "Mist Over the Old Stones (Medieval Fantasy Music)" by Kaazoom |
+| `ch-boss.mp3` | The Stormborn Leviathan and the Keeper's guard | "War Bridge" by Andorios |
 | `ch-fair-tide.mp3` | Fair Tide | "Paper Lanterns (Full Version)" by Kaazoom |
 
-Still open (the game falls back to the base tracks): `ch-harbor`, `ch-storm`, `ch-mist`, `ch-channel`, `ch-boss`.
+Still open (the game falls back to the base tracks): `ch-storm`.
