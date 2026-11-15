@@ -13,7 +13,7 @@
   //   ch_home      assets/audio/ch-home.mp3       the quiet rooms: Tribute House, Captain's Quarters
   //   ch_pearl     assets/audio/ch-pearl.mp3      the Black Pearl study (Research Team tab)
   //   ch_harbor    assets/audio/ch-harbor.mp3     the new harbors: Harbor Beyond the Charts, Island Harbor,
-  //                                              Outer Island, Channel Island, Terrace Harbor, River Mouth, Ropewalk Town
+  //                                              Outer Island, Channel Island, Terrace Harbor, River Mouth, Ropewalk Town, Timber Port
   //   ch_storm     assets/audio/ch-storm.mp3      Storm Shelf
   //   ch_mist      assets/audio/ch-mist.mp3       West Gate, the Mist Straits
   //   ch_channel   assets/audio/ch-channel.mp3    South Gate, the Deep Channel (and the Central Gate)
@@ -28,7 +28,7 @@
   const PORT_TRACK = {
     harbor_beyond_charts:'ch_harbor', storm_shelf:'ch_storm', west_gate:'ch_mist', south_gate:'ch_channel', central_gate:'ch_channel',
     island_harbor:'ch_harbor', outer_island:'ch_harbor', channel_island:'ch_harbor', terrace_harbor:'ch_harbor',
-    river_mouth:'ch_harbor', ropewalk_town:'ch_harbor'
+    river_mouth:'ch_harbor', ropewalk_town:'ch_harbor', timber_port:'ch_harbor'
   };
   const BOSS_FIGHTS = ['3', '60'];   // CH_FIGHTS keys: the Stormborn Leviathan, the Keeper's guard
 

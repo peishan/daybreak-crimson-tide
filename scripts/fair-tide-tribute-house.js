@@ -253,6 +253,8 @@
       when:function(){ return wingLv('nursery') >= 1; }},
     {id:'nursery_blankets', icon:'🧺', t:'A pile of small blankets in several colours has appeared on the nursery shelf, with no note.',
       when:function(){ return wingLv('nursery') >= 2; }},
+    {id:'block_harbor', icon:'🧱', t:'A block harbor stands in the playroom, with a second channel built around the spot where Soel sleeps.',
+      when:function(){ return ch(102); }},
     {id:'five_wings', icon:'🏡', t:'Every wing stands now, and the Tribute House no longer looks like a place for visitors.',
       when:function(){ return WING_IDS.every(function(w){ return wingLv(w) >= 1; }); }}
   ];
@@ -306,6 +308,19 @@
     return EXPECTING.filter(function(e){ return e.known() && born.indexOf(e.id) === -1; });
   }
   function cotsUsed(){ return babies().length + kidsStaying().length + expectingNow().length; }
+  // Crimson Horizon 101: Fair Tide opens its nursery and playroom near the infirmary. The Nursery wing
+  // starts at level 1 if it has not been built, and Fen's older son joins the playroom.
+  window.openTributeNursery = function(){
+    if (typeof game === 'undefined' || !game || !unlocked()) return false;
+    const h = hs();
+    if (!(h.wings.nursery >= 1)) {
+      h.wings.nursery = 1;
+      if (typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('The nursery and the playroom open at Fair Tide, beside the infirmary.', '👶');
+    }
+    window.setTributeNurseryGuest('fen_child', true);
+    syncMemories();
+    return true;
+  };
   // Called by a later chapter when a baby is born at Fair Tide.
   window.recordTributeBirth = function(motherId, babyName){
     if (typeof game === 'undefined' || !game || !unlocked()) return false;
