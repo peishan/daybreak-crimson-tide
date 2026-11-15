@@ -20,6 +20,10 @@
   // later arcs to say. window.coldSpringInvited(id) lets a later chapter
   // read it.
   //
+  // Already gone (San): the canon five were invited as a group, and Hugh and Sera went
+  // with San and Joel in Arc XLII (Ch.27, "The Cooling Spring"). They show as done and are
+  // not invited again; everyone else is invited one at a time.
+  //
   // Permitted: the Tribute team (Jade, Devon, Sky, Levi, Sally), their
   // family and friends (Hugh, Sera, Adrian, Eve, Rheon, Mirelle, Aster,
   // Fen, Roc, Delilah). Jenika is not on the list (she keeps to the medical
@@ -33,12 +37,17 @@
   ];
   window.COLD_SPRING_PERMITTED = PERMITTED;
 
+  const GROUP = ['jade','devon','sky','levi','sally'];
+  function groupDone(){ return !!game.arc42Complete; }
+  function pairDone(id){ return (id === 'hugh' || id === 'sera') && !!(game.comicProgress42 && game.comicProgress42[27]); }
+  function historic(id){ return (GROUP.indexOf(id) !== -1 && groupDone()) || pairDone(id); }
+
   function state(){
     if (!game.coldSpring) game.coldSpring = {};
     if (!game.coldSpring.invites) game.coldSpring.invites = {};
     return game.coldSpring;
   }
-  window.coldSpringInvited = function(id){ return !!(typeof game !== 'undefined' && game && game.coldSpring && game.coldSpring.invites && game.coldSpring.invites[id]); };
+  window.coldSpringInvited = function(id){ return !!(typeof game !== 'undefined' && game && ((game.coldSpring && game.coldSpring.invites && game.coldSpring.invites[id]) || historic(id))); };
 
   function open(){ return !!(game.comicProgress42 && game.comicProgress42[27]); }
   function cast(id){
@@ -65,6 +74,7 @@
     if (!open()) return;
     const p = PERMITTED.find(function(x){ return x.id === id; });
     if (!p) { toast('Only the Tribute team, their family and visiting friends can be invited this way.'); return; }
+    if (historic(id)) { toast(GROUP.indexOf(id) !== -1 ? 'San invited the Tribute team as a group already.' : cast(id).name + ' already went with San and Joel in Arc XLII.'); return; }
     if (!present(p)) { toast(cast(id).name + ' is not at Fair Tide right now.'); return; }
     const st = state();
     if (st.invites[id]) { toast('San has already invited ' + cast(id).name + '.'); return; }
@@ -83,11 +93,16 @@
 
   window.renderColdSpringPanel = function(){
     if (typeof game === 'undefined' || !game || !open()) return '';
-    const here = whoIsHere();
+    const here = whoIsHere().filter(function(p){ return !historic(p.id); });
     const st = state();
     let html = '<div class="panel-title" style="margin-top:16px;">♨️ The Cold Spring</div>' +
       '<p style="font-size:.78rem;opacity:.7;margin:0 0 8px;">The Fountain of Youth, by another name. The Tribute team, their family and visiting friends are not sent the way Fair Tide\'s roster is: San invites them. Joel has views.</p>';
-    if (!here.length) return html + '<div class="story-chip">Nobody from the Tribute side is at Fair Tide right now.</div>';
+    // What has already happened
+    const done = [];
+    if (groupDone()) done.push('<article class="quest-item"><strong>👑🛡️🩺🏹😊 The Tribute team</strong> — <span style="opacity:.8;">Invited as a group · San 😈 · Joel 😡</span></article>');
+    if (pairDone('hugh')) done.push('<article class="quest-item"><strong>🤍 Hugh and 🌊 Sera</strong> — <span style="opacity:.8;">Went with San and Joel in Arc XLII (Ch.27) · San 😈 · Joel 😡</span></article>');
+    html += done.join('');
+    if (!here.length) return html + '<div class="story-chip">Nobody else from the Tribute side is at Fair Tide right now.</div>';
     html += here.map(function(p){
       const c = cast(p.id), inv = st.invites[p.id];
       return '<article class="quest-item"><strong>' + c.icon + ' ' + esc(c.name) + '</strong> — ' +
