@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V467 · Music: Storm Shelf, Keeper boss, guardian and raid tracks';
+window.__CT_BUILD__='V468 · Music: second Crimson Horizon sailing track';
