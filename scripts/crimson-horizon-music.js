@@ -21,12 +21,16 @@
   //   ch_mist      assets/audio/ch-mist.mp3       West Gate, the Mist Straits
   //   ch_channel   assets/audio/ch-channel.mp3    South Gate, the Deep Channel (and the Central Gate)
   //   ch_combat    assets/audio/ch-combat.mp3     Crimson Horizon fights
-  //   ch_boss      assets/audio/ch-boss.mp3       the big fights (the Stormborn Leviathan, the Keeper's guard)
+  //   ch_boss      assets/audio/ch-boss.mp3       the Stormborn Leviathan
+  //   ch_boss_keeper assets/audio/ch-boss-keeper.mp3  the Keeper's guard
+  //   boss_keep    assets/audio/boss-keep.mp3     main game (before and after the sequel starts): guardian fights, archive guardians, the Drowned Admiral
+  //   boss_fleet   assets/audio/boss-fleet.mp3    main game: raids
   // -------------------------------------------------------------------
 
   const FILES = {
     ch_title:'ch-title', ch_sail:'ch-sail', ch_fair_tide:'ch-fair-tide', ch_home:'ch-home', ch_pearl:'ch-pearl', ch_market:'ch-market', ch_tavern:'ch-tavern',
-    ch_harbor:'ch-harbor', ch_storm:'ch-storm', ch_mist:'ch-mist', ch_channel:'ch-channel', ch_combat:'ch-combat', ch_boss:'ch-boss'
+    ch_harbor:'ch-harbor', ch_storm:'ch-storm', ch_mist:'ch-mist', ch_channel:'ch-channel', ch_combat:'ch-combat', ch_boss:'ch-boss', ch_boss_keeper:'ch-boss-keeper',
+    boss_keep:'boss-keep', boss_fleet:'boss-fleet'
   };
   const PORT_TRACK = {
     harbor_beyond_charts:'ch_harbor', storm_shelf:'ch_storm', west_gate:'ch_mist', south_gate:'ch_channel', central_gate:'ch_channel',
@@ -34,6 +38,8 @@
     river_mouth:'ch_harbor', ropewalk_town:'ch_harbor', timber_port:'ch_harbor'
   };
   const BOSS_FIGHTS = ['3', '60'];   // CH_FIGHTS keys: the Stormborn Leviathan, the Keeper's guard
+  const KEEPER_FIGHT = '60';         // the Keeper's guard has its own track
+  const KEEP_KINDS = ['guardian', 'archive_guardian', 'final', 'final_rematch'];   // the main game's guardian fights
 
   const available = window.__chMusicAvail = window.__chMusicAvail || {};
   let lastBase = null;
@@ -48,6 +54,12 @@
 
   // Which sequel track (if any) fits this base key right now.
   function wanted(base){
+    // The main game's big fights, before and after the sequel starts: guardians and the Drowned Admiral, and raids.
+    if (base === 'combat') {
+      const e = window.__ctLastEncounter || {};
+      if (KEEP_KINDS.indexOf(e.kind) !== -1) return 'boss_keep';
+      if (e.kind === 'raid') return 'boss_fleet';
+    }
     if (!sequelOn()) return null;
     const so = document.getElementById('storyModeOverlay');
     if (so && so.classList.contains('active')) return null;          // the Arc I comic reader keeps its own music
@@ -55,7 +67,7 @@
     if (base === 'tavern') return 'ch_tavern';
     if (base === 'combat') {
       const enc = window.__ctLastEncounter || {};
-      if (enc.kind === 'crimson_horizon') return BOSS_FIGHTS.indexOf(String(enc.key)) !== -1 ? 'ch_boss' : 'ch_combat';
+      if (enc.kind === 'crimson_horizon') return String(enc.key) === KEEPER_FIGHT ? 'ch_boss_keeper' : (BOSS_FIGHTS.indexOf(String(enc.key)) !== -1 ? 'ch_boss' : 'ch_combat');
       return PORT_TRACK[game.location] ? 'ch_combat' : null;
     }
     if (base === 'port') {
