@@ -76,7 +76,7 @@
     yard:       {n:'Training Yard',icon:'🥋', tender:'Jade',  names:['Sparring Patch','Practice Yard','Drill Court','Warriors\' Court','Phoenix Yard'],
                  d:'Once a day: the party trains for a little XP', cost:{stone:15, food:10}},
     nursery:    {n:'Nursery',      icon:'👶', tender:'Maera', names:['Crib Corner','The Little Room','Nursery','Nursery Wing','The Wide Nursery'],
-                 d:'Cots for expecting mothers and the Tribute cast\'s little ones: 3 at level 1, 2 more with each level', cost:{food:15, trade:10}}
+                 d:'Cots for expecting mothers and the Tribute cast\'s little ones: 4 at level 1, 2 more with each level', cost:{food:15, trade:10}}
   };
   const WING_IDS = Object.keys(WINGS);
   const RES_ICON = {timber:'🪵', stone:'🪨', food:'🍲', trade:'💱'};
@@ -268,20 +268,36 @@
   window.syncTributeHouse = function(){ if (typeof game === 'undefined' || !game || !unlocked()) return; syncHousehold(); syncMemories(); };
 
   // ---- nursery ----
-  function cotsTotal(){ const L = wingLv('nursery'); return L ? 1 + 2 * L : 0; }
+  function cotsTotal(){ const L = wingLv('nursery'); return L ? 2 + 2 * L : 0; }
   function babies(){ const h = hs(); if (!h.babies) h.babies = []; return h.babies; }
   // The women expecting who will have a cot reserved. When each is known to the story:
   const EXPECTING = [
     {id:'sera',  name:'Sera',  with:'Hugh',  known:function(){ return ch(2); }},    // Crimson Horizon 001
     {id:'jade',  name:'Jade',  with:'Devon', known:function(){ return ch(70); }},   // 069: the due windows may overlap
-    {id:'sally', name:'Sally', with:'Levi',  known:function(){ return ch(70); }}
+    {id:'sally', name:'Sally', with:'Levi',  known:function(){ return ch(70); }},
+    // Fen is at Fair Tide now and Aster visits (San). Eve stays at Tribute Palace,
+    // alternating with the Gold Manor, and Mirelle (a special information agent, like
+    // Sally and Sairen) mostly stays at Altan: neither gets a cot here.
+    {id:'fen',   name:'Fen',   with:'Aster', known:function(){ return ch(2); }}
   ];
   // Children of the Tribute cast who stay while their parents are at Fair Tide.
   const NURSERY_KIDS = [
-    {id:'roc_delilah_twins', name:"Roc and Delilah's twins (Liora among them)", parents:['roc','delilah']}
+    {id:'roc_delilah_twins', name:"Roc and Delilah's twins (Liora among them)", parents:['roc','delilah']},
+    // Fen's older child comes to Fair Tide; upcoming chapters show when (San).
+    {id:'fen_child', name:"Fen's older child", flag:true}
   ];
+  // A later chapter calls this when a child arrives at (or leaves) Fair Tide.
+  window.setTributeNurseryGuest = function(id, present){
+    if (typeof game === 'undefined' || !game || !NURSERY_KIDS.some(function(k){ return k.id === id; })) return false;
+    const h = hs(); if (!h.guests) h.guests = {};
+    h.guests[id] = !!present;
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    return true;
+  };
   function kidsStaying(){
     return NURSERY_KIDS.filter(function(k){
+      if (k.flag) return !!(hs().guests && hs().guests[k.id]);
       return k.parents.every(function(p){ const r = resRec(p); return !!(r && r.status === 'resident'); });
     });
   }
@@ -316,6 +332,7 @@
       return html;
     }
     html += '<div style="font-size:.8rem;opacity:.85;">' + cotsUsed() + ' of ' + total + ' cots in use · tended by Maera</div>';
+    if (cotsUsed() > total) html += '<div style="font-size:.76rem;color:var(--danger,#e74c3c);">More little ones than cots: improve the nursery.</div>';
     let i = 0;
     if (exp.length) {
       html += '<div style="font-size:.78rem;margin-top:6px;"><strong>Reserved</strong></div>' + exp.map(function(e){
