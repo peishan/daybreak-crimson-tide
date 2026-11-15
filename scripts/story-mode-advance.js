@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V461 · Crimson Horizon Arc XI: A Place Between Voyages (101-112)';
+window.__CT_BUILD__='V462 · Hugh visits as a resident; Cold Spring invitations';

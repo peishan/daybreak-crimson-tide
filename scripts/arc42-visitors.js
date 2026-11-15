@@ -41,6 +41,12 @@
   ];
   window.ARC42_VISITS = VISITS;
 
+  // Crimson Horizon Arc XI: Hugh comes to Fair Tide to see Sera (Ch.101 id 103 -> back to Lunareth after Ch.108 id 109).
+  const SEQUEL_VISITS = [
+    {key:'s11_hugh', ids:['hugh'], arrive:103, depart:109, away:'Lunareth', awayCompanion:'Family', inNote:'Visits Fair Tide to see Sera.'}
+  ];
+  window.SEQUEL_VISITS = SEQUEL_VISITS;
+
   // Cold Spring (the Fountain of Youth) lines for the resident card. Only the
   // Canon Five (Tribute ch.960-964) and Hugh and Sera (Arc XLII Ch.27, "The
   // Cooling Spring") are shown at the spring in the chapters. For everyone else
@@ -111,6 +117,25 @@
       if (rec.status !== 'resident') changed = true;
       rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null; rec.room = 'Tribute House';
     }
+    // Sequel visits (Crimson Horizon progress): [chapter id the visit starts, chapter id it ends].
+    SEQUEL_VISITS.forEach(function(v){
+      if (!(ch && ch[v.arrive])) return;
+      const over = !!ch[v.depart];
+      v.ids.forEach(function(id){
+        const wasNew = !window.fairTideResidentsState()[id];
+        const rec = ensure(id);
+        if (wasNew) changed = true;
+        logOnce(v.key + ':' + id + ':in', rec, 'join', v.inNote);
+        if (over) {
+          if (rec.status !== 'departed') changed = true;
+          rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = v.awayCompanion || rec.awayCompanion;
+          logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
+        } else {
+          if (rec.status !== 'resident') changed = true;
+          rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null;
+        }
+      });
+    });
     if (changed && typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 
