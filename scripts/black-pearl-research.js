@@ -236,6 +236,54 @@
     if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(REPORT_CH_ID);
   };
 
+  // ---- Network records (Ch.109, id 110) and the custodians' decision (Ch.110, id 111): SIDE chapters ----
+  // 109 opens after Ch.098 (the first report), whenever the player is at Fair Tide; 110 opens after 109.
+  const NETWORK_CH_ID = 110, AUTHORISE_CH_ID = 111;
+  function networkStatus(){
+    if (chProgress(NETWORK_CH_ID)) return 'read';
+    if (!chProgress(REPORT_CH_ID)) return 'waiting_report';
+    if (game.location !== 'fair_tide') return 'waiting_location';
+    return 'ready';
+  }
+  window.blackPearlNetworkStatus = networkStatus;
+  window.blackPearlNetworkReady = function(){ return networkStatus() === 'ready'; };
+  window.blackPearlNetworkReason = function(){
+    switch (networkStatus()) {
+      case 'waiting_report': return "Opens after Devon's review of the first report.";
+      case 'waiting_location': return 'Return to Fair Tide to review the network records.';
+      case 'read': return 'The network records are filed.';
+      default: return 'The records are ready.';
+    }
+  };
+  function authoriseStatus(){
+    if (chProgress(AUTHORISE_CH_ID)) return 'read';
+    if (!chProgress(NETWORK_CH_ID)) return 'waiting_network';
+    if (game.location !== 'fair_tide') return 'waiting_location';
+    return 'ready';
+  }
+  window.blackPearlAuthoriseStatus = authoriseStatus;
+  window.blackPearlAuthoriseReady = function(){ return authoriseStatus() === 'ready'; };
+  window.blackPearlAuthoriseReason = function(){
+    switch (authoriseStatus()) {
+      case 'waiting_network': return 'Opens after the network records are reviewed.';
+      case 'waiting_location': return "Return to Fair Tide to record the custodians' decision.";
+      case 'read': return "The custodians' decision is logged.";
+      default: return 'The decision is ready to record.';
+    }
+  };
+  window.onPearlNetworkRead = function(){
+    pearlNote('network_records', "Network records: Fen's latest records from Lunareth, set beside the readings taken before the Pearl left, show the restoration sites still maintaining what they achieved, even with the Pearl at Fair Tide. Devon identified the entries from places he saw restored himself.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  window.onPearlAuthoriseRead = function(){
+    pearlNote('custodians_decision', "Custodians' decision: San and Joel approved continued observation and asked for a written test proposal before authorising any connection to the Horizon Engine. The decision is logged, and Devon has a copy. Mimi explained why she circled a line in the first observations twice: the same impression on two separate readings, marked for comparison with Renn's log. The cause is still open.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  window.__ctReadPearlNetwork = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(NETWORK_CH_ID); };
+  window.__ctReadPearlAuthorise = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(AUTHORISE_CH_ID); };
+
   // Called by the chapter flow when Ch.081 is completed.
   window.onPearlBriefingHeld = function(){
     game.blackPearlBriefings = game.blackPearlBriefings || {};
@@ -271,6 +319,18 @@
         else if (rs === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlReport()">📖 Review the Pearl Report</button> <span>Devon has read the first report.</span>';
         else if (rs === 'waiting_location') obsLine += '<br>The report is ready for Devon. Return to Fair Tide to review it.';
         else obsLine += '<br>Devon\'s review of the first report opens after Chapter 097.';
+        if (rs === 'read') {
+          const ns = networkStatus();
+          if (ns === 'read') obsLine += '<br>✓ The network records are filed.';
+          else if (ns === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlNetwork()">📖 Review the Network Records</button> <span>Fen\'s records from Lunareth are in.</span>';
+          else obsLine += '<br>Fen\'s records from Lunareth are waiting. Return to Fair Tide to review them.';
+          if (ns === 'read') {
+            const as = authoriseStatus();
+            if (as === 'read') obsLine += '<br>✓ The custodians\' decision is logged.';
+            else if (as === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlAuthorise()">📋 Record the Custodians\' Decision</button> <span>The team has asked about the next test.</span>';
+            else obsLine += '<br>The team\'s question about the next test is waiting. Return to Fair Tide to answer it.';
+          }
+        }
       }
     }
     return '<div class="rt-status" style="margin-top:4px;">Reports: ' + reports + '</div>' +
