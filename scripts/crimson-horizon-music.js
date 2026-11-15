@@ -9,6 +9,7 @@
   //
   //   ch_title     assets/audio/ch-title.mp3      the Crimson Horizon theme (the sequel splash)
   //   ch_sail      assets/audio/ch-sail.mp3       open-water sailing (replaces explore)
+  //   ch_sail2     assets/audio/ch-sail2.mp3      a second sailing track; sailing alternates between the two
   //   ch_fair_tide assets/audio/ch-fair-tide.mp3  Fair Tide as home (replaces port at Fair Tide)
   //   ch_market    assets/audio/ch-market.mp3     the market: the port screen's Market tab at Crimson Horizon ports and Fair Tide,
   //                                              and Fair Tide's Trade tab
@@ -28,7 +29,7 @@
   // -------------------------------------------------------------------
 
   const FILES = {
-    ch_title:'ch-title', ch_sail:'ch-sail', ch_fair_tide:'ch-fair-tide', ch_home:'ch-home', ch_pearl:'ch-pearl', ch_market:'ch-market', ch_tavern:'ch-tavern',
+    ch_title:'ch-title', ch_sail:'ch-sail', ch_sail2:'ch-sail2', ch_fair_tide:'ch-fair-tide', ch_home:'ch-home', ch_pearl:'ch-pearl', ch_market:'ch-market', ch_tavern:'ch-tavern',
     ch_harbor:'ch-harbor', ch_storm:'ch-storm', ch_mist:'ch-mist', ch_channel:'ch-channel', ch_combat:'ch-combat', ch_boss:'ch-boss', ch_boss_keeper:'ch-boss-keeper',
     boss_keep:'boss-keep', boss_fleet:'boss-fleet'
   };
@@ -52,6 +53,18 @@
     return el ? el.id : '';
   }
 
+  // Two sailing tracks. One keeps playing while you sail (ctPlayMusic('explore') is called often and
+  // must not restart it); each time sailing starts afresh it switches to the other one.
+  let lastSail = Math.random() < 0.5 ? 'ch_sail' : 'ch_sail2';
+  function sailKey(){
+    const cur = (typeof ctAudioKey !== 'undefined') ? ctAudioKey : null;
+    if (cur === 'ch_sail' || cur === 'ch_sail2') { lastSail = cur; return cur; }
+    const other = lastSail === 'ch_sail' ? 'ch_sail2' : 'ch_sail';
+    const pick = available[other] === true ? other : 'ch_sail';
+    lastSail = pick;
+    return pick;
+  }
+
   // Which sequel track (if any) fits this base key right now.
   function wanted(base){
     // The main game's big fights, before and after the sequel starts: guardians and the Drowned Admiral, and raids.
@@ -63,7 +76,7 @@
     if (!sequelOn()) return null;
     const so = document.getElementById('storyModeOverlay');
     if (so && so.classList.contains('active')) return null;          // the Arc I comic reader keeps its own music
-    if (base === 'explore') return 'ch_sail';
+    if (base === 'explore') return sailKey();
     if (base === 'tavern') return 'ch_tavern';
     if (base === 'combat') {
       const enc = window.__ctLastEncounter || {};
