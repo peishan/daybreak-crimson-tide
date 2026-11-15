@@ -10,6 +10,9 @@
   //   ch_title     assets/audio/ch-title.mp3      the Crimson Horizon theme (the sequel splash)
   //   ch_sail      assets/audio/ch-sail.mp3       open-water sailing (replaces explore)
   //   ch_fair_tide assets/audio/ch-fair-tide.mp3  Fair Tide as home (replaces port at Fair Tide)
+  //   ch_market    assets/audio/ch-market.mp3     the market: the port screen's Market tab at Crimson Horizon ports and Fair Tide,
+  //                                              and Fair Tide's Trade tab
+  //   ch_tavern    assets/audio/ch-tavern.mp3     the tavern in the sequel (replaces tavern)
   //   ch_home      assets/audio/ch-home.mp3       the quiet rooms: Tribute House, Captain's Quarters
   //   ch_pearl     assets/audio/ch-pearl.mp3      the Black Pearl study (Research Team tab)
   //   ch_harbor    assets/audio/ch-harbor.mp3     the new harbors: Harbor Beyond the Charts, Island Harbor,
@@ -22,7 +25,7 @@
   // -------------------------------------------------------------------
 
   const FILES = {
-    ch_title:'ch-title', ch_sail:'ch-sail', ch_fair_tide:'ch-fair-tide', ch_home:'ch-home', ch_pearl:'ch-pearl',
+    ch_title:'ch-title', ch_sail:'ch-sail', ch_fair_tide:'ch-fair-tide', ch_home:'ch-home', ch_pearl:'ch-pearl', ch_market:'ch-market', ch_tavern:'ch-tavern',
     ch_harbor:'ch-harbor', ch_storm:'ch-storm', ch_mist:'ch-mist', ch_channel:'ch-channel', ch_combat:'ch-combat', ch_boss:'ch-boss'
   };
   const PORT_TRACK = {
@@ -49,16 +52,23 @@
     const so = document.getElementById('storyModeOverlay');
     if (so && so.classList.contains('active')) return null;          // the Arc I comic reader keeps its own music
     if (base === 'explore') return 'ch_sail';
+    if (base === 'tavern') return 'ch_tavern';
     if (base === 'combat') {
       const enc = window.__ctLastEncounter || {};
       if (enc.kind === 'crimson_horizon') return BOSS_FIGHTS.indexOf(String(enc.key)) !== -1 ? 'ch_boss' : 'ch_combat';
       return PORT_TRACK[game.location] ? 'ch_combat' : null;
     }
     if (base === 'port') {
+      // The market: the port screen's Market tab at a Crimson Horizon port or Fair Tide.
+      if (activeScreenId() === 'portScreen' && (PORT_TRACK[game.location] || game.location === 'fair_tide')) {
+        const tabEl = document.querySelector('#portContent .tab-content.active');
+        if (tabEl && tabEl.id === 'port-tab-market') return 'ch_market';
+      }
       if (game.location === 'fair_tide') {
         const tab = game.fairTideActiveTab || 'buildings';
         if (activeScreenId() === 'fairTideScreen') {
           if (tab === 'research') return 'ch_pearl';
+          if (tab === 'trade') return 'ch_market';
           if (tab === 'tribute_house' || tab === 'quarters' || tab === 'allies') return 'ch_home';
         }
         return 'ch_fair_tide';
@@ -126,6 +136,16 @@
     window.__ctCloseCrimsonHorizonSplash = function(){
       const r = oldClose.apply(this, arguments);
       if (lastBase && typeof window.ctPlayMusic === 'function') window.ctPlayMusic(lastBase);
+      return r;
+    };
+  }
+
+  // The port screen's tabs: the Market tab has its own music.
+  const oldSwitchPort = window.switchPortTab;
+  if (typeof oldSwitchPort === 'function') {
+    window.switchPortTab = function(){
+      const r = oldSwitchPort.apply(this, arguments);
+      try { if (sequelOn() && activeScreenId() === 'portScreen') window.ctPlayMusic('port'); } catch(e) {}
       return r;
     };
   }
