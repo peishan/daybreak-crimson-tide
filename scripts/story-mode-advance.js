@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V462 · Hugh visits as a resident; Cold Spring invitations';
+window.__CT_BUILD__='V463 · Cold Spring: group invite and Arc XLII visit shown as done';
