@@ -14,7 +14,18 @@ Crimson Horizon soundtrack. These are royalty-free tracks added by San. Normalis
 | `ch-harbor.mp3` | The new harbors (port screen, non-market tabs) | "By the Boathouse (Medieval Fantasy Music)" by Kaazoom |
 | `ch-mist.mp3` | West Gate and the Mist Straits | "Fog Over the Faerie Keep (Medieval Fantasy Music)" by Kaazoom |
 | `ch-channel.mp3` | South Gate, the Deep Channel and the Central Gate | "Mist Over the Old Stones (Medieval Fantasy Music)" by Kaazoom |
-| `ch-boss.mp3` | The Stormborn Leviathan and the Keeper's guard | "War Bridge" by Andorios |
+| `ch-boss.mp3` | The Stormborn Leviathan | "War Bridge" by Andorios |
 | `ch-fair-tide.mp3` | Fair Tide | "Paper Lanterns (Full Version)" by Kaazoom |
+| `ch-storm.mp3` | Storm Shelf | "Something's Brewing (2 min edit, Suspenseful Foreboding Music)" by Kaazoom |
+| `ch-boss-keeper.mp3` | The Keeper's guard | "War Front" by Andorios |
 
-Still open (the game falls back to the base tracks): `ch-storm`.
+Main game boss music (plays before and after the sequel begins):
+
+| Game file | Plays | Original track |
+|---|---|---|
+| `boss-keep.mp3` | Port guardians, archive guardians, the Drowned Admiral (and its rematch) | "March on the Keep" by Tim Kulig (Free Music) |
+| `boss-fleet.mp3` | Raids | "An Armada Upon Us" by Tim Kulig (Free Music) |
+
+Held back (not in the game yet): "Secrets (30 sec edit, Dramatic Foreboding)" by Kaazoom is only 31 seconds and would loop too obviously; "Crimson Horizon (Epic Fantasy Background Music for RPGs)" by MrOneILoveAlot is unassigned.
+
+All Crimson Horizon slots are now filled.

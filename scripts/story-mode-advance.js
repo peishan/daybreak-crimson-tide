@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V466 · Crimson Horizon music: harbor, mist, channel, boss';
+window.__CT_BUILD__='V467 · Music: Storm Shelf, Keeper boss, guardian and raid tracks';
