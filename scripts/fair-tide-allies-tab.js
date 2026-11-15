@@ -20,8 +20,9 @@
     if (typeof window.checkInAllButtonHtml === 'function') html += window.checkInAllButtonHtml();
     const guests = (typeof window.renderFairTideResidentsPanel === 'function') ? window.renderFairTideResidentsPanel() : '';
     const allies = (typeof window.renderAllyNetworkPanel === 'function') ? window.renderAllyNetworkPanel() : '';
-    html += guests + allies;
-    if (!guests && !allies) html += '<div class="rt-status" style="opacity:.7;">No guests or allies yet. They arrive as the story goes on.</div>';
+    const spring = (typeof window.renderColdSpringPanel === 'function') ? window.renderColdSpringPanel() : '';
+    html += guests + spring + allies;
+    if (!guests && !allies && !spring) html += '<div class="rt-status" style="opacity:.7;">No guests or allies yet. They arrive as the story goes on.</div>';
     el.innerHTML = html;
   }
   window.renderAlliesTab = renderAlliesTab;
