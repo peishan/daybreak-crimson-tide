@@ -281,6 +281,35 @@
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
   };
+  // ---- Archive copies (Ch.121, id 122): a SIDE chapter ----
+  // Two copies of the Core Keeper parchment. Opens after the custodians' decision (Ch.110) and the crew's
+  // morning at Fair Tide (Ch.120), whenever the player is at Fair Tide. Eve contributes when asked; she and
+  // Adrian still share the advisory duties (his formal succession is reserved for later).
+  const ARCHIVE_CH_ID = 122, ARCHIVE_AFTER_CH_ID = 121;
+  function archiveStatus(){
+    if (chProgress(ARCHIVE_CH_ID)) return 'read';
+    if (!chProgress(AUTHORISE_CH_ID)) return 'waiting_authorise';
+    if (!chProgress(ARCHIVE_AFTER_CH_ID)) return 'waiting_story';
+    if (game.location !== 'fair_tide') return 'waiting_location';
+    return 'ready';
+  }
+  window.blackPearlArchiveStatus = archiveStatus;
+  window.blackPearlArchiveReady = function(){ return archiveStatus() === 'ready'; };
+  window.blackPearlArchiveReason = function(){
+    switch (archiveStatus()) {
+      case 'waiting_authorise': return "Opens after the custodians' decision is logged.";
+      case 'waiting_story': return 'Opens after Chapter 120, back at Fair Tide.';
+      case 'waiting_location': return 'Return to Fair Tide to review the archive copies.';
+      case 'read': return 'The archive copies are reviewed.';
+      default: return 'The copies are ready.';
+    }
+  };
+  window.onPearlArchiveCopiesRead = function(){
+    pearlNote('archive_copies', "Archive copies: the Pearl team, with Eve, compared two copies of the Core Keeper parchment. Adrian found the same copying error in both; Eve found the same line missing from both. The team now treats them as one source: both copies likely descend from a single incomplete original, and its owner is still unknown.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  window.__ctReadPearlArchive = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(ARCHIVE_CH_ID); };
   window.__ctReadPearlNetwork = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(NETWORK_CH_ID); };
   window.__ctReadPearlAuthorise = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(AUTHORISE_CH_ID); };
 
@@ -329,6 +358,13 @@
             if (as === 'read') obsLine += '<br>✓ The custodians\' decision is logged.';
             else if (as === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlAuthorise()">📋 Record the Custodians\' Decision</button> <span>The team has asked about the next test.</span>';
             else obsLine += '<br>The team\'s question about the next test is waiting. Return to Fair Tide to answer it.';
+            if (as === 'read') {
+              const ac = archiveStatus();
+              if (ac === 'read') obsLine += '<br>✓ The archive copies are reviewed.';
+              else if (ac === 'ready') obsLine += '<br><button class="btn btn-small btn-magic" onclick="__ctReadPearlArchive()">📜 Review the Archive Copies</button> <span>Eve has been asked to look over two copies of the Core Keeper parchment.</span>';
+              else if (ac === 'waiting_location') obsLine += '<br>The archive copies are ready. Return to Fair Tide to review them.';
+              else obsLine += '<br>Two copies of the Core Keeper parchment are waiting for the crew\'s return from the harbor (Chapter 120).';
+            }
           }
         }
       }

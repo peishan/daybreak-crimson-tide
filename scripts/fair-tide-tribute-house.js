@@ -286,7 +286,9 @@
   const NURSERY_KIDS = [
     {id:'roc_delilah_twins', name:"Roc and Delilah's twins (Liora among them)", parents:['roc','delilah']},
     // Fen's older child comes to Fair Tide; upcoming chapters show when (San).
-    {id:'fen_child', name:"Fen's older child", flag:true}
+    {id:'fen_child', name:"Fen's older child", flag:true},
+    // Adrian and Eve's two daughters stay in the playroom while Eve visits (Crimson Horizon 120; arc42-visitors.js).
+    {id:'adrian_eve_daughters', name:"Adrian and Eve's daughters", flag:true}
   ];
   // A later chapter calls this when a child arrives at (or leaves) Fair Tide.
   window.setTributeNurseryGuest = function(id, present){
@@ -296,6 +298,10 @@
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
     return true;
+  };
+  window.tributeNurseryGuestPresent = function(id){
+    if (typeof game === 'undefined' || !game) return false;
+    return !!(game.tributeHouse && game.tributeHouse.guests && game.tributeHouse.guests[id]);
   };
   function kidsStaying(){
     return NURSERY_KIDS.filter(function(k){
