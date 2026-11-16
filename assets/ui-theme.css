@@ -1,0 +1,178 @@
+/* ============================================================
+   UI THEME: "Deep Tide" and "Crimson Horizon".
+   Applied through <html data-theme="deep|horizon">. No data-theme =
+   the original look ("Classic"). Everything here is colour only
+   (backgrounds, borders, glows): no layout, size or spacing changes.
+   ============================================================ */
+
+/* ---------- Deep Tide: night water, polished gold, wine and emerald ---------- */
+html[data-theme] {
+  --sea: #0c2a40;
+  --ink: #040b13;
+  --sand: #c2a05e;
+  --gold: #f2c95c;
+  --parchment: #f4e9d2;
+  --wood: #2b5b7b;
+  --danger: #d4483b;
+  --success: #2fbf86;
+  --sky: #6fc6e8;
+  --th-glow-a: rgba(35,96,140,.55);
+  --th-glow-b: rgba(120,20,48,.42);
+  --th-base-a: #08192a;
+  --th-base-b: #030910;
+  --th-panel-a: rgba(18,44,68,.78);
+  --th-panel-b: rgba(7,19,32,.84);
+  --th-line: rgba(242,201,92,.26);
+  --th-line-strong: rgba(242,201,92,.55);
+  --th-accent: #b3283f;
+  --th-accent-deep: #5a1426;
+  --th-btn-a: #2f6485;
+  --th-btn-b: #153449;
+  --th-tint: 242,201,92;
+}
+
+/* Crimson Horizon (the sequel): midnight indigo, ember crimson, rose gold */
+html[data-theme="horizon"] {
+  --sea: #141a3d;
+  --ink: #05060f;
+  --sand: #cfa070;
+  --gold: #f5c76a;
+  --parchment: #f6e8d6;
+  --wood: #3a3f86;
+  --sky: #86b6f0;
+  --th-glow-a: rgba(64,62,150,.55);
+  --th-glow-b: rgba(190,52,58,.50);
+  --th-base-a: #0b0e26;
+  --th-base-b: #04050d;
+  --th-panel-a: rgba(26,30,72,.80);
+  --th-panel-b: rgba(9,10,28,.86);
+  --th-line: rgba(245,170,110,.28);
+  --th-line-strong: rgba(245,170,110,.58);
+  --th-accent: #cf3b45;
+  --th-accent-deep: #641525;
+  --th-btn-a: #4a4fa3;
+  --th-btn-b: #1d2160;
+  --th-tint: 245,170,110;
+}
+
+html[data-theme] body {
+  background:
+    radial-gradient(ellipse 120% 60% at 15% -8%, var(--th-glow-a), transparent 62%),
+    radial-gradient(ellipse 110% 55% at 95% 112%, var(--th-glow-b), transparent 60%),
+    linear-gradient(165deg, var(--th-base-a) 0%, var(--th-base-b) 100%);
+  background-attachment: fixed;
+}
+html[data-theme="horizon"] body {
+  /* a thin ember line of horizon at the bottom of every screen */
+  background:
+    linear-gradient(to top, rgba(236,98,70,.20) 0, rgba(236,98,70,0) 90px),
+    radial-gradient(ellipse 120% 60% at 15% -8%, var(--th-glow-a), transparent 62%),
+    radial-gradient(ellipse 110% 55% at 95% 112%, var(--th-glow-b), transparent 60%),
+    linear-gradient(165deg, var(--th-base-a) 0%, var(--th-base-b) 100%);
+  background-attachment: fixed;
+}
+
+html[data-theme] .header {
+  background: linear-gradient(to bottom, rgba(0,0,0,.42), transparent);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--gold), var(--th-accent), var(--gold), transparent) 1;
+}
+html[data-theme] .header h1,
+html[data-theme] .panel-title,
+html[data-theme] th {
+  text-shadow: 0 0 14px rgba(var(--th-tint), .22), 2px 2px 4px rgba(0,0,0,.55);
+}
+
+/* stat pills and nav */
+html[data-theme] .stat-pill {
+  background: linear-gradient(to bottom, rgba(20,48,72,.7), rgba(6,16,27,.7));
+  border-color: var(--th-line-strong);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+html[data-theme] .nav-bar {
+  background: linear-gradient(to bottom, rgba(14,34,54,.72), rgba(5,14,24,.72));
+  border: 1px solid var(--th-line);
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+html[data-theme] .nav-btn,
+html[data-theme] .tab-btn {
+  background: linear-gradient(to bottom, rgba(24,56,84,.55), rgba(6,16,28,.65));
+  border-color: var(--th-line-strong);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+html[data-theme] .nav-btn:hover,
+html[data-theme] .tab-btn:hover {
+  background: linear-gradient(to bottom, rgba(40,86,122,.7), rgba(10,26,42,.7));
+}
+html[data-theme] .nav-btn.active,
+html[data-theme] .tab-btn.active {
+  background: linear-gradient(to bottom, var(--th-accent), var(--th-accent-deep));
+  border-color: var(--gold);
+  color: #fff3d0;
+  box-shadow: 0 0 14px rgba(var(--th-tint), .25), inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+/* panels, cards, modal */
+html[data-theme] .panel {
+  background: linear-gradient(160deg, var(--th-panel-a), var(--th-panel-b));
+  border: 1px solid var(--th-line);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+}
+html[data-theme] .panel-title { border-bottom-color: var(--th-line); }
+html[data-theme] .port-card,
+html[data-theme] .cargo-item,
+html[data-theme] .inv-item,
+html[data-theme] .potion-item,
+html[data-theme] .party-member,
+html[data-theme] .quest-item,
+html[data-theme] .combat-party-card,
+html[data-theme] .spell-btn {
+  background-color: rgba(9,24,40,.62);
+  border-color: var(--th-line);
+}
+html[data-theme] .port-card:hover,
+html[data-theme] .cargo-item:hover,
+html[data-theme] .spell-btn:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(var(--th-tint), .22); }
+html[data-theme] .combat-party-card.active { background: rgba(var(--th-tint), .14); }
+html[data-theme] .event-log,
+html[data-theme] .combat-log { background: rgba(3,9,16,.55); }
+html[data-theme] th { border-bottom-color: var(--th-line-strong); }
+html[data-theme] td { border-bottom-color: rgba(var(--th-tint), .12); }
+html[data-theme] tr:hover { background: rgba(var(--th-tint), .07); }
+
+html[data-theme] .modal-overlay { background: rgba(2,6,12,.78); }
+html[data-theme] .modal {
+  background: linear-gradient(160deg, var(--th-panel-a), var(--th-panel-b)), #060f19;
+  border: 1px solid var(--th-line-strong);
+  box-shadow: 0 24px 70px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.6), 0 0 36px rgba(var(--th-tint), .10), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* buttons */
+html[data-theme] .btn {
+  background: linear-gradient(to bottom, var(--th-btn-a), var(--th-btn-b));
+  border: 2px solid var(--th-line-strong);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);
+}
+html[data-theme] .btn:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(var(--th-tint), .28), inset 0 1px 0 rgba(255,255,255,.18); }
+html[data-theme] .btn-danger,
+html[data-theme] .btn-combat { background: linear-gradient(to bottom, #a52c3a, #5a1220); border-color: #e0606b; }
+html[data-theme] .btn-success { background: linear-gradient(to bottom, #1f9a6e, #0e5a40); border-color: #4fd6a2; }
+html[data-theme] .btn-magic { background: linear-gradient(to bottom, #6a3fb0, #34195f); border-color: #b48af0; }
+
+/* inputs */
+html[data-theme] input[type="text"],
+html[data-theme] input[type="number"],
+html[data-theme] select,
+html[data-theme] textarea { background-color: rgba(3,10,18,.55); border-color: var(--th-line-strong); }
+
+/* progress bars */
+html[data-theme] .voyage-progress-fill { background: linear-gradient(90deg, var(--th-accent), var(--gold)); }
+html[data-theme] .combat-enemy-hp-fill { background: linear-gradient(90deg, #8e1d2e, #e0485a); }
+
+/* event log colours: a little richer on the dark ground */
+html[data-theme] .event-good { color: #62dba0; }
+html[data-theme] .event-bad { color: #f0768a; }
+html[data-theme] .event-neutral { color: #9fd4f4; }
+
+/* scrollbars */
+html[data-theme] * { scrollbar-color: rgba(var(--th-tint), .45) rgba(0,0,0,.25); }
