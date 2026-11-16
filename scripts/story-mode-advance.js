@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V469 · Deep Tide and Crimson Horizon colour themes';
+window.__CT_BUILD__='V470 · Crimson Horizon Arc XII: The High-Tide Passage';

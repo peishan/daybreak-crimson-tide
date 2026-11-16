@@ -43,7 +43,12 @@
 
   // Crimson Horizon Arc XI: Hugh comes to Fair Tide to see Sera (Ch.101 id 103 -> back to Lunareth after Ch.108 id 109).
   const SEQUEL_VISITS = [
-    {key:'s11_hugh', ids:['hugh'], arrive:103, depart:109, away:'Lunareth', awayCompanion:'Family', inNote:'Visits Fair Tide to see Sera.'}
+    {key:'s11_hugh', ids:['hugh'], arrive:103, depart:109, away:'Lunareth', awayCompanion:'Family', inNote:'Visits Fair Tide to see Sera.'},
+    // Arc XII: Eve visits with her daughters (Ch.120, id 121) between her usual palace and manor stays. She
+    // stays until Ch.122 (id 123) AND the archive copies scene (Ch.121, id 122: the Pearl team asked for her
+    // eye) are both read, so the optional scene is never lost. Her daughters are playroom guests meanwhile.
+    {key:'s12_eve', ids:['eve'], arrive:121, depart:123, also:[122], away:'Tribute Palace', awayCompanion:'Her daughters', kid:'adrian_eve_daughters',
+     inNote:'Visits Fair Tide with her daughters.', holdNote:"Staying on a little longer at the Pearl team's request, to look over two copies of the Core Keeper parchment."}
   ];
   window.SEQUEL_VISITS = SEQUEL_VISITS;
 
@@ -120,7 +125,7 @@
     // Sequel visits (Crimson Horizon progress): [chapter id the visit starts, chapter id it ends].
     SEQUEL_VISITS.forEach(function(v){
       if (!(ch && ch[v.arrive])) return;
-      const over = !!ch[v.depart];
+      const over = !!ch[v.depart] && (v.also || []).every(function(c){ return !!ch[c]; });
       v.ids.forEach(function(id){
         const wasNew = !window.fairTideResidentsState()[id];
         const rec = ensure(id);
@@ -130,11 +135,17 @@
           if (rec.status !== 'departed') changed = true;
           rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = v.awayCompanion || rec.awayCompanion;
           logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
+          if (v.holdNote) delete rec.note;
         } else {
           if (rec.status !== 'resident') changed = true;
           rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null;
+          if (v.holdNote) { if (ch[v.depart]) rec.note = v.holdNote; else delete rec.note; }
         }
       });
+      // Children who come with a visitor stay in the Tribute House playroom while the visit lasts.
+      if (v.kid && typeof window.setTributeNurseryGuest === 'function' && typeof window.tributeNurseryGuestPresent === 'function') {
+        if (window.tributeNurseryGuestPresent(v.kid) === over) window.setTributeNurseryGuest(v.kid, !over);
+      }
     });
     if (changed && typeof saveGameQuiet === 'function') saveGameQuiet();
   };
