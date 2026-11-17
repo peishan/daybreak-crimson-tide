@@ -674,6 +674,7 @@
     if (!GOODS.smoked_fish) GOODS.smoked_fish = { name: 'Smoked Fish', icon: '🐟', basePrice: 30, weight: 1 };
     if (!GOODS.lamp_oil) GOODS.lamp_oil = { name: 'Lamp Oil', icon: '🪔', basePrice: 38, weight: 1 };
   }
+  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil'];   // sequel-only trade goods
   const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
   window.CRIMSON_HORIZON_PORTS = CH_PORTS;
 
