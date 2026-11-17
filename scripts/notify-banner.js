@@ -118,7 +118,14 @@
   window.getComingUp = function(){
     const L = lvl(), rows = [];
     arcRows().forEach(function(a){
-      if (a.lv > L) rows.push({lv: a.lv, icon: a.label === 'Crimson Horizon' ? '🌅' : '📖', text: a.label + (a.label === 'Crimson Horizon' ? ' begins' : ' opens')});
+      if (a.label === 'Crimson Horizon') {
+        // The sequel opens when Arc XLII is finished (its chapters pay the XP up to this level), so
+        // it is not shown as a plain level countdown until that arc is done.
+        const done = typeof game !== 'undefined' && game && game.arc42Complete;
+        if (a.lv > L || !done) rows.push({lv: a.lv, icon: '🌅', text: 'Crimson Horizon begins', after: done ? '' : 'after Arc XLII'});
+        return;
+      }
+      if (a.lv > L) rows.push({lv: a.lv, icon: '📖', text: a.label + ' opens'});
     });
     (window.RAIDS || []).forEach(function(r){
       if (r.unlockLevel > L) rows.push({lv: r.unlockLevel, icon: r.icon || '🏆', text: 'Raid: ' + r.name});
@@ -151,7 +158,7 @@
       h += '<div class="cu-row"><span class="cu-ico">📖</span><span class="cu-txt">' + p.label + ': ' + p.read + ' of ' + p.total + ' chapters read</span></div>';
     });
     ahead.forEach(function(r){
-      h += '<div class="cu-row"><span class="cu-ico">' + r.icon + '</span><span class="cu-txt">' + r.text + '</span><span class="cu-lv">Lv ' + r.lv + ' · ' + (r.lv - L) + ' to go</span></div>';
+      h += '<div class="cu-row"><span class="cu-ico">' + r.icon + '</span><span class="cu-txt">' + r.text + '</span><span class="cu-lv">' + (r.after ? r.after : 'Lv ' + r.lv + ' · ' + (r.lv - L) + ' to go') + '</span></div>';
     });
     return h;
   }
@@ -189,7 +196,7 @@
           const L = lvl();
           if (lastLevel !== null && L > lastLevel) {
             const next = window.getComingUp()[0];
-            window.notify({icon:'⭐', title:'Level ' + L, text: next ? 'Next up: ' + next.text + ' (Lv ' + next.lv + ', ' + (next.lv - L) + ' to go)' : '', kind:'level'});
+            window.notify({icon:'⭐', title:'Level ' + L, text: next ? 'Next up: ' + next.text + (next.after ? ' ' + next.after : ' (Lv ' + next.lv + ', ' + (next.lv - L) + ' to go)') : '', kind:'level'});
           }
           lastLevel = L;
           renderComingUp();

@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V475 · Crimson Horizon Arc XIII: The Far Shore';
+window.__CT_BUILD__='V476 · Coming Up: Crimson Horizon follows Arc XLII';
