@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V492 · Mirelle visits open in-person bond actions';
+window.__CT_BUILD__='V493 · Fair Tide nav tab and equipment upgrade hints';
