@@ -106,6 +106,33 @@
     }
   }
 
+  // Sairen is back at Fair Tide from Ch.21 ("Not Sairen": he comes home to the crisis and learns what N did)
+  // until Ch.24, when he goes after the trail she and her recruiter left. A visiting guest in the Residents
+  // list while he is here; check-ins on him count toward the same Bond as his earlier stay.
+  function checkSairenVisitEvents(){
+    const cp = game.comicProgress30;
+    if (!cp) return;
+    const residents = (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState() : null;
+    const s = residents ? residents.sairen : null;
+    if (!s) return;
+    if (cp[21] && !cp[24] && s.status === 'departed' && !s.arc30Visited) {
+      s.status = 'resident'; s.awayLocation = null; s.awayCompanion = null;
+      s.room = 'Guest Quarters'; s.note = 'Back at Fair Tide: cleared of the operation, and learning what N did.';
+      s.arc30Visited = true;
+      if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(s, 'join', 'Comes home to the crisis, and is cleared of it.');
+    }
+    if (cp[24] && s.arc30Visited && s.status !== 'departed') {
+      s.status = 'departed'; s.awayLocation = 'Unknown'; s.awayCompanion = 'Alone, following a trail'; s.note = 'Went after the trail N and her recruiter left.';
+      if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(s, 'leave', 'Leaves to follow the trail.');
+    }
+  }
+
+  const oldSyncArc1ForSairenVisit = window.syncArc1StoryQuestProgress;
+  window.syncArc1StoryQuestProgress = function(){
+    if (oldSyncArc1ForSairenVisit) oldSyncArc1ForSairenVisit();
+    checkSairenVisitEvents();
+  };
+
   const oldSyncArc1ForNFinalStatus = window.syncArc1StoryQuestProgress;
   window.syncArc1StoryQuestProgress = function(){
     if (oldSyncArc1ForNFinalStatus) oldSyncArc1ForNFinalStatus();

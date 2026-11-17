@@ -637,7 +637,11 @@
 
     // Ch.23 ("Come With Me") -- he leaves Fair Tide, same moment N does,
     // same masked identity carried into the "Away" record as hers.
-    if (cp[23] && sairen.status !== 'departed') {
+    // Once only: he comes back as a visitor in Arc XXX Ch.21 (arc30-mechanics.js), so "not departed" alone
+    // no longer means "has not left yet".
+    if (cp[23] && sairen.status === 'departed') sairen.arc28Left = true;
+    if (cp[23] && sairen.status !== 'departed' && !sairen.arc28Left) {
+      sairen.arc28Left = true;
       sairen.status = 'departed';
       sairen.awayLocation = 'Unknown';
       sairen.awayCompanion = 'N';
