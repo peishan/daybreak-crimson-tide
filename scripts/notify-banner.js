@@ -60,7 +60,10 @@
     node.appendChild(icon); node.appendChild(body);
     node.onclick = function(){ dismiss(node); if (typeof n.onClick === 'function') { try { n.onClick(); } catch(e) {} } };
     el.appendChild(node);
-    while (el.children.length > 3) dismiss(el.firstChild);
+    // Keep at most three on screen. (A dismissed banner stays in the DOM for its exit animation, so
+    // count only the live ones; counting children here would loop forever once a fourth arrives.)
+    const live = Array.prototype.filter.call(el.children, function(c){ return !c.__gone; });
+    while (live.length > 3) dismiss(live.shift());
     setTimeout(function(){ dismiss(node); }, n.duration || 4200);
   }
 
@@ -77,8 +80,78 @@
     else people.forEach(show);
     rest.forEach(show);
   }
+  // ---------------- phone reminders ----------------
+  // Local notifications only, shown through the service worker while the app is open or recently
+  // in the background. Nothing can wake a fully closed app: that needs a push server, and this is a
+  // static site. A banner marked remind:true is also sent as a phone notification when the page is
+  // hidden. The choice is per device (localStorage), since the browser permission is too.
+  const REM_KEY = 'ct_reminders';
+  function remSupported(){ return typeof window !== 'undefined' && 'Notification' in window; }
+  function remOn(){
+    let v = null; try { v = localStorage.getItem(REM_KEY); } catch(e) {}
+    return v === '1' && remSupported() && Notification.permission === 'granted';
+  }
+  window.ctReminderStatus = function(){
+    return {supported: remSupported(), permission: remSupported() ? Notification.permission : 'unsupported', on: remOn()};
+  };
+  function sendOs(title, body, tag){
+    if (!remOn()) return;
+    const opts = {body: body || '', icon: 'assets/icons/icon-192x192.png', badge: 'assets/icons/icon-192x192.png', tag: 'ct-' + (tag || 'reminder'), renotify: true};
+    if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+      navigator.serviceWorker.ready.then(function(reg){ return reg.showNotification(title, opts); }).catch(function(){
+        try { new Notification(title, opts); } catch(e) {}
+      });
+    } else { try { new Notification(title, opts); } catch(e) {} }
+  }
+  window.ctSendReminder = sendOs;
+  window.ctEnableReminders = function(){
+    if (!remSupported()) return Promise.resolve(false);
+    return Notification.requestPermission().then(function(p){
+      try { localStorage.setItem(REM_KEY, p === 'granted' ? '1' : '0'); } catch(e) {}
+      if (p === 'granted') sendOs('Reminders are on', 'You will hear from Crimson Tide when something at Fair Tide needs you.', 'on');
+      return p === 'granted';
+    });
+  };
+  window.ctDisableReminders = function(){ try { localStorage.setItem(REM_KEY, '0'); } catch(e) {} };
+
+  // Settings: a Reminders row above Difficulty.
+  const oldSettings = window.showSettings;
+  if (typeof oldSettings === 'function') {
+    window.showSettings = function(){
+      const r = oldSettings.apply(this, arguments);
+      try {
+        const diff = document.getElementById('landingDifficultyEdit');
+        if (diff && !document.getElementById('ctReminderRow')) {
+          const wrap = document.createElement('div'); wrap.id = 'ctReminderRow'; wrap.style.cssText = 'display:grid;gap:6px;';
+          const paint = function(){
+            const st = window.ctReminderStatus();
+            let msg, btn = '';
+            if (!st.supported) msg = 'This browser cannot show notifications.';
+            else if (st.permission === 'denied') msg = 'Notifications are blocked for this site. Allow them in the browser’s site settings to turn reminders on.';
+            else if (st.on) { msg = 'On. You will get a phone notification for finished requests, a returning gathering party, Watchtower alerts and Captain’s Decisions while the game is open or in the background. It cannot wake a fully closed app.'; btn = 'Turn reminders off'; }
+            else { msg = 'Off. Get a phone notification for finished requests, a returning gathering party, Watchtower alerts and Captain’s Decisions while the game is open or in the background.'; btn = 'Turn reminders on'; }
+            wrap.innerHTML = '<label style="font-size:.8rem;color:var(--gold);">Phone reminders</label><div style="font-size:.76rem;opacity:.8;line-height:1.4;"></div>' + (btn ? '<button type="button" class="btn btn-small" style="justify-self:start;"></button>' : '');
+            wrap.children[1].textContent = msg;
+            if (btn) {
+              const b = wrap.children[2]; b.textContent = btn;
+              b.onclick = function(){
+                if (window.ctReminderStatus().on) { window.ctDisableReminders(); paint(); }
+                else window.ctEnableReminders().then(function(ok){ paint(); if (!ok && typeof toast === 'function') toast('🔕 Reminders stay off. Allow notifications to turn them on.', 3600); });
+              };
+            }
+          };
+          paint();
+          const diffLabel = diff.previousElementSibling;
+          diff.parentNode.insertBefore(wrap, diffLabel || diff);
+        }
+      } catch(e) {}
+      return r;
+    };
+  }
+
   window.notify = function(n){
     if (!n || (!n.title && !n.text)) return;
+    if (n.remind && typeof document !== 'undefined' && document.hidden) sendOs(n.title || 'Crimson Tide', n.text || '', n.tag || n.kind);
     pending.push(n);
     if (!flushTimer) flushTimer = setTimeout(flush, 350);
   };
