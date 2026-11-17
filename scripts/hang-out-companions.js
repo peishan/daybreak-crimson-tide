@@ -53,6 +53,13 @@
   //     resident happiness/bond sweep (scripts/fair-tide-wider-
   //     residents.js) -- this deeper track is her relationship system,
   //     not that one.
+  //   - Sairen   -> joins the crew (game.foundCompanions.sairen, Arc XLI
+  //     Ch.16). He is a fixed crew member in Crimson Horizon, so San and
+  //     Joel get a coffee-table bond with him, same shape as the others:
+  //     bonus:0, story and Shared Moments only. members:[] and
+  //     hideUntilUnlocked (no card before he has joined). The points
+  //     are seeded from how he was treated as a guest (see
+  //     scripts/sairen-bond.js).
   //   - Sera     -> Arc XLII Ch.23, the chapter that brings her to Fair
   //     Tide (same flag the Crossover tab's Wider Ally Network uses for
   //     her). She is a guest, not a fielded party member (she was an
@@ -214,6 +221,31 @@
         {id: 'quiet_tea',      icon: '🍵', label: 'Quiet Tea Between Patients', flavor: 'A rare five minutes where nobody needs stitching.'},
         {id: 'trade_remedies', icon: '📖', label: 'Trade Old Remedies',         flavor: "Jovie knows cures San's never heard of, from somewhere she can't place anymore."},
         {id: 'just_sit',       icon: '🌙', label: 'Just Sit With Her',          flavor: "Not every visit needs a reason. Jovie seems to need this one more than she'll say."}
+      ]
+    },
+    {
+      key: 'san_sairen', label: 'San, Joel & Sairen', icon: '☕', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Have coffee with Sairen',
+      flavor: 'Three cups on the table. Sairen pretends he did not ask for the third.',
+      tiers: [
+        {threshold:0,    name:'A Guest at Their Table',         bonus:0},
+        {threshold:50,   name:'A Third Cup',                    bonus:0},
+        {threshold:150,  name:'His Usual Chair',                bonus:0},
+        {threshold:300,  name:'Coffee, Whatever the Hour',      bonus:0},
+        {threshold:600,  name:'Not Just Passing Through',       bonus:0},
+        {threshold:1000, name:'Home, Without Having to Say So', bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.sairen); },
+      handlerName: 'hangOutWithSairen',
+      panelTitle: '☕ Coffee with Sairen',
+      panelBlurb: 'San and Joel make room at the table for Sairen. This still uses today\'s San, Joel &amp; Sairen time, same as above.',
+      activities: [
+        {id: 'morning_coffee', icon: '☕', label: 'Morning Coffee',        flavor: 'Joel makes it too strong. Sairen drinks it without comment, which from him is a compliment.'},
+        {id: 'deck_rail',      icon: '🌅', label: 'Coffee on the Deck',    flavor: 'Three cups, one rail, and the harbour waking up. Nobody needs to explain anything.'},
+        {id: 'joel_story',     icon: '🗣️', label: 'Let Joel Tell a Story', flavor: 'Joel tells it badly on purpose. Sairen corrects one detail, which is the closest he comes to joining in.'},
+        {id: 'his_blend',      icon: '🫖', label: 'Try Sairen\'s Blend',   flavor: 'His coffee is terrible and he knows it. They finish the pot anyway.'},
+        {id: 'late_cup',       icon: '🌙', label: 'A Late-Night Cup',      flavor: 'He does not sleep much. Neither, lately, do they. The galley light stays on.'},
+        {id: 'ask_jovie',      icon: '🩹', label: 'Ask About Jovie',       flavor: 'San does not push. Joel pushes a little. Sairen goes quiet, then smiles at the table.'}
       ]
     },
     {
