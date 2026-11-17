@@ -307,6 +307,60 @@
   }
   window.completeRaid = completeRaid;
 
+  // -------------------------------------------------------------------
+  // THREAT READOUT. An estimate for the party you would actually bring, not a level: past Level 167
+  // HP and MP stop growing and abilities end at 255, so level says nothing about whether you can win.
+  // For each stage it works out
+  //   - how long the party survives: total HP of the members who can fall, divided by the average hit
+  //     (the stage's scaled damage plus a little, less the party's average armour), times 3.4 for
+  //     healing, shields and revives;
+  //   - how long it takes to win: the stage's HP divided by the party's average damage per action
+  //     (a basic attack plus gear, 0.9 for turns spent healing and buffing; spells run dry quickly).
+  // Both factors were calibrated against auto-battle simulations of these raids. The ratio of the two
+  // sets the tag, taken from the worst stage: Manageable (<= 0.9), Risky (<= 1.5), Deadly (above). In the
+  // simulations (an ungeared party on auto-battle, every stage from full HP) a ratio under about 1 won and
+  // 1.1 to 1.3 lost with 5-25% of the enemy left. Real play (gear, potions, choosing actions) does better.
+  // -------------------------------------------------------------------
+  const HEAL_FACTOR = 3.4, ACTION_EFFICIENCY = 0.9;
+  function raidThreat(raid){
+    try {
+      if (typeof getCrimsonCombatParty !== 'function') return null;
+      const party = getCrimsonCombatParty();
+      if (!party.length) return null;
+      const killable = party.filter(function(m){ return !UNKILLABLE_IDS.has(m.id); });
+      const pool = killable.length ? killable : party;
+      const totalHp = pool.reduce(function(n, m){ return n + Math.max(1, effectiveMaxHp(m)); }, 0);
+      const avgDef = party.reduce(function(n, m){ return n + gearBonuses(m.id).defense; }, 0) / party.length;
+      const armour = 1 - Math.min(0.35, avgDef / 200);
+      const cannons = (game.ship && game.ship.cannons) || 0;
+      const perAction = ACTION_EFFICIENCY * (1 + cannons * 0.12) * party.reduce(function(n, m){ return n + 18 + 10.5 + gearBonuses(m.id).atk; }, 0) / party.length;
+      let worst = null;
+      raid.stages.forEach(function(st){
+        const enemy = scaleCrimsonEnemy({hp: st.hp, dmg: st.dmg, xp: 1, gold: 1}, 'guardian', raid.unlockLevel);
+        const hit = Math.max(1, (enemy.dmg + 4.5) * armour);
+        const survive = HEAL_FACTOR * totalHp / hit;
+        const kill = enemy.hp / perAction;
+        const ratio = kill / survive;
+        if (!worst || ratio > worst.ratio) worst = {ratio: ratio, stage: st, hit: hit, survive: survive, kill: kill};
+      });
+      if (!worst) return null;
+      const tag = worst.ratio <= 0.9 ? 'manageable' : (worst.ratio <= 1.5 ? 'risky' : 'deadly');
+      const san = party.find(function(m){ return m.id === 'san'; });
+      const sanPct = san ? Math.round(100 * worst.hit / Math.max(1, effectiveMaxHp(san))) : null;
+      return {tag: tag, ratio: worst.ratio, stageName: worst.stage.name, hitPct: sanPct, kill: Math.round(worst.kill), survive: Math.round(worst.survive)};
+    } catch(e) { return null; }
+  }
+  window.raidThreat = raidThreat;
+  const THREAT_LABEL = {manageable: ['🟢', 'Manageable'], risky: ['🟡', 'Risky'], deadly: ['🔴', 'Deadly']};
+  function threatHtml(raid){
+    const t = raidThreat(raid);
+    if (!t) return '';
+    const lb = THREAT_LABEL[t.tag];
+    return '<div style="font-size:.74rem;margin-top:3px;"><strong>' + lb[0] + ' ' + lb[1] + '</strong> for your party' +
+      '<span style="opacity:.7;"> · hardest: ' + esc(t.stageName) + (t.hitPct != null ? ' (hits San for about ' + t.hitPct + '% of her HP)' : '') +
+      ' · you need about ' + t.kill + ' actions, you last about ' + t.survive + '</span></div>';
+  }
+
   function renderRaidSelectPanel(){
     let html = '<div class="panel-title">⏳ Raids</div>';
     RAIDS.forEach(function(raid){
@@ -317,7 +371,7 @@
         '<div style="display:flex;gap:10px;align-items:center;">' +
         '<div style="font-size:1.4rem;">' + raid.icon + '</div>' +
         '<div style="flex:1;min-width:0;"><strong>' + esc(raid.name) + '</strong>' + (cleared ? ' <span class="story-chip">✓ Cleared</span>' : '') + '<br>' +
-        '<span style="font-size:.72rem;opacity:.6;">' + raid.stages.length + ' stages · Level ' + raid.unlockLevel + (raid.checkpointAfter ? ' · checkpoint after stage ' + raid.checkpointAfter : '') + '</span></div>' +
+        '<span style="font-size:.72rem;opacity:.6;">' + raid.stages.length + ' stages · Level ' + raid.unlockLevel + (raid.checkpointAfter ? ' · checkpoint after stage ' + raid.checkpointAfter : '') + '</span>' + (isRaidUnlocked(raid) ? threatHtml(raid) : '') + '</div>' +
         (unlocked ? '<button class="btn btn-small" onclick="enterRaid(\'' + raid.id + '\')">' + (cleared ? '🔁 Train' : '⚔️ Enter') + '</button>'
                   : '<div style="font-size:.72rem;opacity:.65;text-align:right;">🔒 ' + esc(lockText) + '</div>') +
         '</div>' +

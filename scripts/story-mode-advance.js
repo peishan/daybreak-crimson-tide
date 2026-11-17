@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V482 · Raid stages are lost when everyone who can fall is down';
+window.__CT_BUILD__='V483 · Raid threat readout';
