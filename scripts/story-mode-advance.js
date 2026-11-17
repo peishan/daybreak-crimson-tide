@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V474 · Top-of-screen notifications and a Coming Up panel';
+window.__CT_BUILD__='V475 · Crimson Horizon Arc XIII: The Far Shore';

@@ -48,7 +48,10 @@
     // stays until Ch.122 (id 123) AND the archive copies scene (Ch.121, id 122: the Pearl team asked for her
     // eye) are both read, so the optional scene is never lost. Her daughters are playroom guests meanwhile.
     {key:'s12_eve', ids:['eve'], arrive:121, depart:123, also:[122], away:'Tribute Palace', awayCompanion:'Her daughters', kid:'adrian_eve_daughters',
-     inNote:'Visits Fair Tide with her daughters.', holdNote:"Staying on a little longer at the Pearl team's request, to look over two copies of the Core Keeper parchment."}
+     inNote:'Visits Fair Tide with her daughters.', holdNote:"Staying on a little longer at the Pearl team's request, to look over two copies of the Core Keeper parchment."},
+    // Arc XIII: Hugh comes for breakfast on the day he and Sera agreed (Ch.130, id 131) and stays for the first
+    // appointment together (Ch.131, id 132); he leaves once Ch.132 (id 133) is read.
+    {key:'s13_hugh', ids:['hugh'], arrive:131, depart:133, away:'Lunareth', awayCompanion:'Family', inNote:'Comes to Fair Tide for breakfast with Sera, as promised.'}
   ];
   window.SEQUEL_VISITS = SEQUEL_VISITS;
 

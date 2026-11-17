@@ -255,6 +255,12 @@
       when:function(){ return wingLv('nursery') >= 2; }},
     {id:'block_harbor', icon:'🧱', t:'A block harbor stands in the playroom, with a second channel built around the spot where Soel sleeps.',
       when:function(){ return ch(102); }},
+    {id:'hugh_told', icon:'💛', t:'Sera told Hugh herself, before breakfast, and held his hand until he ran out of questions.',
+      when:function(){ return ch(131); }},
+    {id:'hugh_list', icon:'📋', t:'Hugh keeps a folded list in his coat now. The first question on it has an answer, and the margin has the days he is keeping free.',
+      when:function(){ return ch(132); }},
+    {id:'tiny_cups', icon:'🥣', t:'A row of very small glazed cups stands on the nursery shelf by the window, each with a thumb-mark of glaze at the base.',
+      when:function(){ return ch(133); }},
     {id:'five_wings', icon:'🏡', t:'Every wing stands now, and the Tribute House no longer looks like a place for visitors.',
       when:function(){ return WING_IDS.every(function(w){ return wingLv(w) >= 1; }); }}
   ];
