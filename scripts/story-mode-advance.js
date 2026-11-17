@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V476 · Coming Up: Crimson Horizon follows Arc XLII';
+window.__CT_BUILD__='V477 · N and Sairen: short tasks before their chapters, and Sairen remembers';

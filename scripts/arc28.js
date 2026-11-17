@@ -202,7 +202,7 @@
       if (ready) {
         action = 
           '<button class="btn btn-small btn-success" onclick="markArc28ChapterRead('+ch.id+')">'+esc(ch.action || '✓ Mark Chapter Read')+'</button>';
-      } else action = '<div class="story-chip">Follow the current Objective.</div>';
+      } else action = '<div class="story-chip">'+esc((window.residentGateHint && window.residentGateHint(ch.id)) || 'Follow the current Objective.')+'</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
         '<span style="font-size:.82rem;opacity:.82;">'+esc(ch.focus)+'</span><br>'+
         '<span style="font-size:.78rem;">'+status+'</span> <span style="font-size:.76rem;opacity:.75;">📖 Story XP: +'+ch.xp+'</span><div class="story-actions">'+action+'</div></article>';
