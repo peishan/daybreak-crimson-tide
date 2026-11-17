@@ -68,8 +68,12 @@
     flushTimer = null;
     const batch = pending; pending = [];
     if (!batch.length) return;
-    if (batch.length > 3) show({icon:'🏘️', title: batch.length + ' updates at Fair Tide', text: batch.slice(0, 3).map(function(b){ return b.title; }).join(' · ') + ' and more. See Allies & Guests.', duration: 5200});
-    else batch.forEach(show);
+    // Only arrivals and departures collapse into a summary; instructions and level ups always show.
+    const people = batch.filter(function(b){ return b.kind === 'join' || b.kind === 'leave'; });
+    const rest = batch.filter(function(b){ return !(b.kind === 'join' || b.kind === 'leave'); });
+    if (people.length > 3) show({icon:'🏘️', title: people.length + ' updates at Fair Tide', text: people.slice(0, 3).map(function(b){ return b.title; }).join(' · ') + ' and more. See Allies & Guests.', duration: 5200});
+    else people.forEach(show);
+    rest.forEach(show);
   }
   window.notify = function(n){
     if (!n || (!n.title && !n.text)) return;
