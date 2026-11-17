@@ -25,6 +25,7 @@
     '.ct-notify .cn-icon{font-size:2rem;line-height:1;flex:0 0 auto;}' +
     '.ct-notify .cn-title{font-family:Cinzel,serif;font-size:1.2rem;line-height:1.25;font-weight:700;color:var(--gold,#e8c547);}' +
     '.ct-notify .cn-text{font-size:.95rem;line-height:1.35;opacity:.92;margin-top:2px;}' +
+    '.ct-notify .cn-hint{font-size:.72rem;opacity:.6;margin-top:3px;letter-spacing:.04em;}' +
     '.ct-notify.leave{border-color:var(--sand,#c4a35a);} .ct-notify.leave .cn-title{color:var(--parchment,#f5e6c8);}' +
     '.ct-notify.level .cn-title{font-size:1.3rem;}' +
     '@keyframes ctNotifyIn{from{opacity:0;transform:translateY(-18px) scale(.97)}to{opacity:1;transform:none}}' +
@@ -55,8 +56,9 @@
     const title = document.createElement('div'); title.className = 'cn-title'; title.textContent = n.title || '';
     body.appendChild(title);
     if (n.text) { const t = document.createElement('div'); t.className = 'cn-text'; t.textContent = n.text; body.appendChild(t); }
+    if (typeof n.onClick === 'function') { const h = document.createElement('div'); h.className = 'cn-hint'; h.textContent = n.hint || 'Tap to open'; body.appendChild(h); }
     node.appendChild(icon); node.appendChild(body);
-    node.onclick = function(){ dismiss(node); };
+    node.onclick = function(){ dismiss(node); if (typeof n.onClick === 'function') { try { n.onClick(); } catch(e) {} } };
     el.appendChild(node);
     while (el.children.length > 3) dismiss(el.firstChild);
     setTimeout(function(){ dismiss(node); }, n.duration || 4200);
