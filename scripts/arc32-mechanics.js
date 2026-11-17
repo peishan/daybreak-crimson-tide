@@ -153,6 +153,15 @@
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 
+  // Birth status follows the Arc XXXV birth chapters (7: it begins, 9: Vaeren, 10: Joelle).
+  function birthStatusText(fallback){
+    const cp = game.comicProgress35 || {};
+    if (cp[10]) return 'Born ✓ — Vaeren and Joelle';
+    if (cp[9]) return 'Vaeren has arrived ✓';
+    if (cp[7]) return 'Underway';
+    return fallback;
+  }
+
   function renderHomePreparationPanel(){
     if (!homePreparationUnlocked()) return '';
     const state = homePreparationState();
@@ -161,7 +170,7 @@
         'Home Expansion: '+(state.homeExpansion ? 'Complete ✓' : 'In Progress')+'<br>'+
         'Family Supplies: '+(state.familySupplies ? 'Prepared ✓' : 'In Progress')+'<br>'+
         'Community Support: '+(state.communitySupport ? 'Strong ✓' : 'Growing')+'<br>'+
-        'Birth: Unknown'+
+        'Birth: '+birthStatusText('Unknown')+
       '</article>';
   }
   window.renderHomePreparationPanel = renderHomePreparationPanel;

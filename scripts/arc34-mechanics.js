@@ -58,6 +58,15 @@
   }
   window.familyResonanceUnlocked = familyResonanceUnlocked;
 
+  // Birth status follows the Arc XXXV birth chapters (7: it begins, 9: Vaeren, 10: Joelle).
+  function birthStatusText(fallback){
+    const cp = game.comicProgress35 || {};
+    if (cp[10]) return 'Born ✓ — Vaeren and Joelle';
+    if (cp[9]) return 'Vaeren has arrived ✓';
+    if (cp[7]) return 'Underway';
+    return fallback;
+  }
+
   function renderFamilyResonancePanel(){
     if (!familyResonanceUnlocked()) return '';
     const state = familyResonanceState();
@@ -66,7 +75,7 @@
         'Distinct Signatures: '+(state.distinctSignatures ? 'Confirmed ✓' : 'Unconfirmed')+'<br>'+
         'Fountain Influence: '+(state.fountainInfluence ? 'Present ✓' : 'Unconfirmed')+'<br>'+
         'Emerging Resonance: '+(state.emergingResonance ? 'Confirmed ✓' : 'Unconfirmed')+'<br>'+
-        'Birth: Not Yet'+
+        'Birth: '+birthStatusText('Not Yet')+
       '</article>';
     if (state.observations.length) {
       html += '<div class="panel-title" style="margin-top:12px;font-size:.9rem;">Observations</div>';
