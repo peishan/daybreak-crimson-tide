@@ -60,6 +60,14 @@
   //     hideUntilUnlocked (no card before he has joined). The points
   //     are seeded from how he was treated as a guest (see
   //     scripts/sairen-bond.js).
+  //   - Sairen's own bonds -- the twins, Sally and Mirelle. These are
+  //     centred on Sairen rather than San. The twins unlock as soon as
+  //     all three have joined (Arc XLI Ch.16). Sally and Mirelle are in
+  //     the sequel (Arc XLII complete): Sally once she has joined, Mirelle
+  //     once she has visited Fair Tide (Arc XLII Ch.36). All three are
+  //     information-network specialists with Sairen, so their activities
+  //     are tradecraft and observation. Mirelle mostly stays at Altan, so
+  //     hers lean on letters. bonus:0, Shared Moments only.
   //   - Sera     -> Arc XLII Ch.23, the chapter that brings her to Fair
   //     Tide (same flag the Crossover tab's Wider Ally Network uses for
   //     her). She is a guest, not a fielded party member (she was an
@@ -246,6 +254,81 @@
         {id: 'his_blend',      icon: '🫖', label: 'Try Sairen\'s Blend',   flavor: 'His coffee is terrible and he knows it. They finish the pot anyway.'},
         {id: 'late_cup',       icon: '🌙', label: 'A Late-Night Cup',      flavor: 'He does not sleep much. Neither, lately, do they. The galley light stays on.'},
         {id: 'ask_jovie',      icon: '🩹', label: 'Ask About Jovie',       flavor: 'San does not push. Joel pushes a little. Sairen goes quiet, then smiles at the table.'}
+      ]
+    },
+    {
+      key: 'sairen_twins', label: 'Sairen & the Twins', icon: '🌊', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Vaeren and Joelle',
+      flavor: 'He would never call it looking after them. He is always, somehow, nearby.',
+      tiers: [
+        {threshold:0,    name:'The Quiet Man on the Ship',    bonus:0},
+        {threshold:50,   name:'Allowed Into the Game',        bonus:0},
+        {threshold:150,  name:'Someone to Ask',               bonus:0},
+        {threshold:300,  name:'Their Favourite Silence',      bonus:0},
+        {threshold:600,  name:'Uncle, Without the Word',      bonus:0},
+        {threshold:1000, name:'Someone They Never Have to Look For', bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.sairen && game.foundCompanions.vaeren && game.foundCompanions.joelle); },
+      handlerName: 'hangOutWithSairenTwins',
+      panelTitle: '🌊 Sairen & the Twins',
+      panelBlurb: 'Sairen spends time with Vaeren and Joelle. This still uses today\'s Sairen &amp; the Twins time, same as above.',
+      activities: [
+        {id: 'hide_seek',   icon: '🫥', label: 'Hide and Seek',            flavor: 'Sairen never loses. Vaeren has decided this is cheating. Joelle has decided it is a skill worth learning.'},
+        {id: 'quiet_steps', icon: '👣', label: 'Learn to Walk Quietly',    flavor: 'Joelle manages three steps. Vaeren, who is built like a wall, manages one and is very proud of it.'},
+        {id: 'star_names',  icon: '✨', label: 'Name the Stars',           flavor: 'Joelle knows them all. Sairen only knows which ones to navigate by, and she corrects him gently.'},
+        {id: 'shield_drill', icon: '🛡️', label: 'Watch Vaeren Drill',      flavor: 'He says nothing about the stance. Then, at the end, one small adjustment, and it is exactly right.'},
+        {id: 'night_watch_kids', icon: '🌙', label: 'Sit Up With Them',    flavor: 'They could not sleep. Neither, apparently, could he. Nobody mentions it.'},
+        {id: 'one_story',   icon: '📖', label: 'Tell One True Story',      flavor: 'A mild one, chosen carefully. They ask for another. He says maybe tomorrow, and means it.'}
+      ]
+    },
+    {
+      key: 'sairen_sally', label: 'Sairen & Sally', icon: '🌹', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Compare notes with Sally',
+      flavor: 'Two people who notice everything, politely pretending not to.',
+      tiers: [
+        {threshold:0,    name:'Same Trade, Different Manners', bonus:0},
+        {threshold:50,   name:'Comparing Notes',               bonus:0},
+        {threshold:150,  name:'Trusted Second Pair of Eyes',   bonus:0},
+        {threshold:300,  name:'The Network Behind the Network', bonus:0},
+        {threshold:600,  name:'Finishing Each Other\'s Reports', bonus:0},
+        {threshold:1000, name:'Nothing Gets Past Either of Them', bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.arc42Complete && game.foundCompanions && game.foundCompanions.sairen && game.foundCompanions.sally); },
+      handlerName: 'hangOutWithSairenSally',
+      panelTitle: '🌹 Sairen & Sally',
+      panelBlurb: 'Sairen and Sally work the information side of the voyage together. This still uses today\'s Sairen &amp; Sally time, same as above.',
+      activities: [
+        {id: 'compare_reports', icon: '🗒️', label: 'Compare Reports',       flavor: 'Same port, same day. Two completely different accounts, and the truth turns out to sit between them.'},
+        {id: 'tail_drill',      icon: '👀', label: 'Tail a Stranger',       flavor: 'A drill, nothing more. Sally gets spotted by a child. Sairen gets spotted by nobody and is quietly annoyed that she noticed him anyway.'},
+        {id: 'dockside_chat',   icon: '🍵', label: 'Tea on the Dockside',   flavor: 'Sally charms the stall-keeper into three pieces of gossip. Sairen only needed one of them, and says so.'},
+        {id: 'teach_charm',     icon: '😊', label: 'Let Her Teach Him to Smile', flavor: 'Sally calls it a cover skill. Sairen calls it unnecessary. He practises it on the way back.'},
+        {id: 'cipher_swap',     icon: '🔐', label: 'Swap Ciphers',          flavor: 'His are older and plainer. Hers are prettier. Both of them are privately impressed.'},
+        {id: 'debrief',         icon: '🌙', label: 'A Quiet Debrief',       flavor: 'No orders, no audience. They talk about the work, then, for a moment, about what it cost.'}
+      ]
+    },
+    {
+      key: 'sairen_mirelle', label: 'Sairen & Mirelle', icon: '🌷', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Trade observations with Mirelle',
+      flavor: 'She watches people. He watches rooms. Together they miss very little.',
+      tiers: [
+        {threshold:0,    name:'A Queen Who Listens',            bonus:0},
+        {threshold:50,   name:'Observations Exchanged',         bonus:0},
+        {threshold:150,  name:'The Things Left Unsaid',         bonus:0},
+        {threshold:300,  name:'Reading the Room Together',      bonus:0},
+        {threshold:600,  name:'Trusted Across Two Courts',      bonus:0},
+        {threshold:1000, name:'The Quiet Between the Reports',  bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.arc42Complete && game.comicProgress42 && game.comicProgress42[36] && game.foundCompanions && game.foundCompanions.sairen); },
+      handlerName: 'hangOutWithSairenMirelle',
+      panelTitle: '🌷 Sairen & Mirelle',
+      panelBlurb: 'Mirelle mostly stays at Altan, so much of this is by letter. This still uses today\'s Sairen &amp; Mirelle time, same as above.',
+      activities: [
+        {id: 'coded_letter',   icon: '✉️', label: 'Send a Coded Letter',     flavor: 'Mirelle answers in the margin of a harmless-looking recipe. He reads it twice and smiles at the second pass.'},
+        {id: 'who_sat_where',  icon: '🪑', label: 'Who Sat Where',           flavor: 'She remembers the seating, the tone, and who avoided whose eye. He remembers the exits. Between them it is a full picture.'},
+        {id: 'small_favours',  icon: '🎁', label: 'Track the Small Favours', flavor: 'Mirelle says the real politics is in who owes whom a loaf of bread. Sairen finds this alarmingly accurate.'},
+        {id: 'listen_first',   icon: '👂', label: 'Learn to Listen First',   flavor: 'She tells him people reveal more in casual talk than in formal reports. He tries it on a dockhand and is a little unsettled by how well it works.'},
+        {id: 'altan_news',     icon: '👑', label: 'Hear News from Altan',    flavor: 'Court gossip, delivered as if it were weather. Sairen keeps three details and quietly files the rest.'},
+        {id: 'ask_her_view',   icon: '💭', label: 'Ask What She Noticed',    flavor: 'He asks what she saw that he missed. She names two things and is right about both.'}
       ]
     },
     {

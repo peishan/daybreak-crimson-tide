@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V489 · Coffee with Sairen, and small touches in his Jovie arc';
+window.__CT_BUILD__='V490 · Sairen bonds with the twins, Sally and Mirelle';
