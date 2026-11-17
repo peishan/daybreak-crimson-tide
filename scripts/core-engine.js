@@ -4657,6 +4657,21 @@ function effectiveMaxHp(m) {
   return scaledBase + (t && t.hpBonus ? t.hpBonus : 0) + g.hp;
 }
 function partyHpOf(m) { return game.partyHp[m.id] != null ? game.partyHp[m.id] : effectiveMaxHp(m); }
+// Has the party lost the fight? Normally when every member is at 0 HP. Eliz and Soel can never drop
+// below 1 HP, so with either fielded a fight could never be lost and the pair could grind a raid stage
+// out alone. In a raid, a stage is lost once every member who CAN fall is down (if only the pair is
+// fielded, once all of them are at 1 HP). Everywhere else the rule is unchanged.
+function isPartyWiped(party) {
+  if (party.every(m => partyHpOf(m) <= 0)) return true;
+  const e = game.combatEnemy;
+  if (e && e.kind === 'raid') {
+    const killable = party.filter(m => !UNKILLABLE_IDS.has(m.id));
+    if (killable.length) return killable.every(m => partyHpOf(m) <= 0);
+    return party.every(m => partyHpOf(m) <= 1);
+  }
+  return false;
+}
+window.isPartyWiped = isPartyWiped;
 function partyMpOf(m) { return game.partyMp[m.id] != null ? game.partyMp[m.id] : effectiveMaxMp(m); }
 function effectiveMaxMp(m) {
   if (m._scaledMaxMp != null) return m._scaledMaxMp;
@@ -5218,7 +5233,7 @@ function renderCombat() {
   // standing, and Eliz's Resurrect (now prioritizing San, see castSpell/
   // SKILL revive handling above) can bring her back mid-fight. Combat only
   // ends in defeat if the whole active party — San included — is down.
-  const allFallen = party.every(m => partyHpOf(m) <= 0);
+  const allFallen = isPartyWiped(party);
   if (game.inCombat && allFallen) { handleDefeat(); return; }
   if (game.inCombat && game.combatEnemyHp <= 0) { handleVictory(); return; }
 
