@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V472 · Quests and markets keep sequel ports and goods out of the main campaign';
+window.__CT_BUILD__='V473 · N and the Arc XXVIII-XXX residents sync when chapters are read';
