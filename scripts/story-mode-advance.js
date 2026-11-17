@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V480 · Phone reminder notifications';
+window.__CT_BUILD__='V481 · Companions keep full strength as the shared level rises';

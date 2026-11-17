@@ -4614,6 +4614,15 @@ function characterPowerMult(id) {
   ensureCharacterSeeded(id);
   const partyLv = Math.max(1, level());
   const ownLv = characterLevel(id);
+  // Adults are always at full personal power (see the notes above: they seed at the party's level
+  // and "nothing changes for them"). Personal XP only grows from combat, so once story chapters pay
+  // out whole level bands (story-xp-rebalance.js) the shared level races ahead of it, and without
+  // this every companion would be weakened as the shared level rose, down to a quarter of their HP
+  // and MP. Only the young (Vaeren, Joelle) are meant to lag and catch up by fighting.
+  if (!YOUNG_GROWING_IDS.has(id) && gameSessionActive && game.characterXp && ownLv < partyLv) {
+    game.characterXp[id] = characterXpForLevel(partyLv);
+    return 1;
+  }
   return Math.max(0.25, Math.min(1, ownLv / partyLv));
 }
 window.characterLevel = characterLevel;
