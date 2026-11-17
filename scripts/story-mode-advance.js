@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V486 · N fate notice banner';
+window.__CT_BUILD__='V487 · N returns to the guest list as a visitor in Arc XXX';
