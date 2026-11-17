@@ -68,6 +68,12 @@
   //     information-network specialists with Sairen, so their activities
   //     are tradecraft and observation. Mirelle mostly stays at Altan, so
   //     hers lean on letters. bonus:0, Shared Moments only.
+  //   - Levi and Devon -- the Arc XLII crossover foreshadowing (Ch.17/18/
+  //     20/21/22): Levi with KW Liang, Senedra and Iris; Devon with Joel
+  //     and Ser Aldric. Unlocked once Levi/Devon are aboard (Crimson
+  //     Horizon prologue) and the other is a companion. Joel is always
+  //     aboard so Devon's bond with him is the main one; Aldric (Fair
+  //     Tide-based, Final Voyage cleared) is the lighter second.
   //   - Sera     -> Arc XLII Ch.23, the chapter that brings her to Fair
   //     Tide (same flag the Crossover tab's Wider Ally Network uses for
   //     her). She is a guest, not a fielded party member (she was an
@@ -257,6 +263,131 @@
       ]
     },
     {
+      key: 'levi_liang', label: 'Levi & KW Liang', icon: '🐇', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Liang',
+      flavor: 'Neither says much. Their shots do the talking.',
+      tiers: [
+        {threshold:0,    name:'Two Quiet Shooters',          bonus:0},
+        {threshold:50,   name:'Answering Each Other\'s Shots', bonus:0},
+        {threshold:150,  name:'Same Range, Same Silence',    bonus:0},
+        {threshold:300,  name:'Trusted Second Bow',          bonus:0},
+        {threshold:600,  name:'No Need to Explain',          bonus:0},
+        {threshold:1000, name:'The Archer and the Rabbit\'s Keeper', bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.levi && game.foundCompanions.kw_liang); },
+      handlerName: 'hangOutWithLeviLiang',
+      panelTitle: '🐇 Levi & KW Liang',
+      panelBlurb: 'Levi and Liang, two people who talk mostly with arrows. This still uses today\'s Levi &amp; Liang time, same as above.',
+      activities: [
+        {id: 'answer_shots',  icon: '🎯', label: 'Answer Each Other\'s Shots', flavor: 'Levi adjusts. Liang adjusts to the adjustment. Nobody keeps score and both of them know it.'},
+        {id: 'trade_bows',    icon: '🏹', label: 'Trade Bows for an Hour',     flavor: 'Liang hands his over without a word. Levi is visibly reluctant to hand it back.'},
+        {id: 'compare_routes', icon: '🗺️', label: 'Compare Routes',           flavor: 'Liang thinks in cargo and margins, Levi in sightlines. They land on the same road from opposite directions.'},
+        {id: 'rabbit_range',  icon: '🐰', label: 'Share the Range with the Rabbit', flavor: 'The rabbit sits in the safest spot on the range, completely unbothered. Both of them aim around it.'},
+        {id: 'long_wager',    icon: '🎲', label: 'A Very Quiet Wager',        flavor: 'Longest clean shot wins. They say nothing, the wager is settled, and no one will confirm the stakes.'},
+        {id: 'silent_meal',   icon: '🍜', label: 'Share a Meal Without Talking', flavor: 'It is the best conversation either of them has had all week.'}
+      ]
+    },
+    {
+      key: 'levi_senedra', label: 'Levi & Senedra', icon: '🔭', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Senedra',
+      flavor: 'She sets the targets a little further out every time. He never complains.',
+      tiers: [
+        {threshold:0,    name:'Lookout and Archer',            bonus:0},
+        {threshold:50,   name:'Targets a Little Further Out',  bonus:0},
+        {threshold:150,  name:'Same Horizon',                  bonus:0},
+        {threshold:300,  name:'Trusted Eyes',                  bonus:0},
+        {threshold:600,  name:'Nothing Crosses Unseen',        bonus:0},
+        {threshold:1000, name:'The Two Who See First',         bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.levi && game.foundCompanions.senedra); },
+      handlerName: 'hangOutWithLeviSenedra',
+      panelTitle: '🔭 Levi & Senedra',
+      panelBlurb: 'Levi and Senedra, comparing how each of them reads the horizon. This still uses today\'s Levi &amp; Senedra time, same as above.',
+      activities: [
+        {id: 'far_targets',   icon: '🎯', label: 'Targets at Distance',     flavor: 'Senedra moves the line back again. Levi says nothing and hits it. She moves it back again.'},
+        {id: 'lookout_shift', icon: '🗼', label: 'Share a Lookout Shift',   flavor: 'Two people who read the ground before anyone else, saying very little about it.'},
+        {id: 'read_ground',   icon: '👁️', label: 'Read the Ground',         flavor: 'They point out different things on the same hillside, then realise they were both right.'},
+        {id: 'signal_arrows', icon: '🚩', label: 'Work Out Signals',        flavor: 'A flag, an arrow, one hand sign. By the end it is a language, and it is nearly all silence.'},
+        {id: 'dusk_watch',    icon: '🌅', label: 'Dusk Watch',              flavor: 'The hour when everything changes shape. They both prefer it, and neither mentions why.'},
+        {id: 'swap_maps',     icon: '📜', label: 'Swap Maps',               flavor: 'Senedra\'s are annotated in a tidy hand. Levi\'s are mostly arrows. Both are exactly right.'}
+      ]
+    },
+    {
+      key: 'levi_iris', label: 'Levi & Iris', icon: '🦊', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Iris',
+      flavor: 'She turns everything into a game. He pretends not to enjoy it.',
+      tiers: [
+        {threshold:0,    name:'A Challenge Accepted',          bonus:0},
+        {threshold:50,   name:'Terrain She Already Knows',     bonus:0},
+        {threshold:150,  name:'Keeping Up, Mostly',            bonus:0},
+        {threshold:300,  name:'Partners in a Dare',            bonus:0},
+        {threshold:600,  name:'Never Boring, Never Quiet',     bonus:0},
+        {threshold:1000, name:'Worth Every Detour',            bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.levi && game.foundCompanions.iris); },
+      handlerName: 'hangOutWithLeviIris',
+      panelTitle: '🦊 Levi & Iris',
+      panelBlurb: 'Levi and Iris, a competition that never quite ends. This still uses today\'s Levi &amp; Iris time, same as above.',
+      activities: [
+        {id: 'terrain_dare',  icon: '⛰️', label: 'Take Her Terrain Dare',   flavor: 'She picks the ground and the rules. Levi loses the first round and wins the second, and says nothing about either.'},
+        {id: 'ridge_race',    icon: '🏃', label: 'Race the Ridge',          flavor: 'Iris cuts a corner that does not look like a corner. Levi takes the long way and arrives three seconds behind, annoyed.'},
+        {id: 'knife_arrow',   icon: '🗡️', label: 'Knife Against Arrow',     flavor: 'Close range is hers, distance is his, and the argument over which matters more is an old one by now.'},
+        {id: 'tracking_game', icon: '🐾', label: 'Play the Tracking Game',  flavor: 'Whoever finds the other first wins. Iris cheats. Levi lets her, then wins anyway.'},
+        {id: 'steal_snack',   icon: '🥟', label: 'Lose a Snack to Her',     flavor: 'She takes it so smoothly that he only notices when she is already eating it.'},
+        {id: 'rooftop_rest',  icon: '🌤️', label: 'Rest on a Rooftop',      flavor: 'For once she sits still. Neither of them says it is nice.'}
+      ]
+    },
+    {
+      key: 'devon_joel', label: 'Devon & Joel', icon: '🛡️', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Spend time with Devon',
+      flavor: 'A knight and a paladin, comparing how it feels to stand next to someone who does not need protecting.',
+      tiers: [
+        {threshold:0,    name:'Two Protectors',                   bonus:0},
+        {threshold:50,   name:'Common Ground',                    bonus:0},
+        {threshold:150,  name:'Fellow Watchmen',                  bonus:0},
+        {threshold:300,  name:'Understood Without Explaining',    bonus:0},
+        {threshold:600,  name:'Two Men Who Stand Beside, Not In Front', bonus:0},
+        {threshold:1000, name:'Brothers in Duty',                 bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.devon); },
+      handlerName: 'hangOutWithDevonJoel',
+      panelTitle: '🛡️ Devon & Joel',
+      panelBlurb: 'Joel is aboard, and so is Devon, which makes this the easy one. This still uses today\'s Devon &amp; Joel time, same as above.',
+      activities: [
+        {id: 'deck_spar',     icon: '⚔️', label: 'Spar on the Deck',        flavor: 'Steady against precise. Neither is in a hurry, and both find the other harder to read than expected.'},
+        {id: 'partners_talk', icon: '💬', label: 'Talk About Their Partners', flavor: 'Two men who spend their lives quietly watching over strong-willed women, and finally have someone to say it to.'},
+        {id: 'night_watch_dj', icon: '🌙', label: 'Stand Watch Together',   flavor: 'The ship sleeps. They both pretend this is a duty and not a pleasure.'},
+        {id: 'compare_duty',  icon: '📜', label: 'Compare Oaths',           flavor: 'Lunareth\'s version and Fair Tide\'s. More alike than either expected.'},
+        {id: 'quiet_drink',   icon: '🍶', label: 'A Quiet Drink on Deck',   flavor: 'Joel talks about the early days. Devon listens like it is a report he plans to remember.'},
+        {id: 'protect_tips',  icon: '🧭', label: 'Trade Notes on Being Overruled', flavor: 'They compare techniques for objecting to a captain and a princess. None of them work, and they agree on that too.'}
+      ]
+    },
+    {
+      key: 'devon_aldric', label: 'Devon & Ser Aldric', icon: '🌊', members: [], hideUntilUnlocked: true,
+      actionLabel: 'Train with Ser Aldric',
+      flavor: 'Three fighting philosophies in one practice yard, and one of them is a rule book.',
+      tiers: [
+        {threshold:0,    name:'Different Worlds, Same Yard',   bonus:0},
+        {threshold:50,   name:'Mutual Respect',                bonus:0},
+        {threshold:150,  name:'Sparring Partners',             bonus:0},
+        {threshold:300,  name:'Disagreeing on Principle',      bonus:0},
+        {threshold:600,  name:'Knights of Different Worlds',   bonus:0},
+        {threshold:1000, name:'Two Oaths, One Yard',           bonus:0}
+      ],
+      unlockedFn: function(){ return !!(game.foundCompanions && game.foundCompanions.devon && game.finalCleared); },
+      handlerName: 'hangOutWithDevonAldric',
+      panelTitle: '🌊 Devon & Ser Aldric',
+      panelBlurb: 'Ser Aldric is at Fair Tide more than aboard, so this is the lighter of Devon\'s two bonds. This still uses today\'s Devon &amp; Ser Aldric time, same as above.',
+      activities: [
+        {id: 'yard_drill',    icon: '🛡️', label: 'Drill in the Yard',        flavor: 'Aldric corrects Devon\'s footing. Devon, politely, does not agree. They drill the footing again.'},
+        {id: 'discipline',    icon: '📏', label: 'Argue About Discipline',   flavor: 'A spirited exchange on duty, order and protecting others. Both of them enjoy it more than they admit.'},
+        {id: 'waves_style',   icon: '🌊', label: 'Learn the Waves Style',    flavor: 'Aldric teaches him to stand like water. It takes Devon an afternoon to stop standing like a wall.'},
+        {id: 'old_oaths',     icon: '📖', label: 'Swap Old Oaths',           flavor: 'Two knights, two worlds, and a surprising amount of overlap in the wording.'},
+        {id: 'polish_armour', icon: '✨', label: 'Polish Armour Together',   flavor: 'The most peaceful part of any knight\'s day, and the one they talk about least.'},
+        {id: 'three_way',     icon: '⚔️', label: 'A Three-Way Bout with Joel', flavor: 'Three philosophies, one practice yard, and nobody willing to concede the last point.'}
+      ]
+    },
+    {
       key: 'sairen_twins', label: 'Sairen & the Twins', icon: '🌊', members: [], hideUntilUnlocked: true,
       actionLabel: 'Spend time with Vaeren and Joelle',
       flavor: 'He would never call it looking after them. He is always, somehow, nearby.',
@@ -321,14 +452,14 @@
       unlockedFn: function(){ return !!(game.arc42Complete && game.comicProgress42 && game.comicProgress42[36] && game.foundCompanions && game.foundCompanions.sairen); },
       handlerName: 'hangOutWithSairenMirelle',
       panelTitle: '🌷 Sairen & Mirelle',
-      panelBlurb: 'Mirelle mostly stays at Altan, so much of this is by letter. This still uses today\'s Sairen &amp; Mirelle time, same as above.',
+      panelBlurb: 'Mirelle is a guest of Fair Tide, not a resident: she handles missions from Altan and only comes over when she travels with Rheon. Most of this is remote. This still uses today\'s Sairen &amp; Mirelle time, same as above.',
       activities: [
-        {id: 'coded_letter',   icon: '✉️', label: 'Send a Coded Letter',     flavor: 'Mirelle answers in the margin of a harmless-looking recipe. He reads it twice and smiles at the second pass.'},
-        {id: 'who_sat_where',  icon: '🪑', label: 'Who Sat Where',           flavor: 'She remembers the seating, the tone, and who avoided whose eye. He remembers the exits. Between them it is a full picture.'},
-        {id: 'small_favours',  icon: '🎁', label: 'Track the Small Favours', flavor: 'Mirelle says the real politics is in who owes whom a loaf of bread. Sairen finds this alarmingly accurate.'},
-        {id: 'listen_first',   icon: '👂', label: 'Learn to Listen First',   flavor: 'She tells him people reveal more in casual talk than in formal reports. He tries it on a dockhand and is a little unsettled by how well it works.'},
-        {id: 'altan_news',     icon: '👑', label: 'Hear News from Altan',    flavor: 'Court gossip, delivered as if it were weather. Sairen keeps three details and quietly files the rest.'},
-        {id: 'ask_her_view',   icon: '💭', label: 'Ask What She Noticed',    flavor: 'He asks what she saw that he missed. She names two things and is right about both.'}
+        {id: 'remote_mission', icon: '🛰️', label: 'Run a Mission Remotely',  flavor: 'She plans it from Altan and he does the legwork. Neither sees the other\'s half of the map until it is done.'},
+        {id: 'coded_letter',   icon: '✉️', label: 'Send a Coded Letter',      flavor: 'Mirelle answers in the margin of a harmless-looking recipe. He reads it twice and smiles at the second pass.'},
+        {id: 'who_sat_where',  icon: '🪑', label: 'Debrief a Council Meeting', flavor: 'She remembers the seating, the tone, and who avoided whose eye. He remembers the exits. Between them it is a full picture.'},
+        {id: 'listen_first',   icon: '👂', label: 'Learn to Listen First',    flavor: 'She tells him people reveal more in casual talk than in formal reports. He tries it on a dockhand and is a little unsettled by how well it works.'},
+        {id: 'check_on_sera',  icon: '🍵', label: 'Report on Sera for Her',   flavor: 'Mirelle cannot pop by whenever she likes, so Sairen does. Sera is well, the tea is strong, and she is pretending not to be as happy as she is.'},
+        {id: 'rheon_visit',    icon: '👑', label: 'When Rheon Brings Her Over', flavor: 'A rare visit in person. Rheon makes small talk with the whole harbour; Mirelle slips away to compare notes with Sairen in peace.'}
       ]
     },
     {

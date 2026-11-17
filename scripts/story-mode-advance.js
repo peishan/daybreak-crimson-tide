@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V490 · Sairen bonds with the twins, Sally and Mirelle';
+window.__CT_BUILD__='V491 · Levi and Devon bonds; Mirelle as a remote guest';
