@@ -452,14 +452,15 @@
       unlockedFn: function(){ return !!(game.arc42Complete && game.comicProgress42 && game.comicProgress42[36] && game.foundCompanions && game.foundCompanions.sairen); },
       handlerName: 'hangOutWithSairenMirelle',
       panelTitle: '🌷 Sairen & Mirelle',
-      panelBlurb: 'Mirelle is a guest of Fair Tide, not a resident: she handles missions from Altan and only comes over when she travels with Rheon. Most of this is remote. This still uses today\'s Sairen &amp; Mirelle time, same as above.',
+      panelBlurb: 'Mirelle is a guest of Fair Tide, not a resident. She handles missions from Altan and comes over only when the story brings her, so most of this is remote. The in-person options open while she is visiting. This still uses today\'s Sairen &amp; Mirelle time, same as above.',
       activities: [
         {id: 'remote_mission', icon: '🛰️', label: 'Run a Mission Remotely',  flavor: 'She plans it from Altan and he does the legwork. Neither sees the other\'s half of the map until it is done.'},
         {id: 'coded_letter',   icon: '✉️', label: 'Send a Coded Letter',      flavor: 'Mirelle answers in the margin of a harmless-looking recipe. He reads it twice and smiles at the second pass.'},
         {id: 'who_sat_where',  icon: '🪑', label: 'Debrief a Council Meeting', flavor: 'She remembers the seating, the tone, and who avoided whose eye. He remembers the exits. Between them it is a full picture.'},
         {id: 'listen_first',   icon: '👂', label: 'Learn to Listen First',    flavor: 'She tells him people reveal more in casual talk than in formal reports. He tries it on a dockhand and is a little unsettled by how well it works.'},
         {id: 'check_on_sera',  icon: '🍵', label: 'Report on Sera for Her',   flavor: 'Mirelle cannot pop by whenever she likes, so Sairen does. Sera is well, the tea is strong, and she is pretending not to be as happy as she is.'},
-        {id: 'rheon_visit',    icon: '👑', label: 'When Rheon Brings Her Over', flavor: 'A rare visit in person. Rheon makes small talk with the whole harbour; Mirelle slips away to compare notes with Sairen in peace.'}
+        {id: 'visit_chat',    icon: '👑', label: 'Slip Away During Her Visit', flavor: 'A rare visit in person. Whoever she travelled with makes small talk with the whole harbour; Mirelle slips away to compare notes with Sairen in peace.', needsPresent: 'mirelle'},
+        {id: 'visit_sera',    icon: '🌷', label: 'Look in on Sera Together',   flavor: 'Mirelle checks on her sister-in-law herself this time. Sairen carries the tea and pretends not to listen to a word of it.', needsPresent: 'mirelle'}
       ]
     },
     {
@@ -490,6 +491,19 @@
   ];
   window.HANG_OUT_COMPANIONS = COMPANIONS;
 
+  // An activity with needsPresent:<id> only opens while that guest is
+  // actually at Fair Tide (their resident record is 'resident', which
+  // scripts/arc42-visitors.js sets for every visit window, Arc XLII and
+  // the sequel's SEQUEL_VISITS alike -- so any future chapter that
+  // brings the guest over unlocks it with no change here).
+  function guestPresent(id){
+    try {
+      const r = window.fairTideResidentsState && window.fairTideResidentsState()[id];
+      return !!(r && r.status === 'resident');
+    } catch(e) { return false; }
+  }
+  window.guestPresentAtFairTide = guestPresent;
+
   COMPANIONS.forEach(function(c){
     window.BOND_TRACKS[c.key] = {
       label: c.label, icon: c.icon, tiers: c.tiers, members: c.members,
@@ -499,6 +513,7 @@
       if (!c.unlockedFn()) return;
       const activity = c.activities.find(function(a){ return a.id === activityId; });
       if (!activity) return;
+      if (activity.needsPresent && !guestPresent(activity.needsPresent)) { toast('She is not at Fair Tide right now.'); return; }
       if (typeof window.canSpendTimeOnBond === 'function' && !window.canSpendTimeOnBond(c.key)) {
         toast('Already spent time on this today.');
         return;
@@ -519,7 +534,8 @@
       '<div style="font-size:.82rem;opacity:.85;margin-bottom:8px;">'+c.panelBlurb+'</div>'+
       '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
     c.activities.forEach(function(a){
-      html += '<button class="btn btn-small btn-success" '+(canSpend?'':'disabled')+' onclick="'+c.handlerName+'(\''+a.id+'\')">'+a.icon+' '+esc(a.label)+'</button>';
+      const away = a.needsPresent && !guestPresent(a.needsPresent);
+      html += '<button class="btn btn-small btn-success" '+((canSpend && !away)?'':'disabled')+(away?' title="Only while she is visiting Fair Tide"':'')+' onclick="'+c.handlerName+'(\''+a.id+'\')">'+a.icon+' '+esc(a.label)+(away?' 🔒':'')+'</button>';
     });
     html += '</div>';
     const moments = (typeof window.sharedMomentsFor === 'function') ? window.sharedMomentsFor(c.key) : [];
