@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V485 · N fate is rolled for saves that passed Ch.23 earlier';
+window.__CT_BUILD__='V486 · N fate notice banner';
