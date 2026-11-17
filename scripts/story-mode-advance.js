@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V488 · Sairen returns to the guest list in Arc XXX';
+window.__CT_BUILD__='V489 · Coffee with Sairen, and small touches in his Jovie arc';
