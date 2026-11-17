@@ -1,0 +1,201 @@
+(function(){
+  // -------------------------------------------------------------------
+  // NOTIFICATION BANNER + COMING UP.
+  //
+  // 1. A banner at the top of the screen for the moments worth noticing
+  //    ("N joined Fair Tide", "Rashid left Fair Tide", level ups). Bigger
+  //    type than the bottom toasts and the quest/bounty progress lines, a few
+  //    seconds on screen, tap to dismiss, up to three stacked. A burst
+  //    (more than three at once, e.g. a save catching up) collapses into
+  //    one summary line. window.notify({icon, title, text, kind, duration}).
+  //
+  // 2. "Coming Up": what opens at the next levels, nearest first (story arcs,
+  //    raids, Crimson Horizon) plus the arc in progress. Shown as a panel
+  //    under the Current Objective, and as a "Next up" line on the level-up
+  //    banner. Read straight from existing data, nothing new tracked.
+  // -------------------------------------------------------------------
+
+  // ---------------- banner ----------------
+  const STYLE = '' +
+    '#ctNotifyStack{position:fixed;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(94vw,470px);z-index:1450;display:flex;flex-direction:column;gap:8px;pointer-events:none;}' +
+    '.ct-notify{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;cursor:pointer;' +
+      'background:linear-gradient(160deg,rgba(24,52,78,.97),rgba(6,16,28,.98));border:1px solid var(--gold,#e8c547);color:var(--parchment,#f5e6c8);' +
+      'box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 18px rgba(232,197,71,.18);animation:ctNotifyIn .35s ease-out both;}' +
+    '.ct-notify.out{animation:ctNotifyOut .3s ease-in both;}' +
+    '.ct-notify .cn-icon{font-size:2rem;line-height:1;flex:0 0 auto;}' +
+    '.ct-notify .cn-title{font-family:Cinzel,serif;font-size:1.2rem;line-height:1.25;font-weight:700;color:var(--gold,#e8c547);}' +
+    '.ct-notify .cn-text{font-size:.95rem;line-height:1.35;opacity:.92;margin-top:2px;}' +
+    '.ct-notify.leave{border-color:var(--sand,#c4a35a);} .ct-notify.leave .cn-title{color:var(--parchment,#f5e6c8);}' +
+    '.ct-notify.level .cn-title{font-size:1.3rem;}' +
+    '@keyframes ctNotifyIn{from{opacity:0;transform:translateY(-18px) scale(.97)}to{opacity:1;transform:none}}' +
+    '@keyframes ctNotifyOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-14px)}}' +
+    '.ct-coming-up .cu-row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid rgba(196,163,90,.14);font-size:.88rem;}' +
+    '.ct-coming-up .cu-row:last-child{border-bottom:0;} .ct-coming-up .cu-ico{flex:0 0 1.6em;text-align:center;}' +
+    '.ct-coming-up .cu-txt{flex:1;} .ct-coming-up .cu-lv{font-size:.74rem;opacity:.7;white-space:nowrap;}';
+  function ensureStyle(){
+    if (document.getElementById('ctNotifyStyle')) return;
+    const s = document.createElement('style'); s.id = 'ctNotifyStyle'; s.textContent = STYLE; document.head.appendChild(s);
+  }
+  function stack(){
+    ensureStyle();
+    let el = document.getElementById('ctNotifyStack');
+    if (!el) { el = document.createElement('div'); el.id = 'ctNotifyStack'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite'); document.body.appendChild(el); }
+    return el;
+  }
+  function dismiss(node){
+    if (!node || node.__gone) return; node.__gone = true;
+    node.classList.add('out'); setTimeout(function(){ if (node.parentNode) node.parentNode.removeChild(node); }, 320);
+  }
+  function show(n){
+    const el = stack();
+    const node = document.createElement('div');
+    node.className = 'ct-notify' + (n.kind ? ' ' + n.kind : '');
+    const icon = document.createElement('div'); icon.className = 'cn-icon'; icon.textContent = n.icon || '🔔';
+    const body = document.createElement('div');
+    const title = document.createElement('div'); title.className = 'cn-title'; title.textContent = n.title || '';
+    body.appendChild(title);
+    if (n.text) { const t = document.createElement('div'); t.className = 'cn-text'; t.textContent = n.text; body.appendChild(t); }
+    node.appendChild(icon); node.appendChild(body);
+    node.onclick = function(){ dismiss(node); };
+    el.appendChild(node);
+    while (el.children.length > 3) dismiss(el.firstChild);
+    setTimeout(function(){ dismiss(node); }, n.duration || 4200);
+  }
+
+  // Collect everything fired within a short window; a burst of more than three becomes one summary.
+  let pending = [], flushTimer = null;
+  function flush(){
+    flushTimer = null;
+    const batch = pending; pending = [];
+    if (!batch.length) return;
+    if (batch.length > 3) show({icon:'🏘️', title: batch.length + ' updates at Fair Tide', text: batch.slice(0, 3).map(function(b){ return b.title; }).join(' · ') + ' and more. See Allies & Guests.', duration: 5200});
+    else batch.forEach(show);
+  }
+  window.notify = function(n){
+    if (!n || (!n.title && !n.text)) return;
+    pending.push(n);
+    if (!flushTimer) flushTimer = setTimeout(flush, 350);
+  };
+
+  // Residents joining or leaving Fair Tide.
+  const oldLog = window.logResidentArrivalDeparture;
+  if (typeof oldLog === 'function') {
+    window.logResidentArrivalDeparture = function(r, type, note){
+      const out = oldLog.apply(this, arguments);
+      try {
+        const name = (r && r.nameKnown === false) ? 'Someone' : (r && r.name) || 'Someone';
+        if (type === 'join') window.notify({icon: (r && r.icon) || '🏠', title: name + ' joined Fair Tide', text: note || '', kind: 'join'});
+        else if (type === 'leave') window.notify({icon: (r && r.icon) || '👋', title: name + ' left Fair Tide', text: note || '', kind: 'leave'});
+      } catch(e) {}
+      return out;
+    };
+  }
+
+  // ---------------- coming up ----------------
+  function roman(n){
+    const m = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+    let s = ''; m.forEach(function(p){ while (n >= p[0]) { s += p[1]; n -= p[0]; } }); return s;
+  }
+  function lvl(){ return (typeof level === 'function') ? level() : 0; }
+  function arcRows(){
+    const rows = [];
+    const segs = (window.STORY_XP_REBALANCE && window.STORY_XP_REBALANCE.segments) || [];
+    segs.forEach(function(s){
+      const first = String(s.arrays || '').split('+')[0];
+      let label = null;
+      const m = /^ARC(\d+)_CHAPTERS$/.exec(first);
+      if (m) label = 'Arc ' + roman(+m[1]);
+      else if (first === 'CRIMSON_HORIZON_CHAPTERS') label = 'Crimson Horizon';
+      if (label) rows.push({lv: s.lo, label: label, names: String(s.arrays).split('+')});
+    });
+    return rows;
+  }
+  function progressKey(name){
+    const m = /^ARC(\d+)_CHAPTERS$/.exec(name);
+    if (m) return 'comicProgress' + m[1];
+    return ({ARC20_INTERLUDE_CHAPTERS:'comicProgress20Interlude', ARC41_INTERLUDE_CHAPTERS:'comicProgress41Interlude', ARC41_BRIDGE_CHAPTERS:'comicProgressArc41Bridge', CRIMSON_HORIZON_CHAPTERS:'comicProgressCrimsonHorizon'})[name] || null;
+  }
+  window.getComingUp = function(){
+    const L = lvl(), rows = [];
+    arcRows().forEach(function(a){
+      if (a.lv > L) rows.push({lv: a.lv, icon: a.label === 'Crimson Horizon' ? '🌅' : '📖', text: a.label + (a.label === 'Crimson Horizon' ? ' begins' : ' opens')});
+    });
+    (window.RAIDS || []).forEach(function(r){
+      if (r.unlockLevel > L) rows.push({lv: r.unlockLevel, icon: r.icon || '🏆', text: 'Raid: ' + r.name});
+    });
+    return rows.sort(function(a, b){ return a.lv - b.lv; }).slice(0, 4);
+  };
+  // The arcs already open but not finished (one or two, most recent first).
+  window.getInProgress = function(){
+    const L = lvl(), out = [];
+    arcRows().forEach(function(a){
+      if (a.lv > L) return;
+      let total = 0, read = 0;
+      a.names.forEach(function(n){
+        const list = window[n], key = progressKey(n), done = key && game[key];
+        if (!Array.isArray(list)) return;
+        list.forEach(function(ch){ if (CH_SIDE_SKIP(n, ch)) return; total++; if (done && done[ch.id]) read++; });
+      });
+      if (total && read < total) out.push({lv: a.lv, label: a.label, read: read, total: total});
+    });
+    return out.sort(function(a, b){ return b.lv - a.lv; }).slice(0, 2);
+  };
+  function CH_SIDE_SKIP(name, ch){
+    return name === 'CRIMSON_HORIZON_CHAPTERS' && (window.CRIMSON_HORIZON_SIDE_IDS || []).indexOf(ch.id) !== -1;
+  }
+  function comingUpHtml(){
+    const ahead = window.getComingUp(), prog = window.getInProgress(), L = lvl();
+    if (!ahead.length && !prog.length) return '';
+    let h = '<div class="panel-title" style="margin-bottom:6px;">🔭 Coming Up</div>';
+    prog.forEach(function(p){
+      h += '<div class="cu-row"><span class="cu-ico">📖</span><span class="cu-txt">' + p.label + ': ' + p.read + ' of ' + p.total + ' chapters read</span></div>';
+    });
+    ahead.forEach(function(r){
+      h += '<div class="cu-row"><span class="cu-ico">' + r.icon + '</span><span class="cu-txt">' + r.text + '</span><span class="cu-lv">Lv ' + r.lv + ' · ' + (r.lv - L) + ' to go</span></div>';
+    });
+    return h;
+  }
+  function renderComingUp(){
+    ensureStyle();
+    let el = document.getElementById('ctComingUp');
+    if (!el) {
+      const anchor = document.getElementById('objectiveActionPanel') || document.getElementById('mainGoalPanel');
+      if (!anchor || !anchor.parentNode) return;
+      el = document.createElement('div'); el.id = 'ctComingUp'; el.className = 'panel ct-coming-up'; el.style.margin = '10px 0';
+      anchor.parentNode.insertBefore(el, anchor.nextSibling);
+    }
+    const h = comingUpHtml();
+    el.style.display = h ? '' : 'none';
+    if (h && el.__h !== h) { el.innerHTML = h; el.__h = h; }
+  }
+  window.renderComingUp = renderComingUp;
+
+  // Refresh with the goal card; announce level ups with a Next up line.
+  const oldGoal = window.renderMainGoal;
+  if (typeof oldGoal === 'function') {
+    window.renderMainGoal = function(){
+      const r = oldGoal.apply(this, arguments);
+      try { renderComingUp(); } catch(e) {}
+      return r;
+    };
+  }
+  let lastLevel = null;
+  const oldUpdateUI = window.updateUI;
+  if (typeof oldUpdateUI === 'function') {
+    window.updateUI = function(){
+      const r = oldUpdateUI.apply(this, arguments);
+      try {
+        if (typeof gameSessionActive !== 'undefined' && gameSessionActive) {
+          const L = lvl();
+          if (lastLevel !== null && L > lastLevel) {
+            const next = window.getComingUp()[0];
+            window.notify({icon:'⭐', title:'Level ' + L, text: next ? 'Next up: ' + next.text + ' (Lv ' + next.lv + ', ' + (next.lv - L) + ' to go)' : '', kind:'level'});
+          }
+          lastLevel = L;
+          renderComingUp();
+        }
+      } catch(e) {}
+      return r;
+    };
+  }
+})();

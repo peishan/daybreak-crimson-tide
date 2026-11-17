@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V473 · N and the Arc XXVIII-XXX residents sync when chapters are read';
+window.__CT_BUILD__='V474 · Top-of-screen notifications and a Coming Up panel';
