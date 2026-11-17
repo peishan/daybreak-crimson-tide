@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V470 · Crimson Horizon Arc XII: The High-Tide Passage';
+window.__CT_BUILD__='V471 · Chapter art 100-112 renamed, 3-digit auto-rename';

@@ -81,7 +81,7 @@ jobs:
               with open(path, 'r', encoding='utf-8') as f:
                   src = f.read()
               mapping = {}
-              for m in re.finditer(r"image:\s*'assets/comics/" + re.escape(arc_dir) + r"/(ch(\d{2})-[^']+\.\w+)'", src):
+              for m in re.finditer(r"image:\s*'assets/comics/" + re.escape(arc_dir) + r"/(ch(\d{2,3})-[^']+\.\w+)'", src):
                   filename, chnum = m.group(1), m.group(2)
                   mapping[chnum] = filename
               return mapping
@@ -89,7 +89,7 @@ jobs:
           renamed = []
           warnings = []
           chapter_map_cache = {}
-          bare_pattern = re.compile(r'^ch(\d{2})\.(png|jpg|jpeg|webp)$', re.IGNORECASE)
+          bare_pattern = re.compile(r'^ch(\d{2,3})\.(png|jpg|jpeg|webp)$', re.IGNORECASE)
 
           for filepath in glob.glob('assets/comics/*/*'):
               if not os.path.isfile(filepath):
