@@ -574,6 +574,16 @@
       window.logResidentArrivalDeparture(n, 'leave', 'Leaves Fair Tide with the masked guest.');
       if (typeof logEvent === 'function') logEvent('🚪 N leaves Fair Tide. Her name moves from the active roster to \"Away.\"', 'neutral');
     }
+    // A save that read Ch.23 before the fate roll existed has N already departed and no fate. Roll it now
+    // from the Bond and Happiness she was left with (nothing else about her record changes), so the
+    // reveal (n-fate-reveal.js) has something to show.
+    if (cp[23] && n.status === 'departed' && !n.trueFateKey) {
+      const late = rollNFate(n);
+      n.trueFateRoll = late;
+      n.trueFateScore = late.finalScore;
+      n.trueFateKey = late.outcomeKey;
+      n.trueFateLabel = late.outcomeLabel;
+    }
   }
 
   // ===========================================================================
