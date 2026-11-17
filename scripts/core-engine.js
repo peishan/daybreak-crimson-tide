@@ -1403,7 +1403,8 @@ function buildEnemyLocations(){
     map[key] = map[key] || [];
     if (map[key].indexOf(place) === -1) map[key].push(place);
   }
-  PORTS.forEach(function(p){ (p.harbor||[]).forEach(function(key){ add(key, p.name); }); });
+  const sequelPortIds = (window.CRIMSON_HORIZON_PORTS || []).map(function(p){ return p.id; });
+  PORTS.forEach(function(p){ if (sequelPortIds.indexOf(p.id) !== -1) return; (p.harbor||[]).forEach(function(key){ add(key, p.name); }); });
   // Arc XVI's five harbour-module regions use a self-describing key
   // prefix (forest_coast_*, dragon_coast_*, mountain_port_*,
   // crystal_coast_*, old_harbour_*) rather than one shared array here —
@@ -1610,11 +1611,36 @@ const QUEST_POOL = [
 // Delivery contracts are generated fresh each time they're picked — a random
 // good, a random destination port that isn't wherever you're currently
 // standing, and a payout scaled to the good's value and the quantity asked.
+// Only ports the player can actually reach and trade at, and goods they can
+// actually meet yet, are offered: the Crimson Horizon ports and trade goods
+// are registered in PORTS / GOODS from the start, so without this a main-
+// campaign save could be asked to deliver to (say) Outer Island.
+function deliveryPortReachable(p) {
+  try {
+    if (typeof isPortUnlocked === 'function' && !isPortUnlocked(p.id)) return false;
+    if (typeof p.tradeReady === 'function' && !p.tradeReady()) return false;
+  } catch (e) { return false; }
+  return true;
+}
+function deliveryGoodAvailable(goodId) {
+  const sequelGoods = window.CRIMSON_HORIZON_GOODS || [];
+  return sequelGoods.indexOf(goodId) === -1 || !!game.arc42Complete;
+}
+// Market and salvage: the sequel's trade goods stay out of the main campaign's markets until the
+// sequel begins (a player already carrying some can still see and sell them).
+function goodShownInMarket(goodId) {
+  return deliveryGoodAvailable(goodId) || ((game.cargo && game.cargo[goodId]) > 0);
+}
 function generateDeliveryQuest(id) {
-  const goodIds = Object.keys(GOODS).filter(g => g !== 'contraband');
+  const goodIds = Object.keys(GOODS).filter(g => g !== 'contraband' && deliveryGoodAvailable(g));
   const goodId = goodIds[Math.floor(Math.random() * goodIds.length)];
   const good = GOODS[goodId];
-  const destinations = PORTS.filter(p => p.id !== game.location);
+  let destinations = PORTS.filter(p => p.id !== game.location && deliveryPortReachable(p));
+  if (!destinations.length) {
+    // Nothing reachable yet (a brand-new voyage): any main-campaign port, never a Crimson Horizon one.
+    const sequelIds = (window.CRIMSON_HORIZON_PORTS || []).map(p => p.id);
+    destinations = PORTS.filter(p => p.id !== game.location && sequelIds.indexOf(p.id) === -1);
+  }
   const dest = destinations[Math.floor(Math.random() * destinations.length)];
   const need = 10 + Math.floor(Math.random() * 16);
   const rw = {xp: Math.round(need * good.basePrice * 0.6), gold: Math.round(need * good.basePrice * 0.9), rep: 6};
@@ -1627,6 +1653,14 @@ function generateDeliveryQuest(id) {
 }
 function refreshQuests() {
   if (!game.activeQuests) game.activeQuests = [];
+  // Delivery contracts already handed out to a port or for a good the player cannot reach yet
+  // (an older save, or a port that was locked at the time) are replaced with a reachable one.
+  game.activeQuests = game.activeQuests.map(function(q) {
+    if (!q || q.type !== 'deliver' || q.done) return q;
+    const port = PORTS.find(function(p) { return p.id === q.portId; });
+    if ((port && !deliveryPortReachable(port)) || !deliveryGoodAvailable(q.good)) return generateDeliveryQuest(q.id);
+    return q;
+  });
   while (game.activeQuests.length < 10) {
     const activeIds = new Set(game.activeQuests.map(q => q.id));
     const available = QUEST_POOL.filter(q => !activeIds.has(q.id));
@@ -4089,7 +4123,7 @@ function handleVoyageEvent(event) {
     case 'wreck': {
       const salvage = Math.floor(Math.random() * 3);
       if (salvage === 0) {
-        const goodIds = Object.keys(GOODS).filter(g => g !== 'contraband');
+        const goodIds = Object.keys(GOODS).filter(g => g !== 'contraband' && deliveryGoodAvailable(g));
         const goodId = goodIds[Math.floor(Math.random() * goodIds.length)];
         const qty = 3 + Math.floor(Math.random() * 5);
         game.cargo[goodId] = (game.cargo[goodId] || 0) + qty; game.cargoUsed += GOODS[goodId].weight * qty;
@@ -6461,6 +6495,7 @@ function renderMarket() {
   // to get past. Now: a horizontal strip to pick a good, one detail
   // panel below showing that good's full buy/sell controls.
   const validGoodIds = Object.keys(GOODS).filter(goodId => {
+    if (!goodShownInMarket(goodId)) return false;
     const price = Math.round(game.marketPrices[game.location][goodId] * haggleMultiplier());
     return price !== 0;
   });
@@ -6533,6 +6568,7 @@ function renderIntel() {
   const intel = document.getElementById('marketIntel');
   const specialties = currentPort.specialties.map(s => GOODS[s].name).join(', ');
   const cheapGoods = Object.keys(GOODS).filter(g => {
+    if (!goodShownInMarket(g)) return false;
     const p = game.marketPrices[game.location][g];
     return p > 0 && p < GOODS[g].basePrice * 0.7;
   }).map(g => GOODS[g].name);

@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V471 · Chapter art 100-112 renamed, 3-digit auto-rename';
+window.__CT_BUILD__='V472 · Quests and markets keep sequel ports and goods out of the main campaign';
