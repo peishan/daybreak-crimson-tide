@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V479 · Fair Tide alerts: dispatch, watchtower, decisions, research, NEW tags';
+window.__CT_BUILD__='V480 · Phone reminder notifications';

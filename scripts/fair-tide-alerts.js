@@ -102,7 +102,7 @@
       }
       ready.forEach(function(s){
         const t = template(s);
-        window.notify({icon: '✅', title: (t ? t.title : 'A request') + ' is finished', text: (s.assignedNames && s.assignedNames.length ? s.assignedNames.join(' and ') + (s.assignedNames.length > 1 ? ' are' : ' is') : 'Your crew is') + ' back. Claim the reward at Fair Tide.', kind: 'info', onClick: openRequests, hint: 'Tap to claim'});
+        window.notify({icon: '✅', title: (t ? t.title : 'A request') + ' is finished', text: (s.assignedNames && s.assignedNames.length ? s.assignedNames.join(' and ') + (s.assignedNames.length > 1 ? ' are' : ' is') : 'Your crew is') + ' back. Claim the reward at Fair Tide.', kind: 'info', remind: true, tag: 'request-ready', onClick: openRequests, hint: 'Tap to claim'});
       });
     }
     otherEvents(a);
@@ -117,7 +117,7 @@
     // The gathering party is back.
     const d = (typeof window.fairTideDispatchStatus === 'function') ? window.fairTideDispatchStatus() : null;
     if (d && d.state === 'ready') {
-      if (!a.dispatchTold) { a.dispatchTold = true; say({icon: '⛵', title: 'The gathering party is back', text: 'Collect their haul from Dispatch.', kind: 'info', onClick: function(){ openTab('dispatch'); }, hint: 'Tap to collect'}); }
+      if (!a.dispatchTold) { a.dispatchTold = true; say({icon: '⛵', title: 'The gathering party is back', text: 'Collect their haul from Dispatch.', kind: 'info', remind: true, tag: 'dispatch', onClick: function(){ openTab('dispatch'); }, hint: 'Tap to collect'}); }
     } else a.dispatchTold = false;
     // A Watchtower alert (generated here as well as on the hub render, so it can be announced).
     if (typeof window.checkWatchtowerAlert === 'function') { try { window.checkWatchtowerAlert(); } catch(e) {} }
@@ -126,7 +126,7 @@
       if (a.watchTold !== ws.alert) {
         a.watchTold = ws.alert;
         const al = (window.WATCHTOWER_ALERTS || []).find(function(x){ return x.id === ws.alert; });
-        say({icon: (al && al.icon) || '🔭', title: 'Watchtower: ' + (al ? al.title : 'something on the horizon'), text: 'Imah thinks it is worth a look.', kind: 'info', onClick: function(){ openTab('buildings'); }, hint: 'Tap to investigate'});
+        say({icon: (al && al.icon) || '🔭', title: 'Watchtower: ' + (al ? al.title : 'something on the horizon'), text: 'Imah thinks it is worth a look.', kind: 'info', remind: true, tag: 'watchtower', onClick: function(){ openTab('buildings'); }, hint: 'Tap to investigate'});
       }
     } else a.watchTold = null;
     // A Captain's Decision has run its course.
@@ -135,7 +135,7 @@
     else if (a.decisionActive) {
       const def = (window.CAPTAINS_DECISIONS || []).find(function(x){ return x.id === a.decisionActive; });
       a.decisionActive = null;
-      say({icon: (def && def.icon) || '⚓', title: (def ? def.name : 'The Captain’s Decision') + ' has run its course', text: 'You can issue a new decision once its cooldown ends.', kind: 'info'});
+      say({icon: (def && def.icon) || '⚓', title: (def ? def.name : 'The Captain’s Decision') + ' has run its course', text: 'You can issue a new decision once its cooldown ends.', kind: 'info', remind: true, tag: 'decision'});
     }
     // Research check-ins, once per game day.
     if (a.researchDay !== (game.day || 0) && typeof window.canAdvanceResearch === 'function' && window.ARCHIVE_RESEARCHERS) {
