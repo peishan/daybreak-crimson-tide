@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V494 · Fix Arc XXXV and XXXVIII cover filenames';
+window.__CT_BUILD__='V495 · Archive birth status follows the birth chapters';
