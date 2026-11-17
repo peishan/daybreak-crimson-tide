@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V495 · Archive birth status follows the birth chapters';
+window.__CT_BUILD__='V496 · Bridge to Arc XLII cover art';
