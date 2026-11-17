@@ -59,6 +59,24 @@
     if (cp[11] && !n.arc30AccessStage) {
       n.arc30AccessStage = 'visitor';
     }
+    // She is back at Fair Tide from Ch.11 until her access is revoked (Ch.23): a visiting guest in the
+    // Residents list again (Allies & Guests), not "Away". Ch.23 puts her back out; once revoked the
+    // Residents panel hides her (see residentHiddenFromRosterPanel below).
+    if (cp[11] && !cp[23] && n.status === 'departed') {
+      n.status = 'resident'; n.awayLocation = null; n.awayCompanion = null;
+      n.room = 'Guest Quarters'; n.note = 'Back as a visitor, under ordinary visitor restrictions.';
+      if (!n.arc30VisitLogged) {
+        n.arc30VisitLogged = true;
+        if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(n, 'join', 'Returns to Fair Tide as a visitor.');
+      }
+    }
+    if (cp[23] && n.status !== 'departed') {
+      n.status = 'departed'; n.awayLocation = 'Unknown'; n.awayCompanion = 'The man who recruited her'; delete n.note;
+      if (!n.arc30LeaveLogged) {
+        n.arc30LeaveLogged = true;
+        if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(n, 'leave', 'Her access is revoked.');
+      }
+    }
 
     // Ch.23 ("The Door Closes") -- San's own exact boundary.
     if (cp[23] && n.arc30AccessStage !== 'revoked' && n.arc30AccessStage !== 'missing') {

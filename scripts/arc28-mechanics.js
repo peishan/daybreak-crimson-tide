@@ -289,7 +289,12 @@
   function residentWorkUnlocked(id){
     // N-specific gate for now (Ch.6); a future resident would gate on
     // its own arc's own chapter the same way.
-    if (id === 'n') return !!(game.comicProgress28 && game.comicProgress28[6]);
+    if (id === 'n') {
+      // Back as a visitor in Arc XXX (Ch.11-22): a guest again, not someone with a job here.
+      const nr = residentsState().n;
+      if (nr && nr.arc30AccessStage === 'visitor') return false;
+      return !!(game.comicProgress28 && game.comicProgress28[6]);
+    }
     // The masked guest is never work-assignable -- he's passing through
     // incognito for a handful of chapters, not settling in as a worker.
     if (id === 'sairen') return false;
@@ -562,7 +567,11 @@
     // Deliberately NOT surfaced to the player here or anywhere else in
     // this file: n.trueFateKey/Label/Roll are only written, for whichever
     // future arc decides to reveal them.
-    if (cp[23] && n.status !== 'departed') {
+    // Her Arc XXVIII departure happens once. (She comes back as a visitor in Arc XXX Ch.11-22, see
+    // arc30-mechanics.js, so "not departed" alone no longer means "has not left yet".)
+    if (cp[23] && n.status === 'departed') n.arc28Left = true;
+    if (cp[23] && n.status !== 'departed' && !n.arc28Left) {
+      n.arc28Left = true;
       const fate = rollNFate(n);
       n.trueFateRoll = fate;
       n.trueFateScore = fate.finalScore;
