@@ -317,9 +317,12 @@
   //   - how long it takes to win: the stage's HP divided by the party's average damage per action
   //     (a basic attack plus gear, 0.9 for turns spent healing and buffing; spells run dry quickly).
   // Both factors were calibrated against auto-battle simulations of these raids. The ratio of the two
-  // sets the tag, taken from the worst stage: Manageable (<= 0.9), Risky (<= 1.5), Deadly (above). In the
-  // simulations (an ungeared party on auto-battle, every stage from full HP) a ratio under about 1 won and
-  // 1.1 to 1.3 lost with 5-25% of the enemy left. Real play (gear, potions, choosing actions) does better.
+  // sets the tag, taken from the worst stage: Manageable (<= 0.55), Risky (<= 0.72), Deadly (above).
+  // That is a single-stage ratio; a whole raid also carries damage between stages (25% recovery, a full
+  // rest at the checkpoint), so the thresholds were set against simulated whole raids (see
+  // raid-retune.js): at about 0.55 or below the party won almost every run, 0.6-0.7 won roughly a
+  // quarter to two thirds, above 0.72 it mostly lost. Real play (potions, choosing actions) does better
+  // than the auto-battle used for the simulations.
   // -------------------------------------------------------------------
   const HEAL_FACTOR = 3.4, ACTION_EFFICIENCY = 0.9;
   function raidThreat(raid){
@@ -344,7 +347,7 @@
         if (!worst || ratio > worst.ratio) worst = {ratio: ratio, stage: st, hit: hit, survive: survive, kill: kill};
       });
       if (!worst) return null;
-      const tag = worst.ratio <= 0.9 ? 'manageable' : (worst.ratio <= 1.5 ? 'risky' : 'deadly');
+      const tag = worst.ratio <= 0.55 ? 'manageable' : (worst.ratio <= 0.72 ? 'risky' : 'deadly');
       const san = party.find(function(m){ return m.id === 'san'; });
       const sanPct = san ? Math.round(100 * worst.hit / Math.max(1, effectiveMaxHp(san))) : null;
       return {tag: tag, ratio: worst.ratio, stageName: worst.stage.name, hitPct: sanPct, kill: Math.round(worst.kill), survive: Math.round(worst.survive)};

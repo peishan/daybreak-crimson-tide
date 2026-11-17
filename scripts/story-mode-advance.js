@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V483 · Raid threat readout';
+window.__CT_BUILD__='V484 · Raids retuned so a geared party can win';
