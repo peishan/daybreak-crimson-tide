@@ -164,7 +164,7 @@
       window.__ctShowArc31Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc31/arc31-cover-what-we-protect.webp" alt="Arc XXXI — What We Protect" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc31/arc31-cover-what-we-protect.webp" alt="Arc XXXI — What We Protect" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXI</div><div class="story-act-title">What We Protect</div>'+
       '<div class="story-act-tagline">A home is worth defending.</div></div>';
     if (!arc31Ready) {

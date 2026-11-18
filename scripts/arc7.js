@@ -135,7 +135,7 @@
       window.__ctShowArc7Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc7/arc7-cover-the-farseer.webp" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc7/arc7-cover-the-farseer.webp" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc VII</div><div class="story-act-title">The Farseer</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC7_CHAPTERS.length+' of 24. Some knowledge survives generations.</div></div>';
     if(!arc7Ready){

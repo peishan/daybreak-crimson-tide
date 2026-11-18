@@ -202,7 +202,7 @@
       window.__ctShowArc9Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc9/arc9-cover-soel.webp" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc9/arc9-cover-soel.webp" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc IX</div><div class="story-act-title">The Cat Who Was Always There</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC9_CHAPTERS.length+' of 26. Some mysteries were beside us all along.</div></div>';
     if(!arc9Ready){

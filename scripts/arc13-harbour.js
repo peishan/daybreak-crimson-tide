@@ -138,7 +138,7 @@
       window.__ctShowArc13Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc13/arc13-cover-a-world-of-its-own-rules.webp" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc13/arc13-cover-a-world-of-its-own-rules.webp" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XIII</div><div class="story-act-title">A World With Its Own Rules</div>'+
       '<div class="story-act-tagline">A world is not a backdrop. It is someone\'s home.</div></div>';
     if (!arc13Ready) {

@@ -151,7 +151,7 @@
       window.__ctShowArc41Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc41/arc41-cover-the-ones-who-stay.webp" alt="Arc XLI — The Ones Who Stay" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc41/arc41-cover-the-ones-who-stay.webp" alt="Arc XLI — The Ones Who Stay" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XLI</div><div class="story-act-title">The Ones Who Stay</div>'+
       '<div class="story-act-tagline">Belonging isn\'t something you\'re given. Sometimes it\'s something you choose.</div></div>';
     if (!arc41Ready) {

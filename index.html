@@ -1290,7 +1290,7 @@ body{
 <div class="screen active" id="introScreen">
   <div class="ct-v24-landing" role="main" aria-label="Daybreak Crimson Tide landing screen">
     <div class="ct-v24-art-wrap">
-      <img src="crimson-tide-clean-title-v26.png" class="ct-v24-art ct-v26-art" alt="Daybreak Crimson Tide">
+      <img loading="lazy" decoding="async" src="crimson-tide-clean-title-v26.png" class="ct-v24-art ct-v26-art" alt="Daybreak Crimson Tide">
 </div>
 
     <div class="ct-v26-begin" id="landingPrimaryAction">
@@ -1302,7 +1302,7 @@ body{
 
     <section class="ct-v24-live" aria-live="polite">
       <div class="ct-v24-profile">
-        <div class="ct-v24-avatar ct-v30-avatar"><img src="assets/portraits/san.png" alt="San"></div>
+        <div class="ct-v24-avatar ct-v30-avatar"><img loading="lazy" decoding="async" src="assets/portraits/san.png" alt="San"></div>
         <div>
           <div class="ct-v24-name" id="v24Captain">San</div>
           <div class="ct-v24-role">Sorcerer</div>
@@ -1610,7 +1610,7 @@ body{
       <button class="btn btn-success" onclick="goScreen('fairtide'); if (typeof window.switchFairTideTab === 'function') window.switchFairTideTab('training');">⚔️ Training Room</button>
     </div>
     <div class="crew-visual-sheet-wrap" style="margin-top:22px;text-align:center;">
-      <img src="assets/crew/crew-visual-sheet.png" alt="Daybreak: Crimson Tide crew visual reference sheet" style="width:100%;border-radius:10px;border:1px solid rgba(196,163,90,.28);display:block;">
+      <img loading="lazy" decoding="async" src="assets/crew/crew-visual-sheet.png" alt="Daybreak: Crimson Tide crew visual reference sheet" style="width:100%;border-radius:10px;border:1px solid rgba(196,163,90,.28);display:block;">
       <div style="font-family:Lato,sans-serif;font-size:.72rem;color:rgba(245,230,200,.55);margin-top:8px;">Seven souls, one ship, a brighter tomorrow — the crew as they stand, and the roads still ahead.</div>
     </div>
   </div>
@@ -1973,7 +1973,7 @@ body{
 <div id="comicImageOverlay" onclick="if(event.target===this) closeComicImage()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(3,9,14,.94);padding:16px;box-sizing:border-box;overflow:auto;text-align:center;">
   <button onclick="closeComicImage()" style="position:sticky;top:0;float:right;background:var(--gold,#e8c96a);color:#0d1f2d;border:none;border-radius:6px;padding:8px 14px;font-weight:bold;cursor:pointer;">✕ Close</button>
   <div id="comicImageLoading" style="display:none;color:var(--gold,#e8c96a);padding:60px 0;font-size:1.05rem;">📖 Loading chapter…</div>
-  <img id="comicImageOverlayImg" src="" alt="Comic chapter" style="max-width:100%;height:auto;border-radius:8px;margin-top:44px;display:block;margin-left:auto;margin-right:auto;">
+  <img loading="lazy" decoding="async" id="comicImageOverlayImg" src="" alt="Comic chapter" style="max-width:100%;height:auto;border-radius:8px;margin-top:44px;display:block;margin-left:auto;margin-right:auto;">
 </div>
 
 <script src="scripts/core-engine.js"></script>
@@ -2000,7 +2000,7 @@ body{
 <!-- ARC 2 splash: shown once, the moment Arc I fully finishes -->
 <div id="arc2SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc2/arc2-cover-new-shores.webp" alt="Arc II — New Shores" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc2/arc2-cover-new-shores.webp" alt="Arc II — New Shores" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc2Splash()">⚓ Begin Arc II</button>
   </div>
 </div>
@@ -2013,7 +2013,7 @@ body{
 <!-- ARC 3 splash: shown once, the moment Arc II fully finishes -->
 <div id="arc3SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc3/arc3-cover-steady-hands.webp" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc3/arc3-cover-steady-hands.webp" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc3Splash()">⚓ Begin Arc III</button>
   </div>
 </div>
@@ -2022,7 +2022,7 @@ body{
 <!-- ARC 4 splash: shown once Arc III is finished AND level 80 is reached (Fair Tide itself unlocks earlier, at level 60) -->
 <div id="arc4SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc4/arc4-cover-gathering-tide.webp" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc4/arc4-cover-gathering-tide.webp" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc4Splash()">⚓ Begin Arc IV</button>
   </div>
 </div>
@@ -2034,7 +2034,7 @@ body{
 <!-- ARC 5 splash: shown once Arc IV is finished AND level 100 is reached -->
 <div id="arc5SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc5/arc5-cover-the-bond.webp" alt="Arc V — The Bond" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc5/arc5-cover-the-bond.webp" alt="Arc V — The Bond" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc5Splash()">⚓ Begin Arc V</button>
   </div>
 </div>
@@ -2048,7 +2048,7 @@ body{
 <!-- ARC 7 splash: shown once Arc VI is finished AND level 105 is reached -->
 <div id="arc7SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc7/arc7-cover-the-farseer.webp" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc7/arc7-cover-the-farseer.webp" alt="Arc VII — The Farseer" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc7Splash()">⚓ Begin Arc VII</button>
   </div>
 </div>
@@ -2057,7 +2057,7 @@ body{
 
 <div id="arc8SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.webp" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.webp" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc8Splash()">⚓ Begin Arc VIII</button>
   </div>
 </div>
@@ -2066,7 +2066,7 @@ body{
 
 <div id="arc9SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc9/arc9-cover-soel.webp" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc9/arc9-cover-soel.webp" alt="Arc IX — The Cat Who Was Always There" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc9Splash()">⚓ Begin Arc IX</button>
   </div>
 </div>
@@ -2076,21 +2076,21 @@ body{
 
 <div id="arc10SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc10/arc10-cover-the-first-horizon.webp" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc10/arc10-cover-the-first-horizon.webp" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc10Splash()">⚓ Begin Arc X</button>
   </div>
 </div>
 
 <div id="arc11SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.webp" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.webp" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc11Splash()">⚓ Begin Arc XI</button>
   </div>
 </div>
 
 <div id="arc12SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc12/arc12-cover-the-first-crossing.webp" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc12/arc12-cover-the-first-crossing.webp" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc12Splash()">⚓ Begin Arc XII</button>
   </div>
 </div>
@@ -2139,7 +2139,7 @@ body{
 
 <div id="arc13SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc13/arc13-cover-a-world-of-its-own-rules.webp" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc13/arc13-cover-a-world-of-its-own-rules.webp" alt="Arc XIII — A World With Its Own Rules" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc13Splash()">⚓ Begin Arc XIII</button>
   </div>
 </div>
@@ -2344,35 +2344,35 @@ body{
 
 <div id="arc14SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc14/arc14-cover-people-beneath-the-tide.webp" alt="Arc XIV — People Beneath the Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc14/arc14-cover-people-beneath-the-tide.webp" alt="Arc XIV — People Beneath the Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc14Splash()">⚓ Begin Arc XIV</button>
   </div>
 </div>
 
 <div id="arc15SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc15/arc15-cover-shape-of-a-people.webp" alt="Arc XV — Shape of a People" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc15/arc15-cover-shape-of-a-people.webp" alt="Arc XV — Shape of a People" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc15Splash()">⚓ Begin Arc XV</button>
   </div>
 </div>
 
 <div id="arc16SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc16/arc16-cover-the-price-of-rare-things.webp" alt="Arc XVI — The Price of Rare Things" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc16/arc16-cover-the-price-of-rare-things.webp" alt="Arc XVI — The Price of Rare Things" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc16Splash()">⚓ Begin Arc XVI</button>
   </div>
 </div>
 
 <div id="arc17SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc17/arc17-cover-the-archive-between-worlds.webp" alt="Arc XVII — The Archive Between Worlds" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc17/arc17-cover-the-archive-between-worlds.webp" alt="Arc XVII — The Archive Between Worlds" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc17Splash()">⚓ Begin Arc XVII</button>
   </div>
 </div>
 
 <div id="arc18SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc18/arc18-cover-routes-others-want.webp" alt="Arc XVIII — The Routes Others Want" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc18/arc18-cover-routes-others-want.webp" alt="Arc XVIII — The Routes Others Want" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc18Splash()">⚓ Begin Arc XVIII</button>
   </div>
 </div>
@@ -2380,7 +2380,7 @@ body{
 <!-- ARC 6 splash: cover art existed but was never wired to a splash overlay until this pass -->
 <div id="arc6SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc6/arc6-cover-the-price-of-freedom.webp" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc6/arc6-cover-the-price-of-freedom.webp" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc6Splash()">⚓ Begin Arc VI</button>
   </div>
 </div>
@@ -2388,7 +2388,7 @@ body{
 <!-- ARC 19 splash: cover art existed but was never wired to a splash overlay until this pass -->
 <div id="arc19SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc19/arc19-the-worlds-we-know.webp" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc19/arc19-the-worlds-we-know.webp" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc19Splash()">⚓ Begin Arc XIX</button>
   </div>
 </div>
@@ -2396,7 +2396,7 @@ body{
 <!-- ARC 20 splash: cover art uploaded directly to main after the Arc VI/XIX wiring pass -->
 <div id="arc20SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc20/arc20-cover-forever-and-ever.webp" alt="Arc XX — Forever and Ever" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc20/arc20-cover-forever-and-ever.webp" alt="Arc XX — Forever and Ever" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc20Splash()">⚓ Begin Arc XX</button>
   </div>
 </div>
@@ -2407,168 +2407,168 @@ body{
      further code change needed once she does. -->
 <div id="arc21SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc21/arc21-cover-the-life-we-build.webp" alt="Arc XXI — The Life We Build" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc21/arc21-cover-the-life-we-build.webp" alt="Arc XXI — The Life We Build" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc21Splash()">⚓ Begin Arc XXI</button>
   </div>
 </div>
 
 <div id="arc22SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc22/arc22-cover-the-child-of-fair-tide.webp" alt="Arc XXII — The Child of Fair Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc22/arc22-cover-the-child-of-fair-tide.webp" alt="Arc XXII — The Child of Fair Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc22Splash()">⚓ Begin Arc XXII</button>
   </div>
 </div>
 
 <div id="arc23SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc23/arc23-cover-the-wider-tide.webp" alt="Arc XXIII — The Wider Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc23/arc23-cover-the-wider-tide.webp" alt="Arc XXIII — The Wider Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc23Splash()">⚓ Begin Arc XXIII</button>
   </div>
 </div>
 
 <div id="arc24SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc24/arc24-cover-the-people-without-names.webp" alt="Arc XXIV — The People Without Names" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc24/arc24-cover-the-people-without-names.webp" alt="Arc XXIV — The People Without Names" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc24Splash()">⚓ Begin Arc XXIV</button>
   </div>
 </div>
 
 <div id="arc25SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc25/arc25-cover-a-friends-request.webp" alt="Arc XXV — A Friend's Request" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc25/arc25-cover-a-friends-request.webp" alt="Arc XXV — A Friend's Request" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc25Splash()">⚓ Begin Arc XXV</button>
   </div>
 </div>
 
 <div id="arc26SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc26/arc26-cover-the-price-of-independence.webp" alt="Arc XXVI — The Price of Independence" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc26/arc26-cover-the-price-of-independence.webp" alt="Arc XXVI — The Price of Independence" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc26Splash()">⚓ Begin Arc XXVI</button>
   </div>
 </div>
 
 <div id="arc27SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc27/arc27-cover-the-nameless.webp" alt="Arc XXVII — The Nameless" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc27/arc27-cover-the-nameless.webp" alt="Arc XXVII — The Nameless" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc27Splash()">⚓ Begin Arc XXVII</button>
   </div>
 </div>
 
 <div id="arc28SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc28/arc28-cover-n.webp" alt="Arc XXVIII — N" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc28/arc28-cover-n.webp" alt="Arc XXVIII — N" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc28Splash()">⚓ Begin Arc XXVIII</button>
   </div>
 </div>
 
 <div id="arc29SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc29/arc29-cover-the-spy.webp" alt="Arc XXIX — The Spy" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc29/arc29-cover-the-spy.webp" alt="Arc XXIX — The Spy" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc29Splash()">⚓ Begin Arc XXIX</button>
   </div>
 </div>
 
 <div id="arc30SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc30/arc30-cover-the-betrayal.webp" alt="Arc XXX — The Betrayal" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc30/arc30-cover-the-betrayal.webp" alt="Arc XXX — The Betrayal" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc30Splash()">⚓ Begin Arc XXX</button>
   </div>
 </div>
 
 <div id="arc31SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc31/arc31-cover-what-we-protect.webp" alt="Arc XXXI — What We Protect" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc31/arc31-cover-what-we-protect.webp" alt="Arc XXXI — What We Protect" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc31Splash()">⚓ Begin Arc XXXI</button>
   </div>
 </div>
 
 <div id="arc32SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc32/arc32-cover-the-long-tide.webp" alt="Arc XXXII — The Long Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc32/arc32-cover-the-long-tide.webp" alt="Arc XXXII — The Long Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc32Splash()">⚓ Begin Arc XXXII</button>
   </div>
 </div>
 
 <div id="arc33SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc33/arc33-cover-the-family-we-become.webp" alt="Arc XXXIII — The Family We Become" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc33/arc33-cover-the-family-we-become.webp" alt="Arc XXXIII — The Family We Become" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc33Splash()">⚓ Begin Arc XXXIII</button>
   </div>
 </div>
 
 <div id="arc34SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc34/arc34-cover-two-hearts.webp" alt="Arc XXXIV — Two Hearts" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc34/arc34-cover-two-hearts.webp" alt="Arc XXXIV — Two Hearts" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc34Splash()">⚓ Begin Arc XXXIV</button>
   </div>
 </div>
 
 <div id="arc35SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc35/arc35-cover-the-children-of-fair-tide.webp" alt="Arc XXXV — The Children of Fair Tide" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc35/arc35-cover-the-children-of-fair-tide.webp" alt="Arc XXXV — The Children of Fair Tide" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc35Splash()">⚓ Begin Arc XXXV</button>
   </div>
 </div>
 
 <div id="arc36SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc36/arc36-cover-growing-tides.webp" alt="Arc XXXVI — Growing Tides" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc36/arc36-cover-growing-tides.webp" alt="Arc XXXVI — Growing Tides" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc36Splash()">⚓ Begin Arc XXXVI</button>
   </div>
 </div>
 
 <div id="arc37SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc37/arc37-cover-children-of-two-worlds.webp" alt="Arc XXXVII — Children of Two Worlds" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc37/arc37-cover-children-of-two-worlds.webp" alt="Arc XXXVII — Children of Two Worlds" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc37Splash()">⚓ Begin Arc XXXVII</button>
   </div>
 </div>
 
 <div id="arc38SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc38/arc38-cover-the-lives-we-didnt-live.webp" alt="Arc XXXVIII — The Lives We Didn't Live" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc38/arc38-cover-the-lives-we-didnt-live.webp" alt="Arc XXXVIII — The Lives We Didn't Live" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc38Splash()">⚓ Begin Arc XXXVIII</button>
   </div>
 </div>
 
 <div id="arc39SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc39/arc39-cover-the-steady-reach.webp" alt="Arc XXXIX — The Steady Reach" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc39/arc39-cover-the-steady-reach.webp" alt="Arc XXXIX — The Steady Reach" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc39Splash()">⚓ Begin Arc XXXIX</button>
   </div>
 </div>
 
 <div id="arc40SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc40/arc40-cover-resonance.webp" alt="Arc XL — Resonance" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc40/arc40-cover-resonance.webp" alt="Arc XL — Resonance" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc40Splash()">⚓ Begin Arc XL</button>
   </div>
 </div>
 
 <div id="arc41SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc41/arc41-cover-the-ones-who-stay.webp" alt="Arc XLI — The Ones Who Stay" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc41/arc41-cover-the-ones-who-stay.webp" alt="Arc XLI — The Ones Who Stay" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc41Splash()">⚓ Begin Arc XLI</button>
   </div>
 </div>
 
 <div id="arc41BridgeSplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/bridge-arc42/bridge-arc42-cover-the-shore-beyond-the-horizon.webp" alt="The Shore Beyond the Horizon" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/bridge-arc42/bridge-arc42-cover-the-shore-beyond-the-horizon.webp" alt="The Shore Beyond the Horizon" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc41BridgeSplash()">🌌 Find the Shore Beyond the Horizon</button>
   </div>
 </div>
 
 <div id="arc42SplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/arc42/arc42-cover-meet-the-maker.webp" alt="Arc XLII — Meet the Maker" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/arc42/arc42-cover-meet-the-maker.webp" alt="Arc XLII — Meet the Maker" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseArc42Splash()">⚓ Begin Arc XLII</button>
   </div>
 </div>
 
 <div id="crimsonHorizonSplashOverlay" class="story-mode-overlay" aria-hidden="true" style="display:none;">
   <div style="max-width:640px;margin:0 auto;padding:14px 10px 30px;text-align:center;">
-    <img src="assets/comics/sequel/crimson-horizon-cover.webp" alt="Crimson Horizon — Adventures of San and Jade" style="width:100%;border-radius:8px;display:block;">
+    <img loading="lazy" decoding="async" src="assets/comics/sequel/crimson-horizon-cover.webp" alt="Crimson Horizon — Adventures of San and Jade" style="width:100%;border-radius:8px;display:block;">
     <button class="btn btn-success" style="width:100%;margin-top:16px;" onclick="window.__ctCloseCrimsonHorizonSplash()">🌅 The Horizon Awaits</button>
   </div>
 </div>
@@ -2773,6 +2773,7 @@ body{
 <script src="scripts/sairen-bond.js"></script>
 <script src="scripts/fair-tide-alerts.js"></script>
 <script src="scripts/nav-fair-tide.js"></script>
+<script src="scripts/perf-release-screens.js"></script>
 <script src="scripts/equipment-upgrades.js"></script>
 <script src="scripts/n-fate-notice.js"></script>
 </body>

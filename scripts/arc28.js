@@ -184,7 +184,7 @@
       window.__ctShowArc28Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc28/arc28-cover-n.webp" alt="Arc XXVIII — N" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc28/arc28-cover-n.webp" alt="Arc XXVIII — N" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXVIII</div><div class="story-act-title">N</div>'+
       '<div class="story-act-tagline">Forgiveness does not automatically restore trust.</div></div>';
     if (!arc28Ready) {

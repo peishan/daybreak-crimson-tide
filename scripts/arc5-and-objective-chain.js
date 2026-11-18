@@ -152,7 +152,7 @@
       window.__ctShowArc5Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc5/arc5-cover-the-bond.webp" alt="Arc V — The Bond" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc5/arc5-cover-the-bond.webp" alt="Arc V — The Bond" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc V</div><div class="story-act-title">The Bond</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC5_CHAPTERS.length+' of 24. What we build now becomes its own history.</div></div>';
     if(!arc5Ready){

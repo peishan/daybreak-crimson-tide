@@ -379,7 +379,7 @@
       window.__ctShowArc4Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc4/arc4-cover-gathering-tide.webp" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc4/arc4-cover-gathering-tide.webp" alt="Arc IV — The Gathering Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc IV</div><div class="story-act-title">The Gathering Tide</div>'+
       '<div class="story-act-tagline">1 chapter so far. New people, new horizons.</div></div>';
     if(!arc4Ready){

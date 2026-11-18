@@ -176,3 +176,8 @@ html[data-theme] .event-neutral { color: #9fd4f4; }
 
 /* scrollbars */
 html[data-theme] * { scrollbar-color: rgba(var(--th-tint), .45) rgba(0,0,0,.25); }
+
+/* Lazy comic art: reserve a 4:5 box until the real size is known, so a long
+   list of covers does not collapse to zero height (which would make the browser
+   load and decode every one of them at once). Loaded images use their own ratio. */
+img[loading="lazy"][src*="assets/comics/"]{aspect-ratio:auto 4/5;}

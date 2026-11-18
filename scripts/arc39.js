@@ -161,7 +161,7 @@
       window.__ctShowArc39Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc39/arc39-cover-the-steady-reach.webp" alt="Arc XXXIX — The Steady Reach" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc39/arc39-cover-the-steady-reach.webp" alt="Arc XXXIX — The Steady Reach" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXIX</div><div class="story-act-title">The Steady Reach</div>'+
       '<div class="story-act-tagline">People who once worked together can find different purposes when their circumstances change.</div></div>';
     if (!arc39Ready) {

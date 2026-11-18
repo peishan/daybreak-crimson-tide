@@ -31,7 +31,7 @@
 
   function chip(m){
     return '<div class="chc-chip' + (m.booster ? ' booster' : '') + '">' +
-      '<div class="chc-pt"><img src="' + m.img + '" alt="" onerror="this.remove()"></div>' +
+      '<div class="chc-pt"><img loading="lazy" decoding="async" src="' + m.img + '" alt="" onerror="this.remove()"></div>' +
       '<div class="chc-name">' + esc(m.name) + '</div><div class="chc-role">' + esc(m.role) + '</div></div>';
   }
 

@@ -180,7 +180,7 @@
       window.__ctShowArc30Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc30/arc30-cover-the-betrayal.webp" alt="Arc XXX — The Betrayal" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc30/arc30-cover-the-betrayal.webp" alt="Arc XXX — The Betrayal" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXX</div><div class="story-act-title">The Betrayal</div>'+
       '<div class="story-act-tagline">What happens when the people inside the walls become the threat?</div></div>';
     if (!arc30Ready) {

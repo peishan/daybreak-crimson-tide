@@ -159,7 +159,7 @@
       window.__ctShowArc35Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc35/arc35-cover-the-children-of-fair-tide.webp" alt="Arc XXXV — The Children of Fair Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc35/arc35-cover-the-children-of-fair-tide.webp" alt="Arc XXXV — The Children of Fair Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXV</div><div class="story-act-title">The Children of Fair Tide</div>'+
       '<div class="story-act-tagline">A new generation begins.</div></div>';
     if (!arc35Ready) {

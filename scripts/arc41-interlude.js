@@ -112,7 +112,7 @@
     if (!container) return;
     const interludeReady = window.arc41InterludeObjectiveState() !== null;
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/interludes/interludes-cover.webp" alt="Crimson Tide — Interludes" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/interludes/interludes-cover.webp" alt="Crimson Tide — Interludes" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Interlude</div><div class="story-act-title">Crimson Tide — Interludes</div>'+
       '<div class="story-act-tagline">Stories between horizons.</div></div>';
     if (!interludeReady) {

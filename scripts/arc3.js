@@ -110,7 +110,7 @@
       window.__ctShowArc3Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc3/arc3-cover-steady-hands.webp" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc3/arc3-cover-steady-hands.webp" alt="Arc III — Origins: Steady Hands" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc III — Origins</div><div class="story-act-title">Steady Hands</div>'+
       '<div class="story-act-tagline">26 chapters so far. Calmer days, rougher days — the same crew.</div></div>';
     if(!arc2Done){

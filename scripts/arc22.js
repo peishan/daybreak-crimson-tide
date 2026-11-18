@@ -165,7 +165,7 @@
       window.__ctShowArc22Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc22/arc22-cover-the-child-of-fair-tide.webp" alt="Arc XXII — The Child of Fair Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc22/arc22-cover-the-child-of-fair-tide.webp" alt="Arc XXII — The Child of Fair Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXII</div><div class="story-act-title">The Child of Fair Tide</div>'+
       '<div class="story-act-tagline">Something new is growing.</div></div>';
     if (!arc22Ready) {

@@ -155,7 +155,7 @@
       window.__ctShowArc21Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc21/arc21-cover-the-life-we-build.webp" alt="Arc XXI — The Life We Build" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc21/arc21-cover-the-life-we-build.webp" alt="Arc XXI — The Life We Build" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXI</div><div class="story-act-title">The Life We Build</div>'+
       '<div class="story-act-tagline">A home isn\'t just a place you return to. It\'s a place that can keep going when you leave.</div></div>';
     if (!arc21Ready) {

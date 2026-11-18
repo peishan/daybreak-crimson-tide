@@ -156,7 +156,7 @@
       window.__ctShowArc36Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc36/arc36-cover-growing-tides.webp" alt="Arc XXXVI — Growing Tides" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc36/arc36-cover-growing-tides.webp" alt="Arc XXXVI — Growing Tides" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXVI</div><div class="story-act-title">Growing Tides</div>'+
       '<div class="story-act-tagline">Children change a home simply by growing within it.</div></div>';
     if (!arc36Ready) {

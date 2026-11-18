@@ -2072,7 +2072,7 @@
       window.__ctShowArc6Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc6/arc6-cover-the-price-of-freedom.webp" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc6/arc6-cover-the-price-of-freedom.webp" alt="Arc VI — The Price of Freedom" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc VI</div><div class="story-act-title">The Price of Freedom</div>'+
       '<div class="story-act-tagline">Power gives San the choice to do better.</div></div>';
     ARC6_CHAPTERS.forEach(ch=>{

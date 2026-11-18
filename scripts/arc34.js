@@ -167,7 +167,7 @@
       window.__ctShowArc34Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc34/arc34-cover-two-hearts.webp" alt="Arc XXXIV — Two Hearts" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc34/arc34-cover-two-hearts.webp" alt="Arc XXXIV — Two Hearts" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXIV</div><div class="story-act-title">Two Hearts</div>'+
       '<div class="story-act-tagline">Two lives, already part of the family.</div></div>';
     if (!arc34Ready) {

@@ -133,7 +133,7 @@
       window.__ctShowArc40Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc40/arc40-cover-resonance.webp" alt="Arc XL — Resonance" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc40/arc40-cover-resonance.webp" alt="Arc XL — Resonance" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XL</div><div class="story-act-title">Resonance</div>'+
       '<div class="story-act-tagline">Some connections grow so familiar that neither person notices when understanding becomes something more.</div></div>';
     if (!arc40Ready) {

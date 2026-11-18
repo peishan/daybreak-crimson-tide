@@ -156,7 +156,7 @@
       window.__ctShowArc32Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc32/arc32-cover-the-long-tide.webp" alt="Arc XXXII — The Long Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc32/arc32-cover-the-long-tide.webp" alt="Arc XXXII — The Long Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXII</div><div class="story-act-title">The Long Tide</div>'+
       '<div class="story-act-tagline">Life continues while the world changes.</div></div>';
     if (!arc32Ready) {

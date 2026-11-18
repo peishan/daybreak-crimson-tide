@@ -134,7 +134,7 @@
       '<p style="font-size:.8rem;opacity:.75;margin-bottom:8px;">Not recruited, not relocated — trusted friends on the other side of the Horizon.</p>';
     visible.forEach(function(c){
       const pt = CROSSOVER_PORTRAITS[c.id];
-      const ptHtml = pt ? '<img src="'+pt+'" alt="" onerror="this.remove()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 20%;float:left;margin:0 10px 4px 0;">' : '';
+      const ptHtml = pt ? '<img loading="lazy" decoding="async" src="'+pt+'" alt="" onerror="this.remove()" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 20%;float:left;margin:0 10px 4px 0;">' : '';
       html += '<article class="quest-item">'+ptHtml+'<strong>'+(pt ? '' : c.icon+' ')+esc(c.name)+'</strong> — <span style="opacity:.8;">'+esc(c.connection)+'</span><br>'+
         '<span style="font-size:.8rem;opacity:.8;">'+esc(c.desc)+'</span></article>';
     });
@@ -151,11 +151,11 @@
       return;
     }
     let html = '<div class="panel">'+
-      '<img src="assets/bios/san-joel-jade-devon.png" alt="San &amp; Joel x Jade &amp; Devon crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
+      '<img loading="lazy" decoding="async" src="assets/bios/san-joel-jade-devon.png" alt="San &amp; Joel x Jade &amp; Devon crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
       '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">San &amp; Joel (Crimson Tide) x Jade &amp; Devon (Tribute)</div>'+
       '</div>';
     html += '<div class="panel">'+
-      '<img src="assets/bios/vaeren-joelle-soel-crossover.png" alt="Tribute x Crimson Tide -- Vaeren, Joelle &amp; Soel crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
+      '<img loading="lazy" decoding="async" src="assets/bios/vaeren-joelle-soel-crossover.png" alt="Tribute x Crimson Tide -- Vaeren, Joelle &amp; Soel crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
       '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">Vaeren, Joelle &amp; Soel -- Twins &amp; Guardian Companion (Tribute x Crimson Tide)</div>'+
       '</div>';
     html += '<div class="panel">'+renderTributeRosterPanel()+'</div>';

@@ -322,7 +322,7 @@
       window.__ctShowArc42Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc42/arc42-cover-meet-the-maker.webp" alt="Arc XLII — Meet the Maker" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc42/arc42-cover-meet-the-maker.webp" alt="Arc XLII — Meet the Maker" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XLII</div><div class="story-act-title">Meet the Maker</div>'+
       '<div class="story-act-tagline">Some stories continue long after their writers stop writing.</div></div>';
     if (!arc42Ready) {

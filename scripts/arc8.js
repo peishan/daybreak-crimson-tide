@@ -151,7 +151,7 @@
       window.__ctShowArc8Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.webp" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc8/arc8-cover-beyond-the-known-sea.webp" alt="Arc VIII — Beyond the Known Sea" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc VIII</div><div class="story-act-title">Beyond the Known Sea</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC8_CHAPTERS.length+' of 24. The world is larger than the map.</div></div>';
     if(!arc8Ready){

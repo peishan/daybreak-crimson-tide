@@ -171,7 +171,7 @@
       window.__ctShowArc20Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc20/arc20-cover-forever-and-ever.webp" alt="Arc XX — Forever and Ever" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc20/arc20-cover-forever-and-ever.webp" alt="Arc XX — Forever and Ever" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XX</div><div class="story-act-title">Forever and Ever</div>'+
       '<div class="story-act-tagline">After everything — the people behind the adventures.</div></div>';
     if (!arc20Ready) {

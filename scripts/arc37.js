@@ -176,7 +176,7 @@
       window.__ctShowArc37Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc37/arc37-cover-children-of-two-worlds.webp" alt="Arc XXXVII — Children of Two Worlds" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc37/arc37-cover-children-of-two-worlds.webp" alt="Arc XXXVII — Children of Two Worlds" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXVII</div><div class="story-act-title">Children of Two Worlds</div>'+
       '<div class="story-act-tagline">Where you come from is part of you. It doesn\'t decide where you belong.</div></div>';
     if (!arc37Ready) {
