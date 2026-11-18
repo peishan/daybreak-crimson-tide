@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v288';
+const CACHE_VERSION = 'crimson-tide-v289';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -255,7 +255,7 @@ self.addEventListener('install', event => {
         // from any future missing or renamed file in this list.
         return Promise.all(
           PRECACHE_URLS.map(url =>
-            cache.add(url).catch(err => {
+            cache.add(new Request(url, { cache: 'reload' })).catch(err => {
               console.warn('[SW] Skipping failed precache URL:', url, err && err.message);
             })
           )
@@ -282,6 +282,14 @@ self.addEventListener('activate', event => {
       .then(keys => Promise.all(
         keys.filter(k => k !== PRECACHE && k !== RUNTIME).map(k => caches.delete(k))
       ))
+      // STALE-SCRIPT FIX: the runtime cache outlives every version bump (on purpose, for images), and
+      // any script that was ever fetched while it was NOT in PRECACHE_URLS was stored there cache-first
+      // and never refreshed. caches.match() searches every cache, oldest first, so that stale copy kept
+      // winning over the fresh one for ever (a player was still being told Arc XXXVIII needs Level 570
+      // long after the gate became 415). Code never belongs in the runtime cache: drop it.
+      .then(() => caches.open(RUNTIME).then(cache => cache.keys().then(reqs => Promise.all(
+        reqs.filter(r => isCodeUrl(new URL(r.url))).map(r => cache.delete(r))
+      ))))
       .then(() => self.clients.claim())
   );
 });
@@ -304,6 +312,7 @@ self.addEventListener('activate', event => {
 // script file here is now treated the same way — this doesn't just make
 // the update check fire sooner, it removes the dependency on that whole
 // mechanism for getting fresh code in the first place.
+function isCodeUrl(url) { return /\.(js|css|html|json|webmanifest)$/i.test(url.pathname) || url.pathname.endsWith('/'); }
 function isAppShellRequest(url) {
   return PRECACHE_URLS.some(function(asset){
     const clean = asset.replace('./', '/');
@@ -370,9 +379,12 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (isAppShellRequest(new URL(req.url))) {
+  // App shell and ALL code (scripts, styles, json, pages) share one rule: serve from THIS version's
+  // precache only (never a stale copy from another cache), refresh it in the background.
+  const reqUrl = new URL(req.url);
+  if (isAppShellRequest(reqUrl) || (reqUrl.origin === self.location.origin && isCodeUrl(reqUrl))) {
     event.respondWith(
-      caches.match(req).then(cached => {
+      caches.open(PRECACHE).then(pc => pc.match(req)).then(cached => {
         const network = fetch(req).then(res => {
           if (res && res.ok) {
             const copy = res.clone();
