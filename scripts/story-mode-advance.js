@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V519 · Collapsible Story arcs and a comic reader';
+window.__CT_BUILD__='V520 · Art filename fixes and bridge chapter art';
