@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V524 · Fair Tide chatter waits for Fair Tide';
+window.__CT_BUILD__='V525 · Thought Resonance shared action in battle';
