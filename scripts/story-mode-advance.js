@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V515 · Twins record adds guardians and cousins';
+window.__CT_BUILD__='V516 · Twins record: chosen bond Sairen once he joins';
