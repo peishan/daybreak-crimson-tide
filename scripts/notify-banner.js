@@ -167,8 +167,8 @@
 
   window.notify = function(n){
     if (!n || (!n.title && !n.text)) return;
-    // The roster is seeded at the start of a new voyage; don't announce it as news before Chapter 1
-    if ((n.kind === 'join' || n.kind === 'leave') && typeof window.ctStartQuiet === 'function' && window.ctStartQuiet()) return;
+    // Fair Tide arrivals and departures are not news until the player has unlocked Fair Tide
+    if ((n.kind === 'join' || n.kind === 'leave') && typeof window.ctFairTideKnown === 'function' && !window.ctFairTideKnown()) return;
     if (n.remind && typeof document !== 'undefined' && document.hidden) sendOs(n.title || 'Crimson Tide', n.text || '', n.tag || n.kind);
     pending.push(n);
     if (!flushTimer) flushTimer = setTimeout(flush, 350);

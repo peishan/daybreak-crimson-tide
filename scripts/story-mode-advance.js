@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V523 · First Voyage Guide for new players';
+window.__CT_BUILD__='V524 · Fair Tide chatter waits for Fair Tide';

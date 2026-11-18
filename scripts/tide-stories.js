@@ -167,6 +167,8 @@
   }
 
   function rollTodaysTideStories(){
+    // Nothing from Fair Tide reaches a voyage that has not unlocked it yet
+    if (typeof window.ctFairTideKnown === 'function' && !window.ctFairTideKnown()) return;
     const state = tideStoriesState();
     const now = currentRealDate();
     const key = dateKey(now);

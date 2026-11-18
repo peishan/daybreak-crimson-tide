@@ -48,9 +48,6 @@
       go:function(){ goScreen('tavern'); }, pulse:['.nav-btn[onclick*="\'tavern\'"]'] }
   ];
 
-  // true only in the very first minutes of a new voyage (Chapter 1 unread, under Level 5)
-  window.ctStartQuiet = function(){ try { return !(game.comicProgress && game.comicProgress[1]) && level() < 5; } catch(e) { return false; } };
-
   function T(){ return game.tutorial && game.tutorial.on ? game.tutorial : null; }
   function flags(){ game.tutorial.flags = game.tutorial.flags || {}; return game.tutorial.flags; }
 
