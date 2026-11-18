@@ -159,6 +159,8 @@
       '<article class="quest-item">'+
         'Parents: San &amp; Joel<br>'+
         'Aunt: Joy, Aisyah, Mezstorm<br>'+
+        'Guardian: Joy, Maera<br>'+
+        'Cousins: Senedra, Zaki, Eliz<br>'+
         'Home: Fair Tide<br>'+
         'Status: '+twinsStatusText()+
 
