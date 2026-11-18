@@ -161,7 +161,7 @@
         'Aunt: Joy, Aisyah, Mezstorm<br>'+
         'Guardian: Joy, Maera<br>'+
         'Cousins: Senedra, Zaki, Eliz<br>'+
-        (game.foundCompanions && game.foundCompanions.sairen ? 'Chosen bond: Sairen<br>' : '')+
+        'Chosen bond: Soel'+(game.foundCompanions && game.foundCompanions.sairen ? ', Sairen' : '')+'<br>'+
         'Home: Fair Tide<br>'+
         'Status: '+twinsStatusText()+
 
