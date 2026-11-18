@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V503 · Living economy, port events, standing and contract deadlines';
+window.__CT_BUILD__='V504 · Joy goes home to look after the twins';
