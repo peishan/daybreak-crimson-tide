@@ -54,8 +54,8 @@
         const row = game.marketPrices && game.marketPrices[port.id];
         if (!row) return;
         Object.keys(GOODS).forEach(function(goodId){
+          if (goodId === 'contraband') { row[goodId] = (typeof window.contrabandPriceAt === 'function') ? window.contrabandPriceAt(port.id, game.day) : row[goodId]; return; }   // see contraband.js
           if (!row[goodId]) return;                      // 0 = not sold here: leave it
-          if (goodId === 'contraband' && port.id !== 'manila') return;   // keep the original rule for it
           row[goodId] = steadyPrice(port, goodId, game.day);
         });
       });
