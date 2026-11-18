@@ -3999,6 +3999,7 @@ function renderNavigation() {
   document.getElementById('voyageConditions').innerHTML =
     'Current wind: <span style="color: var(--success);">Favorable</span>. ' +
     (game.ship.sails >= 2 ? 'Your upgraded sails catch every breeze.' : 'Standard sails.') +
+    '<br>Your ship deters about ' + Math.round(100 * (1 - (1 - 0.45 * voyageSafety()) * (1 - 0.5 * voyageSafety()))) + '% of hostile encounters.' +
     '<br>Ship condition: ' + (game.health > 70 ? 'Good' : game.health > 30 ? 'Damaged' : '<span style="color: var(--danger);">Critical</span>') + '.';
 }
 function sailTo(portId) {
@@ -4034,6 +4035,24 @@ function renderInterceptionStreak() {
   const days = game.daysSinceInterception || 0;
   el.textContent = '🏴‍☠️ ' + days + ' day' + (days === 1 ? '' : 's') + ' since last interception';
 }
+// How safe the voyage is, 0..1: the vessel's tier (40%) plus how far the hull, cannons
+// and sails are upgraded toward the current stat cap (60%). A bigger, better-kept ship
+// meets fewer hostile ships and sea beasts: at 1.0 a day's event chance falls by 45%, and
+// half of the hostile ones that do show up turn away instead of attacking. Before this
+// the ship made no difference to how often you were attacked.
+function voyageSafety() {
+  let tierFrac = 0;
+  try {
+    const v = currentVessel();
+    const idx = VESSELS.findIndex(x => x.id === v.id);
+    tierFrac = VESSELS.length > 1 ? Math.max(0, idx) / (VESSELS.length - 1) : 0;
+  } catch (e) {}
+  const cap = Math.max(1, shipStatCap());
+  const sh = game.ship || {};
+  const statFrac = Math.min(1, (((Number(sh.hull) || 1) + (Number(sh.cannons) || 1) + (Number(sh.sails) || 1)) / 3) / cap);
+  return Math.max(0, Math.min(1, 0.4 * tierFrac + 0.6 * statFrac));
+}
+window.voyageSafety = voyageSafety;
 function doVoyage(portId, days, dangerLevel) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('voyageScreen').classList.add('active');
@@ -4047,8 +4066,13 @@ function doVoyage(portId, days, dangerLevel) {
     document.getElementById('voyageProgress').style.width = (currentDay / days * 100) + '%';
     game.day++;
 
-    if (Math.random() < 0.3 + (dangerLevel * 0.07)) {
-      const event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+    const safety = voyageSafety();
+    if (Math.random() < (0.3 + (dangerLevel * 0.07)) * (1 - 0.45 * safety)) {
+      let event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+      if (event.combat && Math.random() < 0.5 * safety) {
+        // A well-kept ship is not worth the trouble: they steer clear.
+        event = { type: 'calm', text: 'Something hostile shadows the ship for a while, then thinks better of it and turns away.' };
+      }
       document.getElementById('voyageEvent').innerHTML = '<span style="color: var(--danger);">' + event.text + '</span>';
 
       if (event.combat) {
