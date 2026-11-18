@@ -3089,9 +3089,9 @@ const CREW_PORTRAITS = {
   // Locked Daybreak reference designs are retained as named slots; their original
   // portrait files will be wired when supplied as local assets.
   aldric:'assets/portraits/aldric.png', wren:'assets/portraits/wren.png',
-  mimi:'assets/portraits/mimi.png', kwliang:'assets/portraits/kw-liang.png',
-  iris:'assets/portraits/iris.png', bradashah:'assets/portraits/brada-shah.png',
-  draa:'assets/portraits/dr-aa.png'
+  mimi:'assets/portraits/mimi.png', kwliang:'assets/portraits/kw_liang.png',
+  iris:'assets/portraits/iris.png', bradashah:'assets/portraits/brada_shah.png',
+  draa:'assets/portraits/dr_aa.png'
 };
 function portraitKeyFor(name) {
   const n=String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
