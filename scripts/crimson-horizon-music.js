@@ -36,7 +36,7 @@
   const PORT_TRACK = {
     harbor_beyond_charts:'ch_harbor', storm_shelf:'ch_storm', west_gate:'ch_mist', south_gate:'ch_channel', central_gate:'ch_channel',
     island_harbor:'ch_harbor', outer_island:'ch_harbor', channel_island:'ch_harbor', terrace_harbor:'ch_harbor',
-    river_mouth:'ch_harbor', ropewalk_town:'ch_harbor', timber_port:'ch_harbor', nestcliff_harbor:'ch_harbor', farshore_estuary:'ch_harbor'
+    river_mouth:'ch_harbor', ropewalk_town:'ch_harbor', timber_port:'ch_harbor', nestcliff_harbor:'ch_harbor', farshore_estuary:'ch_harbor', salt_coast_harbor:'ch_harbor'
   };
   const BOSS_FIGHTS = ['3', '60'];   // CH_FIGHTS keys: the Stormborn Leviathan, the Keeper's guard
   const KEEPER_FIGHT = '60';         // the Keeper's guard has its own track

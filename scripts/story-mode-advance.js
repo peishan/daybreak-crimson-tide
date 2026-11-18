@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V507 · Soel becomes protector of the twins in the sequel';
+window.__CT_BUILD__='V508 · Crimson Horizon Arc XIV: The Bell at Dusk (chapters 133-144)';
