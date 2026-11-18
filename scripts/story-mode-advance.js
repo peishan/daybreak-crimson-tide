@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V521 · Gentler sequel level gates';
+window.__CT_BUILD__='V522 · Portrait filename fixes';
