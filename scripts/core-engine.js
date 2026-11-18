@@ -3997,7 +3997,7 @@ function renderNavigation() {
   }).join('');
 
   document.getElementById('voyageConditions').innerHTML =
-    'Current wind: <span style="color: var(--success);">Favorable</span>. ' +
+    'Weather: ' + (typeof window.seaWeatherLine === 'function' ? window.seaWeatherLine() : '<span style="color: var(--success);">Favorable wind</span>.') + ' ' +
     (game.ship.sails >= 2 ? 'Your upgraded sails catch every breeze.' : 'Standard sails.') +
     '<br>Your ship deters about ' + Math.round(100 * (1 - (1 - 0.45 * voyageSafety()) * (1 - 0.5 * voyageSafety()))) + '% of hostile encounters.' +
     '<br>Ship condition: ' + (game.health > 70 ? 'Good' : game.health > 30 ? 'Damaged' : '<span style="color: var(--danger);">Critical</span>') + '.';
@@ -4009,7 +4009,7 @@ function sailTo(portId) {
   const dist = currentPort.distances[portId];
   const travelDays = Math.max(1, dist - (game.ship.sails >= 3 ? 1 : 0));
 
-  showModal('Set Sail?', 'Sail to ' + targetPort.name + '?<br><br>Distance: ' + dist + ' units<br>Travel time: ' + travelDays + ' day' + (travelDays > 1 ? 's' : '') + '<br>Danger level: ' + '⚔️'.repeat(targetPort.danger),
+  showModal('Set Sail?', 'Sail to ' + targetPort.name + '?<br><br>Distance: ' + dist + ' units<br>Travel time: ' + travelDays + ' day' + (travelDays > 1 ? 's' : '') + '<br>Danger level: ' + '⚔️'.repeat(targetPort.danger) + (typeof window.seaHostilityLabel === 'function' ? '<br>Raider activity today: ' + window.seaHostilityLabel(portId) + '<br>Weather: ' + window.seaWeatherLine() : ''),
     [{text: '⚓ Set Sail', action: () => { closeModal(); doVoyage(portId, travelDays, targetPort.danger); }},
      {text: 'Stay in Port', action: closeModal}]);
 }
@@ -4067,8 +4067,17 @@ function doVoyage(portId, days, dangerLevel) {
     game.day++;
 
     const safety = voyageSafety();
-    if (Math.random() < (0.3 + (dangerLevel * 0.07)) * (1 - 0.45 * safety)) {
+    // Weather and raider activity change from day to day (scripts/sea-conditions.js).
+    const sea = (typeof window.seaVoyageMods === 'function') ? window.seaVoyageMods(portId) : { event: 1, hostile: 1, stormy: false };
+    if (Math.random() < (0.3 + (dangerLevel * 0.07)) * (1 - 0.45 * safety) * sea.event) {
       let event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+      if (sea.stormy && !event.combat && Math.random() < 0.35) event = EVENTS.find(e => e.type === 'storm') || event;
+      if (event.combat && Math.random() > sea.hostile) {
+        event = { type: 'calm', text: 'The raiders and sea beasts seem to be keeping their distance today.' };
+      } else if (!event.combat && sea.hostile > 1 && Math.random() < (sea.hostile - 1) * 0.3) {
+        const hostileEvents = EVENTS.filter(e => e.combat);
+        event = hostileEvents[Math.floor(Math.random() * hostileEvents.length)];
+      }
       if (event.combat && Math.random() < 0.5 * safety) {
         // A well-kept ship is not worth the trouble: they steer clear.
         event = { type: 'calm', text: 'Something hostile shadows the ship for a while, then thinks better of it and turns away.' };

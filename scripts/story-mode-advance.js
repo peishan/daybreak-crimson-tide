@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V499 · Ship tier and upgrades deter hostile encounters';
+window.__CT_BUILD__='V500 · Daily weather and raider activity at sea';
