@@ -130,7 +130,7 @@
       '<div class="story-act-tagline">Every world has a history of its own, even one that began as a story.</div></div>';
     if (!bridgeReady) {
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Locked</div><div class="story-chapter-sub">'+
-        (!game.arc41Complete ? 'Finish Arc XLI first.' : 'Reach Level 455 to begin.')+'</div></div></section>';
+        (!game.arc41Complete ? 'Finish Arc XLI first.' : (level() < 455 ? 'Reach Level 455 to begin.' : 'Commission the new ship at the Shipyard first.'))+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
