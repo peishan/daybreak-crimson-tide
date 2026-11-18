@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V498 · Three or more banners collapse into one';
+window.__CT_BUILD__='V499 · Ship tier and upgrades deter hostile encounters';
