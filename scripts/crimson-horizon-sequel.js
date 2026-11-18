@@ -658,11 +658,14 @@
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
   // LEVEL GATES. Arc I opens the moment the main series (Arc XLII) is finished, with no level
-  // requirement. Every later arc opens at a steeper gate than the main series' +10 per arc:
-  // Arc II at 480, then +15 per arc (Arc XIII at 645). The gate only applies at the START of
-  // an arc: once any chapter of an arc has been read, the rest of that arc is never held back,
-  // so a save that is already part-way through an arc is not locked out of it.
-  window.crimsonHorizonArcLevel = function(arc){ return arc <= 1 ? 0 : 465 + 15 * (arc - 1); };
+  // requirement. Later arcs open at 459 (Arc II) and rise 4 levels per arc (Arc XIV: 507).
+  // Why 4: the sequel's own story XP is worth only about 3 levels per arc at these levels (a level
+  // costs 100 x the level in XP, and an arc's chapters pay 65k-220k), so 4 a rung means a little
+  // fighting, raiding or trading between arcs, but never a wall. The first version stepped by 15
+  // (Arc V at 525, Arc XIV at 660), which story XP could never reach: a player at Level 517 was
+  // stuck. The gate only applies at the START of an arc: once any chapter of an arc has been read,
+  // the rest of that arc is never held back.
+  window.crimsonHorizonArcLevel = function(arc){ return arc <= 1 ? 0 : 455 + 4 * (arc - 1); };
   window.crimsonHorizonObjectiveState = function(){
     if (!game.arc42Complete) return null;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};

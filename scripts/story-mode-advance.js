@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V508 · Crimson Horizon Arc XIV: The Bell at Dusk (chapters 133-144)';
+window.__CT_BUILD__='V509 · Sequel level gates retuned so they can be reached';
