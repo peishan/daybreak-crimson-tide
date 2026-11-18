@@ -385,7 +385,7 @@
     if(!arc4Ready){
       const arc3Done = typeof window.arc3ObjectiveState==='function' && window.arc3ObjectiveState()==='arc3_chapters_complete_for_now';
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc IV Locked</div><div class="story-chapter-sub">'+
-        (!arc3Done ? 'Finish all of Arc III first.' : 'Reach Level 80 to begin.')+'</div></div></section>';
+        (!arc3Done ? 'Finish all of Arc III first.' : 'Reach Level 60 to begin.')+'</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
