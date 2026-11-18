@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V502 · Contraband: dropped by pirates, one rotating buyer';
+window.__CT_BUILD__='V503 · Living economy, port events, standing and contract deadlines';

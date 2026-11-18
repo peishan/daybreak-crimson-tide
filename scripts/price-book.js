@@ -39,6 +39,7 @@
     const se = (typeof window.seaSeason === 'function') ? window.seaSeason(day) : null;
     if (se && se.price && se.price[goodId]) m *= se.price[goodId];
     if (typeof window.rumorEffectFor === 'function') { const r = window.rumorEffectFor(port.id, goodId); if (r) m *= r.multiplier; }
+    if (typeof window.marketPriceMods === 'function') m *= window.marketPriceMods(port.id, goodId, day);   // events and supply/demand, see market-economy.js
     return Math.max(1, Math.round(good.basePrice * m));
   }
   window.steadyMarketPrice = function(portId, goodId, day){
@@ -73,7 +74,7 @@
       if (typeof goodShownInMarket === 'function' && !goodShownInMarket(g)) return;
       const p = row[g]; if (!p) return;
       const e = b[loc][g];
-      if (e && e.day === game.day) { e.price = p; return; }
+      if (e && e.day === game.day) return;   // the first look of the day wins: not the price after you dumped a hold on it
       b[loc][g] = { price: p, day: game.day, avg: e ? Math.round((e.avg || e.price) * 0.5 + p * 0.5) : p, n: (e ? e.n : 0) + 1 };
     });
   }

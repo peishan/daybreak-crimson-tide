@@ -95,7 +95,7 @@
     const w = weatherFor(day == null ? game.day : day);
     const h = hostilityFor(portId, day == null ? game.day : day);
     const se = seasonFor(day == null ? game.day : day);
-    return { event: w.event * (0.85 + 0.3 * h) * (se ? se.def.event : 1), hostile: w.hostile * h * (se ? se.def.hostile : 1), weather: w, stormy: !!w.stormy };
+    return { event: w.event * (0.85 + 0.3 * h) * (se ? se.def.event : 1), hostile: w.hostile * h * (se ? se.def.hostile : 1) * (typeof window.seaRouteHostility === 'function' ? window.seaRouteHostility(portId, day == null ? game.day : day) : 1), weather: w, stormy: !!w.stormy };
   };
 
   // Sea battles: the day's weather nudges the enemy.
