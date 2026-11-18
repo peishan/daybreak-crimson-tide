@@ -507,6 +507,7 @@
     13: {cover:null, kicker:'Crimson Horizon · Arc XIII', title:'The Far Shore', tagline:'Two banks, one market, and a boat that has to keep running.'},
     14: {cover:null, kicker:'Crimson Horizon · Arc XIV', title:'The Bell at Dusk', tagline:'Some crossings are not finished until everyone is ashore.'}
   };
+  window.CRIMSON_HORIZON_ARC_META = CRIMSON_HORIZON_ARC_META;
 
   const CRIMSON_HORIZON_CHAPTER_SCENES = {
     1: 'A new horizon rises for the Crimson Tide.<br><br>"We\'ve closed one chapter..." Joel says, watching the sunset, "...but the world is far from finished with us."<br><br>"I know," San says. "This is not an ending. It\'s a chance to explore what still lies beyond our maps — together."<br><br>The Black Pearl remains within their guardianship, its true origins and deeper purpose still a mystery waiting to be unravelled.<br><br>"Then let\'s go," San says, looking out over the water. "A wider world awaits — and this time, we sail it as one."',
