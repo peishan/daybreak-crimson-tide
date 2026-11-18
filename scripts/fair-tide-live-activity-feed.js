@@ -51,6 +51,11 @@
     return fresh;
   }
 
+  // Fair Tide opens at Level 60 (or once the port itself is unlocked); before that a new voyage hears nothing from it
+  window.ctFairTideKnown = function(){
+    try { return level() >= 60 || (typeof isPortUnlocked === 'function' && !!isPortUnlocked('fair_tide')); } catch(e) { return true; }
+  };
+
   function checkLiveActivityFeed(){
     const today = game.day || 0;
     const state = feedState();
@@ -83,8 +88,8 @@
     }
 
     if (!fresh.length) return;
-    // A brand-new voyage has no Fair Tide yet: keep the first minutes quiet (they are marked seen, just not announced)
-    if (typeof window.ctStartQuiet === 'function' && window.ctStartQuiet()) return;
+    // Fair Tide chatter is only announced once the player has unlocked Fair Tide (entries are marked seen, just not announced)
+    if (!window.ctFairTideKnown()) return;
 
     fresh.forEach(function(item){
       logEvent(item.icon + ' ' + item.text, 'good');
