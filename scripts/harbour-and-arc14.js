@@ -340,7 +340,13 @@
   // the screen was reached, so this needs no changes to how the Hub is
   // normally entered.
   // -------------------------------------------------------------------
-  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'grooming', 'garden', 'reading', 'starmap', 'karaoke', 'uncharted', 'bonds', 'expedition', 'steady_reach'];
+  // 'bonds' is not on this list any more: it is open remotely, but only for the people in the travelling
+// party (scripts/remote-bonds.js).
+  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'grooming', 'garden', 'reading', 'starmap', 'karaoke', 'uncharted', 'expedition', 'steady_reach'];
+  // Remote access is a fact about where the ship is, not a flag that lasts one render: the Hub re-renders on
+  // every check-in, and the old one-shot flag dropped back to "in person" on the first re-render, unlocking
+  // the Training Room, Quarters and the rest while the crew was still at sea.
+  window.fairTideIsRemote = function(){ return !!game.fairTideEnteringRemotely || game.location !== 'fair_tide'; };
 
   window.remoteAccessUnlocked = function(){
     return typeof window.arc13ObjectiveState === 'function' && window.arc13ObjectiveState() !== null;
@@ -354,26 +360,18 @@
 
   const oldRenderFairTideHubForRemote = window.renderFairTideHub;
   window.renderFairTideHub = function(){
-    if (game.fairTideEnteringRemotely) {
-      game.fairTideRemoteAccessMode = true;
-      game.fairTideEnteringRemotely = false;
-      // switchFairTideTab() below only blocks a tab SWITCH -- it was never
-      // enough on its own. If an earlier in-person visit left
-      // fairTideActiveTab on something like 'quarters', entering remotely
-      // would render that tab's content on this very first paint (every
-      // per-tab renderFairTideHub wrap reads fairTideActiveTab directly,
-      // not remote mode), handing out a free full heal with nobody ever
-      // clicking a blocked tab button. Force a safe tab before that first
-      // render happens.
-      if (REMOTE_RESTRICTED_TABS.includes(game.fairTideActiveTab)) {
-        game.fairTideActiveTab = 'buildings';
-      }
-    } else {
-      game.fairTideRemoteAccessMode = false;
+    game.fairTideRemoteAccessMode = window.fairTideIsRemote();
+    game.fairTideEnteringRemotely = false;
+    // Every tab's own render wrap reads fairTideActiveTab directly, not remote mode, so a restricted tab left
+    // active from an earlier in-person visit would render (a free full heal from Quarters, for one) on the
+    // first paint. Force a safe tab on EVERY remote render, not only the first.
+    if (game.fairTideRemoteAccessMode && REMOTE_RESTRICTED_TABS.includes(game.fairTideActiveTab)) {
+      game.fairTideActiveTab = 'buildings';
     }
     if (oldRenderFairTideHubForRemote) oldRenderFairTideHubForRemote();
     const header = document.getElementById('fairTideSpiritDisplay');
     if (header && game.fairTideRemoteAccessMode) {
+      const dupe = document.getElementById('remoteAccessBanner'); if (dupe) dupe.remove();
       header.insertAdjacentHTML('afterend',
         '<div id="remoteAccessBanner" style="text-align:center;font-size:.78rem;opacity:.85;background:rgba(120,180,255,.12);border:1px solid rgba(120,180,255,.35);border-radius:8px;padding:6px 10px;margin:6px 0 10px;">'+
         '📡 Remote Access — checking in from wherever Crimson Tide currently is.</div>');
@@ -385,7 +383,7 @@
 
   const oldSwitchFairTideTabForRemote = window.switchFairTideTab;
   window.switchFairTideTab = function(tab){
-    if (game.fairTideRemoteAccessMode && REMOTE_RESTRICTED_TABS.includes(tab)) {
+    if (window.fairTideIsRemote() && REMOTE_RESTRICTED_TABS.includes(tab)) {
       toast('🔒 Requires being at Fair Tide in person.');
       return;
     }

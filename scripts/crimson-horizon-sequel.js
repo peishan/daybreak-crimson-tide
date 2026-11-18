@@ -632,13 +632,23 @@
   };
   window.CRIMSON_HORIZON_CHAPTER_SCENES = CRIMSON_HORIZON_CHAPTER_SCENES;
 
+  // LEVEL GATES. Arc I opens the moment the main series (Arc XLII) is finished, with no level
+  // requirement. Every later arc opens at a steeper gate than the main series' +10 per arc:
+  // Arc II at 480, then +15 per arc (Arc XIII at 645). The gate only applies at the START of
+  // an arc: once any chapter of an arc has been read, the rest of that arc is never held back,
+  // so a save that is already part-way through an arc is not locked out of it.
+  window.crimsonHorizonArcLevel = function(arc){ return arc <= 1 ? 0 : 465 + 15 * (arc - 1); };
   window.crimsonHorizonObjectiveState = function(){
     if (!game.arc42Complete) return null;
-    if (level() < 465) return null;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
     for (const ch of CRIMSON_HORIZON_CHAPTERS) {
       if (CH_SIDE[ch.id]) continue; // side chapters never hold up the chain
-      if (!game.comicProgressCrimsonHorizon[ch.id]) return 'complete_crimson_horizon_chapter_' + ch.id;
+      if (!game.comicProgressCrimsonHorizon[ch.id]) {
+        const gate = window.crimsonHorizonArcLevel(ch.arc);
+        const arcStarted = CRIMSON_HORIZON_CHAPTERS.some(function(o){ return o.arc === ch.arc && game.comicProgressCrimsonHorizon[o.id]; });
+        if (!arcStarted && level() < gate) return 'crimson_horizon_level_gate_' + ch.arc;
+        return 'complete_crimson_horizon_chapter_' + ch.id;
+      }
     }
     return 'crimson_horizon_part1_complete_for_now';
   };
@@ -733,7 +743,7 @@
 
   function prog(){ return (game && game.comicProgressCrimsonHorizon) || {}; }
   const CH_PORT_UNLOCK = {
-    harbor_beyond_charts: function(){ return !!game.arc42Complete && level() >= 465; },
+    harbor_beyond_charts: function(){ return !!game.arc42Complete; },
     storm_shelf: function(){ return !!prog()[11]; },     // Ch.010 read
     west_gate:   function(){ return !!prog()[33]; },     // Ch.032 read
     south_gate:  function(){ return !!prog()[49]; },     // Ch.048 read
@@ -1304,7 +1314,8 @@
     if (!sequelAnnounced) return;
     const so = window.crimsonHorizonObjectiveState();
     const cur = currentChapter();
-    const headerArc = cur ? cur.arc : CRIMSON_HORIZON_CHAPTERS[CRIMSON_HORIZON_CHAPTERS.length - 1].arc;
+    const gateArcForHeader = (typeof so === 'string' && so.indexOf('crimson_horizon_level_gate_') === 0) ? Number(so.split('_').pop()) : null;
+    const headerArc = cur ? cur.arc : (gateArcForHeader || CRIMSON_HORIZON_CHAPTERS[CRIMSON_HORIZON_CHAPTERS.length - 1].arc);
     const meta = CRIMSON_HORIZON_ARC_META[headerArc] || CRIMSON_HORIZON_ARC_META[1];
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">' +
       (meta.cover ? '<img loading="lazy" decoding="async" src="' + meta.cover + '" alt="' + esc(meta.kicker + ': ' + meta.title) + '" style="width:100%;border-radius:8px;margin-bottom:12px;">' : '') +
@@ -1314,6 +1325,10 @@
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Crimson Horizon Locked</div><div class="story-chapter-sub">Reach Level 465 to begin.</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
+    }
+    if (typeof so === 'string' && so.indexOf('crimson_horizon_level_gate_') === 0) {
+      const gateArc = Number(so.split('_').pop()), gate = window.crimsonHorizonArcLevel(gateArc);
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + gateArc + ' opens at Level ' + gate + '</div><div class="story-chapter-sub">Level ' + level() + ' / ' + gate + '. Earn XP from the Reach, raids, bounties and trading.</div></div>';
     }
     CRIMSON_HORIZON_CHAPTERS.forEach(function(ch){
       const done = !!prog()[ch.id];

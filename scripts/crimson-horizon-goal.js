@@ -22,6 +22,10 @@
     if (so === null) {
       title = 'Crimson Horizon — Reach Level 465';
       text = 'Level ' + level() + ' / 465. The next voyage opens at Level 465: earn XP from the Reach, raids, bounties and trading.';
+    } else if (typeof so === 'string' && so.indexOf('crimson_horizon_level_gate_') === 0) {
+      const arc = Number(so.split('_').pop()), gate = window.crimsonHorizonArcLevel(arc);
+      title = 'Crimson Horizon — Reach Level ' + gate;
+      text = 'Level ' + level() + ' / ' + gate + '. Arc ' + arc + ' opens at Level ' + gate + ': earn XP from the Reach, raids, bounties and trading.';
     } else if (so === 'crimson_horizon_part1_complete_for_now') {
       title = 'Crimson Horizon — All Caught Up';
       text = 'Every available chapter is read. More is on the way.';
