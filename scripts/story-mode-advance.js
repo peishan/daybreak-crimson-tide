@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V510 · Shorter banners and toasts, new requests count up in one banner';
+window.__CT_BUILD__='V511 · Fix stale scripts served by the service worker';
