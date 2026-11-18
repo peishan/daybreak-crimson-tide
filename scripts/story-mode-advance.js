@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V514 · Twins record lists all three aunts and the right status';
+window.__CT_BUILD__='V515 · Twins record adds guardians and cousins';
