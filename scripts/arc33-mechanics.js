@@ -147,14 +147,21 @@
   }
   window.twinsRecordUnlocked = twinsRecordUnlocked;
 
+  // Awaiting Arrival until the twins are born (Arc XXXV Ch.10); then at Fair Tide, or aboard once they sail with the crew.
+  function twinsStatusText(){
+    if (!(game.comicProgress35 && game.comicProgress35[10])) return 'Awaiting Arrival';
+    const aboard = typeof window.isFielded === 'function' && game.foundCompanions && game.foundCompanions.vaeren && window.isFielded('vaeren');
+    return aboard ? 'Aboard the Crimson Tide' : 'At Fair Tide';
+  }
   function renderTwinsRecordPanel(){
     if (!twinsRecordUnlocked()) return '';
     return '<div class="panel-title" style="margin-top:16px;">👶 Children of San &amp; Joel</div>'+
       '<article class="quest-item">'+
         'Parents: San &amp; Joel<br>'+
-        'Aunt: Joy<br>'+
+        'Aunt: Joy, Aisyah, Mezstorm<br>'+
         'Home: Fair Tide<br>'+
-        'Status: Awaiting Arrival'+
+        'Status: '+twinsStatusText()+
+
       '</article>';
   }
   window.renderTwinsRecordPanel = renderTwinsRecordPanel;
