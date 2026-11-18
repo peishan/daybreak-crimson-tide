@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V500 · Daily weather and raider activity at sea';
+window.__CT_BUILD__='V501 · Price Book, steady prices and sequel seasons';
