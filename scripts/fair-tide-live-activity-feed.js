@@ -83,6 +83,8 @@
     }
 
     if (!fresh.length) return;
+    // A brand-new voyage has no Fair Tide yet: keep the first minutes quiet (they are marked seen, just not announced)
+    if (typeof window.ctStartQuiet === 'function' && window.ctStartQuiet()) return;
 
     fresh.forEach(function(item){
       logEvent(item.icon + ' ' + item.text, 'good');
