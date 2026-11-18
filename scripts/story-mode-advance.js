@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V497 · Lazy-load images to stop memory crashes';
+window.__CT_BUILD__='V498 · Three or more banners collapse into one';

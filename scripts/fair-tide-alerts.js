@@ -100,7 +100,10 @@
       } else if (fresh.length > 1) {
         window.notify({icon: '📋', title: fresh.length + ' new requests at Fair Tide', text: fresh.map(function(s){ const t = template(s); return t ? t.title : ''; }).filter(Boolean).slice(0, 3).join(' · '), kind: 'info', onClick: openRequests, hint: 'Tap to open the Requests board'});
       }
-      ready.forEach(function(s){
+      if (ready.length > 1) {
+        // Several finished at once: one banner, not a stack of them.
+        window.notify({icon: '✅', title: ready.length + ' requests are finished', text: ready.map(function(s){ const t = template(s); return t ? t.title : ''; }).filter(Boolean).slice(0, 3).join(' · ') + '. Claim the rewards at Fair Tide.', kind: 'info', remind: true, tag: 'requests-ready', onClick: openRequests, hint: 'Tap to open the Requests board'});
+      } else ready.forEach(function(s){
         const t = template(s);
         window.notify({icon: '✅', title: (t ? t.title : 'A request') + ' is finished', text: (s.assignedNames && s.assignedNames.length ? s.assignedNames.join(' and ') + (s.assignedNames.length > 1 ? ' are' : ' is') : 'Your crew is') + ' back. Claim the reward at Fair Tide.', kind: 'info', remind: true, tag: 'request-ready', onClick: openRequests, hint: 'Tap to claim'});
       });
