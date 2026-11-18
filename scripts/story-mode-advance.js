@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V506 · The Lodestar, the compass ship objective, and the unified sequel crew';
+window.__CT_BUILD__='V507 · Soel becomes protector of the twins in the sequel';
