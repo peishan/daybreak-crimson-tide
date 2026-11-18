@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V512 · The Playroom and the twins bond';
+window.__CT_BUILD__='V513 · Fair Tide tabs: Roster and Allies first, then Dispatch and Trade';
