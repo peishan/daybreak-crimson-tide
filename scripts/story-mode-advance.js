@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V511 · Fix stale scripts served by the service worker';
+window.__CT_BUILD__='V512 · The Playroom and the twins bond';

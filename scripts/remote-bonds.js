@@ -17,7 +17,7 @@
     san_joel: ['joel'], san_trio: ['mimi', 'renn', 'erynn'],
     tm_crew: ['@fairtide'], c_adv_crew: ['@fairtide'],
     san_aisyah: ['aisyah'], san_mez: ['mezstorm'], san_eliz: ['eliz'], san_senedra: ['senedra'],
-    san_dre: ['dre'], san_jovie: ['jovie'], san_sera: ['sera'], san_joy: ['ate_joy'],
+    san_twins: ['vaeren', 'joelle'], san_dre: ['dre'], san_jovie: ['jovie'], san_sera: ['sera'], san_joy: ['ate_joy'],
     san_sairen: ['sairen', 'joel'], sairen_twins: ['sairen', 'vaeren', 'joelle'], sairen_sally: ['sairen', 'sally'], sairen_mirelle: ['sairen'],
     levi_liang: ['levi', 'kw_liang'], levi_senedra: ['levi', 'senedra'], levi_iris: ['levi', 'iris'],
     devon_joel: ['devon', 'joel'], devon_aldric: ['devon', 'ser_aldric']

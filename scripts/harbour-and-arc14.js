@@ -342,7 +342,7 @@
   // -------------------------------------------------------------------
   // 'bonds' is not on this list any more: it is open remotely, but only for the people in the travelling
 // party (scripts/remote-bonds.js).
-  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'grooming', 'garden', 'reading', 'starmap', 'karaoke', 'uncharted', 'expedition', 'steady_reach'];
+  const REMOTE_RESTRICTED_TABS = ['clinic', 'training', 'quarters', 'grooming', 'garden', 'reading', 'starmap', 'karaoke', 'playroom', 'uncharted', 'expedition', 'steady_reach'];
   // Remote access is a fact about where the ship is, not a flag that lasts one render: the Hub re-renders on
   // every check-in, and the old one-shot flag dropped back to "in person" on the first re-render, unlocking
   // the Training Room, Quarters and the rest while the crew was still at sea.
