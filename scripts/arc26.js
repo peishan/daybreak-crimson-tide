@@ -167,7 +167,7 @@
       window.__ctShowArc26Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc26/arc26-cover-the-price-of-independence.webp" alt="Arc XXVI — The Price of Independence" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc26/arc26-cover-the-price-of-independence.webp" alt="Arc XXVI — The Price of Independence" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXVI</div><div class="story-act-title">The Price of Independence</div>'+
       '<div class="story-act-tagline">Being independent means making difficult choices.</div></div>';
     if (!arc26Ready) {

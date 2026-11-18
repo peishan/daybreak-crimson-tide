@@ -164,7 +164,7 @@
       window.__ctShowArc27Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc27/arc27-cover-the-nameless.webp" alt="Arc XXVII — The Nameless" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc27/arc27-cover-the-nameless.webp" alt="Arc XXVII — The Nameless" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXVII</div><div class="story-act-title">The Nameless</div>'+
       '<div class="story-act-tagline">The enemy isn\'t always the person standing in front of you.</div></div>';
     if (!arc27Ready) {

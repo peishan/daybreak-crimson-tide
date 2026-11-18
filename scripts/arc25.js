@@ -151,7 +151,7 @@
       window.__ctShowArc25Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc25/arc25-cover-a-friends-request.webp" alt="Arc XXV — A Friend\'s Request" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc25/arc25-cover-a-friends-request.webp" alt="Arc XXV — A Friend\'s Request" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXV</div><div class="story-act-title">A Friend\'s Request</div>'+
       '<div class="story-act-tagline">Sometimes asking for help is harder than giving it.</div></div>';
     if (!arc25Ready) {

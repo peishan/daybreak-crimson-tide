@@ -153,7 +153,7 @@
       window.__ctShowArc33Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc33/arc33-cover-the-family-we-become.webp" alt="Arc XXXIII — The Family We Become" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc33/arc33-cover-the-family-we-become.webp" alt="Arc XXXIII — The Family We Become" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXIII</div><div class="story-act-title">The Family We Become</div>'+
       '<div class="story-act-tagline">Family isn\'t just who you were born with.</div></div>';
     if (!arc33Ready) {

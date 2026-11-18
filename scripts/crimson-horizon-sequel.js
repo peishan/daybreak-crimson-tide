@@ -1307,7 +1307,7 @@
     const headerArc = cur ? cur.arc : CRIMSON_HORIZON_CHAPTERS[CRIMSON_HORIZON_CHAPTERS.length - 1].arc;
     const meta = CRIMSON_HORIZON_ARC_META[headerArc] || CRIMSON_HORIZON_ARC_META[1];
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">' +
-      (meta.cover ? '<img src="' + meta.cover + '" alt="' + esc(meta.kicker + ': ' + meta.title) + '" style="width:100%;border-radius:8px;margin-bottom:12px;">' : '') +
+      (meta.cover ? '<img loading="lazy" decoding="async" src="' + meta.cover + '" alt="' + esc(meta.kicker + ': ' + meta.title) + '" style="width:100%;border-radius:8px;margin-bottom:12px;">' : '') +
       '<div class="story-act-kicker">' + esc(meta.kicker) + '</div><div class="story-act-title">' + esc(meta.title) + '</div>' +
       '<div class="story-act-tagline">' + esc(meta.tagline) + '</div></div>';
     if (!chReady) {

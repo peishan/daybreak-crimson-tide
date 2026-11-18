@@ -83,7 +83,7 @@
       '<div class="panel" style="margin-top:12px;">'+
       '<div class="panel-title">🖼️ Extended Crew</div>'+
       '<p style="font-size:.8rem;opacity:.8;margin-bottom:10px;">Different people. Different paths. A shared horizon. The whole cast, from San and Joel to the Horizon Team, in one place.</p>'+
-      '<img src="assets/crew/crew-expedition-reference-sheet.png" alt="Crimson Tide — full crew reference" '+
+      '<img loading="lazy" decoding="async" src="assets/crew/crew-expedition-reference-sheet.png" alt="Crimson Tide — full crew reference" '+
       'style="width:100%;border-radius:8px;cursor:pointer;display:block;" '+
       'onclick="openComicImage(\'assets/crew/crew-expedition-reference-sheet.png\')">'+
       '</div>');

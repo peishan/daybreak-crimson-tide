@@ -173,7 +173,7 @@
       window.__ctShowArc24Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc24/arc24-cover-the-people-without-names.webp" alt="Arc XXIV — The People Without Names" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc24/arc24-cover-the-people-without-names.webp" alt="Arc XXIV — The People Without Names" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXIV</div><div class="story-act-title">The People Without Names</div>'+
       '<div class="story-act-tagline">Not everyone who watches Fair Tide wants to be known.</div></div>';
     if (!arc24Ready) {

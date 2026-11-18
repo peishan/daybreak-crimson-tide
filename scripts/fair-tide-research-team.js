@@ -60,7 +60,7 @@
   }
 
   function portraitWithFallback(m){
-    return '<div class="rt-pt"><img src="' + m.portrait + '" alt="" onerror="this.parentNode.textContent=\'' + m.icon + '\'"></div>';
+    return '<div class="rt-pt"><img loading="lazy" decoding="async" src="' + m.portrait + '" alt="" onerror="this.parentNode.textContent=\'' + m.icon + '\'"></div>';
   }
 
   function memberRow(m){

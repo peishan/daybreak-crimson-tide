@@ -164,7 +164,7 @@
       window.__ctShowArc29Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc29/arc29-cover-the-spy.webp" alt="Arc XXIX — The Spy" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc29/arc29-cover-the-spy.webp" alt="Arc XXIX — The Spy" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXIX</div><div class="story-act-title">The Spy</div>'+
       '<div class="story-act-tagline">A person can hide the truth without everything they show you being false.</div></div>';
     if (!arc29Ready) {

@@ -133,7 +133,7 @@
       window.__ctShowArc10Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc10/arc10-cover-the-first-horizon.webp" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc10/arc10-cover-the-first-horizon.webp" alt="Arc X — The First Horizon" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc X</div><div class="story-act-title">The First Horizon</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC10_CHAPTERS.length+' of 24. Some horizons must be built before they can be crossed.</div></div>';
     if (!arc10Ready) {
@@ -292,7 +292,7 @@
       window.__ctShowArc11Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.webp" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc11/arc11-cover-the-world-beyond-the-window.webp" alt="Arc XI — The World Beyond the Window" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XI</div><div class="story-act-title">The World Beyond the Window</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC11_CHAPTERS.length+' of 24. Seeing another world is not the same as reaching it.</div></div>';
     if (!arc11Ready) {
@@ -442,7 +442,7 @@
       window.__ctShowArc12Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc12/arc12-cover-the-first-crossing.webp" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc12/arc12-cover-the-first-crossing.webp" alt="Arc XII — The First Crossing" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XII</div><div class="story-act-title">The First Crossing</div>'+
       '<div class="story-act-tagline">Chapters 1-'+ARC12_CHAPTERS.length+' of 24. Every new world begins with someone taking the first step.</div></div>';
     if (!arc12Ready) {
@@ -667,7 +667,7 @@
     if (!container) return;
     const ready = typeof window.memoryArchiveObjectiveState === 'function' && window.memoryArchiveObjectiveState() !== null;
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/memory-archive/memory-archive-cover.webp" alt="The Memory Archive" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/memory-archive/memory-archive-cover.webp" alt="The Memory Archive" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Memory Archive</div><div class="story-act-title">Before the Crimson Tide</div>'+
       '<div class="story-act-tagline">San and Joel\'s life before the ship — thirteen fragments, love, hardship, and family.</div></div>';
     if (!ready) {

@@ -118,7 +118,7 @@
       window.__ctShowArc2Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc2/arc2-cover-new-shores.webp" alt="Arc II — New Shores" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc2/arc2-cover-new-shores.webp" alt="Arc II — New Shores" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc II</div><div class="story-act-title">A Voyage to Remember</div>'+
       '<div class="story-act-tagline">14 story chapters. New horizons, familiar hearts.</div></div>';
     if(!arc1Done){

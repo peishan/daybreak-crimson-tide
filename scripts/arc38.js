@@ -157,7 +157,7 @@
       window.__ctShowArc38Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc38/arc38-cover-the-lives-we-didnt-live.webp" alt="Arc XXXVIII — The Lives We Didn\'t Live" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc38/arc38-cover-the-lives-we-didnt-live.webp" alt="Arc XXXVIII — The Lives We Didn\'t Live" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXXVIII</div><div class="story-act-title">The Lives We Didn\'t Live</div>'+
       '<div class="story-act-tagline">A life that never happened can still teach us something about the one we chose.</div></div>';
     if (!arc38Ready) {

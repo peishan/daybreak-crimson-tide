@@ -125,7 +125,7 @@
       window.__ctShowArc41BridgeSplash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/bridge-arc42/bridge-arc42-cover-the-shore-beyond-the-horizon.webp" alt="The Shore Beyond the Horizon" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/bridge-arc42/bridge-arc42-cover-the-shore-beyond-the-horizon.webp" alt="The Shore Beyond the Horizon" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Bridge to Arc XLII</div><div class="story-act-title">The Shore Beyond the Horizon</div>'+
       '<div class="story-act-tagline">Every world has a history of its own, even one that began as a story.</div></div>';
     if (!bridgeReady) {

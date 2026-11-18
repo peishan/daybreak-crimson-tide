@@ -125,7 +125,7 @@
       window.__ctShowArc19Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc19/arc19-the-worlds-we-know.webp" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc19/arc19-the-worlds-we-know.webp" alt="Arc XIX — The Worlds We Know" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XIX</div><div class="story-act-title">The Worlds We Know</div>'+
       '<div class="story-act-tagline">Before anything new — everything they never finished.</div></div>';
     if (!arc19Ready) {

@@ -158,7 +158,7 @@
       window.__ctShowArc23Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
-      '<img src="assets/comics/arc23/arc23-cover-the-wider-tide.webp" alt="Arc XXIII — The Wider Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
+      '<img loading="lazy" decoding="async" src="assets/comics/arc23/arc23-cover-the-wider-tide.webp" alt="Arc XXIII — The Wider Tide" style="width:100%;border-radius:8px;margin-bottom:12px;">'+
       '<div class="story-act-kicker">Arc XXIII</div><div class="story-act-title">The Wider Tide</div>'+
       '<div class="story-act-tagline">A home becomes important when people beyond its walls begin to depend on it.</div></div>';
     if (!arc23Ready) {

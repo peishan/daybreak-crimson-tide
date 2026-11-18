@@ -218,7 +218,7 @@ function renderComicPanels(ch, key) {
       const image = p.image || p.src;
       return `<article class="comic-panel" style="margin:0 0 14px;">
         ${image
-          ? `<img class="comic-image-panel" src="${esc(image)}" alt="${esc(p.caption || 'Comic panel '+(i+1))}"
+          ? `<img loading="lazy" decoding="async" class="comic-image-panel" src="${esc(image)}" alt="${esc(p.caption || 'Comic panel '+(i+1))}"
               onerror="this.outerHTML='<div class=\\'comic-panel-fallback\\'>Comic artwork not loaded yet<br><small>${esc(image)}</small></div>'">`
           : `<div class="comic-panel-fallback">Comic artwork slot · Panel ${i+1}</div>`}
         ${p.caption ? `<div class="comic-caption">${esc(p.caption)}</div>` : ''}
@@ -863,7 +863,7 @@ function renderEquipment() {
     const rules = gearMemberRules(m.id);
     const eq = game.equippedGear[m.id] || {};
     const visibleSlots = GEAR_SLOTS.filter(s => !(rules.hidden || []).includes(s));
-    const portrait = m.portraitAsset ? `<img src="${esc(m.portraitAsset)}" alt="" class="gear-portrait">` : `<span>${m.portrait}</span>`;
+    const portrait = m.portraitAsset ? `<img loading="lazy" decoding="async" src="${esc(m.portraitAsset)}" alt="" class="gear-portrait">` : `<span>${m.portrait}</span>`;
     return `<div class="gear-member panel">
       <div class="gear-member-head">${portrait}<div><div class="gear-member-name">${m.name}</div><div class="gear-member-role">${m.role} · ${rules.label}</div><div class="gear-bonus-summary">${gearSummaryText(m.id)}</div></div></div>
       <div class="gear-slots">
@@ -2286,7 +2286,7 @@ function renderStoryModePanel(){
   const panel=document.getElementById('storyModePanel');
   const counter=document.getElementById('storyModeCounter');
   if(!panel||!p) return;
-  panel.innerHTML=`<div class="story-mode-image-wrap"><img class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap the screen to continue</div>`;
+  panel.innerHTML=`<div class="story-mode-image-wrap"><img loading="lazy" decoding="async" class="story-mode-image" src="${p.image}" alt="Chapter ${storyModeChapterId} story panel ${storyModeIndex+1}" draggable="false"></div><div class="story-mode-text"><div class="story-mode-speaker">${esc(p.caption)}</div><div class="story-mode-caption">${esc(p.text)}</div></div><div class="story-mode-tap">Tap the screen to continue</div>`;
   if(counter) counter.textContent=`${storyModeIndex+1} / ${storyModeChapter.length}`;
   window.scrollTo({top:0,left:0,behavior:'instant'});
   // Diagnostic: confirm whether this panel's image actually loads. A broken
@@ -3075,7 +3075,7 @@ function portraitHTML(path, name='') {
   const src = candidates[0] || '';
   const safeName = String(name || '').replace(/"/g,'&quot;');
   const fallback = `this.onerror=null;this.style.display='none';this.parentElement.classList.add('portrait-missing');this.parentElement.setAttribute('data-name','${safeName}')`;
-  return `<div class="portrait-frame"><img src="${src}" alt="${safeName}" loading="lazy" onerror="${fallback}"><span class="portrait-fallback">${safeName.slice(0,1).toUpperCase()}</span></div>`;
+  return `<div class="portrait-frame"><img loading="lazy" decoding="async" src="${src}" alt="${safeName}" onerror="${fallback}"><span class="portrait-fallback">${safeName.slice(0,1).toUpperCase()}</span></div>`;
 }
 
 const CREW_PORTRAITS = {
@@ -3104,7 +3104,7 @@ function portraitKeyFor(name) {
 function portraitHTML(name,size='52px'){
   const key=portraitKeyFor(name), src=CREW_PORTRAITS[key];
   if(!src)return `<div class="crew-portrait fallback" style="width:${size};height:${size};">⚓</div>`;
-  return `<img class="crew-portrait" src="${src}" alt="" style="width:${size};height:${size};object-fit:cover;" onerror="this.outerHTML='<div class=&quot;crew-portrait fallback&quot; style=&quot;width:${size};height:${size};&quot;>⚓</div>'">`;
+  return `<img loading="lazy" decoding="async" class="crew-portrait" src="${src}" alt="" style="width:${size};height:${size};object-fit:cover;" onerror="this.outerHTML='<div class=&quot;crew-portrait fallback&quot; style=&quot;width:${size};height:${size};&quot;>⚓</div>'">`;
 }
 function wireCrewPortraits(){
   document.querySelectorAll('.crew-card,.party-card,.member-card,.crew-member').forEach(card=>{
@@ -6425,7 +6425,7 @@ function portraitMarkup(member, mode='party') {
   const imgCls = mode === 'combat' ? 'combat-portrait-img' : mode === 'strip' ? '' : 'party-portrait-img';
   if (!asset) return `<div class="${cls}" aria-label="${esc(member.name || '')}">${fallback}</div>`;
   return `<div class="${cls}" aria-label="${esc(member.name || '')}">
-    <img class="${imgCls}" src="${asset}" alt="${esc(member.name || '')}" onerror="this.style.display='none';this.parentElement.textContent='${fallback.replace(/'/g, "\\'")}'">
+    <img loading="lazy" decoding="async" class="${imgCls}" src="${asset}" alt="${esc(member.name || '')}" onerror="this.style.display='none';this.parentElement.textContent='${fallback.replace(/'/g, "\\'")}'">
   </div>`;
 }
 function togglePartyListExpanded() {
