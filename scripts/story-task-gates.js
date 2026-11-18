@@ -1,0 +1,223 @@
+(function(){
+  // -------------------------------------------------------------------
+  // STORY TASK GATES for Arc XLII and the Crimson Horizon sequel: the same idea as N's
+  // gates (resident-task-gates.js). The next chapter waits at set points until you have done
+  // a small task, and the Current Objective says what to do and why. Gates count from when
+  // they open (a save part-way through starts fresh) and gates already passed are never
+  // re-applied.
+  //
+  // ARC XLII, "Host the guests": the visitors from Lunareth and Dragonvale stay at Fair Tide
+  // for a few chapters. Before the last chapter of each visit you check in with the guests who
+  // are there (once each, once a day), so the visits are ones you took part in.
+  //
+  // CRIMSON HORIZON, "use the trade systems": before each arc after the first, one task from
+  // the sequel's trading: sell goods at the port the last arc ended in, finish a delivery
+  // contract, or have prices from several ports in your Price Book. Like the level gates, only
+  // the START of an arc is held back; once an arc is under way it is never stopped.
+  // -------------------------------------------------------------------
+  // ---- the gates ----
+  const HOST = [
+    { id: 'h1', before: 15, ids: ['jade', 'devon'],                          title: 'Host Jade and Devon' },
+    { id: 'h2', before: 22, ids: ['jade', 'devon', 'sally', 'levi'],          title: 'Host the four guests' },
+    { id: 'h3', before: 28, ids: ['hugh', 'sera'],                            title: 'Host Hugh and Sera' },
+    { id: 'h4', before: 33, ids: ['adrian', 'eve'],                           title: 'Host Adrian and Eve' },
+    { id: 'h5', before: 36, ids: ['sky', 'jenika'],                           title: 'Host Sky and Jenika' },
+    { id: 'h6', before: 38, ids: ['rheon', 'mirelle'],                        title: 'Host Rheon and Mirelle' },
+    { id: 'h7', before: 41, ids: ['aster', 'fen', 'roc', 'delilah'],          title: 'Host the Dragonvale guests' }
+  ];
+  // Sequel arc N (2..14) is held until the task is done. port: where the previous arc ended.
+  const TRADE = [
+    { id: 't2',  arc: 2,  title: 'Make a first trade run',        tasks: [{ k: 'sell', port: 'harbor_beyond_charts', n: 10 }] },
+    { id: 't3',  arc: 3,  title: 'Trade at Storm Shelf',          tasks: [{ k: 'sell', port: 'storm_shelf', n: 20 }] },
+    { id: 't4',  arc: 4,  title: 'Take on a delivery contract',   tasks: [{ k: 'contract', n: 1 }] },
+    { id: 't5',  arc: 5,  title: 'Trade at the West Gate',        tasks: [{ k: 'sell', port: 'west_gate', n: 20 }] },
+    { id: 't6',  arc: 6,  title: 'Learn the coast’s prices',      tasks: [{ k: 'book', n: 6 }] },
+    { id: 't7',  arc: 7,  title: 'Trade at Island Harbor',        tasks: [{ k: 'sell', port: 'island_harbor', n: 20 }] },
+    { id: 't8',  arc: 8,  title: 'Finish a delivery contract',    tasks: [{ k: 'contract', n: 1 }] },
+    { id: 't9',  arc: 9,  title: 'Trade at Channel Island',       tasks: [{ k: 'sell', port: 'channel_island', n: 20 }] },
+    { id: 't10', arc: 10, title: 'Trade at Terrace Harbor',       tasks: [{ k: 'sell', port: 'terrace_harbor', n: 20 }] },
+    { id: 't11', arc: 11, title: 'Deliver for a merchant',        tasks: [{ k: 'contract', n: 1 }] },
+    { id: 't12', arc: 12, title: 'Trade at the Timber Port',      tasks: [{ k: 'sell', port: 'timber_port', n: 20 }] },
+    { id: 't13', arc: 13, title: 'Trade at Nestcliff Harbor',     tasks: [{ k: 'sell', port: 'nestcliff_harbor', n: 20 }] },
+    { id: 't14', arc: 14, title: 'Trade at Farshore Estuary',     tasks: [{ k: 'sell', port: 'farshore_estuary', n: 20 }] }
+  ];
+
+  function done(){ game.storyGateDone = game.storyGateDone || {}; return game.storyGateDone; }
+  function starts(){ game.storyGateStart = game.storyGateStart || {}; return game.storyGateStart; }
+  function told(){ game.storyGateTold = game.storyGateTold || {}; return game.storyGateTold; }
+  function tc(){ game.storyTaskCounts = game.storyTaskCounts || { soldAt: {}, contracts: 0, visitCheckins: {} }; const c = game.storyTaskCounts; c.soldAt = c.soldAt || {}; c.visitCheckins = c.visitCheckins || {}; return c; }
+  function portName(id){ const p = (typeof PORTS !== 'undefined') ? PORTS.find(function(x){ return x.id === id; }) : null; return p ? p.name : id; }
+  function personName(id){
+    const c = (window.TRIBUTE_CROSSOVER_CAST || []).find(function(x){ return x.id === id; });
+    if (c) return c.name;
+    const m = (typeof ALL_PARTY !== 'undefined' ? ALL_PARTY : []).find(function(x){ return x.id === id; });
+    return m ? m.name.charAt(0) + m.name.slice(1).toLowerCase() : id.charAt(0).toUpperCase() + id.slice(1);
+  }
+  function rec(id){ return (typeof window.fairTideResidentsState === 'function') ? window.fairTideResidentsState()[id] : null; }
+  function present(id){ const r = rec(id); return !!(r && (r.status === 'resident' || r.status === 'working_resident')); }
+  function cp42(){ return game.comicProgress42 || {}; }
+  function ch(){ return game.comicProgressCrimsonHorizon || {}; }
+
+  // ---- which gate is active right now ----
+  function hostGate(){
+    const c = cp42();
+    for (let i = 0; i < HOST.length; i++) {
+      const g = HOST[i];
+      if (done()[g.id]) continue;
+      if (c[g.before]) { done()[g.id] = true; continue; }
+      if (!c[g.before - 1]) continue;
+      if (!g.ids.some(present)) continue;                 // nobody here to host
+      return { kind: 'host', g: g };
+    }
+    return null;
+  }
+  function chapterList(){ return window.CRIMSON_HORIZON_CHAPTERS || []; }
+  function sideIds(){ return window.CRIMSON_HORIZON_SIDE_IDS || []; }
+  function tradeGate(){
+    if (!game.arc42Complete) return null;
+    const list = chapterList(), side = sideIds();
+    const next = list.find(function(c){ return side.indexOf(c.id) === -1 && !ch()[c.id]; });
+    if (!next || next.arc < 2) return null;
+    const g = TRADE.find(function(t){ return t.arc === next.arc; });
+    if (!g || done()[g.id]) return null;
+    if (list.some(function(o){ return o.arc === next.arc && ch()[o.id]; })) { done()[g.id] = true; return null; }   // arc already under way
+    // A task at a port you cannot reach cannot be done: skip it.
+    if (g.tasks.some(function(t){ return t.port && typeof isPortUnlocked === 'function' && !isPortUnlocked(t.port); })) return null;
+    return { kind: 'trade', g: g, chapter: next };
+  }
+  function activeGate(){ return hostGate() || tradeGate(); }
+
+  // ---- progress ----
+  function hostProgress(g){
+    const base = starts()[g.id] = starts()[g.id] || Object.assign({}, tc().visitCheckins);
+    const here = g.ids.filter(present);
+    return here.map(function(id){ return { label: 'Check in with ' + personName(id), have: (tc().visitCheckins[id] || 0) > (base[id] || 0) ? 1 : 0, need: 1 }; });
+  }
+  function tradeProgress(g){
+    const c = tc();
+    const base = starts()[g.id] = starts()[g.id] || { soldAt: Object.assign({}, c.soldAt), contracts: c.contracts };
+    return g.tasks.map(function(t){
+      if (t.k === 'sell') return { label: 'Sell ' + t.n + ' goods at ' + portName(t.port), have: Math.min(t.n, (c.soldAt[t.port] || 0) - ((base.soldAt || {})[t.port] || 0)), need: t.n };
+      if (t.k === 'contract') return { label: 'Finish a delivery contract', have: Math.min(t.n, c.contracts - (base.contracts || 0)), need: t.n };
+      const ports = Object.keys(game.priceBook || {}).length;
+      return { label: 'Have prices from ' + t.n + ' ports in your Price Book', have: Math.min(t.n, ports), need: t.n };
+    });
+  }
+  function progress(a){ return a.kind === 'host' ? hostProgress(a.g) : tradeProgress(a.g); }
+  function met(a){ return progress(a).every(function(p){ return p.have >= p.need; }); }
+  window.storyTaskGate = function(){ const a = activeGate(); return a && !met(a) ? { gate: a.g, kind: a.kind, progress: progress(a), chapter: a.kind === 'host' ? a.g.before : (a.chapter && a.chapter.id) } : null; };
+
+  // ---- hold the chapter back ----
+  const oldArc42 = window.arc42ObjectiveState;
+  if (typeof oldArc42 === 'function') {
+    window.arc42ObjectiveState = function(){
+      const s = oldArc42.apply(this, arguments);
+      const m = /^complete_arc42_chapter_(\d+)$/.exec(s || '');
+      if (m) { const a = hostGate(); if (a && a.g.before === +m[1] && !met(a)) return 'arc42_task_' + a.g.id; }
+      return s;
+    };
+  }
+  const oldCH = window.crimsonHorizonObjectiveState;
+  if (typeof oldCH === 'function') {
+    window.crimsonHorizonObjectiveState = function(){
+      const s = oldCH.apply(this, arguments);
+      if (/^complete_crimson_horizon_chapter_(\d+)$/.test(s || '')) { const a = tradeGate(); if (a && !met(a)) return 'crimson_horizon_task_' + a.g.id; }
+      return s;
+    };
+  }
+
+  // ---- counting ----
+  function wrap(name, fn){ const old = window[name]; if (typeof old !== 'function') return; window[name] = function(){ return fn(old, this, arguments); }; }
+  wrap('checkInOnResident', function(old, self, args){
+    const id = args[0], can = typeof window.canCheckInOnResident === 'function' && window.canCheckInOnResident(id);
+    const r = old.apply(self, args);
+    if (can) tc().visitCheckins[id] = (tc().visitCheckins[id] || 0) + 1;
+    after();
+    return r;
+  });
+  wrap('checkInAllResidents', function(old, self, args){
+    const ids = Object.keys(window.fairTideResidentsState ? window.fairTideResidentsState() : {}).filter(function(id){ return present(id) && window.canCheckInOnResident(id); });
+    const r = old.apply(self, args);
+    ids.forEach(function(id){ tc().visitCheckins[id] = (tc().visitCheckins[id] || 0) + 1; });
+    after();
+    return r;
+  });
+  wrap('sellGood', function(old, self, args){
+    const id = args[0], loc = game.location, before = Number((game.cargo || {})[id] || 0);
+    const r = old.apply(self, args);
+    const sold = before - Number((game.cargo || {})[id] || 0);
+    if (sold > 0 && id !== 'contraband') { tc().soldAt[loc] = (tc().soldAt[loc] || 0) + sold; after(); }
+    return r;
+  });
+  wrap('checkQuestProgress', function(old, self, args){
+    const before = (game.activeQuests || []).filter(function(q){ return q && q.type === 'deliver'; }).map(function(q){ return q.id; });
+    const r = old.apply(self, args);
+    if (args[0] === 'deliver') {
+      const nowIds = (game.activeQuests || []).map(function(q){ return q && q.id; });
+      const finished = before.filter(function(id){ return nowIds.indexOf(id) === -1; }).length;
+      if (finished) { tc().contracts += finished; after(); }
+    }
+    return r;
+  });
+
+  // ---- telling the player ----
+  function announce(){
+    const a = activeGate(); if (!a) return;
+    const key = a.g.id;
+    if (met(a)) {
+      if (!told()[key + '_met']) { told()[key + '_met'] = true; if (typeof window.notify === 'function') window.notify({ icon: '📖', title: 'The story can go on', text: 'The next chapter is open.', kind: 'info', duration: 5000 }); }
+      return;
+    }
+    if (!told()[key]) {
+      told()[key] = true;
+      const why = a.kind === 'host' ? 'Your guests are here for a few chapters. Spend a little time with them.' : 'The next arc is waiting on a bit of trade. See the Current Objective.';
+      if (typeof window.notify === 'function') window.notify({ icon: a.kind === 'host' ? '🤝' : '⚖️', title: a.g.title, text: why, kind: 'info', duration: 6000 });
+    }
+  }
+  function after(){
+    try { announce(); if (typeof saveGameQuiet === 'function') saveGameQuiet(); if (typeof renderMainGoal === 'function') renderMainGoal(); if (typeof renderStory === 'function' && document.querySelector('#storyScreen.active')) renderStory(); } catch(e) {}
+  }
+
+  const oldGoal = window.renderMainGoal;
+  if (typeof oldGoal === 'function') {
+    window.renderMainGoal = function(){
+      const r = oldGoal.apply(this, arguments);
+      try {
+        const t = window.storyTaskGate(), el = document.getElementById('mainGoalPanel');
+        if (t && el) {
+          const lines = t.progress.map(function(p){ return (p.have >= p.need ? '✓ ' : '○ ') + p.label + (p.need > 1 ? ' (' + p.have + '/' + p.need + ')' : ''); }).join(' · ');
+          let text, button;
+          if (t.kind === 'host') {
+            text = lines + '. Your guests are here for a few chapters, so look in on them. Check-ins are once a day, so give it a little time.';
+            button = game.location === 'fair_tide'
+              ? '<button class="btn btn-small btn-magic" onclick="goScreen(\'fairtide\'); switchFairTideTab(\'allies\')">🤝 Open Allies &amp; Guests</button>'
+              : '<button class="btn btn-small btn-magic" onclick="sailTo(\'fair_tide\')">⛵ Sail to Fair Tide</button>';
+          } else {
+            const sell = t.gate.tasks.find(function(x){ return x.k === 'sell'; });
+            text = lines + '. Arc ' + t.gate.arc + ' of the voyage opens once you have done a little trading.';
+            if (sell && game.location !== sell.port) button = '<button class="btn btn-small btn-magic" onclick="sailTo(\'' + sell.port + '\')">⛵ Sail to ' + esc(portName(sell.port)) + '</button>';
+            else if (t.gate.tasks.some(function(x){ return x.k === 'contract'; })) button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'tavern\')">📜 Open the Quest Board</button>';
+            else button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'port\')">🏛️ Open the Market</button>';
+          }
+          el.innerHTML = '<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ' + esc(t.gate.title) + '</div><div class="ct-goal-text">' + esc(text) + '</div>' +
+            '<div style="margin-top:6px;">' + button + '</div><div class="ct-goal-optional">' + (t.kind === 'host' ? 'Chapter ' + t.chapter : 'The next chapter') + ' opens once this is done.</div>';
+        }
+      } catch(e) {}
+      return r;
+    };
+  }
+  const oldUpdateUI = window.updateUI;
+  if (typeof oldUpdateUI === 'function') {
+    window.updateUI = function(){
+      const r = oldUpdateUI.apply(this, arguments);
+      try { if (typeof gameSessionActive !== 'undefined' && gameSessionActive) announce(); } catch(e) {}
+      return r;
+    };
+  }
+  // The sequel Story panel asks for this notice (crimson-horizon-sequel.js).
+  window.storyTaskNoticeHtml = function(){
+    const t = window.storyTaskGate(); if (!t || t.kind !== 'trade') return '';
+    return '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + t.gate.arc + ': ' + esc(t.gate.title) + '</div><div class="story-chapter-sub">' +
+      esc(t.progress.map(function(p){ return (p.have >= p.need ? '✓ ' : '○ ') + p.label + (p.need > 1 ? ' (' + p.have + '/' + p.need + ')' : ''); }).join(' · ')) + '</div></div>';
+  };
+})();

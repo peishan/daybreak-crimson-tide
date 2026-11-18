@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V517 · Twins record: chosen bond Soel, Sairen added once he joins';
+window.__CT_BUILD__='V518 · Objectives for Arc XLII guests and the sequel arcs';

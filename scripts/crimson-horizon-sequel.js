@@ -1399,6 +1399,7 @@
       const gateArc = Number(so.split('_').pop()), gate = window.crimsonHorizonArcLevel(gateArc);
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + gateArc + ' opens at Level ' + gate + '</div><div class="story-chapter-sub">Level ' + level() + ' / ' + gate + '. Earn XP from the Reach, raids, bounties and trading.</div></div>';
     }
+    if (typeof so === 'string' && so.indexOf('crimson_horizon_task_') === 0 && typeof window.storyTaskNoticeHtml === 'function') html += window.storyTaskNoticeHtml();
     CRIMSON_HORIZON_CHAPTERS.forEach(function(ch){
       const done = !!prog()[ch.id];
       const side = CH_SIDE[ch.id];
