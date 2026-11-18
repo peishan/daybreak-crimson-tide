@@ -6,7 +6,7 @@
   //    ("N joined Fair Tide", "Rashid left Fair Tide", level ups). Bigger
   //    type than the bottom toasts and the quest/bounty progress lines, a few
   //    seconds on screen, tap to dismiss, up to three stacked. A burst
-  //    (more than three at once, e.g. a save catching up) collapses into
+  //    (three or more arrivals/departures at once, e.g. three pirates taken in, or a save catching up) collapses into
   //    one summary line. window.notify({icon, title, text, kind, duration}).
   //
   // 2. "Coming Up": what opens at the next levels, nearest first (story arcs,
@@ -67,7 +67,7 @@
     setTimeout(function(){ dismiss(node); }, n.duration || 4200);
   }
 
-  // Collect everything fired within a short window; a burst of more than three becomes one summary.
+  // Collect everything fired within a short window; a burst of three or more arrivals/departures becomes one summary.
   let pending = [], flushTimer = null;
   function flush(){
     flushTimer = null;
@@ -76,7 +76,7 @@
     // Only arrivals and departures collapse into a summary; instructions and level ups always show.
     const people = batch.filter(function(b){ return b.kind === 'join' || b.kind === 'leave'; });
     const rest = batch.filter(function(b){ return !(b.kind === 'join' || b.kind === 'leave'); });
-    if (people.length > 3) show({icon:'🏘️', title: people.length + ' updates at Fair Tide', text: people.slice(0, 3).map(function(b){ return b.title; }).join(' · ') + ' and more. See Allies & Guests.', duration: 5200});
+    if (people.length >= 3) show({icon:'🏘️', title: people.length + ' updates at Fair Tide', text: people.slice(0, 3).map(function(b){ return b.title; }).join(' · ') + (people.length > 3 ? ' and more' : '') + '. See Allies & Guests.', duration: 5200});
     else people.forEach(show);
     rest.forEach(show);
   }
