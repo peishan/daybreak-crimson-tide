@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V509 · Sequel level gates retuned so they can be reached';
+window.__CT_BUILD__='V510 · Shorter banners and toasts, new requests count up in one banner';

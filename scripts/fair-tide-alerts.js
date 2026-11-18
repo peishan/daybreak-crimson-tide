@@ -94,11 +94,18 @@
       window.notify({icon: '📋', title: 'The Requests board is open', text: 'People now bring their problems to Fair Tide’s dock. Pick who to help.', kind: 'info', duration: 6000, onClick: openRequests, hint: 'Tap to open the Requests board'});
     }
     if (typeof window.notify === 'function') {
-      if (fresh.length === 1) {
-        const t = template(fresh[0]);
-        window.notify({icon: (t && t.icon) || '📋', title: 'New request: ' + (t ? t.title : 'Fair Tide'), text: fresh[0].npcName + ' is waiting at the dock.', kind: 'info', onClick: openRequests, hint: 'Tap to open the Requests board'});
-      } else if (fresh.length > 1) {
-        window.notify({icon: '📋', title: fresh.length + ' new requests at Fair Tide', text: fresh.map(function(s){ const t = template(s); return t ? t.title : ''; }).filter(Boolean).slice(0, 3).join(' · '), kind: 'info', onClick: openRequests, hint: 'Tap to open the Requests board'});
+      if (fresh.length) {
+        // New requests that arrive a few seconds apart count up in ONE banner instead of stacking up.
+        const now = Date.now();
+        if (!window.__ctNewReq || now - window.__ctNewReq.t > 20000) window.__ctNewReq = { t: now, titles: [] };
+        const nr = window.__ctNewReq; nr.t = now;
+        fresh.forEach(function(sl){ const tt = template(sl); nr.titles.push(tt ? tt.title : 'A new request'); });
+        if (nr.titles.length === 1) {
+          const t0 = template(fresh[0]);
+          window.notify({icon: (t0 && t0.icon) || '📋', title: 'New request: ' + nr.titles[0], text: fresh[0].npcName + ' is waiting at the dock.', kind: 'info', group: 'new-requests', onClick: openRequests, hint: 'Tap to open the Requests board'});
+        } else {
+          window.notify({icon: '📋', title: nr.titles.length + ' new requests at Fair Tide', text: nr.titles.slice(0, 3).join(' · '), kind: 'info', group: 'new-requests', onClick: openRequests, hint: 'Tap to open the Requests board'});
+        }
       }
       if (ready.length > 1) {
         // Several finished at once: one banner, not a stack of them.

@@ -47,9 +47,25 @@
     if (!node || node.__gone) return; node.__gone = true;
     node.classList.add('out'); setTimeout(function(){ if (node.parentNode) node.parentNode.removeChild(node); }, 320);
   }
+  const DEFAULT_MS = 3000;
   function show(n){
     const el = stack();
+    // A banner with a `group` is updated in place if one from the same group is still on screen
+    // (three new requests arriving a few seconds apart become one banner that counts up, not three).
+    if (n.group) {
+      const live = Array.prototype.find.call(el.children, function(c){ return !c.__gone && c.__group === n.group; });
+      if (live) {
+        const t = live.querySelector('.cn-title'), x = live.querySelector('.cn-text');
+        if (t) t.textContent = n.title || '';
+        if (x) x.textContent = n.text || '';
+        clearTimeout(live.__timer);
+        live.__timer = setTimeout(function(){ dismiss(live); }, n.duration || DEFAULT_MS);
+        live.onclick = function(){ dismiss(live); if (typeof n.onClick === 'function') { try { n.onClick(); } catch(e) {} } };
+        return;
+      }
+    }
     const node = document.createElement('div');
+    node.__group = n.group || null;
     node.className = 'ct-notify' + (n.kind ? ' ' + n.kind : '');
     const icon = document.createElement('div'); icon.className = 'cn-icon'; icon.textContent = n.icon || '🔔';
     const body = document.createElement('div');
@@ -64,7 +80,7 @@
     // count only the live ones; counting children here would loop forever once a fourth arrives.)
     const live = Array.prototype.filter.call(el.children, function(c){ return !c.__gone; });
     while (live.length > 3) dismiss(live.shift());
-    setTimeout(function(){ dismiss(node); }, n.duration || 4200);
+    node.__timer = setTimeout(function(){ dismiss(node); }, n.duration || DEFAULT_MS);
   }
 
   // Collect everything fired within a short window; a burst of three or more arrivals/departures becomes one summary.
