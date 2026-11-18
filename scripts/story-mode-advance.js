@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V504 · Joy goes home to look after the twins';
+window.__CT_BUILD__='V505 · Remote bonds limited to the travelling party, sequel crew change and level gates';
