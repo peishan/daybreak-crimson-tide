@@ -261,6 +261,8 @@
       when:function(){ return ch(132); }},
     {id:'tiny_cups', icon:'🥣', t:'A row of very small glazed cups stands on the nursery shelf by the window, each with a thumb-mark of glaze at the base.',
       when:function(){ return ch(133); }},
+    {id:'bags_drawing', icon:'🖍️', t:'A crayon drawing of the Crimson Tide is pinned in the playroom: Aunt Jade has the biggest sword, and a tiny figure at the edge is holding everyone\'s bags.',
+      when:function(){ return ch(144); }},
     {id:'five_wings', icon:'🏡', t:'Every wing stands now, and the Tribute House no longer looks like a place for visitors.',
       when:function(){ return WING_IDS.every(function(w){ return wingLv(w) >= 1; }); }}
   ];
