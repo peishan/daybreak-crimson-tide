@@ -175,10 +175,9 @@
       game.comicProgress[18]=true;
       if(typeof saveGame==='function') saveGame();
     }
-    // Senedra and Zaki join with Chapters 20 and 21 (also repairs saves that
-    // finished those chapters before joining was added).
-    if(game.comicProgress?.[20]) joinEscapedCompanion('senedra');
-    if(game.comicProgress?.[21]) joinEscapedCompanion('zaki');
+    // Senedra and Zaki join together with Chapter 23 (also repairs saves that
+    // finished it before joining was wired).
+    if(game.comicProgress?.[23]) joinSenedraAndZaki();
     if(!game.comicProgress?.[19]) return 'complete_chapter_19';
     if(!game.comicProgress?.[20]) return 'complete_chapter_20';
     if(!game.comicProgress?.[21]) return 'complete_chapter_21';
@@ -224,8 +223,7 @@
           20:'complete_chapter_21',21:'complete_chapter_22',22:'complete_chapter_23',
           23:'complete_chapter_24',24:'continue_voyage'
         };
-        if(Number(id)===20) joinEscapedCompanion('senedra');
-        if(Number(id)===21) joinEscapedCompanion('zaki');
+        if(Number(id)===23) joinSenedraAndZaki();
         if(typeof setArc1Objective==='function') setArc1Objective(nextMap[id]||'continue_voyage',ch.title);
         else game.arc1Objective=nextMap[id]||'continue_voyage';
         saveGameQuiet();

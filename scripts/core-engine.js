@@ -3467,8 +3467,8 @@ function startHarborFight(key, returnKind) {
 function startGuardianFight(portId) {
   const port = PORTS.find(p => p.id === portId);
   if (!port || !port.guardian) return;
-  // Senedra and Zaki join when their own story chapters (20 and 21) are
-  // completed, so their guardians are always an optional fight.
+  // Senedra and Zaki join together when Chapter 23 is completed, so
+  // their guardians are always an optional fight.
   const escaped = port.recruitment === 'escape';
   const quest = ARC1_STORY_QUESTS.find(q => q.portId === portId);
 
@@ -3534,8 +3534,8 @@ const ARC1_STORY_QUESTS = [
   {id:3, title:'Palembang — Find Aisyah', portId:'palembang', level:10, companion:'aisyah', summary:'Reach Palembang and resolve Aisyah’s false debt.', complete:()=>game.location==='palembang' && !!game.foundCompanions.aisyah},
   {id:4, title:'Batavia — Find Eliz', portId:'batavia', level:15, companion:'eliz', summary:'Reach Batavia and bring Eliz back aboard.', complete:()=>game.location==='batavia' && !!game.foundCompanions.eliz},
   {id:5, title:'Bangkok — Find Mezstorm', portId:'bangkok', level:20, companion:'mezstorm', summary:'Reach Bangkok and break the storm-bound bargain holding Mezstorm.', complete:()=>game.location==='bangkok' && !!game.foundCompanions.mezstorm},
-  {id:6, title:'Hanoi — Find Senedra', portId:'hanoi', level:25, companion:'senedra', summary:'Follow Senedra’s signal after the earlier crew has been recovered. She joins when Chapter 20 is complete.', complete:()=>(game.location==='hanoi' || !!game.comicProgress?.[20]) && !!game.foundCompanions.senedra},
-  {id:7, title:'Manila — Find Zaki', portId:'manila', level:30, companion:'zaki', summary:'Bring Zaki out of the prison hulk. He joins when Chapter 21 is complete.', complete:()=>(game.location==='manila' || !!game.comicProgress?.[21]) && !!game.foundCompanions.zaki},
+  {id:6, title:'Hanoi — Find Senedra', portId:'hanoi', level:25, companion:'senedra', summary:'Follow Senedra’s signal after the earlier crew has been recovered. She joins with Zaki when Chapter 23 is complete.', complete:()=>(game.location==='hanoi' || !!game.comicProgress?.[23]) && !!game.foundCompanions.senedra},
+  {id:7, title:'Manila — Find Zaki', portId:'manila', level:30, companion:'zaki', summary:'Bring Zaki out of the prison hulk. He joins with Senedra when Chapter 23 is complete.', complete:()=>(game.location==='manila' || !!game.comicProgress?.[23]) && !!game.foundCompanions.zaki},
   {id:8, title:'Drowned Passage — The Last Crossing', portId:'drowned_passage', level:35, companion:'final', summary:'Reach the Drowned Passage after all six companions are aboard and defeat the Drowned Admiral.', complete:()=>!!game.finalCleared}
 ];
 function arc1StoryPrereqMet(q){
@@ -3756,21 +3756,27 @@ function scrollToComicArchiveSection(id){
 }
 window.scrollToComicArchiveSection = scrollToComicArchiveSection;
 
-// Senedra (Chapter 20) and Zaki (Chapter 21) join the crew when their own
-// story chapter is completed — no guardian fight is needed. Safe to call
+// Senedra and Zaki join the crew together when Chapter 23 (The Two Who
+// Remembered) is completed — no guardian fight is needed. Safe to call
 // again: it does nothing once the companion is aboard.
-function joinEscapedCompanion(companion){
+function joinEscapedCompanion(companion, quiet){
   const port=PORTS.find(p=>p.companion===companion);
   if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return false;
   const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return false;
   game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
   logEvent(`📖 ${m.name} joined the crew`, 'gold');
   syncArc1StoryQuestProgress();
-  toast(`${m.name} has joined the crew.`);
+  if(!quiet) toast(`${m.name} has joined the crew.`);
   saveGame(); try{ updateUI(); renderExplore(); }catch(e){}
   return true;
 }
 window.joinEscapedCompanion = joinEscapedCompanion;
+function joinSenedraAndZaki(){
+  const a=joinEscapedCompanion('senedra',true), b=joinEscapedCompanion('zaki',true);
+  if(a||b) toast('Senedra and Zaki have joined the crew.', 4200);
+  return a||b;
+}
+window.joinSenedraAndZaki = joinSenedraAndZaki;
 function readStoryQuestComic(id){
   const ch = ARC1_COMICS.find(x=>x.id===id);
   if(!ch || !ch.unlock()) return;
