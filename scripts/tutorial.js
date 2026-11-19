@@ -5,7 +5,7 @@
   // It teaches the things a new captain has to figure out in the first hour, in the
   // order the game actually needs them: read Chapter 1, buy goods, fight in the harbour,
   // reach Level 5 (Malacca stays locked until Chapter 1 is read AND you are Level 5),
-  // rest, sail to Malacca, sell where goods are worth more, hire crew at the Tavern.
+  // rest, sail to Malacca, read Chapter 2, sell, hire crew, bring Joel home and read his chapters
   //
   //   * Starts on a NEW voyage only. Saves made before this existed never see it, unless
   //     the player reopens it with the 🧭 Guide button.
@@ -43,18 +43,30 @@
       done:function(){ return level() >= 5; },
       go:function(){ goScreen('port'); if (typeof switchPortTab === 'function') switchPortTab('explore'); }, pulse:['.tab-btn[onclick*="\'explore\'"]'] },
     { id:'sail', icon:'🗺️', title:'Sail to Malacca',
-      text:'Open 🗺️ Sail, pick Malacca and set sail. Voyages take days and can bring encounters; a faster ship gets there sooner.',
+      text:'Open 🗺️ Sail, pick Malacca and set sail. Voyages take days and can bring encounters; a faster ship gets there sooner. The Current Objective says the same thing.',
       done:function(f){ return !!f.sailed || game.location !== 'singapore'; },
       go:function(){ goScreen('navigate'); }, pulse:['.nav-btn[onclick*="\'navigate\'"]'] },
+    { id:'ch2', icon:'📖', title:'Read Chapter 2 in Malacca',
+      text:'You have arrived. Open 📖 Story and play Chapter 2, The First Port. After that the Current Objective sends you to the Tavern to hire crew.',
+      done:function(){ return !!(game.comicProgress && game.comicProgress[2]); },
+      go:function(){ goScreen('story'); }, pulse:['.nav-btn[onclick*="\'story\'"]'] },
     { id:'sell', icon:'📈', title:'Sell goods at a new port',
       text:'Bring cargo to a different port and sell it where it pays more. The 📈 Intelligence tab shows prices at other ports.',
       done:function(f){ return !!f.sold; },
       go:function(){ goScreen('port'); if (typeof switchPortTab === 'function') switchPortTab('market'); }, pulse:['.tab-btn[onclick*="\'market\'"]'] },
     { id:'crew', icon:'🍺', title:'Hire a crew member',
-      text:'Once you reach Level 5, visit the 🍺 Tavern and hire at least one temporary crew member. A crew fights beside San and many story chapters need one.',
+      text:'In Malacca, once Chapter 2 is read, visit the 🍺 Tavern and hire at least one temporary crew member (Level 5 needed). A crew fights beside San and the next chapters need one.',
       done:function(){ return !!((game.temporaryCrew || []).length || (game.foundCompanions && game.foundCompanions.joel)); },
       go:function(){ goScreen('tavern'); }, pulse:['.nav-btn[onclick*="\'tavern\'"]'] }
     ,
+    { id:'joel', icon:'🛡️', title:'Bring Joel home',
+      text:'Follow the Current Objective: read Chapter 3, plan with your crew, talk to Joel, read Chapter 4, then open the ⚔️ Explore tab in Malacca and face the Wreck Warden.',
+      done:function(){ return !!(game.foundCompanions && game.foundCompanions.joel); },
+      go:function(){ goScreen('port'); }, pulse:['#mainGoalPanel'] },
+    { id:'joelch', icon:'📖', title:'Read Joel\'s chapters',
+      text:'Joel is aboard. Before you sail anywhere else, open 📖 Story and read Chapters 5 to 8. Then the Current Objective sends you on to Palembang to find Aisyah.',
+      done:function(){ return !!(game.comicProgress && game.comicProgress[8]); },
+      go:function(){ goScreen('story'); }, pulse:['.nav-btn[onclick*="\'story\'"]'] },
     { id:'kotabatu', icon:'🏯', title:'Sail to Kota Batu',
       locked:function(){ return !portOpen('kota_batu'); },
       lockedText:'Kota Batu opens at Level 50, once the memory illusions of Arc III are behind you.',
