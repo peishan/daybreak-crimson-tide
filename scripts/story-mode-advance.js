@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V539 · Senedra and Zaki join with their chapters';
+window.__CT_BUILD__='V540 · Senedra and Zaki join together at Chapter 23';
