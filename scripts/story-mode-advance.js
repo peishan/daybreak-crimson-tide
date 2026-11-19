@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V535 · Crew hiring lock moved into the core';
+window.__CT_BUILD__='V536 · Guide teaches the Tavern, rests and quests';
