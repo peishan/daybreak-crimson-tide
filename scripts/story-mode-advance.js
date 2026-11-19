@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V525 · Thought Resonance shared action in battle';
+window.__CT_BUILD__='V526 · Objectives for Arc XXI buildings and Arc XXVI reserves';
