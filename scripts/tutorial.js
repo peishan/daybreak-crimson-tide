@@ -27,9 +27,13 @@
       done:function(f){ return !!f.fought; },
       go:function(){ goScreen('port'); if (typeof switchPortTab === 'function') switchPortTab('explore'); }, pulse:['.tab-btn[onclick*="\'explore\'"]'] },
     { id:'rest', icon:'🛏️', title:'Rest at port',
-      text:'Hurt after a fight? Press 🛏️ Rest Here on the Port screen. It is free and restores everyone\'s HP and MP (small chance of a visitor).',
+      text:'Hurt after a fight? Press 🛏️ Rest Here on the Port screen. It is free once a day and restores everyone\'s HP and MP (small chance of a visitor). When that is used up, the 🍺 Tavern sells another full rest for 15g.',
       done:function(f){ return !!f.rested; },
       go:function(){ goScreen('port'); }, pulse:['button[onclick*="freeRestAtPort"]'] },
+    { id:'tavern', icon:'🎯', title:'Visit the Tavern',
+      text:'Open the 🍺 Tavern. The Quest Board lists contracts that count automatically as you fight and trade, and pay XP and gold (more appear as you open new ports). The Tavern also sells a Tavern Rest for 15g whenever you need another rest.',
+      done:function(f){ return !!f.tavern; },
+      go:function(){ goScreen('tavern'); }, pulse:['.nav-btn[onclick*="\'tavern\'"]'] },
     { id:'level', icon:'⭐', title:'Reach Level 5',
       text:'Fights, bounties, trading and chapters all give XP. Chapter 1 gives a big boost. Malacca stays locked on the Sail screen, and crew hiring at the Tavern too, until you have read Chapter 1 and reached Level 5.',
       done:function(){ return level() >= 5; },
@@ -155,7 +159,7 @@
   function welcome(){
     if (typeof showModal !== 'function') return;
     showModal('⚓ Welcome aboard, Captain',
-      'You are San, and the <b>Daybreak</b> is yours. A short checklist will walk you through the first hour: reading the story, trading, fighting, resting, sailing and hiring crew.<br><br>' +
+      'You are San, and the <b>Daybreak</b> is yours. A short checklist will walk you through the first hour: reading the story, trading, fighting, resting, the Tavern and its quests, sailing and hiring crew.<br><br>' +
       '<i>Tip: the yellow <b>Current Objective</b> box on the Port screen always tells you the next step of the story.</i>',
       [ { text:'🧭 Show me the ropes', action:function(){ closeModal(); } },
         { text:'I know the way', action:function(){ closeModal(); window.tutorialDismiss(); } } ]);
@@ -184,6 +188,14 @@
   (function(){
     const old = window.sailTo; if (typeof old !== 'function') return;
     window.sailTo = function(id){ try { if (T() && typeof isPortUnlocked === 'function' && isPortUnlocked(id)) flags().sailed = true; } catch(e) {} return old.apply(this, arguments); };
+  })();
+  (function(){
+    const old = window.restAtTavern; if (typeof old !== 'function') return;
+    window.restAtTavern = function(){ const g = game.gold; const r = old.apply(this, arguments); try { if (T() && game.gold < g) { flags().rested = true; render(); } } catch(e) {} return r; };
+  })();
+  (function(){
+    const old = window.goScreen; if (typeof old !== 'function') return;
+    window.goScreen = function(name){ try { if (name === 'tavern' && T()) flags().tavern = true; } catch(e) {} return old.apply(this, arguments); };
   })();
   ['updateUI', 'goScreen', 'switchPortTab', 'renderMainGoal'].forEach(function(name){
     const old = window[name]; if (typeof old !== 'function') return;
