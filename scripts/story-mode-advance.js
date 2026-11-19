@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V529 · Crimson Horizon Arc XVII: The Forest at the Water Edge';
+window.__CT_BUILD__='V530 · Arc I cinematics';
