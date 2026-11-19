@@ -4,7 +4,7 @@
   //
   //   storm    The Storm That Remained  -> when the player opens Chapter 1
   //   malacca  Arrival at Malacca       -> the first time the ship sails into Malacca
-  //   palembang, batavia, bangkok   Port arrivals  -> the first time the ship sails into each port
+  //   palembang, batavia, bangkok, hanoi, manila   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
@@ -38,6 +38,12 @@
     { id:'bangkok', icon:'🛕', title:'Arrival at Bangkok', where:'The first time you sail into Bangkok', port:'bangkok',
       clips:['cin07-bangkok-first-arrival.mp4'],
       passed:function(){ return !!((game.foundCompanions && game.foundCompanions.mezstorm) || (game.comicProgress && game.comicProgress[18])); } },
+    { id:'hanoi', icon:'🏮', title:'Arrival at Hanoi', where:'The first time you sail into Hanoi', port:'hanoi',
+      clips:['cin08-hanoi-first-arrival.mp4'],
+      passed:function(){ return !!((game.foundCompanions && game.foundCompanions.senedra) || (game.comicProgress && game.comicProgress[20])); } },
+    { id:'manila', icon:'🏝️', title:'Arrival at Manila', where:'The first time you sail into Manila', port:'manila',
+      clips:['cin09-manila-first-arrival.mp4'],
+      passed:function(){ return !!((game.foundCompanions && game.foundCompanions.zaki) || (game.comicProgress && game.comicProgress[23])); } },
     { id:'joel', icon:'🛡️', title:'San Meets Joel', where:'Opens with Chapter 5',
       clips:['cin03-san-meets-joel-a.mp4', 'cin03-san-meets-joel-b.mp4', 'cin03-san-meets-joel-c.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[5]); } }
