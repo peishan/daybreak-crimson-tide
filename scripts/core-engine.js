@@ -3569,7 +3569,7 @@ function storyQuestStatus(q){
 function storyQuestLevelText(q){ return q.level <= 1 ? 'Level 1' : `Level ${q.level}`; }
 
 const ARC1_COMICS = [
-  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:150},
+  {id:1,title:'The Storm That Remained',tag:'Survival Is the First Memory',unlock:()=>true,summary:'The storm scatters the crew. San survives with Soel, but the memories and faces she once knew are gone.',xp:800},
   {id:2,title:'The First Port',tag:'Malacca',unlock:()=>!!game.comicProgress?.[1],summary:'The Crimson Tide reaches Malacca: a new world of strangers, trade, rumours, and danger.',xp:150},
   {id:3,title:'A Crew of Choice',tag:'We Sail Together or Not at All',unlock:()=>!!game.comicProgress?.[2],summary:'San begins building a crew through earned loyalty, practical skill, and the choice to stand together.',xp:150},
   {id:4,title:'The Guardian’s Fortress',tag:'Strategy Before the Storm',unlock:()=>!!game.comicProgress?.[3],summary:'San refuses to rush the ruins. The crew studies the guardian, makes a plan, and prepares to bring Joel home.',xp:175},

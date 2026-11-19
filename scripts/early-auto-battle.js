@@ -33,6 +33,8 @@
           const mp = game.partyMp[actor.id] || 0;
           const spellList = kitSpellList(kit).filter(function(s){ return (s.levelReq || 1) <= level(); });
           const atk = expAttack(actor.id);
+          // a long fight and the party is taking a beating: raise Daybreak Ward (never while a shield is already up)
+          if (kit.skill && kit.skill.effect === 'ward' && mp >= (kit.skill.mp || 0) && (game.shieldTurns || 0) <= 0 && game.combatEnemyHp > atk * 6 && partyHpOf(actor) / effectiveMaxHp(actor) < 0.7) { combatAction('SKILL'); return; }
           const good = spellList.filter(function(s){ return s.dice && mp >= s.mp && expSpell(s, actor.id) >= atk; });
           if (good.length && Math.random() < 0.7) {
             const best = good.reduce(function(a, b){ return expSpell(b, actor.id) > expSpell(a, actor.id) ? b : a; });

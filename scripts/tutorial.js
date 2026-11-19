@@ -31,7 +31,7 @@
       done:function(f){ return !!f.rested; },
       go:function(){ goScreen('port'); }, pulse:['button[onclick*="freeRestAtPort"]'] },
     { id:'level', icon:'⭐', title:'Reach Level 5',
-      text:'Fights, bounties, trading and chapters all give XP. Malacca stays locked on the Sail screen until you have read Chapter 1 and reached Level 5.',
+      text:'Fights, bounties, trading and chapters all give XP. Chapter 1 gives a big boost. Malacca stays locked on the Sail screen, and crew hiring at the Tavern too, until you have read Chapter 1 and reached Level 5.',
       done:function(){ return level() >= 5; },
       go:function(){ goScreen('port'); if (typeof switchPortTab === 'function') switchPortTab('explore'); }, pulse:['.tab-btn[onclick*="\'explore\'"]'] },
     { id:'sail', icon:'🗺️', title:'Sail to Malacca',
@@ -43,7 +43,7 @@
       done:function(f){ return !!f.sold; },
       go:function(){ goScreen('port'); if (typeof switchPortTab === 'function') switchPortTab('market'); }, pulse:['.tab-btn[onclick*="\'market\'"]'] },
     { id:'crew', icon:'🍺', title:'Hire a crew member',
-      text:'Visit the 🍺 Tavern and hire at least one temporary crew member. A crew fights beside San and many story chapters need one.',
+      text:'Once you reach Level 5, visit the 🍺 Tavern and hire at least one temporary crew member. A crew fights beside San and many story chapters need one.',
       done:function(){ return !!((game.temporaryCrew || []).length || (game.foundCompanions && game.foundCompanions.joel)); },
       go:function(){ goScreen('tavern'); }, pulse:['.nav-btn[onclick*="\'tavern\'"]'] }
   ];
