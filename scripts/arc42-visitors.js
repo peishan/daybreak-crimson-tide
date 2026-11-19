@@ -51,7 +51,9 @@
      inNote:'Visits Fair Tide with her daughters.', holdNote:"Staying on a little longer at the Pearl team's request, to look over two copies of the Core Keeper parchment."},
     // Arc XIII: Hugh comes for breakfast on the day he and Sera agreed (Ch.130, id 131) and stays for the first
     // appointment together (Ch.131, id 132); he leaves once Ch.132 (id 133) is read.
-    {key:'s13_hugh', ids:['hugh'], arrive:131, depart:133, away:'Lunareth', awayCompanion:'Family', inNote:'Comes to Fair Tide for breakfast with Sera, as promised.'}
+    {key:'s13_hugh', ids:['hugh'], arrive:131, depart:133, away:'Lunareth', awayCompanion:'Family', inNote:'Comes to Fair Tide for breakfast with Sera, as promised.'},
+    // Arc XV: Jenika brings Sky's son for a short family visit (Ch.153, id 154) and leaves after Ch.155 (id 156).
+    {key:'s15_jenika', ids:['jenika'], arrive:154, depart:156, away:'Lunareth', awayCompanion:'Their son', kid:'sky_jenika_son', inNote:'Visits Fair Tide with their son, to see Sky.'}
   ];
   window.SEQUEL_VISITS = SEQUEL_VISITS;
 
@@ -64,7 +66,9 @@
   // her visit is with the medical team (Ch.34-35, Tribute 955/975).
   const SPRING_ON_PAGE = ['jade','devon','sky','levi','sally','hugh','sera'];
   function springNote(id){
-    if (id === 'jenika') return 'Spent her visit with Fair Tide\'s medical team, comparing notes.';
+    if (id === 'jenika') return (game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[155])
+      ? '♨️ Drank from the Fountain on an earlier visit, and told Sky only years later, on this one.'
+      : 'Spent her visit with Fair Tide\'s medical team, comparing notes.';
     if (SPRING_ON_PAGE.indexOf(id) !== -1) return '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
     return '';   // off the page: readers are meant to infer it from the sequel
   }

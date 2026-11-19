@@ -61,7 +61,8 @@
     SEGMENTS.push({lo:g, hi:g + 10, names:ARC_ARRAYS[k]});
   });
   // Crimson Horizon: about a hundred chapters opening at 465, roughly four arcs' worth.
-  SEGMENTS.push({lo:465, hi:505, names:['CRIMSON_HORIZON_CHAPTERS']});
+  // (the band grows with the chapters so each chapter keeps about the same XP: 505 for Arcs I-XIV, 509.5 with Arc XV)
+  SEGMENTS.push({lo:465, hi:509.5, names:['CRIMSON_HORIZON_CHAPTERS']});
 
   function round(n){ return Math.round(n / ROUND_TO) * ROUND_TO; }
 
