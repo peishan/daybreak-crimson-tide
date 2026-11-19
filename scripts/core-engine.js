@@ -3366,7 +3366,7 @@ function renderExplore() {
     if (done) {
       html += `<article class="quest-item" style="border-left-color:#6fb57d;"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">Cleared · optional rematch available</span></div><button class="btn btn-small" onclick="startGuardianRematch('${port.id}')">🔁 Rematch</button></div></article>`;
     } else {
-      const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
+      const escaped = port.recruitment === 'escape';
       const label = escaped ? 'Optional Guardian' : 'Guardian';
       html += `<article class="quest-item" style="border-left-color:var(--danger);"><div style="display:flex;gap:10px;align-items:center;"><div style="font-size:1.8rem;">${g.art}</div><div style="flex:1;"><strong>${g.name}</strong><br><span style="font-size:0.8rem;opacity:0.8;">${g.desc}</span><br><span style="font-size:0.8rem;">${g.hp} HP · ${label}</span></div><button class="btn btn-small btn-danger" onclick="startGuardianFight('${port.id}')">${escaped ? 'Challenge' : 'Face Them'}</button></div></article>`;
     }
@@ -3467,7 +3467,9 @@ function startHarborFight(key, returnKind) {
 function startGuardianFight(portId) {
   const port = PORTS.find(p => p.id === portId);
   if (!port || !port.guardian) return;
-  const escaped = port.recruitment === 'escape' && game.foundCompanions[port.companion];
+  // Senedra and Zaki join when their own story chapters (20 and 21) are
+  // completed, so their guardians are always an optional fight.
+  const escaped = port.recruitment === 'escape';
   const quest = ARC1_STORY_QUESTS.find(q => q.portId === portId);
 
   // First-time recruitment is objective-gated. Optional rematches for
@@ -3488,7 +3490,7 @@ function startGuardianFight(portId) {
     }
   }
   const pre = escaped
-    ? `${GUARDIANS[port.guardian].name} still controls part of the harbor. ${ALL_PARTY.find(m=>m.id===port.companion)?.name || 'The companion'} already escaped — this is an optional rematch for the challenge and rewards.`
+    ? `${GUARDIANS[port.guardian].name} still controls part of the harbor. ${ALL_PARTY.find(m=>m.id===port.companion)?.name || 'The companion'} joins through the story, not this fight — it is an optional challenge for the rewards.`
     : (port.preFight || "San steadies herself at the threshold. Whatever's waiting below, she isn't leaving without them.");
   showModal(`${escaped ? 'Optional Rematch' : 'Chapter '+port.chapterId}`, pre,
     [{text: '⚔️ Challenge', action: () => { closeModal(); startCombat({ kind: 'guardian', key: port.guardian, enemy: scaleCrimsonEnemy(GUARDIANS[port.guardian], 'guardian', quest?.level || level()), portId }); }},
@@ -3532,8 +3534,8 @@ const ARC1_STORY_QUESTS = [
   {id:3, title:'Palembang — Find Aisyah', portId:'palembang', level:10, companion:'aisyah', summary:'Reach Palembang and resolve Aisyah’s false debt.', complete:()=>game.location==='palembang' && !!game.foundCompanions.aisyah},
   {id:4, title:'Batavia — Find Eliz', portId:'batavia', level:15, companion:'eliz', summary:'Reach Batavia and bring Eliz back aboard.', complete:()=>game.location==='batavia' && !!game.foundCompanions.eliz},
   {id:5, title:'Bangkok — Find Mezstorm', portId:'bangkok', level:20, companion:'mezstorm', summary:'Reach Bangkok and break the storm-bound bargain holding Mezstorm.', complete:()=>game.location==='bangkok' && !!game.foundCompanions.mezstorm},
-  {id:6, title:'Hanoi — Find Senedra', portId:'hanoi', level:25, companion:'senedra', summary:'Reach Hanoi and follow Senedra’s signal after the earlier crew has been recovered.', complete:()=>game.location==='hanoi' && !!game.foundCompanions.senedra},
-  {id:7, title:'Manila — Find Zaki', portId:'manila', level:30, companion:'zaki', summary:'Reach Manila and bring Zaki out of the prison hulk.', complete:()=>game.location==='manila' && !!game.foundCompanions.zaki},
+  {id:6, title:'Hanoi — Find Senedra', portId:'hanoi', level:25, companion:'senedra', summary:'Follow Senedra’s signal after the earlier crew has been recovered. She joins when Chapter 20 is complete.', complete:()=>(game.location==='hanoi' || !!game.comicProgress?.[20]) && !!game.foundCompanions.senedra},
+  {id:7, title:'Manila — Find Zaki', portId:'manila', level:30, companion:'zaki', summary:'Bring Zaki out of the prison hulk. He joins when Chapter 21 is complete.', complete:()=>(game.location==='manila' || !!game.comicProgress?.[21]) && !!game.foundCompanions.zaki},
   {id:8, title:'Drowned Passage — The Last Crossing', portId:'drowned_passage', level:35, companion:'final', summary:'Reach the Drowned Passage after all six companions are aboard and defeat the Drowned Admiral.', complete:()=>!!game.finalCleared}
 ];
 function arc1StoryPrereqMet(q){
@@ -3754,24 +3756,21 @@ function scrollToComicArchiveSection(id){
 }
 window.scrollToComicArchiveSection = scrollToComicArchiveSection;
 
-function completeSelfEscape(companion){
-  const port=PORTS.find(p=>p.companion===companion); if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return;
-  const quest=ARC1_STORY_QUESTS.find(q=>q.companion===companion);
-  if(quest && level() < quest.level){ toast(`Requires Level ${quest.level} to continue this story chapter.`); return; }
-  // Recruitment follows the established Legends of Daybreak order.
-  const prior = companion==='senedra' ? 'mezstorm' : companion==='zaki' ? 'senedra' : null;
-  if(prior && !game.foundCompanions[prior]){
-    toast(`The story is not ready for ${ALL_PARTY.find(x=>x.id===companion)?.name || companion} yet.`);
-    return;
-  }
-  if(quest && !arc1StoryPrereqMet(quest)){ toast('Complete the previous story chapter first.'); return; }
-  const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return;
+// Senedra (Chapter 20) and Zaki (Chapter 21) join the crew when their own
+// story chapter is completed — no guardian fight is needed. Safe to call
+// again: it does nothing once the companion is aboard.
+function joinEscapedCompanion(companion){
+  const port=PORTS.find(p=>p.companion===companion);
+  if(!port || port.recruitment!=='escape' || game.foundCompanions[companion]) return false;
+  const m=ALL_PARTY.find(x=>x.id===companion); if(!m) return false;
   game.foundCompanions[companion]=true; game.partyHp[m.id]=m.hp; game.partyMp[m.id]=m.mp;
-  gainXP(90); game.reputation=(game.reputation||0)+2;
-  logEvent(`📖 ${m.name} escaped and joined the crew on their own · +90 XP`, 'gold');
+  logEvent(`📖 ${m.name} joined the crew`, 'gold');
   syncArc1StoryQuestProgress();
-  toast(`${m.name} escaped — and is now aboard.`); saveGame(); renderStory(); updateUI(); renderExplore();
+  toast(`${m.name} has joined the crew.`);
+  saveGame(); try{ updateUI(); renderExplore(); }catch(e){}
+  return true;
 }
+window.joinEscapedCompanion = joinEscapedCompanion;
 function readStoryQuestComic(id){
   const ch = ARC1_COMICS.find(x=>x.id===id);
   if(!ch || !ch.unlock()) return;
@@ -5979,7 +5978,7 @@ function handleVictory() {
     const port = PORTS.find(p => p.id === enemy.portId);
     game.clearedGuardians[enemy.key] = true;
     const member = ALL_PARTY.find(m => m.id === port.companion);
-    if (member && !game.foundCompanions[port.companion]) {
+    if (member && !game.foundCompanions[port.companion] && port.recruitment !== 'escape') {
       game.foundCompanions[port.companion] = true;
       game.partyHp[member.id] = member.hp; game.partyMp[member.id] = member.mp;
       logCombat(`<span style="color:#e8c96a">${member.name} joins the crew!</span>`);
@@ -5991,7 +5990,7 @@ function handleVictory() {
       }
       try { renderMainGoal(); } catch(e) {}
     } else if (member) {
-      logCombat(`<span style="color:#e8c96a">Optional rematch cleared.</span> ${member.name} was already aboard.`);
+      logCombat(`<span style="color:#e8c96a">Optional guardian cleared.</span> ${member.name} joins through the story.`);
     }
   } else if (enemy.kind === 'final') {
     game.finalCleared = true;
