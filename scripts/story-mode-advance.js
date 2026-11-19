@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V538 · Port arrival clips: Palembang, Batavia, Bangkok';
+window.__CT_BUILD__='V539 · Senedra and Zaki join with their chapters';
