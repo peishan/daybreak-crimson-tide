@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V527 · Crimson Horizon Arc XV: The Orchard Beyond the Walls';
+window.__CT_BUILD__='V528 · Crimson Horizon Arc XVI: The Road Home';

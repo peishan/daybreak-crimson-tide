@@ -53,7 +53,11 @@
     // appointment together (Ch.131, id 132); he leaves once Ch.132 (id 133) is read.
     {key:'s13_hugh', ids:['hugh'], arrive:131, depart:133, away:'Lunareth', awayCompanion:'Family', inNote:'Comes to Fair Tide for breakfast with Sera, as promised.'},
     // Arc XV: Jenika brings Sky's son for a short family visit (Ch.153, id 154) and leaves after Ch.155 (id 156).
-    {key:'s15_jenika', ids:['jenika'], arrive:154, depart:156, away:'Lunareth', awayCompanion:'Their son', kid:'sky_jenika_son', inNote:'Visits Fair Tide with their son, to see Sky.'}
+    {key:'s15_jenika', ids:['jenika'], arrive:154, depart:156, away:'Lunareth', awayCompanion:'Their son', kid:'sky_jenika_son', inNote:'Visits Fair Tide with their son, to see Sky.'},
+    // Arc XVI: Eve is at Fair Tide for the length of the voyage to Dragonvale (from Ch.157, id 158), and Adrian joins her
+    // when the family letters arrive (Ch.169, id 170). Both go home once Ch.170 (id 171) is read.
+    {key:'s16_eve', ids:['eve'], arrive:158, depart:171, away:'Tribute Palace', awayCompanion:'Her daughters', inNote:'Stays at Fair Tide while the crew is away in Dragonvale.'},
+    {key:'s16_adrian', ids:['adrian'], arrive:170, depart:171, away:'Tribute Palace', awayCompanion:'Eve', inNote:'Joins Eve at Fair Tide to read the girls’ letters.'}
   ];
   window.SEQUEL_VISITS = SEQUEL_VISITS;
 

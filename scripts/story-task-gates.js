@@ -40,7 +40,8 @@
     { id: 't12', arc: 12, title: 'Trade at the Timber Port',      tasks: [{ k: 'sell', port: 'timber_port', n: 20 }] },
     { id: 't13', arc: 13, title: 'Trade at Nestcliff Harbor',     tasks: [{ k: 'sell', port: 'nestcliff_harbor', n: 20 }] },
     { id: 't14', arc: 14, title: 'Trade at Farshore Estuary',     tasks: [{ k: 'sell', port: 'farshore_estuary', n: 20 }] },
-    { id: 't15', arc: 15, title: 'Trade at Salt Coast Harbor',    tasks: [{ k: 'sell', port: 'salt_coast_harbor', n: 20 }] }
+    { id: 't15', arc: 15, title: 'Trade at Salt Coast Harbor',    tasks: [{ k: 'sell', port: 'salt_coast_harbor', n: 20 }] },
+    { id: 't16', arc: 16, title: 'Trade at Orchard Harbor',       tasks: [{ k: 'sell', port: 'orchard_harbor', n: 20 }] }
   ];
 
   function done(){ game.storyGateDone = game.storyGateDone || {}; return game.storyGateDone; }
