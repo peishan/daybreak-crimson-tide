@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v307';
+const CACHE_VERSION = 'crimson-tide-v308';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -207,6 +207,7 @@ const PRECACHE_URLS = [
   './scripts/tutorial.js',
   './scripts/thought-resonance-assist.js',
   './scripts/arc-prep-gates.js',
+  './scripts/cinematics.js',
   './scripts/crimson-horizon-music.js',
   './scripts/fair-tide-mood.js',
   './scripts/veyren-weather.js',
@@ -329,6 +330,10 @@ function isAppShellRequest(url) {
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
+
+  // Cinematics (video) are never cached here: they are loaded only when played, and caching them breaks
+  // range requests on iPhones and would eat storage. The browser handles them directly.
+  if (/\.(mp4|webm|m4v|mov)$/i.test(new URL(req.url).pathname)) return;
 
   // BUG FIX (San's report — app wouldn't open after a phone reboot, no
   // error, just flashed and closed): found by diffing against Legends of
