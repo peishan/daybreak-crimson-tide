@@ -4,6 +4,7 @@
   //
   //   storm    The Storm That Remained  -> when the player opens Chapter 1
   //   malacca  Arrival at Malacca       -> the first time the ship sails into Malacca
+  //   palembang, batavia, bangkok   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
@@ -25,9 +26,18 @@
     { id:'storm', icon:'⛈️', title:'The Storm That Remained', where:'Opens with Chapter 1',
       clips:['cin01-the-storm-that-remained-a.mp4', 'cin01-the-storm-that-remained-b.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[1]); } },
-    { id:'malacca', icon:'⚓', title:'Arrival at Malacca', where:'The first time you sail into Malacca',
+    { id:'malacca', icon:'⚓', title:'Arrival at Malacca', where:'The first time you sail into Malacca', port:'malacca',
       clips:['cin02-malacca-first-arrival.mp4'],
-      passed:function(){ return !!((game.comicProgress && game.comicProgress[2]) || (game.foundCompanions && game.foundCompanions.joel) || game.location === 'malacca'); } },   // (only used for saves that pre-date cinematics)
+      passed:function(){ return !!((game.comicProgress && game.comicProgress[2]) || (game.foundCompanions && game.foundCompanions.joel)); } },   // (only used for saves that pre-date cinematics)
+    { id:'palembang', icon:'🏘️', title:'Arrival at Palembang', where:'The first time you sail into Palembang', port:'palembang',
+      clips:['cin04-palembang-first-arrival.mp4'],
+      passed:function(){ return !!((game.foundCompanions && game.foundCompanions.aisyah) || (game.comicProgress && game.comicProgress[12])); } },
+    { id:'batavia', icon:'🏛️', title:'Arrival at Batavia', where:'The first time you sail into Batavia', port:'batavia',
+      clips:['cin06-batavia-first-arrival.mp4'],
+      passed:function(){ return !!((game.foundCompanions && game.foundCompanions.eliz) || (game.comicProgress && game.comicProgress[15])); } },
+    { id:'bangkok', icon:'🛕', title:'Arrival at Bangkok', where:'The first time you sail into Bangkok', port:'bangkok',
+      clips:['cin07-bangkok-first-arrival.mp4'],
+      passed:function(){ return !!((game.foundCompanions && game.foundCompanions.mezstorm) || (game.comicProgress && game.comicProgress[18])); } },
     { id:'joel', icon:'🛡️', title:'San Meets Joel', where:'Opens with Chapter 5',
       clips:['cin03-san-meets-joel-a.mp4', 'cin03-san-meets-joel-b.mp4', 'cin03-san-meets-joel-c.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[5]); } }
@@ -166,12 +176,15 @@
       return oldOpen.apply(this, arguments);
     };
   }
+  // the first arrival at a port with its own cinematic
+  const PORT_CINEMA = {}; CINEMATICS.forEach(function(c){ if (c.port) PORT_CINEMA[c.port] = c.id; });
   const oldArrive = window.triggerArrivalStory;
   if (typeof oldArrive === 'function') {
     window.triggerArrivalStory = function(portId){
-      if (portId === 'malacca' && autoOn() && !isSeen('malacca') && !busy) {
+      const id = PORT_CINEMA[portId];
+      if (id && autoOn() && !isSeen(id) && !busy) {
         const self = this, args = arguments;
-        window.playCinematic('malacca').then(function(){ oldArrive.apply(self, args); });
+        window.playCinematic(id).then(function(){ oldArrive.apply(self, args); });
         return;
       }
       return oldArrive.apply(this, arguments);

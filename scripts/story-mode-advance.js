@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V537 · Guide: bounties, Kota Batu and Fair Tide';
+window.__CT_BUILD__='V538 · Port arrival clips: Palembang, Batavia, Bangkok';
