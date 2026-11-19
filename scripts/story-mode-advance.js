@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V536 · Guide teaches the Tavern, rests and quests';
+window.__CT_BUILD__='V537 · Guide: bounties, Kota Batu and Fair Tide';
