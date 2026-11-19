@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V534 · Arc I story XP follows the level gates';
+window.__CT_BUILD__='V535 · Crew hiring lock moved into the core';

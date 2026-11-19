@@ -4266,6 +4266,8 @@ const TEMP_CREW = [
 function hireTemporaryCrew(id) {
   const hire = TEMP_CREW.find(c => c.id === id);
   if (!hire) return;
+  // Crew sign on from Level 5 (the Tavern hire is part of the Malacca objective, "Recruit a Crew").
+  if (level() < 5) { toast('🔒 Crew sign on once you reach Level 5. Level up with harbor fights and chapters first.'); return; }
   if ((game.gold || 0) < hire.cost) {
     toast(`You need ${hire.cost}g to hire ${hire.name}.`);
     return;
@@ -4334,13 +4336,14 @@ function renderTemporaryCrew() {
   if (tavernLabel) tavernLabel.textContent = `${getTotalCrewCount()} / ${getShipCrewCapacity()} crew aboard`;
   if (!el) return;
 
-  el.innerHTML = TEMP_CREW.map(c => {
+  const hireLocked = level() < 5;
+  el.innerHTML = (hireLocked ? `<div style="margin:6px 0;padding:8px;border:1px dashed rgba(232,197,71,.45);border-radius:8px;font-size:.8rem;">🔒 Hiring opens at <b>Level 5</b>. You are Level ${level()}.</div>` : '') + TEMP_CREW.map(c => {
     const aboard = (game.temporaryCrew || []).some(t => t.id === c.id);
     return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0;padding:8px;border:1px solid rgba(232,197,71,.18);border-radius:8px;">
       <div><b>${c.icon} ${c.name}</b><div style="font-size:.72rem;opacity:.72;">${c.role} • ${c.maxHp} HP • ${c.cost}g / voyage</div></div>
       ${aboard
         ? `<button class="btn btn-danger" onclick="dismissTemporaryCrew('${c.id}')">Dismiss</button>`
-        : `<button class="btn btn-magic" onclick="hireTemporaryCrew('${c.id}')">Hire ${c.cost}g</button>`}
+        : `<button class="btn btn-magic" onclick="hireTemporaryCrew('${c.id}')" ${hireLocked ? 'disabled style="opacity:.5"' : ''}>Hire ${c.cost}g</button>`}
     </div>`;
   }).join('');
 }
