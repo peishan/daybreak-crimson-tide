@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V531 · Early auto-battle fix';
+window.__CT_BUILD__='V532 · Daybreak Ward, crew hiring at Level 5, faster Level 5';
