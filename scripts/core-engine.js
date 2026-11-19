@@ -2668,7 +2668,24 @@ function renderMainGoal() {
     recruit_joel:['Rescue Joel','Defeat the Wreck Warden and bring your first mate home.'],
     continue_voyage:['Continue the Voyage','Sail toward the next crew member and keep building the Crimson Tide.']
   };
-  const pair=labels[objectiveState()]||labels.continue_voyage;
+  // Arc I's later steps (Chapters 5-24, and the sail / rescue steps between them)
+  // used to fall through to "Continue the Voyage", which sent players to the next
+  // port before the chapters that come first.
+  const objNow=objectiveState();
+  let dyn=null, m;
+  if((m=/^complete_chapter_(\d+)$/.exec(objNow)) && Number(m[1])>=5){
+    const cid=Number(m[1]), cch=(typeof ARC1_COMICS!=='undefined') ? ARC1_COMICS.find(x=>x.id===cid) : null;
+    dyn=['Complete Chapter '+cid+(cch?' — '+cch.title:''),'Open Story and play Chapter '+cid+'.'];
+    if(cid===5) dyn[1]='Joel is aboard. Open Story and read Chapters 5 to 8 before you sail on.';
+    if(cid===24 && !game.finalCleared) dyn=['The Drowned Passage','Sail to the Drowned Passage and defeat the Drowned Admiral, then play Chapter 24.'];
+  }
+  else if(objNow==='sail_palembang') dyn=['Sail to Palembang','Joel\'s chapters are read. Sail to Palembang to find Aisyah.'];
+  else if(objNow==='sail_batavia') dyn=['Sail to Batavia','Sail to Batavia to find Eliz.'];
+  else if(objNow==='sail_bangkok') dyn=['Sail to Bangkok','Sail to Bangkok to find Mezstorm.'];
+  else if(objNow==='rescue_aisyah') dyn=['Rescue Aisyah','Open the Explore tab in Palembang and face the Debt Collector.'];
+  else if(objNow==='rescue_eliz') dyn=['Rescue Eliz','Open the Explore tab in Batavia and face the Plague Hulk.'];
+  else if(objNow==='rescue_mezstorm') dyn=['Rescue Mezstorm','Open the Explore tab in Bangkok and face the Storm Idol.'];
+  const pair=dyn||labels[objNow]||labels.continue_voyage;
   el.innerHTML=`<div class="ct-goal-kicker">Current Objective</div><div class="ct-goal-title">🎯 ${esc(pair[0])}</div><div class="ct-goal-text">${esc(pair[1])}</div><div class="ct-goal-optional">Optional: complete bounties for extra XP and gold.</div>`;
   renderObjectiveActionPanel();
 }
@@ -5991,7 +6008,7 @@ function handleVictory() {
       game.storyModalQueue.push(Object.assign({}, port, {companionName: member.name}));
       syncArc1StoryQuestProgress();
       if (port && port.id === 'malacca') {
-        goalToast('recruited Joel', 'sail to Palembang when ready');
+        goalToast('recruited Joel', 'read Chapters 5 to 8 in Story');
         toast('💰 Optional Goal: complete bounties for extra XP and gold.', 4800);
       }
       try { renderMainGoal(); } catch(e) {}

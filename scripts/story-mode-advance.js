@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V541 · Port arrival clips: Hanoi and Manila';
+window.__CT_BUILD__='V542 · Guide and objectives now follow the same path';
