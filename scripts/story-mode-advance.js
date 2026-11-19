@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V530 · Arc I cinematics';
+window.__CT_BUILD__='V531 · Early auto-battle fix';
