@@ -296,7 +296,9 @@
     // Fen's older child comes to Fair Tide; upcoming chapters show when (San).
     {id:'fen_child', name:"Fen's older child", flag:true},
     // Adrian and Eve's two daughters stay in the playroom while Eve visits (Crimson Horizon 120; arc42-visitors.js).
-    {id:'adrian_eve_daughters', name:"Adrian and Eve's daughters", flag:true}
+    {id:'adrian_eve_daughters', name:"Adrian and Eve's daughters", flag:true},
+    // Sky and Jenika's son stays in the playroom during Jenika's visit (Crimson Horizon 153-155; arc42-visitors.js).
+    {id:'sky_jenika_son', name:"Sky and Jenika's son", flag:true}
   ];
   // A later chapter calls this when a child arrives at (or leaves) Fair Tide.
   window.setTributeNurseryGuest = function(id, present){
