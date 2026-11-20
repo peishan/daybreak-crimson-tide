@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V571 · Roc and Delilah family ties';
+window.__CT_BUILD__='V572 · Aster, Fen and Roc ties corrected';
