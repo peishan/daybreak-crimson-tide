@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V561 · Sairen shown as crew; sisters, nieces and nephew in the family records';
+window.__CT_BUILD__='V562 · Lock for the Tavern quest board';
