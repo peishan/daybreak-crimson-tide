@@ -8,6 +8,7 @@
   //   joel     San Meets Joel           -> when the player opens Chapter 5
   //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (five clips; the Wreck Warden fight comes after it)
   //   aisyah, eliz, mezstorm, senedra, zaki, twins, passage   -> when the player opens Chapters 12, 15, 18, 20, 21, 23, 24
+  //   mimi, renn, erynn, twinsbirth, sparks   -> when Arc IV Ch10, Arc V Ch6, Arc VII Ch3, Arc XXXV Ch10 / Ch24 is marked read
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
   //   the video is released the moment it ends or is skipped.
@@ -79,9 +80,24 @@
     ,{ id:'fair_tide', icon:'🌅', title:'Arrival at Fair Tide', where:'The first time you sail into Fair Tide', port:'fair_tide',
       clips:['cin18-fair-tide-first-arrival.mp4'],
       passed:function(){ return !!((game.comicProgress4 && Object.keys(game.comicProgress4).length) || (game.fairTideBuildings && Object.keys(game.fairTideBuildings).length)); } }
+    ,{ id:'mimi', icon:'🔮', title:'Mimi — The Diviner\'s Path', where:'When Arc IV Chapter 10 is marked read',
+      clips:['cin19-mimi-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress4 && game.comicProgress4[10]); } }
+    ,{ id:'renn', icon:'🌬️', title:'Renn — The Mage Who Stole the Wind', where:'When Arc V Chapter 6 is marked read',
+      clips:['cin20-renn-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[6]); } }
+    ,{ id:'erynn', icon:'📖', title:'Erynn Farseer — The Man Who Knows the Door', where:'When Arc VII Chapter 3 is marked read',
+      clips:['cin21-erynn-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress7 && game.comicProgress7[3]); } }
+    ,{ id:'twinsbirth', icon:'👶', title:'The Twins Are Born', where:'When Arc XXXV Chapter 10 is marked read',
+      clips:['cin22-twins-birth.mp4'],
+      passed:function(){ return !!(game.comicProgress35 && game.comicProgress35[10]); } }
+    ,{ id:'sparks', icon:'✨', title:'The Twins\' First Sparks', where:'When Arc XXXV is complete',
+      clips:['cin23-twins-first-sparks.mp4'],
+      passed:function(){ return !!game.arc35Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -230,6 +246,27 @@
       return oldArrive.apply(this, arguments);
     };
   }
+
+  // exported so other scripts can chain a clip after something else (for example a splash screen)
+  window.playCinematicOnce = function(id){
+    if (!BY_ID[id] || !autoOn() || isSeen(id) || busy) return Promise.resolve({ played:false });
+    return window.playCinematic(id);
+  };
+
+  // ---- Arcs whose chapters open as a comic page in another tab: the clip plays when the chapter is marked read ----
+  [ ['markArc4ChapterRead',  'comicProgress4',  { 10:'mimi' }  ],
+    ['markArc5ChapterRead',  'comicProgress5',  { 6:'renn' }   ],
+    ['markArc7ChapterRead',  'comicProgress7',  { 3:'erynn' }  ],
+    ['markArc35ChapterRead', 'comicProgress35', { 24:'sparks' }]   // (Chapter 10's clip follows its splash, see milestone-splash.js)
+  ].forEach(function(h){
+    const old = window[h[0]]; if (typeof old !== 'function') return;
+    window[h[0]] = function(id){
+      const n = Number(id), was = !!(game[h[1]] && game[h[1]][n]);
+      const r = old.apply(this, arguments);
+      try { if (!was && game[h[1]] && game[h[1]][n] && h[2][n]) setTimeout(function(){ window.playCinematicOnce(h[2][n]); }, 800); } catch(e) {}
+      return r;
+    };
+  });
 
   // ---- Comic Archive: replay list and the automatic switch ----
   function panelHtml(){
