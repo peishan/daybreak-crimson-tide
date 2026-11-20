@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V565 · Horizon Engine upgrades: faster crossings and more';
+window.__CT_BUILD__='V566 · Renn is he in the archive';

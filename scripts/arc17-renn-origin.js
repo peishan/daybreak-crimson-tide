@@ -6,7 +6,7 @@
   // Arc XVII's mechanics doc (Archive Hub + Records, then Research, now
   // this) — and per San's own priority call, this one specifically,
   // since the arc's whole five-part structure (Renn belongs here /
-  // what happened to her people / why the doors closed) is really this
+  // what happened to his people / why the doors closed) is really this
   // thread's own throughline, currently underselling itself by only
   // existing folded into the six general Archive Records.
   //
@@ -18,7 +18,7 @@
   //                          lineage; documentary fact, not yet the
   //                          place itself acknowledging him
   //   Origin Confirmed    -> Ch.23 ("The Archive Remembers") — the
-  //                          Archive itself recognizes her as belonging,
+  //                          Archive itself recognizes him as belonging,
   //                          restores access; the full, final act of
   //                          recognition rather than a stage named
   //                          identically to the mechanism (the Archive)
@@ -39,20 +39,20 @@
   // move FROM Unknown TO Possible Connection) is listed as the first
   // milestone inside "Possible Connection", not inside "Unknown".
   const ORIGIN_MILESTONES = [
-    { ch: 6,  stage: 'Possible Connection', note: "She knows which symbols mark restricted areas, understands mechanisms without being taught. Not memory, exactly. More like instinct." },
-    { ch: 7,  stage: 'Possible Connection', note: "She reads the archival language the way you read something you already know — not translating it. Remembering it." },
-    { ch: 8,  stage: 'Possible Connection', note: "This wasn't just where her people studied. There were homes here. This was where they lived." },
-    { ch: 9,  stage: 'Possible Connection', note: "A name close enough to hers in an old record. Then another. Different records, different dates — the same family line." },
-    { ch: 10, stage: 'Possible Connection', note: "She says it herself, finally: she knows this place. Not intellectually. The way you know somewhere you grew up. San decides they go at her pace, not the Archive's." },
-    { ch: 13, stage: 'Possible Connection', note: "The Door from Arc VII wasn't isolated — it was one piece of a network she'd been unknowingly connected to long before she understood it." },
-    { ch: 15, stage: 'Possible Connection', note: "The Archive's most important missing pages, deliberately removed rather than merely lost, concern the final period of her civilization specifically." },
-    { ch: 17, stage: 'Possible Connection', note: "What actually happened to the world she came from — the network damaged, the civilization that built the Archive not remaining intact." },
-    { ch: 18, stage: 'Archive Recognition', note: "Direct records, at last — not a prophecy, a person. She came from this world, part of its final generation. How she ended up separated from it stays uncertain." },
-    { ch: 19, stage: 'Archive Recognition', note: "Memory returns in fragments — a home, people, a departure, fear, someone telling her she had to leave. The full circumstances remain incomplete." },
-    { ch: 20, stage: 'Archive Recognition', note: "No dramatic awakening. She just walks through a place she once knew and realizes: she grew up here. San stays beside her, and doesn't tell her what to feel." },
+    { ch: 6,  stage: 'Possible Connection', note: "He knows which symbols mark restricted areas, understands mechanisms without being taught. Not memory, exactly. More like instinct." },
+    { ch: 7,  stage: 'Possible Connection', note: "He reads the archival language the way you read something you already know — not translating it. Remembering it." },
+    { ch: 8,  stage: 'Possible Connection', note: "This wasn't just where his people studied. There were homes here. This was where they lived." },
+    { ch: 9,  stage: 'Possible Connection', note: "A name close enough to his in an old record. Then another. Different records, different dates — the same family line." },
+    { ch: 10, stage: 'Possible Connection', note: "He says it himself, finally: he knows this place. Not intellectually. The way you know somewhere you grew up. San decides they go at his pace, not the Archive's." },
+    { ch: 13, stage: 'Possible Connection', note: "The Door from Arc VII wasn't isolated — it was one piece of a network he'd been unknowingly connected to long before he understood it." },
+    { ch: 15, stage: 'Possible Connection', note: "The Archive's most important missing pages, deliberately removed rather than merely lost, concern the final period of his civilization specifically." },
+    { ch: 17, stage: 'Possible Connection', note: "What actually happened to the world he came from — the network damaged, the civilization that built the Archive not remaining intact." },
+    { ch: 18, stage: 'Archive Recognition', note: "Direct records, at last — not a prophecy, a person. He came from this world, part of its final generation. How he ended up separated from it stays uncertain." },
+    { ch: 19, stage: 'Archive Recognition', note: "Memory returns in fragments — a home, people, a departure, fear, someone telling him he had to leave. The full circumstances remain incomplete." },
+    { ch: 20, stage: 'Archive Recognition', note: "No dramatic awakening. He just walks through a place he once knew and realizes: he grew up here. San stays beside him, and doesn't tell him what to feel." },
     { ch: 22, stage: 'Archive Recognition', note: "Why the doors were really closed — not travel itself, but what uncontrolled access became. Some began treating other worlds as resources, not places people lived." },
-    { ch: 23, stage: 'Origin Confirmed', note: "The Archive itself recognizes her — not as a chosen hero, but as someone who belongs to the civilization that built it. Access, restored." },
-    { ch: 24, stage: 'Origin Confirmed', note: "She stays connected to the Archive's preservation, but sails home with the Crimson Tide. That's home too." },
+    { ch: 23, stage: 'Origin Confirmed', note: "The Archive itself recognizes him — not as a chosen hero, but as someone who belongs to the civilization that built it. Access, restored." },
+    { ch: 24, stage: 'Origin Confirmed', note: "He stays connected to the Archive's preservation, but sails home with the Crimson Tide. That's home too." },
     { ch: 25, stage: 'Origin Confirmed', note: '"So what are you now?" Joel asks. "I suppose I\'m an archivist." "You were already an Archive Mage." "Yes. But now I know why."' }
   ];
 
@@ -77,7 +77,7 @@
     let html = '<div class="panel-title" style="margin-top:16px;">🧑‍🔬 Renn\'s Origin</div>';
 
     if (stage === 'Unknown') {
-      html += '<p style="font-size:.8rem;opacity:.6;">Nothing here feels familiar to her yet.</p>';
+      html += '<p style="font-size:.8rem;opacity:.6;">Nothing here feels familiar to him yet.</p>';
       return html;
     }
 
