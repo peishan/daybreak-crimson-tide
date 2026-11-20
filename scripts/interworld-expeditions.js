@@ -78,12 +78,25 @@
   function interworldState(){ game.interworldDiscoveries = game.interworldDiscoveries || {}; return game.interworldDiscoveries; }
   window.interworldDiscoveryState = interworldState;
 
+  // What a crossing actually costs and how long it takes, after Horizon Engine upgrades
+  // (scripts/horizon-engine-upgrades.js; with none, exactly the base figures).
+  window.interworldTripCost = function(dest){
+    const f = (typeof window.horizonEngineSupplyFactor === 'function') ? window.horizonEngineSupplyFactor() : 1;
+    const out = {};
+    Object.entries(dest.supplyCost).forEach(([k,v]) => { out[k] = Math.max(1, Math.round(v * f)); });
+    return out;
+  };
+  window.interworldCrossingDays = function(){
+    return (typeof window.horizonEngineCrossingDays === 'function') ? window.horizonEngineCrossingDays(EXPEDITION_TOTAL_DAYS) : EXPEDITION_TOTAL_DAYS;
+  };
+
   window.canAffordInterworldTrip = function(destId){
     const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
     if (!dest) return false;
-    if ((game.gold||0) < (dest.supplyCost.gold||0)) return false;
+    const cost = window.interworldTripCost(dest);
+    if ((game.gold||0) < (cost.gold||0)) return false;
     const res = game.fairTideResources || {};
-    return Object.entries(dest.supplyCost).every(([k,v]) => k === 'gold' || (res[k]||0) >= v);
+    return Object.entries(cost).every(([k,v]) => k === 'gold' || (res[k]||0) >= v);
   };
 
   // Crossing-only flavor events — no combat entries here on purpose. The
@@ -137,9 +150,10 @@
     const dest = INTERWORLD_DESTINATIONS.find(d => d.id === destId);
     if (!dest) return;
     if (!window.canAffordInterworldTrip(destId)) { toast('Not enough supplies for the crossing.'); return; }
-    game.gold -= (dest.supplyCost.gold||0);
+    const tripCost = window.interworldTripCost(dest);
+    game.gold -= (tripCost.gold||0);
     game.fairTideResources = game.fairTideResources || {};
-    Object.entries(dest.supplyCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
+    Object.entries(tripCost).forEach(([k,v]) => { if (k !== 'gold') game.fairTideResources[k] = Math.max(0, (game.fairTideResources[k]||0) - v); });
 
     game.pendingInterworldExpedition = destId;
     if (typeof window.runDestinationVoyage === 'function') {
@@ -148,7 +162,7 @@
         events: INTERWORLD_VOYAGE_EVENTS,
         combatKind: 'interworld_crossing_voyage',
         screenName: 'interworld',
-        totalDays: EXPEDITION_TOTAL_DAYS
+        totalDays: window.interworldCrossingDays()
       });
     } else {
       resolveInterworldExpedition(dest);
@@ -202,7 +216,7 @@
       html += '<div class="panel"><div class="panel-title">'+dest.name+'</div>'+
         '<p style="font-size:.82rem;opacity:.85;">'+dest.tagline+'</p>'+
         '<div style="font-size:.78rem;opacity:.7;margin:6px 0;">Supplies needed: '+
-        Object.entries(dest.supplyCost).map(([k,v]) => v+' '+k).join(', ')+'</div>'+
+        Object.entries(window.interworldTripCost(dest)).map(([k,v]) => v+' '+k).join(', ')+' · Crossing: '+window.interworldCrossingDays()+' days</div>'+
         '<button class="btn btn-small '+(canLaunch?'btn-success':'')+'" '+(canLaunch?'':'disabled')+' onclick="launchInterworldExpedition(\''+dest.id+'\')">'+btnLabel+'</button>'+
         '</div>';
     });
