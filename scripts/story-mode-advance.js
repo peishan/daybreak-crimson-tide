@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V568 · The arcane trio stay home in the sequel';
+window.__CT_BUILD__='V569 · Cold Spring notes for the Fair Tide visitors';
