@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V546 · Arc III Chapter 1 splash';
+window.__CT_BUILD__='V547 · Eliz recruitment splash';
