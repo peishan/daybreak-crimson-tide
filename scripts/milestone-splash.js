@@ -129,7 +129,15 @@
     window.handleVictory = function(){
       const had = {}; GUARDIAN_JOIN.forEach(function(c){ had[c] = !!(game.foundCompanions && game.foundCompanions[c]); });
       const r = oldVictory.apply(this, arguments);
-      try { GUARDIAN_JOIN.forEach(function(c){ if (!had[c] && game.foundCompanions && game.foundCompanions[c]) auto(c, 900); }); } catch(e) {}
+      try {
+        GUARDIAN_JOIN.forEach(function(c){
+          if (had[c] || !(game.foundCompanions && game.foundCompanions[c])) return;
+          if (c === 'joel' && typeof window.playCinematicOnce === 'function') {
+            // the two post-battle clips first, then his splash
+            new Promise(function(r){ setTimeout(r, 900); }).then(function(){ return window.playCinematicOnce('rescueafter'); }).then(function(){ return auto('joel', 300); });
+          } else auto(c, 900);
+        });
+      } catch(e) {}
       return r;
     };
   }
