@@ -616,9 +616,20 @@
     13: "Joel's family carries its own complications. His parents separated while he was still in school. His father passed on after a hard stretch, not long after finally getting back to steady work.<br><br>Joel is the second of four. His older sister survived real hardship and came out of it stronger — he's plainly proud of her. One brother built a stable life further away; the youngest started a family early, before he was really ready to.<br><br>His mother has carried more than her share too, across bad years and harder ones.<br><br>Joel never pushes San about her past — if she wants to talk about it, he listens, and he never needed the full story before he could love her anyway.<br><br>Two people. Two complicated families. Somehow, still, each other.<br><br>\"I'm lucky to have you,\" San tells him.<br><br>\"I'm also lucky to have you,\" he says back."
   };
 
+  // The archive holds San's memories from before the ship, so it stays closed until she has them
+  // back: once Arc III's memory fragments are all resolved, or Fair Tide is open (which needs the
+  // same). A save that already started reading it keeps its access.
+  function memoryArchiveOpen(){
+    if (game.comicProgressMemoryArchive && Object.keys(game.comicProgressMemoryArchive).length) return true;
+    try { if (typeof isPortUnlocked === 'function' && isPortUnlocked('fair_tide')) return true; } catch(e) {}
+    try { return typeof window.arc3ObjectiveState === 'function' && window.arc3ObjectiveState() === 'arc3_chapters_complete_for_now'; } catch(e) { return false; }
+  }
+  window.memoryArchiveOpen = memoryArchiveOpen;
+
   window.memoryArchiveObjectiveState = function(){
     const joelM = ALL_PARTY.find(m => m.id === 'joel');
     if (!joelM || !memberUnlocked(joelM)) return null;
+    if (!memoryArchiveOpen()) return null;
     game.comicProgressMemoryArchive = game.comicProgressMemoryArchive || {};
     for (const ch of MEMORY_ARCHIVE_CHAPTERS) {
       if (!game.comicProgressMemoryArchive[ch.id]) return 'complete_memoryarchive_chapter_' + ch.id;
@@ -671,7 +682,8 @@
       '<div class="story-act-kicker">Memory Archive</div><div class="story-act-title">Before the Crimson Tide</div>'+
       '<div class="story-act-tagline">San and Joel\'s life before the ship — thirteen fragments, love, hardship, and family.</div></div>';
     if (!ready) {
-      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Memory Archive Locked</div><div class="story-chapter-sub">Recruit Joel first — these are shared memories.</div></div></section>';
+      const joelAboard = !!(game.foundCompanions && game.foundCompanions.joel);
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Memory Archive Locked</div><div class="story-chapter-sub">' + (joelAboard ? 'San does not have these memories back yet. The archive opens once she has worked through the memory fragments of Arc III, or when Fair Tide opens.' : 'Recruit Joel first — these are shared memories.') + '</div></div></section>';
       container.insertAdjacentHTML('beforeend', html);
       return;
     }
