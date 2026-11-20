@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V573 · Crimson Horizon Arc XVIII: The Ships That Stay';
+window.__CT_BUILD__='V574 · Story pacing: mid-arc gates and steeper arc levels';
