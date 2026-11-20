@@ -4,7 +4,7 @@
   //
   //   storm    The Storm That Remained  -> when the player opens Chapter 1
   //   malacca  Arrival at Malacca       -> the first time the ship sails into Malacca
-  //   palembang, batavia, bangkok, hanoi, manila   Port arrivals  -> the first time the ship sails into each port
+  //   palembang, batavia, bangkok, hanoi, manila, kota_batu, fair_tide   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
   //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (five clips; the Wreck Warden fight comes after it)
   //   aisyah, eliz, mezstorm, senedra, zaki, twins, passage   -> when the player opens Chapters 12, 15, 18, 20, 21, 23, 24
@@ -73,9 +73,15 @@
     ,{ id:'passage', icon:'🌊', title:'The Drowned Passage', where:'Opens with Chapter 24',
       clips:['cin16-drowned-passage-intro.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[24]); } }
+    ,{ id:'kota_batu', icon:'🏯', title:'Arrival at Kota Batu', where:'The first time you sail into Kota Batu', port:'kota_batu',
+      clips:['cin17-kota-batu-first-arrival.mp4'],
+      passed:function(){ return !!(typeof isPortUnlocked === 'function' && isPortUnlocked('fair_tide')); } }
+    ,{ id:'fair_tide', icon:'🌅', title:'Arrival at Fair Tide', where:'The first time you sail into Fair Tide', port:'fair_tide',
+      clips:['cin18-fair-tide-first-arrival.mp4'],
+      passed:function(){ return !!((game.comicProgress4 && Object.keys(game.comicProgress4).length) || (game.fairTideBuildings && Object.keys(game.fairTideBuildings).length)); } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
