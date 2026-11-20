@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V555 · Story mode panels follow the comic rows; Chapters 10 and 11 retitled';
+window.__CT_BUILD__='V556 · Story mode panels: real captions and clean crops, Chapters 1 to 14';
