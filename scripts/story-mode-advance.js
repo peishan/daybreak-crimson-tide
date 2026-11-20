@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V566 · Renn is he in the archive';
+window.__CT_BUILD__='V567 · Banter pronouns for Erynn; the old crew can be sent home in the sequel';

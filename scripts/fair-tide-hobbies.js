@@ -22,7 +22,7 @@
     { id:'mimi_flowers',     icon:'🌸', title:"Mimi's Arrangement",    text:'Mimi rearranged an entire corner of Fair Tide with flowers. Nobody remembers approving this.', characters:['mimi'] },
     { id:'renn_missing',     icon:'📚', title:'Missing Researcher',    text:'Renn was reported missing. He was in the Archive. Nobody checked the Archive.', characters:['renn'] },
     { id:'renn_reading',     icon:'📖', title:"Renn's Reading Spot",   text:'Renn was found reading on top of a cargo crate again. The crate was moving at the time.', characters:['renn'] },
-    { id:'erynn_sky',        icon:'🌌', title:"Erynn's Sky",           text:'Erynn spent the evening studying the sky. She has a theory. She is not ready to share it yet.', characters:['erynn'] },
+    { id:'erynn_sky',        icon:'🌌', title:"Erynn's Sky",           text:'Erynn spent the evening studying the sky. He has a theory. He is not ready to share it yet.', characters:['erynn'] },
     { id:'senedra_explore',  icon:'🧭', title:"Senedra's Wander",      text:'Senedra went exploring and came back with a new route nobody asked her to map.', characters:['senedra'] },
     { id:'kw_iris_scouting', icon:'🦊', title:'Scouting Practice',     text:'KW Liang and Iris practiced scouting drills on the docks. Several crates did not survive.', characters:['kw_liang','iris'] },
     { id:'aisyah_trading',   icon:'💰', title:"Aisyah's Deal",         text:"Aisyah closed a trade deal nobody else understood the terms of. She assures everyone it's fine.", characters:['aisyah'] },
