@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V575 · Crimson Horizon Arc XIX: The House Above the Snow';
+window.__CT_BUILD__='V576 · Crimson Horizon Arc XX: The Lanterns We Bring';
