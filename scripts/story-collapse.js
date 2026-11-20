@@ -18,14 +18,15 @@
   function romanVal(s){ let t = 0; for (let i = 0; i < s.length; i++) { const v = ROMAN[s[i]], n = ROMAN[s[i + 1]]; t += (n && n > v) ? -v : v; } return t; }
 
 
-  const ARC1_IMAGES = { 1:'ch01-storm-that-remained.webp', 2:'ch02-the-first-port.webp', 3:'ch03-a-crew-of-choice.webp', 4:'ch04-the-guardians-fortress.webp', 5:'ch05-the-voice-behind-the-wall.webp', 6:'ch06-the-shield-returns.webp', 7:'ch07-the-shield-that-remained.webp', 8:'ch08-the-tradewinds-remember.webp', 9:'ch09-shield-returns.webp', 10:'ch10-day-sea-rested.webp', 11:'ch11-day-we-chose.webp', 12:'ch12-debt-wasnt-hers.webp', 13:'ch13-debt-collector.webp', 14:'ch14-two-sisters-one-ship.webp', 15:'ch15-one-who-stayed.webp', 16:'ch16-mark-we-carried.webp', 17:'ch17-things-we-do-without-knowing.webp', 18:'ch18-mezstorm-rescue.webp', 19:'ch19-crew-we-choose.webp', 20:'ch20-senedra.webp', 21:'ch21-zaki.webp', 22:'ch22-mezstorm.webp', 23:'ch23-siblings.webp', 24:'ch24-drowned-passage.webp' };
+  // The comic reader shows the full read-back pages (assets/comics/arc1-readback/); Story Mode keeps its own art in assets/comics/arc1/.
+  const ARC1_IMAGES = { 1:'ch01-the-storm-that-remained.webp', 2:'ch02-the-first-port.webp', 3:'ch03-a-crew-of-choice.webp', 4:'ch04-the-guardians-fortress.webp', 5:'ch05-the-voice-behind-the-wall.webp', 6:'ch06-the-shield-returns.webp', 7:'ch07-the-shield-that-remained.webp', 8:'ch08-the-trader-winds-remember.webp', 9:'ch09-the-shield-returns-promise-carried-forward.webp', 10:'ch10-the-day-the-sea-rested.webp', 11:'ch11-the-day-we-chose.webp', 12:'ch12-the-debt-that-wasnt-hers.webp', 13:'ch13-the-debt-collector.webp', 14:'ch14-two-sisters-one-ship.webp', 15:'ch15-the-one-who-stayed.webp', 16:'ch16-the-mark-we-carried.webp', 17:'ch17-the-things-we-do-without-knowing.webp', 18:'ch18-the-storm-that-was-owed.webp', 19:'ch19-the-crew-we-choose.webp', 20:'ch20-senedra-the-watchful-signal.webp', 21:'ch21-zaki-the-planner.webp', 22:'ch22-mezstorm-the-regeneration.webp', 23:'ch23-senedra-and-zaki-the-two-who-remembered.webp', 24:'ch24-the-drowned-passage.webp' };
 
   // key -> { label, chapters:[{id,title,image,focus,read}] }
   function arcData(key){
     try {
       if (key === 'a1') {
         const prog = game.comicProgress || {};
-        return { label: 'Arc I — The First Voyage', chapters: (typeof ARC1_COMICS !== 'undefined' ? ARC1_COMICS : []).map(function(c){ return { id: c.id, title: c.title, image: ARC1_IMAGES[c.id] ? 'assets/comics/arc1/' + ARC1_IMAGES[c.id] : null, focus: c.focus || '', read: !!prog[c.id] }; }) };
+        return { label: 'Arc I — The First Voyage', chapters: (typeof ARC1_COMICS !== 'undefined' ? ARC1_COMICS : []).map(function(c){ return { id: c.id, title: c.title, image: ARC1_IMAGES[c.id] ? 'assets/comics/arc1-readback/' + ARC1_IMAGES[c.id] : null, focus: c.focus || '', read: !!prog[c.id] }; }) };
       }
       let m = /^a(\d+)$/.exec(key);
       if (m) {
