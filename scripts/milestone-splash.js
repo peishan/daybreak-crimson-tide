@@ -8,6 +8,7 @@
   //   ch11      Before the Next Port   -> when Chapter 11 opens
   //   joel      Joel joins             -> the moment the Wreck Warden falls
   //   aisyah    Aisyah joins           -> the moment the Debt Collector falls
+  //   eliz      Eliz joins             -> the moment the Plague Hulk falls
   //   mezstorm  Mezstorm joins         -> the moment the Storm Idol falls
   //   twins     Senedra and Zaki join  -> when Chapter 23 is complete (they join together)
   //   finale    The whole crew         -> when Chapter 24 is complete
@@ -23,6 +24,7 @@
     { id:'ch11',     img:'ch11-before-the-next-port.webp', kicker:'Chapter 11',     title:'Before the Next Port',       where:'Opens with Chapter 11' },
     { id:'joel',     img:'joel-joins.webp',                kicker:'Crew recruited', title:'Joel joins the crew',        where:'When Joel joins the crew' },
     { id:'aisyah',   img:'aisyah-joins.webp',              kicker:'Crew recruited', title:'Aisyah joins the crew',      where:'When Aisyah joins the crew' },
+    { id:'eliz',     img:'eliz-joins.webp',                kicker:'Crew recruited', title:'Eliz joins the crew',        where:'When Eliz joins the crew' },
     { id:'mezstorm', img:'mezstorm-joins.webp',            kicker:'Crew recruited', title:'Mezstorm joins the crew',    where:'When Mezstorm joins the crew' },
     { id:'twins',    img:'senedra-zaki-join.webp',         kicker:'Crew recruited', title:'Senedra and Zaki join the crew', where:'When Senedra and Zaki join the crew' },
     { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' },
@@ -118,8 +120,8 @@
     };
   }
 
-  // ---- Recruitment: Joel, Aisyah and Mezstorm join when their guardian falls ----
-  const GUARDIAN_JOIN = ['joel', 'aisyah', 'mezstorm'];
+  // ---- Recruitment: Joel, Aisyah, Eliz and Mezstorm join when their guardian falls ----
+  const GUARDIAN_JOIN = ['joel', 'aisyah', 'eliz', 'mezstorm'];
   const oldVictory = window.handleVictory;
   if (typeof oldVictory === 'function') {
     window.handleVictory = function(){
