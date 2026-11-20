@@ -6,6 +6,7 @@
   //   malacca  Arrival at Malacca       -> the first time the ship sails into Malacca
   //   palembang, batavia, bangkok, hanoi, manila   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
+  //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (five clips; the Wreck Warden fight comes after it)
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
   //   the video is released the moment it ends or is skipped.
@@ -47,7 +48,12 @@
     { id:'joel', icon:'🛡️', title:'San Meets Joel', where:'Opens with Chapter 5',
       clips:['cin03-san-meets-joel-a.mp4', 'cin03-san-meets-joel-b.mp4', 'cin03-san-meets-joel-c.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[5]); } }
+    ,{ id:'rescue', icon:'⚔️', title:'The Rescue of Joel', where:'Opens with Chapter 6',
+      clips:['cin05-joel-rescue-a.mp4', 'cin05-joel-rescue-b.mp4', 'cin05-joel-rescue-c.mp4', 'cin05-joel-rescue-d.mp4', 'cin05-joel-rescue-e.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[6]); } }
   ];
+  // story order, for the Comic Archive list
+  (function(){ const o=['storm','malacca','joel','rescue','palembang','batavia','bangkok','hanoi','manila']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -167,7 +173,7 @@
   }
 
   // ---- triggers ----
-  const CHAPTER_CINEMA = { 1:'storm', 5:'joel' };
+  const CHAPTER_CINEMA = { 1:'storm', 5:'joel', 6:'rescue' };
   const oldOpen = window.openStoryMode;
   if (typeof oldOpen === 'function') {
     window.openStoryMode = function(chapterId, options){

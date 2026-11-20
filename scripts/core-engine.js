@@ -2330,7 +2330,7 @@ function finishStoryModeChapter(id){
     if(id===1) completeObjectiveAndRefresh(level()>=5 ? 'sail_malacca' : 'reach_level_5','Chapter 1');
     if(id===2) completeObjectiveAndRefresh('recruit_crew','Chapter 2');
     if(id===3) completeObjectiveAndRefresh('plan_with_crew','Chapter 3');
-    if(id===4) completeObjectiveAndRefresh('recruit_joel','Chapter 4');
+    if(id===4) completeObjectiveAndRefresh('complete_chapter_5','Chapter 4');
     try { renderMainGoal(); } catch(e) {}
   }
   const autoNext=nextAutoStoryChapter(id);
@@ -2624,6 +2624,9 @@ function objectiveState() {
   if (game.malaccaPrepStep === 1) return 'talk_to_joel';
   if (game.malaccaPrepStep === 2) return 'change_plan';
   if (!game.comicProgress[4]) return 'complete_chapter_4';
+  // Chapters 5 and 6 tell the approach and the rescue; the Wreck Warden fight comes after them.
+  if (!game.comicProgress[5]) return 'complete_chapter_5';
+  if (!game.comicProgress[6]) return 'complete_chapter_6';
   return 'recruit_joel';
 }
 function setArc1Objective(next, completedLabel=null) {
@@ -2633,7 +2636,7 @@ function setArc1Objective(next, completedLabel=null) {
       begin_chapter_1:'Open Story → Chapter 1', reach_level_5:'Reach Level 5', sail_malacca:'Sail to Malacca',
       complete_chapter_2:'Open Story → Chapter 2', recruit_crew:'Go to the Tavern → recruit a crew member',
       complete_chapter_3:'Open Story → Chapter 3', plan_with_crew:'Plan with your crew', talk_to_joel:'Talk to Joel',
-      change_plan:'Change the plan', complete_chapter_4:'Open Story → Chapter 4', recruit_joel:'Defeat the Wreck Warden and rescue Joel',
+      change_plan:'Change the plan', complete_chapter_4:'Open Story → Chapter 4', complete_chapter_5:'Open Story → Chapter 5', complete_chapter_6:'Open Story → Chapter 6', recruit_joel:'Defeat the Wreck Warden and rescue Joel',
       continue_voyage:'Continue the Voyage'
     };
     goalToast(completedLabel, nextLabels[next] || next);
@@ -2665,7 +2668,7 @@ function renderMainGoal() {
     talk_to_joel:['Talk to Joel','Go to the wreck and speak with Joel before the final approach.'],
     change_plan:['Change the Plan','Return to the crew and revise the plan based on what Joel told you.'],
     complete_chapter_4:['Complete Chapter 4 — The Guardian’s Fortress','Open Story and complete the preparation chapter.'],
-    recruit_joel:['Rescue Joel','Defeat the Wreck Warden and bring your first mate home.'],
+    recruit_joel:['Rescue Joel','The chapters have told it. Now defeat the Wreck Warden in Malacca and bring your first mate home.'],
     continue_voyage:['Continue the Voyage','Sail toward the next crew member and keep building the Crimson Tide.']
   };
   // Arc I's later steps (Chapters 5-24, and the sail / rescue steps between them)
@@ -2676,7 +2679,7 @@ function renderMainGoal() {
   if((m=/^complete_chapter_(\d+)$/.exec(objNow)) && Number(m[1])>=5){
     const cid=Number(m[1]), cch=(typeof ARC1_COMICS!=='undefined') ? ARC1_COMICS.find(x=>x.id===cid) : null;
     dyn=['Complete Chapter '+cid+(cch?' — '+cch.title:''),'Open Story and play Chapter '+cid+'.'];
-    if(cid===5) dyn[1]='Joel is aboard. Open Story and read Chapters 5 to 8 before you sail on.';
+    if(cid>=5 && cid<=8 && game.foundCompanions?.joel) dyn[1] = cid===5 ? 'Joel is aboard. Open Story and read Chapters 5 to 8 before you sail on.' : 'Open Story and play Chapter '+cid+' before you sail on.';
     if(cid===24 && !game.finalCleared) dyn=['The Drowned Passage','Sail to the Drowned Passage and defeat the Drowned Admiral, then play Chapter 24.'];
   }
   else if(objNow==='sail_palembang') dyn=['Sail to Palembang','Joel\'s chapters are read. Sail to Palembang to find Aisyah.'];
@@ -6008,7 +6011,7 @@ function handleVictory() {
       game.storyModalQueue.push(Object.assign({}, port, {companionName: member.name}));
       syncArc1StoryQuestProgress();
       if (port && port.id === 'malacca') {
-        goalToast('recruited Joel', 'read Chapters 5 to 8 in Story');
+        goalToast('recruited Joel', 'read Chapters 7 and 8 in Story');
         toast('💰 Optional Goal: complete bounties for extra XP and gold.', 4800);
       }
       try { renderMainGoal(); } catch(e) {}
