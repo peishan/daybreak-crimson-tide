@@ -108,7 +108,7 @@
     { type: 'flavor', text: 'The Horizon Engine\'s door holds steady behind you. Ahead, there\'s nothing to steer by at all.' },
     { type: 'flavor', text: 'The crew stops trying to describe what\'s outside the hull. Words weren\'t built for it.' },
     { type: 'flavor', text: 'For a moment the ship isn\'t moving through water anymore. Then it is again, and nobody mentions it.' },
-    { type: 'flavor', text: 'Erynn keeps a running count of things she can\'t explain. She stopped reading it aloud after the third one.' },
+    { type: 'flavor', text: 'Erynn keeps a running count of things he can\'t explain. He stopped reading it aloud after the third one.' },
     { type: 'calm', text: 'The crossing settles into something almost ordinary. Almost.' }
   ];
 

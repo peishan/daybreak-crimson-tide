@@ -27,8 +27,8 @@
 
   window.sequelCrewActive = function(){ return !!game.sequelCrewApplied; };
 
-  function apply(){
-    if (game.sequelCrewApplied || !prologueRead()) return;
+  function apply(force){
+    if ((game.sequelCrewApplied && !force) || !prologueRead()) return;
     if (!CANON.every(joined)) return;                       // wait for the canon five to actually join
     game.sequelCrewApplied = true;
     game.fieldedIds = game.fieldedIds || ['san'];
@@ -59,6 +59,44 @@
   }
   window.applySequelParty = apply;
 
+  // Anyone who should be at home but is still fielded (the old crew that stayed aboard).
+  function stillAboard(){
+    const ids = (typeof window.getFieldedIds === 'function') ? window.getFieldedIds() : [];
+    return HOME_NAMED.concat(ids).filter(function(id, i, a){ return a.indexOf(id) === i; })
+      .filter(function(id){ return ids.indexOf(id) !== -1 && id !== 'san' && !free(id) && REQUIRED.indexOf(id) === -1 && joined(id); });
+  }
+  // The crew screen's "Send the old crew home" button: runs the sequel arrangement again, on request.
+  window.sendOldCrewHome = function(){
+    if (!game.sequelCrewApplied) { apply(); return; }
+    const before = stillAboard();
+    apply(true);
+    if (!before.length && typeof toast === 'function') toast('Everyone else is already at Fair Tide.', 2800);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof renderPartyScreen === 'function') renderPartyScreen();
+  };
+  // One-time repair for a save that entered the sequel with the old crew still aboard.
+  function repairOnce(){
+    if (!game.sequelCrewApplied || game.sequelHomeRepaired) return;
+    game.sequelHomeRepaired = true;
+    if (stillAboard().length) apply(true);
+  }
+  const oldRenderParty = window.renderPartyScreen;
+  if (typeof oldRenderParty === 'function') {
+    window.renderPartyScreen = function(){
+      const r = oldRenderParty.apply(this, arguments);
+      try {
+        const c = document.getElementById('partyDetail');
+        if (c && game.sequelCrewApplied && !c.querySelector('#sendOldCrewHome')) {
+          const n = stillAboard().length;
+          c.insertAdjacentHTML('afterbegin', '<div id="sendOldCrewHome" class="panel" style="margin-bottom:12px;"><div style="font-size:.82rem;opacity:.85;margin-bottom:6px;">' +
+            (n ? n + ' of the old crew (' + stillAboard().map(nm).join(', ') + ') are still aboard. The new voyage sails with the sequel crew; the rest are home at Fair Tide.' : 'The new voyage sails with the sequel crew; everyone else is home at Fair Tide.') + '</div>' +
+            '<button class="btn btn-small" onclick="sendOldCrewHome()"' + (n ? '' : ' disabled') + '>⚓ Send the old crew home</button></div>');
+        }
+      } catch(e) {}
+      return r;
+    };
+  }
+
   // Story-required: cannot be sent home once the sequel crew is set.
   const oldRequired = window.getRequiredFieldedIds;
   if (typeof oldRequired === 'function') {
@@ -74,7 +112,7 @@
   const oldGetFielded = window.getFieldedIds;
   if (typeof oldGetFielded === 'function') {
     window.getFieldedIds = function(){
-      try { apply(); } catch(e) {}
+      try { apply(); repairOnce(); } catch(e) {}
       return oldGetFielded.apply(this, arguments);
     };
   }
