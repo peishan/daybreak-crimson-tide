@@ -7,6 +7,7 @@
   //   palembang, batavia, bangkok, hanoi, manila   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
   //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (five clips; the Wreck Warden fight comes after it)
+  //   aisyah, eliz, mezstorm, senedra, zaki, twins, passage   -> when the player opens Chapters 12, 15, 18, 20, 21, 23, 24
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
   //   the video is released the moment it ends or is skipped.
@@ -51,9 +52,30 @@
     ,{ id:'rescue', icon:'⚔️', title:'The Rescue of Joel', where:'Opens with Chapter 6',
       clips:['cin05-joel-rescue-a.mp4', 'cin05-joel-rescue-b.mp4', 'cin05-joel-rescue-c.mp4', 'cin05-joel-rescue-d.mp4', 'cin05-joel-rescue-e.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[6]); } }
+    ,{ id:'aisyah', icon:'🗡️', title:'Aisyah — The Debt', where:'Opens with Chapter 12',
+      clips:['cin10-aisyah-intro-a.mp4', 'cin10-aisyah-intro-b.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[12]); } }
+    ,{ id:'eliz', icon:'💚', title:'Eliz — The One Who Stayed', where:'Opens with Chapter 15',
+      clips:['cin11-eliz-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[15]); } }
+    ,{ id:'mezstorm', icon:'⛈️', title:'Mezstorm — The Storm That Was Owed', where:'Opens with Chapter 18',
+      clips:['cin12-mezstorm-intro-a.mp4', 'cin12-mezstorm-intro-b.mp4', 'cin12-mezstorm-intro-c.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[18]); } }
+    ,{ id:'senedra', icon:'🏹', title:'Senedra — The Watchful Signal', where:'Opens with Chapter 20',
+      clips:['cin13-senedra-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[20]); } }
+    ,{ id:'zaki', icon:'💥', title:'Zaki — The Planner', where:'Opens with Chapter 21',
+      clips:['cin14-zaki-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[21]); } }
+    ,{ id:'twins', icon:'👥', title:'The Two Who Remembered', where:'Opens with Chapter 23',
+      clips:['cin15-senedra-zaki-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[23]); } }
+    ,{ id:'passage', icon:'🌊', title:'The Drowned Passage', where:'Opens with Chapter 24',
+      clips:['cin16-drowned-passage-intro.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[24]); } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','palembang','batavia','bangkok','hanoi','manila']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -173,7 +195,7 @@
   }
 
   // ---- triggers ----
-  const CHAPTER_CINEMA = { 1:'storm', 5:'joel', 6:'rescue' };
+  const CHAPTER_CINEMA = { 1:'storm', 5:'joel', 6:'rescue', 12:'aisyah', 15:'eliz', 18:'mezstorm', 20:'senedra', 21:'zaki', 23:'twins', 24:'passage' };
   const oldOpen = window.openStoryMode;
   if (typeof oldOpen === 'function') {
     window.openStoryMode = function(chapterId, options){
