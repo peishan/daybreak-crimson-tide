@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V558 · Chapter 15 before 16 and 17 at Batavia';
+window.__CT_BUILD__='V559 · Arc splashes wait for the chapter-complete screen';
