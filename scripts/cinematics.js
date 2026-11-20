@@ -6,7 +6,9 @@
   //   malacca  Arrival at Malacca       -> the first time the ship sails into Malacca
   //   palembang, batavia, bangkok, hanoi, manila, kota_batu, fair_tide   Port arrivals  -> the first time the ship sails into each port
   //   joel     San Meets Joel           -> when the player opens Chapter 5
-  //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (five clips; the Wreck Warden fight comes after it)
+  //   rescue   The Rescue of Joel       -> when the player opens Chapter 6 (arrival and the Warden fight; the real fight comes after it)
+  //   rescueafter  The Warden Falls     -> the moment the Wreck Warden is beaten and Joel joins (conversation, embrace), then his splash
+  //   aboard   Welcome Aboard           -> when the player opens Chapter 7
   //   aisyah, eliz, mezstorm, senedra, zaki, twins, passage   -> when the player opens Chapters 12, 15, 18, 20, 21, 23, 24
   //   mimi, renn, erynn, twinsbirth, sparks   -> when Arc IV Ch10, Arc V Ch6, Arc VII Ch3, Arc XXXV Ch10 / Ch24 is marked read
   //
@@ -51,8 +53,14 @@
       clips:['cin03-san-meets-joel-a.mp4', 'cin03-san-meets-joel-b.mp4', 'cin03-san-meets-joel-c.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[5]); } }
     ,{ id:'rescue', icon:'⚔️', title:'The Rescue of Joel', where:'Opens with Chapter 6',
-      clips:['cin05-joel-rescue-a.mp4', 'cin05-joel-rescue-b.mp4', 'cin05-joel-rescue-c.mp4', 'cin05-joel-rescue-d.mp4', 'cin05-joel-rescue-e.mp4'],
+      clips:['cin05-joel-rescue-a.mp4', 'cin05-joel-rescue-b.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[6]); } }
+    ,{ id:'rescueafter', icon:'🛡️', title:'The Warden Falls', where:'When the Wreck Warden falls and Joel joins',
+      clips:['cin05-joel-rescue-c.mp4', 'cin05-joel-rescue-d.mp4'],
+      passed:function(){ return !!(game.foundCompanions && game.foundCompanions.joel); } }
+    ,{ id:'aboard', icon:'⚓', title:'Welcome Aboard', where:'Opens with Chapter 7',
+      clips:['cin05-joel-rescue-e.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[7]); } }
     ,{ id:'aisyah', icon:'🗡️', title:'Aisyah — The Debt', where:'Opens with Chapter 12',
       clips:['cin10-aisyah-intro-a.mp4', 'cin10-aisyah-intro-b.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[12]); } }
@@ -97,7 +105,7 @@
       passed:function(){ return !!game.arc35Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','batavia','eliz','bangkok','mezstorm','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -217,7 +225,7 @@
   }
 
   // ---- triggers ----
-  const CHAPTER_CINEMA = { 1:'storm', 5:'joel', 6:'rescue', 12:'aisyah', 15:'eliz', 18:'mezstorm', 20:'senedra', 21:'zaki', 23:'twins', 24:'passage' };
+  const CHAPTER_CINEMA = { 1:'storm', 5:'joel', 6:'rescue', 7:'aboard', 12:'aisyah', 15:'eliz', 18:'mezstorm', 20:'senedra', 21:'zaki', 23:'twins', 24:'passage' };
   const oldOpen = window.openStoryMode;
   if (typeof oldOpen === 'function') {
     window.openStoryMode = function(chapterId, options){
