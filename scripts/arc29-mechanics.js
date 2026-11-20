@@ -155,7 +155,7 @@
         'Threat level: '+esc(d.threatLevel)+
         (d.relationship ? '<br>Relationship: '+esc(d.relationship) : '')+
         (d.fairTideAccess ? '<br>Fair Tide Access: '+esc(d.fairTideAccess) : '')+
-        '<br>Recruitable: '+(d.recruitable ? 'Yes' : 'No')+
+        '<br>Recruitable: '+((game.foundCompanions && game.foundCompanions.sairen) ? 'Joined the crew ✓' : (d.recruitable ? 'Yes' : 'No'))+
         '</span></article>';
     } else if (!d.debunked.length) {
       html += '<article class="quest-item"><span style="font-size:.8rem;opacity:.7;">No confirmed findings yet.</span></article>';

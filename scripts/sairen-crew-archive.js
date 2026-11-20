@@ -5,7 +5,9 @@
   // Two records kept showing his old, in-between state:
   //   * the Residents list kept him "Away from Fair Tide" (Arc XXX Ch.24 sent him off alone, and its
   //     "leave" check fired again on every update because he was no longer marked departed);
-  //   * the Nameless Allegiances entry still read Attitude: Unclear / Reliability: Mixed.
+  //   * the Nameless Allegiances entry still read Attitude: Unclear / Reliability: Mixed;
+  //   * the Person of Interest file still read Affiliation: Unknown, Threat: Undetermined, Fair Tide Access:
+  //     Visitor (Restricted), Recruitable: No.
   // The Residents card and the Allegiances entry now follow the crew membership. Saves that were already
   // past Arc XLI are repaired the next time the game updates.
   // -------------------------------------------------------------------
@@ -20,6 +22,14 @@
         if (!game.sairenCrewLogged) {
           game.sairenCrewLogged = true;
           if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(s, 'join', 'Joins Fair Tide\'s crew for good.');
+        }
+      }
+      // the Person of Interest file: still showing the Arc XXIX working classification
+      if (typeof window.sairenDossierState === 'function') {
+        const d = window.sairenDossierState();
+        if (d.classified && d.relationship !== 'Fair Tide Crew') {
+          d.affiliation = 'Fair Tide (crew)'; d.threatLevel = 'None. Cleared, and one of the crew';
+          d.relationship = 'Fair Tide Crew'; d.fairTideAccess = 'Full access (crew)'; d.recruitable = true;
         }
       }
       if (typeof window.registerNamelessContact === 'function') {
