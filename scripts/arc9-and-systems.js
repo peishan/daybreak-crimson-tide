@@ -1203,12 +1203,14 @@
     }
     const he = horizonEngineState();
     const es = expState();
-    const pct = window.getHorizonEngineDevelopmentPct();
+    // The 99% cap only holds the bar back until the story builds the engine; after Arc XII it is built.
+    const built = !!game.arc12Complete;
+    const pct = built ? 100 : window.getHorizonEngineDevelopmentPct();
     let html = '<div class="panel-title">🔭 Research Expedition</div>'+
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">San, Joel, Soel, and the Horizon Team go looking for whatever\'s still out there. Whatever they bring back gets set aside — for later.</p>'+
       '<div style="margin-bottom:10px;"><strong>Horizon Engine Development</strong>'+
       '<div class="ship-stat-bar" style="width:100%;margin:4px 0;"><div class="ship-stat-fill" style="width:'+pct+'%;background:#e8c96a;"></div></div>'+
-      '<span style="font-size:.78rem;opacity:.75;">'+pct+'% — still a research project. Nothing\'s been built yet.</span></div>'+
+      '<span style="font-size:.78rem;opacity:.75;">'+(built ? '100% — built. The Horizon Engine is running, and it opens the way to the Known Worlds.' : pct+'% — still a research project. Nothing\'s been built yet.')+'</span></div>'+
       '<div style="font-size:.85rem;margin-bottom:10px;">🧠 Knowledge: '+he.knowledge+' · 🔮 Residue: '+he.residue+(he.dragonBlood ? ' · 🩸 Dragon Blood: '+he.dragonBlood : '')+'</div>'+
       (game.arc12Complete ? '<div style="font-size:.78rem;opacity:.75;background:rgba(120,200,255,.1);border:1px solid rgba(120,200,255,.3);border-radius:6px;padding:6px 10px;margin-bottom:10px;">✓ Research Complete — the Horizon Engine\'s purpose here is fulfilled. Expeditions continue for experience and raw materials.</div>' : '');
     if (es.active) {
