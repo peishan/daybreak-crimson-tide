@@ -69,13 +69,26 @@
   // Mirelle) get a line about the pregnancy after it. Jenika's follows the chapters:
   // her visit is with the medical team (Ch.34-35, Tribute 955/975).
   const SPRING_ON_PAGE = ['jade','devon','sky','levi','sally','hugh','sera'];
-  const EXPECTING_NOTE = { fen: 'She is expecting Aster\'s child.', eve: 'She is expecting.', mirelle: 'She is expecting.' };
+  const EXPECTING_NOTE = { fen: 'She is expecting Aster\'s child.', eve: 'She is expecting Adrian\'s child.', mirelle: 'She is expecting Rheon\'s child.' };
+  // Who they are to each other (shown on the Residents card instead of the generic "Visiting Friend").
+  const RELATION = {
+    adrian:  'Eve\'s husband · Jade\'s brother',
+    eve:     'Adrian\'s wife · Hugh\'s sister',
+    rheon:   'King of Altan · Mirelle\'s husband · Sera\'s older brother',
+    mirelle: 'Queen of Altan · Rheon\'s wife · Devon\'s trusted ally',
+    aster:   'King of Dragonvale · Fen\'s husband',
+    fen:     'Queen of Dragonvale · Aster\'s wife',
+    hugh:    'Sera\'s partner · Eve\'s brother',
+    sera:    'Hugh\'s partner · Rheon\'s younger sister'
+  };
   function sequelBegun(){ return !!(game.arc42Complete && game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[1]); }
   function springNote(id){
     if (id === 'jenika') return (game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[155])
       ? '♨️ Drank from the Fountain on an earlier visit, and told Sky only years later, on this one.'
       : 'Spent her visit with Fair Tide\'s medical team, comparing notes.';
     if (SPRING_ON_PAGE.indexOf(id) !== -1) return '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
+    // Mirelle was rejuvenated in Lunareth; the spring has now given her a second rejuvenation
+    if (id === 'mirelle') return '♨️ Rejuvenated in Lunareth, and the Fountain of Youth has now given her a second rejuvenation.' + (sequelBegun() ? ' ' + EXPECTING_NOTE.mirelle : '');
     // off the page: it may have happened, at San's invitation
     return '♨️ May have taken the waters at the Cold Spring, the Fountain of Youth.' +
       ((EXPECTING_NOTE[id] && sequelBegun()) ? ' ' + EXPECTING_NOTE[id] : '');
@@ -99,7 +112,7 @@
     const c = cast(id);
     return window.registerTemporaryResident(id, {
       name: c.name, icon: c.icon, room: 'Guest Quarters',
-      relationship: 'Visiting Friend', trust: 'Established', traits: []
+      relationship: RELATION[id] || 'Visiting Friend', trust: 'Established', traits: []
     });
   }
 
@@ -113,6 +126,7 @@
       v.ids.forEach(function(id){
         const wasNew = !window.fairTideResidentsState()[id];
         const rec = ensure(id);
+        if (RELATION[id] && (!rec.relationship || rec.relationship === 'Visiting Friend')) rec.relationship = RELATION[id];
         if (wasNew) changed = true;
         const names = v.ids.filter(function(o){ return o !== id; }).map(function(o){ return cast(o).name; });
         logOnce(v.key + ':' + id + ':in', rec, 'join', 'Visits Fair Tide' + (names.length ? ' with ' + names.join(', ') : '') + '.');

@@ -86,7 +86,7 @@
       desc:"Measuring at first, visibly won over by the end of it. A brilliant scholar and statesman — has a genuine head for exactly how the Horizon Engine actually works, much to Renn's delight.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[31]); }},
     {id:'eve', name:'Eve', icon:'💭',
-      connection:"Lunareth — Adrian's partner.",
+      connection:"Lunareth — Adrian's wife; Hugh's sister.",
       desc:"Quiet about it, but sharp enough to make Erynn stop and actually think before answering.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[31]); }},
     {id:'sky', name:'Sky', icon:'🩺',
