@@ -1310,6 +1310,10 @@
     const rivalKeys = (typeof window.KNOWN_RIVAL_KEYS !== 'undefined') ? window.KNOWN_RIVAL_KEYS : [];
     if (!rivalKeys.includes(rivalKey)) return; // an ordinary sea monster, not a named rival — nothing to do here
     if (typeof window.rivalCaptured === 'function' && window.rivalCaptured(rivalKey)) return; // defensive — shouldn't normally reach here, the ambush pool already excludes captured rivals
+    // A captured captain does community service at Fair Tide and their ship docks there, so there is
+    // nothing to capture them to until that port is open: before then the fight is an ordinary win
+    // (no capture roll, and it does not count as an escape).
+    try { if (typeof isPortUnlocked === 'function' && !isPortUnlocked('fair_tide')) return; } catch(e) {}
     const name = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(rivalKey) : rivalKey;
     const chance = window.getRivalCaptureChance(rivalKey);
     const chancePct = Math.round(chance * 100);
