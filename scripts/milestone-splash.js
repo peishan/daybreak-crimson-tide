@@ -124,6 +124,7 @@
 
   // ---- Recruitment: Joel, Aisyah, Eliz and Mezstorm join when their guardian falls ----
   const GUARDIAN_JOIN = ['joel', 'aisyah', 'eliz', 'mezstorm'];
+  const AFTER_FIGHT = { joel:'rescueafter', aisyah:'aisyahafter', mezstorm:'mezstormafter' };   // the battle clips that follow each real fight
   const oldVictory = window.handleVictory;
   if (typeof oldVictory === 'function') {
     window.handleVictory = function(){
@@ -132,9 +133,10 @@
       try {
         GUARDIAN_JOIN.forEach(function(c){
           if (had[c] || !(game.foundCompanions && game.foundCompanions[c])) return;
-          if (c === 'joel' && typeof window.playCinematicOnce === 'function') {
-            // the two post-battle clips first, then his splash
-            new Promise(function(r){ setTimeout(r, 900); }).then(function(){ return window.playCinematicOnce('rescueafter'); }).then(function(){ return auto('joel', 300); });
+          const after = AFTER_FIGHT[c];
+          if (after && typeof window.playCinematicOnce === 'function') {
+            // the battle clip(s) first, then the companion's splash
+            new Promise(function(r){ setTimeout(r, 900); }).then(function(){ return window.playCinematicOnce(after); }).then(function(){ return auto(c, 300); });
           } else auto(c, 900);
         });
       } catch(e) {}

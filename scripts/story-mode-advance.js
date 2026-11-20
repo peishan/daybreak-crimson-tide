@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V553 · Memory Archive opens once San has her memories back';
+window.__CT_BUILD__='V554 · Battle clips play after the real fight';
