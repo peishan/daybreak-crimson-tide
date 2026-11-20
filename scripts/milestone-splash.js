@@ -11,6 +11,7 @@
   //   mezstorm  Mezstorm joins         -> the moment the Storm Idol falls
   //   twins     Senedra and Zaki join  -> when Chapter 23 is complete (they join together)
   //   finale    The whole crew         -> when Chapter 24 is complete
+  //   arc3ch1   The Night at the Tavern -> when Arc III Chapter 1 is marked read
   //
   // Each shows once per save (game.splashSeen) and follows the same "play cinematics
   // automatically" switch as the videos. A moment a save has already passed never replays by
@@ -24,7 +25,8 @@
     { id:'aisyah',   img:'aisyah-joins.webp',              kicker:'Crew recruited', title:'Aisyah joins the crew',      where:'When Aisyah joins the crew' },
     { id:'mezstorm', img:'mezstorm-joins.webp',            kicker:'Crew recruited', title:'Mezstorm joins the crew',    where:'When Mezstorm joins the crew' },
     { id:'twins',    img:'senedra-zaki-join.webp',         kicker:'Crew recruited', title:'Senedra and Zaki join the crew', where:'When Senedra and Zaki join the crew' },
-    { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' }
+    { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' },
+    { id:'arc3ch1',  img:'arc3-ch01-the-night-at-the-tavern.webp', kicker:'Arc III · Chapter 1', title:'The Night at the Tavern', where:'When Arc III Chapter 1 is marked read' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
@@ -139,6 +141,17 @@
         if (!was && now && n === 23 && game.foundCompanions && game.foundCompanions.senedra && game.foundCompanions.zaki) auto('twins', 700);
         if (!was && now && n === 24) auto('finale', 700);
       } catch(e) {}
+      return r;
+    };
+  }
+
+  // ---- Arc III Chapter 1: shown once it is marked read (its comic opens in another tab) ----
+  const oldMark3 = window.markArc3ChapterRead;
+  if (typeof oldMark3 === 'function') {
+    window.markArc3ChapterRead = function(id){
+      const was = !!(game.comicProgress3 && game.comicProgress3[Number(id)]);
+      const r = oldMark3.apply(this, arguments);
+      try { if (Number(id) === 1 && !was && game.comicProgress3 && game.comicProgress3[1]) auto('arc3ch1', 600); } catch(e) {}
       return r;
     };
   }
