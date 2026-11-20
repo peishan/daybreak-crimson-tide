@@ -3616,22 +3616,32 @@ const ARC1_COMICS = [
   {id:23,title:'The Two Who Remembered',tag:'Senedra & Zaki',unlock:()=>!!game.comicProgress?.[22],summary:'Senedra and Zaki remember each other as siblings, but not Aisyah, San, Mezstorm, or Eliz.',xp:60},
   {id:24,title:'The Drowned Passage',tag:'Arc I Finale',unlock:()=>!!game.comicProgress?.[23] && !!game.finalCleared,summary:'Aldric and Wren join the reunited crew as the Drowned Admiral guards the way beyond the charts.',xp:75}
 ];
+// Full comic pages for chapters opened without Story Mode art; these are the read-back versions.
 const ARC1_ART = {
-  1:'assets/comics/arc1/ch01-storm-that-remained.webp',
-  2:'assets/comics/arc1/ch02-the-first-port.webp',
-  3:'assets/comics/arc1/ch03-a-crew-of-choice.webp',
-  4:'assets/comics/arc1/ch04-the-guardians-fortress.webp',
-  5:'assets/comics/arc1/ch05-the-voice-behind-the-wall.webp',
-  6:'assets/comics/arc1/ch06-the-shield-returns.webp',
-  7:'assets/comics/arc1/ch07-the-shield-that-remained.webp',
-  8:'assets/comics/arc1/ch08-the-tradewinds-remember.webp',
-  18:'assets/comics/arc1/ch18-mezstorm-rescue.webp',
-  19:'assets/comics/arc1/ch19-crew-we-choose.webp',
-  20:'assets/comics/arc1/ch20-senedra.webp',
-  21:'assets/comics/arc1/ch21-zaki.webp',
-  22:'assets/comics/arc1/ch22-mezstorm.webp',
-  23:'assets/comics/arc1/ch23-siblings.webp',
-  24:'assets/comics/arc1/ch24-drowned-passage.webp'
+  1:'assets/comics/arc1-readback/ch01-the-storm-that-remained.webp',
+  2:'assets/comics/arc1-readback/ch02-the-first-port.webp',
+  3:'assets/comics/arc1-readback/ch03-a-crew-of-choice.webp',
+  4:'assets/comics/arc1-readback/ch04-the-guardians-fortress.webp',
+  5:'assets/comics/arc1-readback/ch05-the-voice-behind-the-wall.webp',
+  6:'assets/comics/arc1-readback/ch06-the-shield-returns.webp',
+  7:'assets/comics/arc1-readback/ch07-the-shield-that-remained.webp',
+  8:'assets/comics/arc1-readback/ch08-the-trader-winds-remember.webp',
+  9:'assets/comics/arc1-readback/ch09-the-shield-returns-promise-carried-forward.webp',
+  10:'assets/comics/arc1-readback/ch10-the-day-the-sea-rested.webp',
+  11:'assets/comics/arc1-readback/ch11-the-day-we-chose.webp',
+  12:'assets/comics/arc1-readback/ch12-the-debt-that-wasnt-hers.webp',
+  13:'assets/comics/arc1-readback/ch13-the-debt-collector.webp',
+  14:'assets/comics/arc1-readback/ch14-two-sisters-one-ship.webp',
+  15:'assets/comics/arc1-readback/ch15-the-one-who-stayed.webp',
+  16:'assets/comics/arc1-readback/ch16-the-mark-we-carried.webp',
+  17:'assets/comics/arc1-readback/ch17-the-things-we-do-without-knowing.webp',
+  18:'assets/comics/arc1-readback/ch18-the-storm-that-was-owed.webp',
+  19:'assets/comics/arc1-readback/ch19-the-crew-we-choose.webp',
+  20:'assets/comics/arc1-readback/ch20-senedra-the-watchful-signal.webp',
+  21:'assets/comics/arc1-readback/ch21-zaki-the-planner.webp',
+  22:'assets/comics/arc1-readback/ch22-mezstorm-the-regeneration.webp',
+  23:'assets/comics/arc1-readback/ch23-senedra-and-zaki-the-two-who-remembered.webp',
+  24:'assets/comics/arc1-readback/ch24-the-drowned-passage.webp'
 };
 function completeArc1Comic(id){
   const ch=ARC1_COMICS.find(x=>x.id===id); if(!ch || !ch.unlock()) return;

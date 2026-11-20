@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V550 · Quest board keeps your delivery contracts on arrival';
+window.__CT_BUILD__='V551 · Arc I comic reader uses the read-back pages';
