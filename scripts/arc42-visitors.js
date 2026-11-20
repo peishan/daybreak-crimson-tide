@@ -78,6 +78,8 @@
     mirelle: 'Queen of Altan · Rheon\'s wife · Devon\'s trusted ally',
     aster:   'King of Dragonvale · Fen\'s husband',
     fen:     'Queen of Dragonvale · Aster\'s wife',
+    roc:     'Delilah\'s husband · Devon\'s twin brother',
+    delilah: 'Roc\'s wife · Devon\'s sister-in-law',
     hugh:    'Sera\'s partner · Eve\'s brother',
     sera:    'Hugh\'s partner · Rheon\'s younger sister'
   };
