@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V543 · Joel rescue: chapters first, then the Wreck Warden';
+window.__CT_BUILD__='V544 · Chapter intro clips: Aisyah, Eliz, Mezstorm, Senedra, Zaki, Passage';
