@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V563 · Sairen Person of Interest file updated once he is crew';
+window.__CT_BUILD__='V564 · Horizon Engine shown as built; the twins unlocked for expeditions once crew';
