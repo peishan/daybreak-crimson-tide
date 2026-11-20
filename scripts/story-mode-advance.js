@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V564 · Horizon Engine shown as built; the twins unlocked for expeditions once crew';
+window.__CT_BUILD__='V565 · Horizon Engine upgrades: faster crossings and more';
