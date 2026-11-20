@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V552 · Joel rescue clips staged across the fight';
+window.__CT_BUILD__='V553 · Memory Archive opens once San has her memories back';
