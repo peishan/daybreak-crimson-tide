@@ -106,7 +106,7 @@
       desc:"A long-standing friend Devon has looked up to since he was young — former Head of House Veyne and a key figure in Tribute's political and intelligence circles. Delighted by every small story about the families Fair Tide's residents have built here.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[36]); }},
     {id:'roc', name:'Roc', icon:'🐉',
-      connection:"Dragonvale — Devon's twin brother. Delilah's husband.",
+      connection:"Dragonvale — Devon's twin brother; Jade's brother-in-law. Delilah's husband.",
       desc:"Warm welcome, a household full of it — including twins (Liora among them) who toddle past strangers entirely unbothered.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'delilah', name:'Delilah', icon:'🏡',
@@ -114,11 +114,11 @@
       desc:"Builds a life out of love rather than obligation — the kind San is openly delighted to see in another family.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'aster', name:'Aster', icon:'🗺️',
-      connection:"Dragonvale — King of Dragonvale. Fen's husband. Jade and Devon's sibling.",
+      connection:"Dragonvale — King of Dragonvale. Fen's husband. Devon's brother; Jade's brother-in-law.",
       desc:"Steady in conversation, contributes without needing to lead it, and still finds time to actually look around wherever the visit lands.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }},
     {id:'fen', name:'Fen', icon:'⚙️',
-      connection:"Dragonvale — Queen of Dragonvale. Aster's wife; Jade and Devon's sister-in-law.",
+      connection:"Dragonvale — Queen of Dragonvale. Aster's wife; Devon's sister-in-law.",
       desc:"A learned queen with a sharp, compassionate mind. Lights up at the Horizon Engine — already imagining what a real exchange of knowledge between worlds could look like.",
       eligible: function(){ return !!(game.comicProgress42 && game.comicProgress42[38]); }}
   ];

@@ -71,14 +71,16 @@
   const SPRING_ON_PAGE = ['jade','devon','sky','levi','sally','hugh','sera'];
   const EXPECTING_NOTE = { fen: 'She is expecting Aster\'s child.', eve: 'She is expecting Adrian\'s child.', mirelle: 'She is expecting Rheon\'s child.' };
   // Who they are to each other (shown on the Residents card instead of the generic "Visiting Friend").
+  // earlier wordings of the same ties, so saves that already hold one are brought up to date
+  const OLD_RELATION = ['King of Dragonvale · Fen\'s husband', 'Queen of Dragonvale · Aster\'s wife', 'Delilah\'s husband · Devon\'s twin brother'];
   const RELATION = {
     adrian:  'Eve\'s husband · Jade\'s brother',
     eve:     'Adrian\'s wife · Hugh\'s sister',
     rheon:   'King of Altan · Mirelle\'s husband · Sera\'s older brother',
     mirelle: 'Queen of Altan · Rheon\'s wife · Devon\'s trusted ally',
-    aster:   'King of Dragonvale · Fen\'s husband',
-    fen:     'Queen of Dragonvale · Aster\'s wife',
-    roc:     'Delilah\'s husband · Devon\'s twin brother',
+    aster:   'King of Dragonvale · Fen\'s husband · Devon\'s brother · Jade\'s brother-in-law',
+    fen:     'Queen of Dragonvale · Aster\'s wife · Devon\'s sister-in-law',
+    roc:     'Delilah\'s husband · Devon\'s twin brother · Jade\'s brother-in-law',
     delilah: 'Roc\'s wife · Devon\'s sister-in-law',
     hugh:    'Sera\'s partner · Eve\'s brother',
     sera:    'Hugh\'s partner · Rheon\'s younger sister'
@@ -128,7 +130,7 @@
       v.ids.forEach(function(id){
         const wasNew = !window.fairTideResidentsState()[id];
         const rec = ensure(id);
-        if (RELATION[id] && (!rec.relationship || rec.relationship === 'Visiting Friend')) rec.relationship = RELATION[id];
+        if (RELATION[id] && (!rec.relationship || rec.relationship === 'Visiting Friend' || OLD_RELATION.indexOf(rec.relationship) !== -1)) rec.relationship = RELATION[id];
         if (wasNew) changed = true;
         const names = v.ids.filter(function(o){ return o !== id; }).map(function(o){ return cast(o).name; });
         logOnce(v.key + ':' + id + ':in', rec, 'join', 'Visits Fair Tide' + (names.length ? ' with ' + names.join(', ') : '') + '.');
