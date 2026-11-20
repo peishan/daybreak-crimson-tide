@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V562 · Lock for the Tavern quest board';
+window.__CT_BUILD__='V563 · Sairen Person of Interest file updated once he is crew';
