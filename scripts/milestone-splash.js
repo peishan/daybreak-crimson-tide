@@ -4,8 +4,8 @@
   // few seconds, then closes by itself (tap to close early). Used for the smaller story moments
   // that do not get a video:
   //
-  //   ch10      The Names We Keep      -> when Chapter 10 opens
-  //   ch11      Before the Next Port   -> when Chapter 11 opens
+  //   ch10      The Day the Sea Rested -> when Chapter 10 has been read
+  //   ch11      The Day We Chose       -> when Chapter 11 has been read
   //   joel      Joel joins             -> the moment the Wreck Warden falls
   //   aisyah    Aisyah joins           -> the moment the Debt Collector falls
   //   eliz      Eliz joins             -> the moment the Plague Hulk falls
@@ -21,8 +21,8 @@
   // -------------------------------------------------------------------
   const BASE = 'assets/splash/arc1/';
   const SPLASH = [
-    { id:'ch10',     img:'ch10-the-names-we-keep.webp',    kicker:'Chapter 10',     title:'The Names We Keep',          where:'Opens with Chapter 10' },
-    { id:'ch11',     img:'ch11-before-the-next-port.webp', kicker:'Chapter 11',     title:'Before the Next Port',       where:'Opens with Chapter 11' },
+    { id:'ch10',     img:'ch10-the-day-the-sea-rested.webp', kicker:'Chapter 10',     title:'The Day the Sea Rested',     where:'After Chapter 10 is read' },
+    { id:'ch11',     img:'ch11-the-day-we-chose.webp',     kicker:'Chapter 11',     title:'The Day We Chose',           where:'After Chapter 11 is read' },
     { id:'joel',     img:'joel-joins.webp',                kicker:'Crew recruited', title:'Joel joins the crew',        where:'When Joel joins the crew' },
     { id:'aisyah',   img:'aisyah-joins.webp',              kicker:'Crew recruited', title:'Aisyah joins the crew',      where:'When Aisyah joins the crew' },
     { id:'eliz',     img:'eliz-joins.webp',                kicker:'Crew recruited', title:'Eliz joins the crew',        where:'When Eliz joins the crew' },
@@ -106,22 +106,6 @@
     return new Promise(function(r){ setTimeout(r, delay || 0); }).then(function(){ return show(id, false); });
   }
 
-  // ---- Chapters 10 and 11: before the chapter opens ----
-  const CHAPTER_SPLASH = { 10:'ch10', 11:'ch11' };
-  const oldOpen = window.openStoryMode;
-  if (typeof oldOpen === 'function') {
-    window.openStoryMode = function(chapterId, options){
-      options = options || {};
-      const id = CHAPTER_SPLASH[chapterId];
-      if (id && !options.replay && autoOn() && !isSeen(id) && !(game.comicProgress && game.comicProgress[chapterId]) && typeof STORY_MODE_CHAPTERS !== 'undefined' && STORY_MODE_CHAPTERS[chapterId]) {
-        const self = this, args = arguments;
-        show(id, false).then(function(){ oldOpen.apply(self, args); });
-        return true;
-      }
-      return oldOpen.apply(this, arguments);
-    };
-  }
-
   // ---- Recruitment: Joel, Aisyah, Eliz and Mezstorm join when their guardian falls ----
   const GUARDIAN_JOIN = ['joel', 'aisyah', 'eliz', 'mezstorm'];
   const AFTER_FIGHT = { joel:'rescueafter', aisyah:'aisyahafter', mezstorm:'mezstormafter' };   // the battle clips that follow each real fight
@@ -144,7 +128,7 @@
     };
   }
 
-  // ---- Chapter 23 (Senedra and Zaki join together) and Chapter 24 (the finale) ----
+  // ---- Chapters 10 and 11 (after they are read), Chapter 23 (Senedra and Zaki join together) and Chapter 24 (the finale) ----
   const oldFinish = window.finishStoryModeChapter;
   if (typeof oldFinish === 'function') {
     window.finishStoryModeChapter = function(id){
@@ -152,6 +136,7 @@
       const r = oldFinish.apply(this, arguments);
       try {
         const now = !!(game.comicProgress && game.comicProgress[n]);
+        if (!was && now && (n === 10 || n === 11)) auto('ch' + n, 700);
         if (!was && now && n === 23 && game.foundCompanions && game.foundCompanions.senedra && game.foundCompanions.zaki) auto('twins', 700);
         if (!was && now && n === 24) auto('finale', 700);
       } catch(e) {}
