@@ -43,7 +43,8 @@
     { id: 't15', arc: 15, title: 'Trade at Salt Coast Harbor',    tasks: [{ k: 'sell', port: 'salt_coast_harbor', n: 20 }] },
     { id: 't16', arc: 16, title: 'Trade at Orchard Harbor',       tasks: [{ k: 'sell', port: 'orchard_harbor', n: 20 }] },
     { id: 't17', arc: 17, title: 'Trade at Dragonvale',          tasks: [{ k: 'sell', port: 'dragonvale', n: 20 }] },
-    { id: 't18', arc: 18, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] }
+    { id: 't18', arc: 18, title: 'Trade at Forest Inlet',         tasks: [{ k: 'sell', port: 'forest_inlet', n: 20 }] },
+    { id: 't19', arc: 19, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] }
   ];
 
   // MID-ARC GATES (Arc XVIII onward): an arc no longer runs through on story XP alone. After the 5th and
