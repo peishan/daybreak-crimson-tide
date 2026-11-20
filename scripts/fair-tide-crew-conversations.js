@@ -167,6 +167,8 @@
   window.fairTideConversationState = conversationState;
 
   function rollTodaysConversation(){
+    // Fair Tide's downtime and conversations only happen once the port is open.
+    try { if (typeof isPortUnlocked === 'function' && !isPortUnlocked('fair_tide')) return; } catch(e) {}
     const state = conversationState();
     const today = game.day || 0;
     if (state.lastRollDay === today) return; // once per new game day, never per render/click

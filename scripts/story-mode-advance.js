@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V559 · Arc splashes wait for the chapter-complete screen';
+window.__CT_BUILD__='V560 · No pirate capture or Fair Tide downtime before Fair Tide opens';
