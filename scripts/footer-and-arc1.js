@@ -158,12 +158,9 @@
       game.comicProgress[12]=true; game.comicProgress[13]=true;
       if(typeof saveGame==='function') saveGame();
     }
-    // Chapters 14, 16, 17 previously had no gate anywhere in this chain and
-    // were unreachable through normal play despite having full art+panels.
-    // They sit narratively after Aisyah joins and before the Eliz arc.
+    // Chapter 14 follows Aisyah joining. Chapters 16 and 17 show Eliz already
+    // aboard, so they come after her own chapter (15) and rescue, not before.
     if(!game.comicProgress?.[14]) return 'complete_chapter_14';
-    if(!game.comicProgress?.[16]) return 'complete_chapter_16';
-    if(!game.comicProgress?.[17]) return 'complete_chapter_17';
     if(!game.foundCompanions?.eliz){
       if(game.location!=='batavia') return 'sail_batavia';
       if(!game.comicProgress?.[15]) return 'complete_chapter_15';
@@ -173,6 +170,8 @@
       game.comicProgress[15]=true;
       if(typeof saveGame==='function') saveGame();
     }
+    if(!game.comicProgress?.[16]) return 'complete_chapter_16';
+    if(!game.comicProgress?.[17]) return 'complete_chapter_17';
     if(!game.foundCompanions?.mezstorm){
       if(game.location!=='bangkok') return 'sail_bangkok';
       if(!game.comicProgress?.[18]) return 'complete_chapter_18';
@@ -225,8 +224,8 @@
           5:'complete_chapter_6',6:'complete_chapter_7',7:'complete_chapter_8',
           8:'sail_palembang',9:'complete_chapter_10',10:'complete_chapter_11',
           11:'complete_chapter_12',12:'complete_chapter_13',13:'complete_chapter_14',
-          14:'complete_chapter_16',15:'rescue_eliz',16:'complete_chapter_17',
-          17:'sail_batavia',18:'rescue_mezstorm',19:'complete_chapter_20',
+          14:'sail_batavia',15:'rescue_eliz',16:'complete_chapter_17',
+          17:'sail_bangkok',18:'rescue_mezstorm',19:'complete_chapter_20',
           20:'complete_chapter_21',21:'complete_chapter_22',22:'complete_chapter_23',
           23:'complete_chapter_24',24:'continue_voyage'
         };
