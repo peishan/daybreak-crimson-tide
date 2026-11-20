@@ -13,6 +13,7 @@
   //   twins     Senedra and Zaki join  -> when Chapter 23 is complete (they join together)
   //   finale    The whole crew         -> when Chapter 24 is complete
   //   arc3ch1   The Night at the Tavern -> when Arc III Chapter 1 is marked read
+  //   twinsborn The twins are born      -> when Arc XXXV Chapter 10 is marked read, then the birth-reveal clip plays
   //
   // Each shows once per save (game.splashSeen) and follows the same "play cinematics
   // automatically" switch as the videos. A moment a save has already passed never replays by
@@ -28,6 +29,7 @@
     { id:'mezstorm', img:'mezstorm-joins.webp',            kicker:'Crew recruited', title:'Mezstorm joins the crew',    where:'When Mezstorm joins the crew' },
     { id:'twins',    img:'senedra-zaki-join.webp',         kicker:'Crew recruited', title:'Senedra and Zaki join the crew', where:'When Senedra and Zaki join the crew' },
     { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' },
+    { id:'twinsborn', img:'arc35-ch10-twins-born.webp', kicker:'Arc XXXV · Chapter 10', title:'The twins are born', where:'When Arc XXXV Chapter 10 is marked read' },
     { id:'arc3ch1',  img:'arc3-ch01-the-night-at-the-tavern.webp', kicker:'Arc III · Chapter 1', title:'The Night at the Tavern', where:'When Arc III Chapter 1 is marked read' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
@@ -154,6 +156,21 @@
       const was = !!(game.comicProgress3 && game.comicProgress3[Number(id)]);
       const r = oldMark3.apply(this, arguments);
       try { if (Number(id) === 1 && !was && game.comicProgress3 && game.comicProgress3[1]) auto('arc3ch1', 600); } catch(e) {}
+      return r;
+    };
+  }
+
+  // ---- Arc XXXV Chapter 10 (Joelle): the splash, then the birth-reveal clip ----
+  const oldMark35 = window.markArc35ChapterRead;
+  if (typeof oldMark35 === 'function') {
+    window.markArc35ChapterRead = function(id){
+      const was = !!(game.comicProgress35 && game.comicProgress35[Number(id)]);
+      const r = oldMark35.apply(this, arguments);
+      try {
+        if (Number(id) === 10 && !was && game.comicProgress35 && game.comicProgress35[10]) {
+          auto('twinsborn', 600).then(function(){ if (typeof window.playCinematicOnce === 'function') window.playCinematicOnce('twinsbirth'); });
+        }
+      } catch(e) {}
       return r;
     };
   }
