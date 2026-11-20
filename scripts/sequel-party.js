@@ -103,7 +103,9 @@
     window.getRequiredFieldedIds = function(){
       const base = oldRequired.apply(this, arguments);
       if (!game.sequelCrewApplied) return base;
-      const out = base.slice();
+      // Renn, Erynn and Mimi are required aboard only for Arc VI-VIII's own story; from the sequel on they stay at Fair Tide
+      // with the research team (otherwise that old requirement kept putting them back on the ship).
+      const out = base.filter(function(id){ return HOME_NAMED.indexOf(id) === -1; });
       REQUIRED.forEach(function(id){ if (joined(id) && out.indexOf(id) === -1) out.push(id); });
       return out;
     };
