@@ -46,6 +46,27 @@
     { id: 't18', arc: 18, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] }
   ];
 
+  // MID-ARC GATES (Arc XVIII onward): an arc no longer runs through on story XP alone. After the 5th and
+  // the 10th chapter of each arc, the next chapter waits for some trading and a level a little ahead of
+  // what the chapters themselves give. Tune here: where the gates fall, the extra levels, the trade needed.
+  const MID_FROM_ARC = 18, MID_AFTER_READ = [5, 10], MID_LEVEL_OVER_ARC_GATE = [2, 4], MID_SELL = 30;
+  function midGate(next){
+    if (next.arc < MID_FROM_ARC) return null;
+    const side = sideIds();
+    const read = chapterList().filter(function(o){ return o.arc === next.arc && side.indexOf(o.id) === -1 && ch()[o.id]; }).length;
+    const k = MID_AFTER_READ.indexOf(read);
+    if (k < 0) return null;
+    const id = 'm' + next.arc + '_' + (k + 1);
+    if (done()[id]) return null;
+    const port = typeof window.crimsonHorizonChapterPort === 'function' ? window.crimsonHorizonChapterPort(next.id) : null;
+    const lvl = (typeof window.crimsonHorizonArcLevel === 'function' ? window.crimsonHorizonArcLevel(next.arc) : 0) + MID_LEVEL_OVER_ARC_GATE[k];
+    const tasks = [];
+    if (k === 0 && port && typeof isPortUnlocked === 'function' && isPortUnlocked(port)) tasks.push({ k: 'sell', port: port, n: MID_SELL });
+    else tasks.push({ k: 'contract', n: 1 });
+    tasks.push({ k: 'level', n: lvl });
+    return { id: id, arc: next.arc, mid: true, title: k === 0 ? 'Restock before the next leg' : 'Earn your keep on the water', tasks: tasks };
+  }
+
   function done(){ game.storyGateDone = game.storyGateDone || {}; return game.storyGateDone; }
   function starts(){ game.storyGateStart = game.storyGateStart || {}; return game.storyGateStart; }
   function told(){ game.storyGateTold = game.storyGateTold || {}; return game.storyGateTold; }
@@ -82,6 +103,8 @@
     const list = chapterList(), side = sideIds();
     const next = list.find(function(c){ return side.indexOf(c.id) === -1 && !ch()[c.id]; });
     if (!next || next.arc < 2) return null;
+    const mg = midGate(next);
+    if (mg) return { kind: 'trade', g: mg, chapter: next };
     const g = TRADE.find(function(t){ return t.arc === next.arc; });
     if (!g || done()[g.id]) return null;
     if (list.some(function(o){ return o.arc === next.arc && ch()[o.id]; })) { done()[g.id] = true; return null; }   // arc already under way
@@ -102,6 +125,7 @@
     const base = starts()[g.id] = starts()[g.id] || { soldAt: Object.assign({}, c.soldAt), contracts: c.contracts };
     return g.tasks.map(function(t){
       if (t.k === 'sell') return { label: 'Sell ' + t.n + ' goods at ' + portName(t.port), have: Math.min(t.n, (c.soldAt[t.port] || 0) - ((base.soldAt || {})[t.port] || 0)), need: t.n };
+      if (t.k === 'level') return { label: 'Reach Level ' + t.n, have: Math.min(t.n, typeof level === 'function' ? level() : 0), need: t.n };
       if (t.k === 'contract') return { label: 'Finish a delivery contract', have: Math.min(t.n, c.contracts - (base.contracts || 0)), need: t.n };
       const ports = Object.keys(game.priceBook || {}).length;
       return { label: 'Have prices from ' + t.n + ' ports in your Price Book', have: Math.min(t.n, ports), need: t.n };
@@ -174,7 +198,7 @@
     }
     if (!told()[key]) {
       told()[key] = true;
-      const why = a.kind === 'host' ? 'Your guests are here for a few chapters. Spend a little time with them.' : 'The next arc is waiting on a bit of trade. See the Current Objective.';
+      const why = a.kind === 'host' ? 'Your guests are here for a few chapters. Spend a little time with them.' : (a.g.mid ? 'The next chapters are waiting on some trade and a few levels. See the Current Objective.' : 'The next arc is waiting on a bit of trade. See the Current Objective.');
       if (typeof window.notify === 'function') window.notify({ icon: a.kind === 'host' ? '🤝' : '⚖️', title: a.g.title, text: why, kind: 'info', duration: 6000 });
     }
   }
@@ -198,7 +222,7 @@
               : '<button class="btn btn-small btn-magic" onclick="sailTo(\'fair_tide\')">⛵ Sail to Fair Tide</button>';
           } else {
             const sell = t.gate.tasks.find(function(x){ return x.k === 'sell'; });
-            text = lines + '. Arc ' + t.gate.arc + ' of the voyage opens once you have done a little trading.';
+            text = lines + (t.gate.mid ? '. The next chapters of Arc ' + t.gate.arc + ' open once you have kept the voyage going: trade, and earn XP from the Reach, raids and bounties.' : '. Arc ' + t.gate.arc + ' of the voyage opens once you have done a little trading.');
             if (sell && game.location !== sell.port) button = '<button class="btn btn-small btn-magic" onclick="sailTo(\'' + sell.port + '\')">⛵ Sail to ' + esc(portName(sell.port)) + '</button>';
             else if (t.gate.tasks.some(function(x){ return x.k === 'contract'; })) button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'tavern\')">📜 Open the Quest Board</button>';
             else button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'port\')">🏛️ Open the Market</button>';
@@ -221,7 +245,7 @@
   // The sequel Story panel asks for this notice (crimson-horizon-sequel.js).
   window.storyTaskNoticeHtml = function(){
     const t = window.storyTaskGate(); if (!t || t.kind !== 'trade') return '';
-    return '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + t.gate.arc + ': ' + esc(t.gate.title) + '</div><div class="story-chapter-sub">' +
+    return '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + t.gate.arc + (t.gate.mid ? ' (next chapters)' : '') + ': ' + esc(t.gate.title) + '</div><div class="story-chapter-sub">' +
       esc(t.progress.map(function(p){ return (p.have >= p.need ? '✓ ' : '○ ') + p.label + (p.need > 1 ? ' (' + p.have + '/' + p.need + ')' : ''); }).join(' · ')) + '</div></div>';
   };
 })();
