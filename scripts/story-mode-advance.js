@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V549 · Mimi, Renn, Erynn intros and the twins';
+window.__CT_BUILD__='V550 · Quest board keeps your delivery contracts on arrival';

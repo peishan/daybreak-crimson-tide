@@ -5,7 +5,8 @@
   // A new voyage started with delivery contracts to Manila and Fair Tide (with Level 1 rewards in the
   // thousands), "Smuggler's End" at ports that were still locked, and sea hunts before there was
   // anywhere to sail. Now a contract is offered only if you could do it today:
-  //   * delivery: the destination port is unlocked (and is not the port you are in);
+  //   * delivery: the destination port is unlocked (a new one is never offered for the port you are in,
+  //     but an accepted one stays when you arrive there, since that is where you hand it over);
   //   * kill, harbor enemy: at least one unlocked port has it in its harbor fights;
   //   * kill, sea enemy: you can sail somewhere (at least two ports unlocked);
   //   * kill, anywhere else (the late-game regions): once Fair Tide is open.
@@ -25,7 +26,7 @@
   }
   window.questEnemyReachable = enemyReachable;
   function deliveryReachable(q){
-    try { const p = PORTS.find(function(x){ return x.id === q.portId; }); return !!p && deliveryPortReachable(p) && p.id !== game.location; } catch(e) { return true; }
+    try { const p = PORTS.find(function(x){ return x.id === q.portId; }); return !!p && deliveryPortReachable(p); } catch(e) { return true; }   // the port you are standing in is fine: that is where you deliver
   }
   function questOk(q){
     if (!q) return false;
