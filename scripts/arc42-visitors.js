@@ -64,17 +64,21 @@
   // Cold Spring (the Fountain of Youth) lines for the resident card. Only the
   // Canon Five (Tribute ch.960-964) and Hugh and Sera (Arc XLII Ch.27, "The
   // Cooling Spring") are shown at the spring in the chapters. For everyone else
-  // it happened off the page, at San's invitation, and is deliberately left
-  // unsaid: readers are meant to work it out from the sequel (so many of the
-  // women expecting at once, all of whom had visited Fair Tide). Jenika's follows the chapters:
+  // it happened off the page, at San's invitation, so their card says they MAY have taken
+  // the waters, and once the sequel has begun the women who are expecting there (Fen, Eve,
+  // Mirelle) get a line about the pregnancy after it. Jenika's follows the chapters:
   // her visit is with the medical team (Ch.34-35, Tribute 955/975).
   const SPRING_ON_PAGE = ['jade','devon','sky','levi','sally','hugh','sera'];
+  const EXPECTING_NOTE = { fen: 'She is expecting Aster\'s child.', eve: 'She is expecting.', mirelle: 'She is expecting.' };
+  function sequelBegun(){ return !!(game.arc42Complete && game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[1]); }
   function springNote(id){
     if (id === 'jenika') return (game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[155])
       ? '♨️ Drank from the Fountain on an earlier visit, and told Sky only years later, on this one.'
       : 'Spent her visit with Fair Tide\'s medical team, comparing notes.';
     if (SPRING_ON_PAGE.indexOf(id) !== -1) return '♨️ Took the waters at the Cold Spring, the Fountain of Youth.';
-    return '';   // off the page: readers are meant to infer it from the sequel
+    // off the page: it may have happened, at San's invitation
+    return '♨️ May have taken the waters at the Cold Spring, the Fountain of Youth.' +
+      ((EXPECTING_NOTE[id] && sequelBegun()) ? ' ' + EXPECTING_NOTE[id] : '');
   }
 
   function cast(id){
@@ -146,7 +150,7 @@
           if (rec.status !== 'departed') changed = true;
           rec.status = 'departed'; rec.awayLocation = v.away; rec.awayCompanion = v.awayCompanion || rec.awayCompanion;
           logOnce(v.key + ':' + id + ':out', rec, 'leave', 'Returns to ' + v.away + '.');
-          if (v.holdNote) delete rec.note;
+          if (v.holdNote) { const sn = springNote(id); if (sn) rec.note = sn; else delete rec.note; }
         } else {
           if (rec.status !== 'resident') changed = true;
           rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null;
