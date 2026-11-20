@@ -121,7 +121,8 @@
       s.arc30Visited = true;
       if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(s, 'join', 'Comes home to the crisis, and is cleared of it.');
     }
-    if (cp[24] && s.arc30Visited && s.status !== 'departed') {
+    // (not once he has joined the crew in Arc XLI: that is where he stays)
+    if (cp[24] && s.arc30Visited && s.status !== 'departed' && s.status !== 'crew' && !(game.foundCompanions && game.foundCompanions.sairen)) {
       s.status = 'departed'; s.awayLocation = 'Unknown'; s.awayCompanion = 'Alone, following a trail'; s.note = 'Went after the trail N and her recruiter left.';
       if (typeof window.logResidentArrivalDeparture === 'function') window.logResidentArrivalDeparture(s, 'leave', 'Leaves to follow the trail.');
     }
