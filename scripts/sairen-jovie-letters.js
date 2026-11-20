@@ -14,6 +14,14 @@
     game.sairenJovieLetters.push({ id: 'cliffside', from: 'Sairen', to: 'Jovie', day: game.day || 0, place: 'Terrace Harbor', text: CLIFFSIDE_LETTER });
   };
 
+  // Crimson Horizon Ch.195 ("Someone Who Knows You", id 196): the letter he writes after supper aboard.
+  const QUAY_LETTER = "Jovie,\n\nThe harbor here was full of ships that could not leave, and a crew that had gone two voyages without full pay. Their captain was dismissed for saying so, and he stayed with them anyway. He kept their contracts in a box.\n\nI did not expect it to matter to me as much as it did. Sally noticed, which is her way, and I said more than I meant to.\n\nWhen I am home, would you save me an evening, if you can?\n\nSairen";
+  window.recordSairenQuayLetter = function(){
+    game.sairenJovieLetters = game.sairenJovieLetters || [];
+    if (game.sairenJovieLetters.some(function(l){ return l.id === 'outer_quay'; })) return;
+    game.sairenJovieLetters.push({ id: 'outer_quay', from: 'Sairen', to: 'Jovie', day: game.day || 0, place: 'Outer Quay Harbor', text: QUAY_LETTER });
+  };
+
   function panelHtml(){
     const letters = game.sairenJovieLetters || [];
     if (!letters.length) return '';

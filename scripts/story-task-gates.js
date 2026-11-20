@@ -42,7 +42,8 @@
     { id: 't14', arc: 14, title: 'Trade at Farshore Estuary',     tasks: [{ k: 'sell', port: 'farshore_estuary', n: 20 }] },
     { id: 't15', arc: 15, title: 'Trade at Salt Coast Harbor',    tasks: [{ k: 'sell', port: 'salt_coast_harbor', n: 20 }] },
     { id: 't16', arc: 16, title: 'Trade at Orchard Harbor',       tasks: [{ k: 'sell', port: 'orchard_harbor', n: 20 }] },
-    { id: 't17', arc: 17, title: 'Trade at Dragonvale',          tasks: [{ k: 'sell', port: 'dragonvale', n: 20 }] }
+    { id: 't17', arc: 17, title: 'Trade at Dragonvale',          tasks: [{ k: 'sell', port: 'dragonvale', n: 20 }] },
+    { id: 't18', arc: 18, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] }
   ];
 
   function done(){ game.storyGateDone = game.storyGateDone || {}; return game.storyGateDone; }
