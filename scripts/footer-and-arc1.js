@@ -118,6 +118,9 @@
       if(game.malaccaPrepStep===1) return 'talk_to_joel';
       if(game.malaccaPrepStep===2) return 'change_plan';
       if(!game.comicProgress?.[4]) return 'complete_chapter_4';
+      // The approach (5) and the rescue (6) are told first; the Wreck Warden fight follows.
+      if(!game.comicProgress?.[5]) return 'complete_chapter_5';
+      if(!game.comicProgress?.[6]) return 'complete_chapter_6';
       return 'recruit_joel';
     } else if(!game.comicProgress?.[2] || !game.comicProgress?.[3] || !game.comicProgress?.[4]) {
       // Joel was found before finishing 2-4 (e.g. direct guardian fight).
@@ -224,8 +227,10 @@
           23:'complete_chapter_24',24:'continue_voyage'
         };
         if(Number(id)===23) joinSenedraAndZaki();
-        if(typeof setArc1Objective==='function') setArc1Objective(nextMap[id]||'continue_voyage',ch.title);
-        else game.arc1Objective=nextMap[id]||'continue_voyage';
+        // Chapter 6 hands over to the Wreck Warden fight when Joel is not yet aboard.
+        const nextObj=(Number(id)===6 && !game.foundCompanions?.joel) ? 'recruit_joel' : (nextMap[id]||'continue_voyage');
+        if(typeof setArc1Objective==='function') setArc1Objective(nextObj,ch.title);
+        else game.arc1Objective=nextObj;
         saveGameQuiet();
       }
       /* Reuse the existing V61 completion screen safely by calling the original
