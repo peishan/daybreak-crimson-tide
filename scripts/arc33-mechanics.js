@@ -32,6 +32,15 @@
   // 1. PERSONAL ARCHIVE — story-defined relationships, never player-set.
   // ===========================================================================
   const FAMILY_RELATIONSHIPS = [
+    // San's sisters, nieces and nephew. The three sisters are San, Aisyah and Mezstorm (Arc XXXVIII Ch.8);
+    // Senedra, Zaki and Eliz are the twins' cousins (Arc XXXV-XXXVI), so San's nieces and nephew.
+    { key:'san_aisyah',      a:'San',     b:'Aisyah',   relation:'Sisters',      unlockChapter:2 },
+    { key:'san_mezstorm',    a:'San',     b:'Mezstorm', relation:'Sisters',      unlockChapter:2 },
+    { key:'aisyah_mezstorm', a:'Aisyah',  b:'Mezstorm', relation:'Sisters',      unlockChapter:2 },
+    { key:'san_senedra',     a:'San',     b:'Senedra',  relation:'Aunt / Niece', unlockChapter:2 },
+    { key:'san_eliz',        a:'San',     b:'Eliz',     relation:'Aunt / Niece', unlockChapter:2 },
+    { key:'san_zaki',        a:'San',     b:'Zaki',     relation:'Aunt / Nephew', unlockChapter:2 },
+    { key:'senedra_zaki',    a:'Senedra', b:'Zaki',     relation:'Siblings',     unlockChapter:2 },
     { key:'joel_joy',  a:'Joel', b:'Joy',    relation:'Siblings',                     unlockChapter:2 },
     { key:'san_joy',   a:'San',  b:'Joy',    relation:'Ate / Sister-in-law / Family',  unlockChapter:2 },
     { key:'joy_twins', a:'Joy',  b:'Twins',  relation:'Aunt / Ate Joy',                unlockChapter:7 },

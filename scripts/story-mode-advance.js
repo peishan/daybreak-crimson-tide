@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V560 · No pirate capture or Fair Tide downtime before Fair Tide opens';
+window.__CT_BUILD__='V561 · Sairen shown as crew; sisters, nieces and nephew in the family records';
