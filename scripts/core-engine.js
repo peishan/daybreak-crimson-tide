@@ -2003,6 +2003,20 @@ function renderLandingV24(){
 
   const bar = document.getElementById('v24XPBar');
   if (bar) bar.style.width = pct + '%';
+
+  // Title art: once the main campaign is finished (Arc XLII complete, which opens Crimson Horizon) the title
+  // screen shows the sequel cover instead of the crew image. A cover that fails to load falls back to the crew image.
+  const art = document.querySelector('.ct-v26-art');
+  if (art) {
+    const CREW = 'crimson-tide-clean-title-v26.png', SEQUEL = 'assets/title/crimson-horizon-cover.webp';
+    const wantSequel = !!display.arc42Complete && !art.dataset.sequelFailed;
+    const want = wantSequel ? SEQUEL : CREW;
+    if (art.getAttribute('src') !== want) {
+      if (wantSequel) art.onerror = function(){ art.onerror = null; art.dataset.sequelFailed = '1'; art.src = CREW; art.alt = 'Daybreak Crimson Tide'; };
+      art.src = want;
+      art.alt = wantSequel ? 'Crimson Horizon: Adventures of San and Jade' : 'Daybreak Crimson Tide';
+    }
+  }
 }
 
 
