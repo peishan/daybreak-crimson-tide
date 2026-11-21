@@ -972,7 +972,10 @@
       blurb:'A long quay glittering with green, amber and blue glass, and the glow of furnaces at the back of every workshop.'},
     {id:'star_cove_harbor', name:'Star Cove Harbor', icon:'✨', danger:3, specialties:['smoked_fish','salt','rope'],
       desc:'A small island harbor in a bay shaped like a bent arm, where pale lights gather beneath the water each evening. (Working name; the merchant vessel and the outer cove beyond the headland are places within it.)',
-      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'}
+      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'},
+    {id:'lunareth_shore', name:'Lunareth — the Arrival Shore', icon:'🏔️', danger:3, specialties:['moonleaf_tea','highland_cheese','wool'],
+      desc:'The coast of Lunareth, where the Horizon crossing comes ashore: a market below the mountains, a road of evenly spaced lamps running along the shore, and forests and waterways beyond. (The Arrival Shore is also an expedition destination; this is the regular harbor.)',
+      blurb:'Mountains behind a pale beach, a lamp-lit coast road, and a morning market that is half in a language you are slowly learning.'}
   ];
 
   // New trade goods for the cliffside port (draft, for review): both sell
@@ -993,8 +996,40 @@
     if (!GOODS.baskets) GOODS.baskets = { name: 'Woven Baskets', icon: '🧺', basePrice: 28, weight: 1 };
     if (!GOODS.wool) GOODS.wool = { name: 'Winter Wool', icon: '🧶', basePrice: 34, weight: 1 };
     if (!GOODS.glass_lamps) GOODS.glass_lamps = { name: 'Glass Lamps', icon: '🪔', basePrice: 46, weight: 1 };
+    if (!GOODS.moonleaf_tea) GOODS.moonleaf_tea = { name: 'Moonleaf Tea', icon: '🍵', basePrice: 42, weight: 1 };
+    if (!GOODS.highland_cheese) GOODS.highland_cheese = { name: 'Highland Cheese', icon: '🧀', basePrice: 32, weight: 1 };
+    if (!GOODS.river_slate) GOODS.river_slate = { name: 'River Slate', icon: '🪨', basePrice: 36, weight: 1 };
   }
-  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps'];   // sequel-only trade goods
+  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate'];   // sequel-only trade goods
+  // ---- Lunareth contracts: fixed deliveries on the Tavern quest board, added once the Arrival Shore is open ----
+  const LUNARETH_QUESTS = [
+    {id:'q_lun_lamps',  good:'glass_lamps',     port:'lunareth_shore', need:12, name:'The Coast Road Lights',   desc:'The lamps along the Arrival Shore\'s coast road have gone dark one by one, and nobody there can make new ones. Sell {need}x {good} at the shore.'},
+    {id:'q_lun_sails',  good:'sailcloth',       port:'lunareth_shore', need:15, name:'Sails for the Shore Boats', desc:'The shore fishers are patching sails with sacking. Sell {need}x {good} at the Arrival Shore and they will be grateful for a season.'},
+    {id:'q_lun_tea',    good:'moonleaf_tea',    port:'dragonvale',     need:14, name:'A Taste of the Mountains',  desc:'Dragonvale\'s harbor stalls cannot keep Lunareth tea on the shelf. Carry {need}x {good} across the crossing and sell it in Dragonvale.'},
+    {id:'q_lun_slate',  good:'river_slate',     port:'dragonvale',     need:20, name:'Slate for the Terraced Roofs', desc:'Dragonvale\'s builders want Lunareth river slate for the terraced roofs. Sell {need}x {good} in Dragonvale.'}
+  ];
+  function lunarethQuestEntry(d){
+    const good = GOODS[d.good], port = PORTS.find(function(p){ return p.id === d.port; });
+    if (!good || !port) return null;
+    return { id: d.id, type: 'deliver', good: d.good, portId: d.port, need: d.need, c: 0, done: false, icon: good.icon, name: d.name,
+      desc: d.desc.replace('{need}', d.need).replace('{good}', good.icon + ' ' + good.name),
+      rw: { xp: Math.round(d.need * good.basePrice * 0.75), gold: Math.round(d.need * good.basePrice * 1.1), rep: 8 } };
+  }
+  const oldRefreshQuestsForLunareth = window.refreshQuests;
+  if (typeof oldRefreshQuestsForLunareth === 'function' && typeof QUEST_POOL !== 'undefined') {
+    window.refreshQuests = function(){
+      try {
+        if (game.arc42Complete && typeof isPortUnlocked === 'function' && isPortUnlocked('lunareth_shore')) {
+          LUNARETH_QUESTS.forEach(function(d){
+            if (QUEST_POOL.some(function(q){ return q.id === d.id; })) return;
+            const e = lunarethQuestEntry(d); if (e) QUEST_POOL.push(e);
+          });
+        }
+      } catch (e) {}
+      return oldRefreshQuestsForLunareth.apply(this, arguments);
+    };
+  }
+
   const CH_PORT_IDS = CH_PORTS.map(function(p){ return p.id; });
   window.CRIMSON_HORIZON_PORTS = CH_PORTS;
 
@@ -1021,7 +1056,8 @@
     outer_quay_harbor: function(){ return !!prog()[186]; },  // Ch.185 read (Enter the Harbor): the outer quay harbor is charted (regular port)
     winter_harbor: function(){ return !!prog()[201]; },  // Ch.200 read (Enter the Winter Harbor): the winter harbor is charted (regular port)
     glass_harbor: function(){ return !!prog()[218]; },  // Ch.217 read (Enter the Glass Harbor): the glass harbor is charted (regular port)
-    star_cove_harbor: function(){ return !!prog()[229]; }  // Ch.228 read (Enter the Star Cove): the star cove harbor is charted (regular port)
+    star_cove_harbor: function(){ return !!prog()[229]; },  // Ch.228 read (Enter the Star Cove): the star cove harbor is charted (regular port)
+    lunareth_shore: function(){ return !!prog()[159]; }  // Ch.158 read (Arrive in Dragonvale): the Lunareth crossing is open, so the Arrival Shore is a regular port too
   };
 
   function registerCrimsonHorizonPorts(){
@@ -1239,7 +1275,7 @@
     201: 'Winter Harbor (working name), the snowbound northern harbor with its winter market, hillside inn and valley spring house, is now on your charts as a regular port with trade. Sail there to continue.',
     186: 'Outer Quay Harbor (working name), the crowded harbor behind the long breakwater, is now on your charts as a regular port with trade. Sail there to continue.',
     172: 'Forest Inlet (working name), the wooded island with houses on posts above the tide, is now on your charts as a regular port with trade. Sail there to continue.',
-    159: 'Dragonvale, across the Lunareth crossing, is now on your charts as a regular port with trade. Sail there to continue.',
+    159: 'Dragonvale, across the Lunareth crossing, is now on your charts as a regular port with trade. Sail there to continue. Lunareth\'s Arrival Shore is open as a regular port too, with its own market and contracts.',
     146: 'Orchard Harbor (working name), the island harbor below the orchards, is now on your charts as a regular port with trade. Sail there to continue.',
     134: 'Salt Coast Harbor (working name), the harbor behind the old stone sea walls, is now on your charts as a regular port with trade. Sail there to continue.',
     125: 'Farshore Estuary (working name), the tidal port with a landing on each bank, is now on your charts as a regular port with trade. Sail there to continue.',

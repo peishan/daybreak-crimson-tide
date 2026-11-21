@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V587 · New sequel title cover';
+window.__CT_BUILD__='V588 · Lunareth Arrival Shore port, goods and contracts';
