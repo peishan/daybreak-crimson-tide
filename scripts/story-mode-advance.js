@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V593 · Resting tip after the first fight and rest';
+window.__CT_BUILD__='V594 · Resting tip now covers potions';
