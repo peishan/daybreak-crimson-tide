@@ -2784,6 +2784,8 @@ function openComicImage(url) {
     if (loading) loading.style.display = 'none';
     img.style.display = 'block';
   };
+  // A lazy-loaded image that is display:none is never fetched, which left "Loading chapter…" up forever.
+  img.loading = 'eager';
   img.src = url;
   overlay.style.display = 'block';
 }

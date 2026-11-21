@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V591 · Port discoveries and San & Joel bond moments';
+window.__CT_BUILD__='V592 · Fix chapter images stuck on Loading chapter';
