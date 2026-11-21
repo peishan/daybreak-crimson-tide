@@ -92,7 +92,7 @@
     const bonusText = tierIdx < 1 ? 'No bond yet.' : ('+' + Math.round(tierDef.bonus * 100) + '% gold & XP');
     return '<article class="quest-item"><strong>'+track.icon+' '+esc(track.label)+'</strong> — <span style="opacity:.8;">'+esc(tierDef.name)+'</span><br>'+
       '<span style="font-size:.78rem;opacity:.75;">'+bonusText+'</span><br>'+
-      '<span style="font-size:.76rem;opacity:.7;">'+(synergyActive?'✅ Active right now':'⚪ Not active — bonded members must be fielded')+'</span>'+
+      '<span style="font-size:.76rem;opacity:.7;">'+((typeof window.bondActiveLabel === 'function') ? window.bondActiveLabel('san_joy') : (synergyActive?'✅ Active right now':'⚪ Not active — bonded members must be fielded'))+'</span>'+
       (nextTier ? '<br><span style="font-size:.74rem;opacity:.6;">'+points+' / '+nextTier.threshold+' to next tier</span>' : '<br><span style="font-size:.74rem;opacity:.6;">Max tier reached</span>')+
       (gatedOut
         ? '<br><span style="font-size:.76rem;opacity:.65;">🔒 Continue Arc XXXIII to unlock.</span>'

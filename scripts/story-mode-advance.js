@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V597 · Chapter 10 and 11 clips';
+window.__CT_BUILD__='V598 · Clearer bond status labels';
