@@ -110,6 +110,9 @@
     ,{ id:'arc6service', icon:'🧹', title:'Community Service Begins', where:'After the Arc VI Chapter 1 capture',
       clips:['cin26-arc6-community-service.mp4'],
       passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[1]); } }
+    ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
+      clips:['cin27-arc20-forever-and-ever.mp4'],
+      passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
     ,{ id:'erynn', icon:'📖', title:'Erynn Farseer — The Man Who Knows the Door', where:'When Arc VII Chapter 3 is marked read',
       clips:['cin21-erynn-intro.mp4'],
       passed:function(){ return !!(game.comicProgress7 && game.comicProgress7[3]); } }
@@ -124,7 +127,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -287,6 +290,23 @@
         .then(function(){ return typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc6ch1') : null; })
         .catch(function(){})
         .then(function(){ starting = false; old.apply(self, args); });
+    };
+  })();
+
+  // ---- Arc XX Chapter 20 ("Forever and Ever"): clicking the chapter plays the clip, then the splash, then the chapter opens ----
+  (function(){
+    let opening = false;
+    const old = window.markArc20ChapterRead;
+    if (typeof old !== 'function') return;
+    window.markArc20ChapterRead = function(id){
+      const self = this, args = arguments;
+      const ready = Number(id) === 20 && !opening && window.arc20ObjectiveState && window.arc20ObjectiveState() === 'complete_arc20_chapter_20' && !(game.comicProgress20 && game.comicProgress20[20]);
+      if (!ready) return old.apply(self, args);
+      opening = true;
+      Promise.resolve(window.playCinematicOnce('arc20ch20'))
+        .then(function(){ return typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc20ch20') : null; })
+        .catch(function(){})
+        .then(function(){ opening = false; old.apply(self, args); });
     };
   })();
 
