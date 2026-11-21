@@ -13,7 +13,7 @@
   //   twins     Senedra and Zaki join  -> when Chapter 23 is complete (they join together)
   //   finale    The whole crew         -> when Chapter 24 is complete
   //   arc3ch1   The Night at the Tavern -> when Arc III Chapter 1 is marked read
-  //   arc6ch1, arc6svc_a, arc6svc_b -> Arc VI Chapter 1: before the fight, and after the capture (community service)
+  //   arc6ch1, arc6svc_a, arc6svc_b -> Arc VI Chapter 1: Senedra's clip then the ships splash before the fight; after the capture, the explainer, the service clip, then Robin's and Jeff's splashes
   //   twinsborn The twins are born      -> when Arc XXXV Chapter 10 is marked read, then the birth-reveal clip plays
   //
   // Each shows once per save (game.splashSeen) and follows the same "play cinematics
@@ -33,8 +33,8 @@
     { id:'twinsborn', img:'arc35-ch10-twins-born.webp', kicker:'Arc XXXV · Chapter 10', title:'The twins are born', where:'When Arc XXXV Chapter 10 is marked read' },
     { id:'arc3ch1',  img:'arc3-ch01-the-night-at-the-tavern.webp', kicker:'Arc III · Chapter 1', title:'The Night at the Tavern', where:'When Arc III Chapter 1 is marked read' },
     { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight' },
-    { id:'arc6svc_a', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Community service begins: hauling at the dock', where:'After the Arc VI Chapter 1 capture' },
-    { id:'arc6svc_b', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Community service begins: sweeping the quay', where:'After the Arc VI Chapter 1 capture' }
+    { id:'arc6svc_a', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
+    { id:'arc6svc_b', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Jeff Dolan: community service begins', where:'After the Arc VI Chapter 1 capture' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
@@ -113,7 +113,7 @@
   // ---- Arc VI Chapter 1 (Robin and Jeff): the splash and the spyglass clip before the fight, the service clip and art after the capture ----
   window.playMilestoneSplashOnce = function(id){ return auto(id, 0); };
   window.playArc6CaptureMedia = function(){
-    return new Promise(function(r){ setTimeout(r, 900); })
+    return new Promise(function(r){ setTimeout(r, 300); })
       .then(function(){ return typeof window.playCinematicOnce === 'function' ? window.playCinematicOnce('arc6service') : null; })
       .then(function(){ return auto('arc6svc_a', 300); })
       .then(function(){ return auto('arc6svc_b', 200); });

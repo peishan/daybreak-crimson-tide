@@ -271,7 +271,7 @@
     };
   }
 
-  // ---- Arc VI Chapter 1: the splash, then Senedra's spyglass clip, then the fight starts ----
+  // ---- Arc VI Chapter 1: Senedra's spyglass clip, then the ships splash, then the fight starts ----
   (function(){
     let starting = false;
     const old = window.startArc6CaptureFight;
@@ -280,8 +280,8 @@
       const self = this, args = arguments;
       if (starting || (window.arc6ObjectiveState && window.arc6ObjectiveState() !== 'complete_arc6_chapter_1')) return old.apply(self, args);
       starting = true;
-      Promise.resolve(typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc6ch1') : null)
-        .then(function(){ return window.playCinematicOnce('arc6encounter'); })
+      Promise.resolve(window.playCinematicOnce('arc6encounter'))
+        .then(function(){ return typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc6ch1') : null; })
         .catch(function(){})
         .then(function(){ starting = false; old.apply(self, args); });
     };
