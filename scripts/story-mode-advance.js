@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V583 · Title screen teaser';
+window.__CT_BUILD__='V584 · Arc XX Chapter 20 clip and splash';
