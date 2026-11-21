@@ -2235,13 +2235,18 @@
     logEvent('⚔️ Chapter 1 complete: The Captives — Robin and Jeff are prisoners.', 'gold');
     toast('⚔️ Robin and Jeff are captured — two ships and their crews are yours to sort out.', 4200);
     // This capture doubles as the tutorial for capturing pirates (sea captures only roll from here on, see arc9-and-systems.js).
-    const showCaptureTutorial = function(){ if (typeof showStoryModal === 'function') showStoryModal({title:'⛓️ How Capturing Works', blurb:
+    const playCaptureMedia = function(){ return (typeof window.playArc6CaptureMedia === 'function' ? window.playArc6CaptureMedia() : Promise.resolve()).catch(function(){}); };
+    const showCaptureTutorial = function(){
+      const body =
       'Robin and Jeff are in chains, and now you know how it is done.<br><br>' +
       'From here on, beating a named pirate captain at sea gives you a chance to <strong>capture</strong> them: 50% the first time, and 80% on any later encounter after they have slipped away once.<br><br>' +
       'A captured captain does community service at Fair Tide for 20 days, and their ship docks there until you decide what to do with it. Robin\'s term is 20 days. Jeff\'s has no end.<br><br>' +
-      'A captain who escapes is listed as <strong>Still at Large</strong> in Explore, with the odds for next time and a button to hunt them down.'}); };
-    // the community service clip and art come first, then the explainer
-    (typeof window.playArc6CaptureMedia === 'function' ? window.playArc6CaptureMedia() : Promise.resolve()).catch(function(){}).then(function(){ setTimeout(showCaptureTutorial, 400); });
+      'A captain who escapes is listed as <strong>Still at Large</strong> in Explore, with the odds for next time and a button to hunt them down.';
+      if (typeof showModal === 'function') showModal('⛓️ How Capturing Works', body, [{text:'Continue', action:function(){ if (typeof closeModal === 'function') closeModal(); playCaptureMedia(); }}]);
+      else playCaptureMedia();
+    };
+    // the explainer first; once it is closed, the community service clip, then Robin's and Jeff's splashes
+    setTimeout(showCaptureTutorial, 900);
     if (typeof saveGame === 'function') saveGame();
     if (typeof renderMainGoal === 'function') renderMainGoal();
     if (typeof renderStory === 'function') renderStory();

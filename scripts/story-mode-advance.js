@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V580 · Arc VI Chapter 1 clips and art';
+window.__CT_BUILD__='V581 · Arc VI Chapter 1 sequence reordered';
