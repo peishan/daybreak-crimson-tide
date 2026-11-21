@@ -2696,6 +2696,9 @@ function renderMainGoal() {
     if(cid>=5 && cid<=8 && game.foundCompanions?.joel) dyn[1] = cid===5 ? 'Joel is aboard. Open Story and read Chapters 5 to 8 before you sail on.' : 'Open Story and play Chapter '+cid+' before you sail on.';
     if(cid===24 && !game.finalCleared) dyn=['The Drowned Passage','Sail to the Drowned Passage and defeat the Drowned Admiral, then play Chapter 24.'];
   }
+  else if(objNow==='defeat_drowned_admiral') dyn=['Defeat the Drowned Admiral', Object.keys(game.foundCompanions||{}).length < 6
+    ? 'Recover the six scattered companions first, then face the Drowned Admiral at the Drowned Passage.'
+    : (game.location==='drowned_passage' ? 'Open the Explore tab here and face the Drowned Admiral. He needs Level 35 to take on.' : 'Sail to the Drowned Passage, open the Explore tab and face the Drowned Admiral. He needs Level 35 to take on. Chapter 24 comes after he falls.')];
   else if(objNow==='sail_palembang') dyn=['Sail to Palembang','Joel\'s chapters are read. Sail to Palembang to find Aisyah.'];
   else if(objNow==='sail_batavia') dyn=['Sail to Batavia','Sail to Batavia to find Eliz.'];
   else if(objNow==='sail_bangkok') dyn=['Sail to Bangkok','Sail to Bangkok to find Mezstorm.'];

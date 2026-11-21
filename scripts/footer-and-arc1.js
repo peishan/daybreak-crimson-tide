@@ -50,6 +50,25 @@
     if (typeof STORY_MODE_CHAPTERS !== 'undefined') STORY_MODE_CHAPTERS[n]=arc1PanelDefs[id];
   });
 
+  // Story Mode crops one panel out of a comic page and enlarges it to the screen width, which softened the lettering.
+  // A mild sharpen filter brings the speech bubbles and captions back, and a "View full page" button opens the
+  // whole page (the sharper Arc I readback version) for anyone who wants to read it that way.
+  (function(){
+    const READBACK = {1:'ch01-the-storm-that-remained',2:'ch02-the-first-port',3:'ch03-a-crew-of-choice',4:'ch04-the-guardians-fortress',5:'ch05-the-voice-behind-the-wall',6:'ch06-the-shield-returns',7:'ch07-the-shield-that-remained',8:'ch08-the-trader-winds-remember',9:'ch09-the-shield-returns-promise-carried-forward',10:'ch10-the-day-the-sea-rested',11:'ch11-the-day-we-chose',12:'ch12-the-debt-that-wasnt-hers',13:'ch13-the-debt-collector',14:'ch14-two-sisters-one-ship',15:'ch15-the-one-who-stayed',16:'ch16-the-mark-we-carried',17:'ch17-the-things-we-do-without-knowing',18:'ch18-the-storm-that-was-owed',19:'ch19-the-crew-we-choose',20:'ch20-senedra-the-watchful-signal',21:'ch21-zaki-the-planner',22:'ch22-mezstorm-the-regeneration',23:'ch23-senedra-and-zaki-the-two-who-remembered',24:'ch24-the-drowned-passage'};
+    window.arc1ReadbackUrl = function(id){ return READBACK[id] ? 'assets/comics/arc1-readback/' + READBACK[id] + '.webp' : null; };
+    function ensureSharpen(){
+      if (document.getElementById('ctSharpenSvg')) return;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.id = 'ctSharpenSvg'; svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true'); svg.style.position = 'absolute';
+      svg.innerHTML = '<filter id="ctSharpen" color-interpolation-filters="sRGB"><feConvolveMatrix order="3" kernelMatrix="0 -0.6 0 -0.6 3.4 -0.6 0 -0.6 0" divisor="1" preserveAlpha="true"/></filter>';
+      document.body.appendChild(svg);
+      const st = document.createElement('style');
+      st.textContent = '.ct-v62-crop-frame{filter:url(#ctSharpen) contrast(1.03);}.ct-full-page-btn{display:block;margin:8px auto 0;opacity:.9;}';
+      document.head.appendChild(st);
+    }
+    window.__ctEnsureSharpen = ensureSharpen;
+  })();
+
   const originalRenderStoryModePanel = window.renderStoryModePanel;
   window.renderStoryModePanel = function(){
     if(!storyModeChapter) return;
@@ -78,7 +97,9 @@
         'style="width:100%;aspect-ratio:'+w+'/'+h+';background-color:#000;background-repeat:no-repeat;'+
         'background-image:url(\''+p.image+'\');background-size:'+bgSizeX+' '+bgSizeY+';background-position:'+bgPosX+' '+bgPosY+';">' +
         '</div><div class="story-mode-text"><div class="story-mode-speaker">'+esc(p.caption)+'</div><div class="story-mode-caption">'+esc(p.text)+'</div></div>' +
+        (window.arc1ReadbackUrl && window.arc1ReadbackUrl(storyModeChapterId) ? '<button class="btn btn-small ct-full-page-btn" type="button" onclick="event.stopPropagation(); openComicImage(arc1ReadbackUrl('+Number(storyModeChapterId)+'))">🔍 View full page</button>' : '') +
         '<div class="story-mode-tap">Tap the screen to continue</div>';
+      if(window.__ctEnsureSharpen) window.__ctEnsureSharpen();
       if(counter) counter.textContent=(storyModeIndex+1)+' / '+storyModeChapter.length;
       window.scrollTo({top:0,left:0,behavior:'instant'});
       // The frame's own aspect-ratio uses the crop's raw w/h fraction as a
@@ -189,7 +210,12 @@
     if(!game.comicProgress?.[21]) return 'complete_chapter_21';
     if(!game.comicProgress?.[22]) return 'complete_chapter_22';
     if(!game.comicProgress?.[23]) return 'complete_chapter_23';
-    if(!game.comicProgress?.[24]) return 'complete_chapter_24';
+    if(!game.comicProgress?.[24]){
+      // The Drowned Admiral holds the passage. Chapter 24 is read after he falls: before this it could be read
+      // first, which finished Arc I and opened Arc II (and its splash) with the Admiral still standing.
+      if(!game.finalCleared) return 'defeat_drowned_admiral';
+      return 'complete_chapter_24';
+    }
     return 'continue_voyage';
   };
 
@@ -227,7 +253,7 @@
           14:'sail_batavia',15:'rescue_eliz',16:'complete_chapter_17',
           17:'sail_bangkok',18:'rescue_mezstorm',19:'complete_chapter_20',
           20:'complete_chapter_21',21:'complete_chapter_22',22:'complete_chapter_23',
-          23:'complete_chapter_24',24:'continue_voyage'
+          23:(game.finalCleared?'complete_chapter_24':'defeat_drowned_admiral'),24:'continue_voyage'
         };
         if(Number(id)===23) joinSenedraAndZaki();
         // Chapter 6 hands over to the Wreck Warden fight when Joel is not yet aboard.
