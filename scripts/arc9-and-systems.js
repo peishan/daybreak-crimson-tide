@@ -515,6 +515,23 @@
     });
   };
 
+  // The status line under a bond. It used to say "bonded members must be fielded" even when the real reason was that
+  // the bond had not started yet (the first tier opens at 50 points), which read as if a fielded pair were being ignored.
+  window.bondActiveLabel = function(trackKey){
+    const track = BOND_TRACKS[trackKey];
+    if (!track) return '';
+    if (window.bondSynergyActive(trackKey)) return track.ambient ? '✅ Always active once bonded' : '✅ Active right now';
+    if (track.ambient) return '⚪ No bond yet';
+    const first = (track.tiers && track.tiers[1]) ? track.tiers[1].threshold : 0;
+    if (window.bondTier(trackKey) < 1) return '⚪ Not active yet — spend time together to start the bond' + (first ? ' (' + first + ' points)' : '');
+    if (track.minCrewCount) return '⚪ Not active — needs at least ' + track.minCrewCount + ' crew members fielded';
+    const party = (typeof getActiveParty === 'function') ? getActiveParty() : [];
+    const ids = new Set(party.map(m => m.id));
+    const missing = (track.members || []).filter(id => !ids.has(id) || ((game.partyHp && game.partyHp[id] != null) ? game.partyHp[id] : 1) <= 0)
+      .map(id => { const m = (typeof ALL_PARTY !== 'undefined') ? ALL_PARTY.find(x => x.id === id) : null; return m ? m.name.charAt(0) + m.name.slice(1).toLowerCase() : id; });
+    return '⚪ Not active — ' + (missing.length ? missing.join(' and ') + (missing.length > 1 ? ' must be fielded and standing' : ' must be fielded and standing') : 'bonded members must be fielded');
+  };
+
   window.canSpendTimeOnBond = function(trackKey){
     const bs = bondState()[trackKey];
     if (!bs) return false;
@@ -645,7 +662,7 @@
       }
       const activeLabel = track.ambient
         ? (synergyActive ? '✅ Always active once bonded' : '⚪ No bond yet')
-        : (synergyActive ? '✅ Active right now' : '⚪ Not active — bonded members must be fielded');
+        : window.bondActiveLabel(key);
       html += '<article class="quest-item"><strong>'+track.icon+' '+esc(track.label)+'</strong> — <span style="opacity:.8;">'+esc(tierDef.name)+'</span><br>'+
         '<span style="font-size:.78rem;opacity:.75;">'+bonusText+'</span><br>'+
         '<span style="font-size:.76rem;opacity:.7;">'+activeLabel+'</span>'+
