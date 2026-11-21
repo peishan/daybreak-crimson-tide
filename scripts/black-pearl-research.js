@@ -129,6 +129,36 @@
     });
   }
 
+  // ---- Records that point to places: finishing one puts the place on the sail screen ----
+  // (from the Tribute game: Moonveil Temple in eastern Dragonvale, and the sea route to the Sunken Kingdom.) The findings stay as
+  // non-committal as the rest of the study: what the records say and what is still unseen, nothing about what the Pearl is.
+  if (R.erynn && !R.erynn.projects.some(function(p){ return p.key === 'pearl_moonveil_records'; })) {
+    R.erynn.projects.push({
+      key: 'pearl_moonveil_records', durationDays: 4, available: function(){ return pearlOpen() && briefingHeld(); },
+      title: 'The Moonveil Records',
+      desc: "Erynn follows a temple named in Devon's and Jade's accounts through the Dragonvale records, and works out where the road to it begins.",
+      finding: "Erynn finds the temple in three separate records: a hidden sanctuary in eastern Dragonvale, with crests of the old royal line on its walls, a stone tablet, and a sealed inner chamber. Devon and Jade both remember it, and neither will say more than the records support until the team has seen it. The symbol on the tablet is older than the current royal line. Erynn marks the road to it and files the record. Moonveil Temple can now be reached by ship.",
+      onComplete: function(){
+        game.pearlMoonveilOpen = true;
+        pearlNote('pearl_moonveil_records', "Erynn traced Moonveil Temple through three Dragonvale records: a sanctuary with royal crests, a tablet and a sealed chamber. The tablet's symbol is older than the current royal line. The temple is now on the charts.");
+        if (typeof toast === 'function') toast('🌙 Moonveil Temple is now on your charts.', 4200);
+      }
+    });
+  }
+  if (R.fen && !R.fen.projects.some(function(p){ return p.key === 'pearl_old_sea_charts'; })) {
+    R.fen.projects.push({
+      key: 'pearl_old_sea_charts', durationDays: 4, available: function(){ return pearlOpen() && briefingHeld(); },
+      title: 'The Old Sea Charts',
+      desc: "Fen sets Devon's account beside the oldest sea charts of the Dragonvale coast, and follows a route the newer charts leave off.",
+      finding: "Fen finds a sea route that leaves the last known Dragonvale waters and is marked on the oldest charts only. One chart names the territory it leads to: Aelyndra, a kingdom under the sea. Nothing on the charts says whether anything is left there. Fen marks the route as an expedition, not a promise, and files all three charts. The Sunken Kingdom can now be reached by ship.",
+      onComplete: function(){
+        game.pearlSeaRouteOpen = true;
+        pearlNote('pearl_old_sea_charts', "Fen followed a route on the oldest Dragonvale charts to a territory named Aelyndra, a kingdom under the sea. Nothing on the charts says whether anything is left. The route is on the charts as an expedition.");
+        if (typeof toast === 'function') toast('🌊 The Sunken Kingdom is now on your charts.', 4200);
+      }
+    });
+  }
+
   // ---- The briefing ----
   const REPORTS = [
     { rid: 'erynn',  key: 'pearl_devons_account',     short: 'Erynn', required: true },

@@ -981,7 +981,15 @@
       blurb:'A long quay glittering with green, amber and blue glass, and the glow of furnaces at the back of every workshop.'},
     {id:'star_cove_harbor', name:'Star Cove Harbor', icon:'✨', danger:3, specialties:['smoked_fish','salt','rope'],
       desc:'A small island harbor in a bay shaped like a bent arm, where pale lights gather beneath the water each evening. (Working name; the merchant vessel and the outer cove beyond the headland are places within it.)',
-      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'}
+      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'},
+    // Standalone ports open from a Black Pearl Study assignment (scripts/black-pearl-research.js), not from the story chain,
+    // so the sail screen shows each one only once it is open and they never hide the ports after them.
+    {id:'moonveil_temple', standalone:true, name:'Moonveil Temple', icon:'🌙', danger:2, specialties:['temple_incense','moonleaf_tea','river_slate'],
+      desc:'A hidden mountain sanctuary in eastern Dragonvale, untouched by time: crests of the old royal line on the walls, a stone tablet, and a sealed chamber deep inside. The Black Pearl study team found it in the records. The keepers sell incense and trade tea and slate for what they cannot grow.',
+      blurb:'Stone halls under the mountain, a crescent carved over every door, and a quiet that has outlasted a dynasty.'},
+    {id:'sunken_kingdom', standalone:true, name:'Sunken Kingdom — Aelyndra Outer City', icon:'🌊', danger:3, specialties:['barrier_glass','school_scrolls','salt'],
+      desc:'A whole kingdom beneath the sea, kept whole by enormous magical barriers: roads, workshops, markets, schools and temples, and a drowned royal palace, reached by the sea route that leaves the last known Dragonvale waters. A chart names the territory Aelyndra. The preserved Outer City trades barrier glass and school scrolls for supplies from above.',
+      blurb:'Air-filled streets under the ocean, a market whose stalls are still laid out as the traders left them, and the sea pressing quietly against the barriers.'}
   ];
 
   // New trade goods for the cliffside port (draft, for review): both sell
@@ -1007,8 +1015,11 @@
     if (!GOODS.river_slate) GOODS.river_slate = { name: 'River Slate', icon: '🪨', basePrice: 36, weight: 1 };
     if (!GOODS.forest_herbs) GOODS.forest_herbs = { name: 'Forest Herbs', icon: '🌿', basePrice: 26, weight: 1 };
     if (!GOODS.moon_tonic) GOODS.moon_tonic = { name: 'Moon Tonic', icon: '🌙', basePrice: 58, weight: 1 };
+    if (!GOODS.temple_incense) GOODS.temple_incense = { name: 'Moonveil Incense', icon: '🕯️', basePrice: 38, weight: 1 };
+    if (!GOODS.barrier_glass) GOODS.barrier_glass = { name: 'Barrier Glass', icon: '🔷', basePrice: 52, weight: 1 };
+    if (!GOODS.school_scrolls) GOODS.school_scrolls = { name: 'Preserved Scrolls', icon: '📜', basePrice: 44, weight: 1 };
   }
-  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate', 'forest_herbs', 'moon_tonic'];   // sequel-only trade goods
+  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate', 'forest_herbs', 'moon_tonic', 'temple_incense', 'barrier_glass', 'school_scrolls'];   // sequel-only trade goods
   // ---- Lunareth contracts: fixed deliveries on the Tavern quest board, added once the Arrival Shore is open ----
   const LUNARETH_QUESTS = [
     {id:'q_lun_lamps',  good:'glass_lamps',     port:'lunareth_shore', need:12, name:'The Coast Road Lights',   desc:'The lamps along the Arrival Shore\'s coast road have gone dark one by one, and nobody there can make new ones. Sell {need}x {good} at the shore.'},
@@ -1016,7 +1027,12 @@
     {id:'q_lun_tea',    good:'moonleaf_tea',    port:'dragonvale',     need:14, name:'A Taste of the Mountains',  desc:'Dragonvale\'s harbor stalls cannot keep Lunareth tea on the shelf. Carry {need}x {good} across the crossing and sell it in Dragonvale.'},
     {id:'q_lun_slate',  good:'river_slate',     port:'dragonvale',     need:20, name:'Slate for the Terraced Roofs', desc:'Dragonvale\'s builders want Lunareth river slate for the terraced roofs. Sell {need}x {good} in Dragonvale.'},
     {id:'q_lun_herbs',  good:'forest_herbs',    port:'royal_pavilion', need:16, name:'Herbs for the Pavilion',  desc:'The Royal Healing Pavilion is running short of forest herbs, and a physician with an empty shelf cannot help anyone. Sell {need}x {good} at the Pavilion.'},
-    {id:'q_lun_tonic',  good:'moon_tonic',      port:'lunareth_shore', need:10, name:'Tonic for the Shore Villages', desc:'The villages along the Arrival Shore road have had a hard winter and no physician. Sell {need}x {good} at the Arrival Shore.'}
+    {id:'q_lun_tonic',  good:'moon_tonic',      port:'lunareth_shore', need:10, name:'Tonic for the Shore Villages', desc:'The villages along the Arrival Shore road have had a hard winter and no physician. Sell {need}x {good} at the Arrival Shore.'},
+    {id:'q_mv_tea',     good:'moonleaf_tea',    port:'moonveil_temple', need:12, name:'Tea for the Temple Keepers', desc:'The Moonveil keepers have not tasted fresh tea since the last pilgrim climbed the mountain. Sell {need}x {good} at the temple.'},
+    {id:'q_mv_slate',   good:'river_slate',     port:'moonveil_temple', need:14, name:'Slate for the Temple Steps', desc:'The temple steps have worn thin after a long, quiet age. Sell {need}x {good} at Moonveil Temple.'},
+    {id:'q_sk_glass',   good:'barrier_glass',   port:'dragonvale',      need:12, needs:'sunken_kingdom', name:'Glass from Under the Sea', desc:'Dragonvale\'s window-makers have heard of glass that has stood against the ocean for centuries. Carry {need}x {good} up from the Sunken Kingdom and sell it in Dragonvale.'},
+    {id:'q_sk_scrolls', good:'school_scrolls',  port:'royal_pavilion',  need:10, needs:'sunken_kingdom', name:'Scrolls for the Pavilion',  desc:'The Pavilion\'s physicians want the old schools\' preserved scrolls for their archive. Sell {need}x {good} at the Royal Healing Pavilion.'},
+    {id:'q_sk_supplies', good:'sailcloth',      port:'sunken_kingdom',  need:14, name:'Supplies for the Outer City', desc:'The Outer City\'s stalls have been waiting for goods from above. Sell {need}x {good} in the Sunken Kingdom.'}
   ];
 
   // ---- Dragonvale's Royal Healing Pavilion and the Cavern of Fireflies (from the Tribute game): a free full rest once a day ----
@@ -1073,9 +1089,10 @@
   if (typeof oldRefreshQuestsForLunareth === 'function' && typeof QUEST_POOL !== 'undefined') {
     window.refreshQuests = function(){
       try {
-        if (game.arc42Complete && typeof isPortUnlocked === 'function' && isPortUnlocked('lunareth_shore')) {
+        if (game.arc42Complete && typeof isPortUnlocked === 'function') {
           LUNARETH_QUESTS.forEach(function(d){
             if (QUEST_POOL.some(function(q){ return q.id === d.id; })) return;
+            if (!isPortUnlocked(d.needs || d.port) || !isPortUnlocked(d.port)) return;   // a contract appears once its ports are open
             const e = lunarethQuestEntry(d); if (e) QUEST_POOL.push(e);
           });
         }
@@ -1113,7 +1130,9 @@
     star_cove_harbor: function(){ return !!prog()[229]; },  // Ch.228 read (Enter the Star Cove): the star cove harbor is charted (regular port)
     lunareth_shore: function(){ return !!prog()[159]; },  // Ch.158 read (Arrive in Dragonvale): the Lunareth crossing is open, so the Arrival Shore is a regular port too
     royal_pavilion: function(){ return !!prog()[159]; },  // Ch.158 read: Dragonvale's Royal Healing Pavilion is open to the crew
-    cavern_fireflies: function(){ return !!prog()[160]; }  // Ch.159 read: Devon shows the crew his secret place
+    cavern_fireflies: function(){ return !!prog()[160]; },  // Ch.159 read: Devon shows the crew his secret place
+    moonveil_temple: function(){ return !!game.pearlMoonveilOpen; },  // Black Pearl Study: Erynn's "The Moonveil Records" is complete
+    sunken_kingdom: function(){ return !!game.pearlSeaRouteOpen; }  // Black Pearl Study: Fen's "The Old Sea Charts" is complete
   };
 
   function registerCrimsonHorizonPorts(){
@@ -1151,9 +1170,10 @@
       const card = grid.querySelector('[data-port="' + def.id + '"]');
       if (!card) return;
       let revealed;
-      if (def.id === 'central_gate') revealed = !!prog()[65];
+      if (def.standalone) revealed = !!CH_PORT_UNLOCK[def.id]();
+      else if (def.id === 'central_gate') revealed = !!prog()[65];
       else if (i === 0) revealed = !!game.arc42Complete;
-      else revealed = !!CH_PORT_UNLOCK[CH_PORTS[i - 1].id]();
+      else { let j = i - 1; while (j > 0 && CH_PORTS[j].standalone) j--; revealed = !!CH_PORT_UNLOCK[CH_PORTS[j].id](); }
       if (!revealed) { card.remove(); return; }
       if (def.id === 'south_gate' && CH_PORT_UNLOCK.south_gate() && !prog()[62] && game.location !== 'south_gate') {
         const d = card.querySelector('.port-dist');
