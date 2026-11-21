@@ -8,6 +8,7 @@
   }
   function wire(){
     const handler = function(ev){
+      if(ev.target && ev.target.closest && ev.target.closest('.ct-full-page-btn')) return;   // "View full page" is a button, not a tap to continue
       const el = ev.target && ev.target.closest ? ev.target.closest('#storyModeNext') : null;
       if(el){ advance(ev); return; }
       const panel = ev.target && ev.target.closest ? ev.target.closest('#storyModePanel') : null;
@@ -25,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V594 · Resting tip now covers potions';
+window.__CT_BUILD__='V595 · Drowned Admiral objective, Story Mode legibility';

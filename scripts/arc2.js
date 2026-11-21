@@ -114,7 +114,8 @@
     // moment Chapter 24 completes) so it also catches saves that finished
     // Arc I before this feature existed, and avoids stacking on top of the
     // Chapter 24 "complete" screen while it's still showing.
-    if(arc1Done && !game.arc2SplashSeen && typeof window.__ctShowArc2Splash==='function'){
+    // Only once the Drowned Admiral has fallen (Chapter 24 is read after him, so this holds for new voyages too).
+    if(arc1Done && game.finalCleared && !game.arc2SplashSeen && typeof window.__ctShowArc2Splash==='function'){
       window.__ctShowArc2Splash();
     }
     let html = '<section class="story-act story-quest-panel"><div class="story-act-header">'+
