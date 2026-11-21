@@ -2008,7 +2008,7 @@ function renderLandingV24(){
   // screen shows the sequel cover instead of the crew image. A cover that fails to load falls back to the crew image.
   const art = document.querySelector('.ct-v26-art');
   if (art) {
-    const CREW = 'crimson-tide-clean-title-v26.png', SEQUEL = 'assets/title/crimson-horizon-cover.webp';
+    const CREW = 'crimson-tide-clean-title-v26.png', SEQUEL = 'assets/title/crimson-horizon-cover-v2.webp';
     const wantSequel = !!display.arc42Complete && !art.dataset.sequelFailed;
     const want = wantSequel ? SEQUEL : CREW;
     if (art.getAttribute('src') !== want) {
