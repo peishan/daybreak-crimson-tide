@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V576 · Crimson Horizon Arc XX: The Lanterns We Bring';
+window.__CT_BUILD__='V577 · Crimson Horizon Arc XXI: The Cove Beneath the Stars';
