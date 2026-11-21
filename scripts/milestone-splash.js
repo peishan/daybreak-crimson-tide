@@ -32,7 +32,7 @@
     { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' },
     { id:'twinsborn', img:'arc35-ch10-twins-born.webp', kicker:'Arc XXXV · Chapter 10', title:'The twins are born', where:'When Arc XXXV Chapter 10 is marked read' },
     { id:'arc3ch1',  img:'arc3-ch01-the-night-at-the-tavern.webp', kicker:'Arc III · Chapter 1', title:'The Night at the Tavern', where:'When Arc III Chapter 1 is marked read' },
-    { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight' },
+    { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight', zoom:true },
     { id:'arc6svc_a', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
     { id:'arc6svc_b', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Jeff Dolan: community service begins', where:'After the Arc VI Chapter 1 capture' }
   ];
@@ -62,8 +62,10 @@
       '#ctSplash .sp-cap{padding:9px 6px 3px;text-align:center;font-family:Cinzel,Georgia,serif;color:#2b1c03;text-shadow:0 1px 0 rgba(255,238,170,.7);}' +
       '#ctSplash .sp-cap small{display:block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;}' +
       '#ctSplash .sp-cap b{display:block;font-size:1.02rem;margin-top:1px;}' +
+      '#ctSplash .sp-art img.sp-zoom{transform-origin:50% 57%;animation:spZoom 4.6s cubic-bezier(.35,.05,.25,1) both;will-change:transform;}' +
+      '@keyframes spZoom{0%{transform:scale(1)}100%{transform:scale(1.28)}}' +
       '@keyframes spPop{0%{transform:scale(.84);opacity:0}100%{transform:scale(1);opacity:1}}' +
-      '@media (prefers-reduced-motion:reduce){#ctSplash .sp-frame{animation:none}#ctSplash{transition:none}}';
+      '@media (prefers-reduced-motion:reduce){#ctSplash .sp-frame{animation:none}#ctSplash{transition:none}#ctSplash .sp-art img.sp-zoom{animation:none}}';
     document.head.appendChild(s);
   }
 
@@ -76,6 +78,7 @@
         ensureStyle();
         const wrap = document.createElement('div'); wrap.id = 'ctSplash'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', def.title);
         const img = new Image(); img.alt = def.title; img.decoding = 'async';
+        if (def.zoom) img.className = 'sp-zoom';   // a slow zoom in, like looking through a spyglass
         let timer = null, done = false, born = 0;
         const finish = function(played){
           if (done) return; done = true; clearTimeout(timer);
