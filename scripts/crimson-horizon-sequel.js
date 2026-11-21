@@ -958,6 +958,15 @@
     {id:'dragonvale', name:'Dragonvale', icon:'🐉', danger:3, specialties:['silk','antiquities','tea'],
       desc:'The kingdom across the Lunareth crossing, with a busy harbor, terraced roofs, a frontier of villages and orchards, and Aster at its head. (Working name for the destination; the village and the tollhouse are places within it.)',
       blurb:'Familiar water, white walls under the mountains, and a road home for everyone who has a family here.'},
+    {id:'lunareth_shore', name:'Lunareth — the Arrival Shore', icon:'🏔️', danger:3, specialties:['moonleaf_tea','highland_cheese','wool'],
+      desc:'The coast of Lunareth, where the Horizon crossing comes ashore: a market below the mountains, a road of evenly spaced lamps running along the shore, and forests and waterways beyond. (The Arrival Shore is also an expedition destination; this is the regular harbor.)',
+      blurb:'Mountains behind a pale beach, a lamp-lit coast road, and a morning market that is half in a language you are slowly learning.'},
+    {id:'royal_pavilion', name:'Dragonvale — Royal Healing Pavilion', icon:'🌙', danger:1, specialties:['forest_herbs','moon_tonic','moonleaf_tea'],
+      desc:'The white healing pavilion above Dragonvale, where Jenika Moon and the royal physicians keep their herb gardens and a waiting room that is never empty. The crew can rest here once a day, free: Jenika tends everyone and nobody is ambushed in her waiting room. It sells herbs and tonics.',
+      blurb:'A cool white hall of drying herbs and low lamps, and a physician who has time for everyone.'},
+    {id:'cavern_fireflies', name:'Cavern of Fireflies', icon:'✨', danger:1, specialties:['moonleaf_tea','highland_cheese'],
+      desc:'A hidden healing cavern of spirit fireflies and waterfalls, reached by a moonlit boat from Dragonvale, and known to very few. It is Devon\'s secret place. The crew can rest by the luminous pool once a day, free and undisturbed. A boatman sells tea and cheese at the landing.',
+      blurb:'Waterfalls in the dark, and a pool lit from within by drifting spirit fireflies.'},
     {id:'forest_inlet', name:'Forest Inlet', icon:'🌲', danger:3, specialties:['baskets','timber','pepper'],
       desc:'A wooded island whose tidal water reaches deep into the forest, with houses built above the water on timber posts. (Working name; the boatbuilder\'s workshop and the village yard are places within it.)',
       blurb:'A narrow inlet between pale cliffs, gangways strung between the houses, and shallow boats tied up beneath them.'},
@@ -972,10 +981,7 @@
       blurb:'A long quay glittering with green, amber and blue glass, and the glow of furnaces at the back of every workshop.'},
     {id:'star_cove_harbor', name:'Star Cove Harbor', icon:'✨', danger:3, specialties:['smoked_fish','salt','rope'],
       desc:'A small island harbor in a bay shaped like a bent arm, where pale lights gather beneath the water each evening. (Working name; the merchant vessel and the outer cove beyond the headland are places within it.)',
-      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'},
-    {id:'lunareth_shore', name:'Lunareth — the Arrival Shore', icon:'🏔️', danger:3, specialties:['moonleaf_tea','highland_cheese','wool'],
-      desc:'The coast of Lunareth, where the Horizon crossing comes ashore: a market below the mountains, a road of evenly spaced lamps running along the shore, and forests and waterways beyond. (The Arrival Shore is also an expedition destination; this is the regular harbor.)',
-      blurb:'Mountains behind a pale beach, a lamp-lit coast road, and a morning market that is half in a language you are slowly learning.'}
+      blurb:'A stone quay, a handful of white houses, and a bay that glows from below at dusk.'}
   ];
 
   // New trade goods for the cliffside port (draft, for review): both sell
@@ -999,15 +1005,63 @@
     if (!GOODS.moonleaf_tea) GOODS.moonleaf_tea = { name: 'Moonleaf Tea', icon: '🍵', basePrice: 42, weight: 1 };
     if (!GOODS.highland_cheese) GOODS.highland_cheese = { name: 'Highland Cheese', icon: '🧀', basePrice: 32, weight: 1 };
     if (!GOODS.river_slate) GOODS.river_slate = { name: 'River Slate', icon: '🪨', basePrice: 36, weight: 1 };
+    if (!GOODS.forest_herbs) GOODS.forest_herbs = { name: 'Forest Herbs', icon: '🌿', basePrice: 26, weight: 1 };
+    if (!GOODS.moon_tonic) GOODS.moon_tonic = { name: 'Moon Tonic', icon: '🌙', basePrice: 58, weight: 1 };
   }
-  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate'];   // sequel-only trade goods
+  window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate', 'forest_herbs', 'moon_tonic'];   // sequel-only trade goods
   // ---- Lunareth contracts: fixed deliveries on the Tavern quest board, added once the Arrival Shore is open ----
   const LUNARETH_QUESTS = [
     {id:'q_lun_lamps',  good:'glass_lamps',     port:'lunareth_shore', need:12, name:'The Coast Road Lights',   desc:'The lamps along the Arrival Shore\'s coast road have gone dark one by one, and nobody there can make new ones. Sell {need}x {good} at the shore.'},
     {id:'q_lun_sails',  good:'sailcloth',       port:'lunareth_shore', need:15, name:'Sails for the Shore Boats', desc:'The shore fishers are patching sails with sacking. Sell {need}x {good} at the Arrival Shore and they will be grateful for a season.'},
     {id:'q_lun_tea',    good:'moonleaf_tea',    port:'dragonvale',     need:14, name:'A Taste of the Mountains',  desc:'Dragonvale\'s harbor stalls cannot keep Lunareth tea on the shelf. Carry {need}x {good} across the crossing and sell it in Dragonvale.'},
-    {id:'q_lun_slate',  good:'river_slate',     port:'dragonvale',     need:20, name:'Slate for the Terraced Roofs', desc:'Dragonvale\'s builders want Lunareth river slate for the terraced roofs. Sell {need}x {good} in Dragonvale.'}
+    {id:'q_lun_slate',  good:'river_slate',     port:'dragonvale',     need:20, name:'Slate for the Terraced Roofs', desc:'Dragonvale\'s builders want Lunareth river slate for the terraced roofs. Sell {need}x {good} in Dragonvale.'},
+    {id:'q_lun_herbs',  good:'forest_herbs',    port:'royal_pavilion', need:16, name:'Herbs for the Pavilion',  desc:'The Royal Healing Pavilion is running short of forest herbs, and a physician with an empty shelf cannot help anyone. Sell {need}x {good} at the Pavilion.'},
+    {id:'q_lun_tonic',  good:'moon_tonic',      port:'lunareth_shore', need:10, name:'Tonic for the Shore Villages', desc:'The villages along the Arrival Shore road have had a hard winter and no physician. Sell {need}x {good} at the Arrival Shore.'}
   ];
+
+  // ---- Dragonvale's Royal Healing Pavilion and the Cavern of Fireflies (from the Tribute game): a free full rest once a day ----
+  // Like the seafarer's free rest site, but without the night ambush: nobody ambushes a waiting room or a secret cave.
+  function restCrewFully(){
+    game.partyHp = game.partyHp || {}; game.partyMp = game.partyMp || {};
+    const permanent = typeof getActiveParty === 'function' ? getActiveParty() : [];
+    permanent.forEach(function(m){ game.partyHp[m.id] = effectiveMaxHp(m); game.partyMp[m.id] = effectiveMaxMp(m); });
+    (game.temporaryCrew || []).forEach(function(m){ game.partyHp[m.id] = Number(m.maxHp || m.hp || 1); game.partyMp[m.id] = Number(m.maxMp || m.mp || 0); });
+    if ('health' in game && 'maxHealth' in game) game.health = game.maxHealth;
+  }
+  const REST_SPOTS = {
+    royal_pavilion:   { key:'pavilionRestDay', btn:'🌙 Royal Remedy: restore the crew', title:'Royal Healing Pavilion',
+      text:'Jenika Moon sets her other work aside, tends everyone in the waiting room in turn, and sends the crew out rested. Free, once a day.',
+      log:'🌙 Jenika tends the crew at the Royal Healing Pavilion. Everyone is fully recovered.' },
+    cavern_fireflies: { key:'fireflyRestDay', btn:'✨ Rest by the luminous pool', title:'The Luminous Pool',
+      text:'Spirit fireflies drift over the water while Devon keeps watch, and the crew rests on a sheltered ledge beside the pool. Free, once a day.',
+      log:'✨ The spirit fireflies glow softly. Everyone is fully recovered.' }
+  };
+  window.restAtHealingSpot = function(){
+    const spot = REST_SPOTS[game.location];
+    if (!spot) return;
+    if (game[spot.key] === game.day) { toast('You have already rested here today.'); return; }
+    game[spot.key] = game.day;
+    restCrewFully();
+    logEvent(spot.log, 'good');
+    if (typeof updateUI === 'function') updateUI();
+    if (typeof renderPort === 'function') renderPort();
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  };
+  const oldRenderExploreForSpots = window.renderExplore;
+  window.renderExplore = function(){
+    if (oldRenderExploreForSpots) oldRenderExploreForSpots.apply(this, arguments);
+    try {
+      const spot = REST_SPOTS[game.location];
+      const container = document.getElementById('exploreContent');
+      if (!spot || !container) return;
+      const used = game[spot.key] === game.day;
+      container.insertAdjacentHTML('afterbegin',
+        '<article class="quest-item" style="border-left-color:var(--gold);"><strong>' + spot.title + '</strong><br>' +
+        '<span style="font-size:.82rem;opacity:.85;">' + spot.text + '</span><br>' +
+        '<button class="btn btn-small btn-success" style="margin-top:6px;" ' + (used ? 'disabled' : '') + ' onclick="restAtHealingSpot()">' + spot.btn + '</button>' +
+        (used ? '<span style="font-size:.76rem;opacity:.7;"> Used today.</span>' : '') + '</article>');
+    } catch (e) {}
+  };
   function lunarethQuestEntry(d){
     const good = GOODS[d.good], port = PORTS.find(function(p){ return p.id === d.port; });
     if (!good || !port) return null;
@@ -1057,7 +1111,9 @@
     winter_harbor: function(){ return !!prog()[201]; },  // Ch.200 read (Enter the Winter Harbor): the winter harbor is charted (regular port)
     glass_harbor: function(){ return !!prog()[218]; },  // Ch.217 read (Enter the Glass Harbor): the glass harbor is charted (regular port)
     star_cove_harbor: function(){ return !!prog()[229]; },  // Ch.228 read (Enter the Star Cove): the star cove harbor is charted (regular port)
-    lunareth_shore: function(){ return !!prog()[159]; }  // Ch.158 read (Arrive in Dragonvale): the Lunareth crossing is open, so the Arrival Shore is a regular port too
+    lunareth_shore: function(){ return !!prog()[159]; },  // Ch.158 read (Arrive in Dragonvale): the Lunareth crossing is open, so the Arrival Shore is a regular port too
+    royal_pavilion: function(){ return !!prog()[159]; },  // Ch.158 read: Dragonvale's Royal Healing Pavilion is open to the crew
+    cavern_fireflies: function(){ return !!prog()[160]; }  // Ch.159 read: Devon shows the crew his secret place
   };
 
   function registerCrimsonHorizonPorts(){
