@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V590 · Moonveil Temple and the Sunken Kingdom';
+window.__CT_BUILD__='V591 · Port discoveries and San & Joel bond moments';
