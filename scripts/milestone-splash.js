@@ -13,6 +13,7 @@
   //   twins     Senedra and Zaki join  -> when Chapter 23 is complete (they join together)
   //   finale    The whole crew         -> when Chapter 24 is complete
   //   arc3ch1   The Night at the Tavern -> when Arc III Chapter 1 is marked read
+  //   sanjoel_t4, sanjoel_t5 -> San & Joel's bond reaching its top two tiers (scripts/sanjoel-tier-scenes.js); art goes in assets/splash/arc1/
   //   arc20ch20  Forever and Ever       -> when Arc XX Chapter 20 is opened: the clip, then this splash, then the chapter
   //   arc6ch1, arc6svc_a, arc6svc_b -> Arc VI Chapter 1: Senedra's clip then the ships splash before the fight; after the capture, the explainer, the service clip, then Robin's and Jeff's splashes
   //   twinsborn The twins are born      -> when Arc XXXV Chapter 10 is marked read, then the birth-reveal clip plays
@@ -33,6 +34,8 @@
     { id:'finale',   img:'ch24-the-whole-crew.webp',       kicker:'Chapter 24',     title:'The whole crew, together',   where:'When Chapter 24 is complete' },
     { id:'twinsborn', img:'arc35-ch10-twins-born.webp', kicker:'Arc XXXV · Chapter 10', title:'The twins are born', where:'When Arc XXXV Chapter 10 is marked read' },
     { id:'arc3ch1',  img:'arc3-ch01-the-night-at-the-tavern.webp', kicker:'Arc III · Chapter 1', title:'The Night at the Tavern', where:'When Arc III Chapter 1 is marked read' },
+    { id:'sanjoel_t4', img:'sanjoel-two-hearts-one-ship.webp', kicker:'San & Joel', title:'Two Hearts, One Ship', where:'When San and Joel\'s bond reaches Two Hearts, One Ship' },
+    { id:'sanjoel_t5', img:'sanjoel-one-ship-one-life.webp', kicker:'San & Joel', title:'One Ship, One Life', where:'When San and Joel\'s bond reaches One Ship, One Life' },
     { id:'arc20ch20', img:'arc20-ch20-forever-and-ever.webp', kicker:'Arc XX · Chapter 20', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened' },
     { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight', zoom:true },
     { id:'arc6svc_a', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
