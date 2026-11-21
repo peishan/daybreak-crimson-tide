@@ -45,7 +45,8 @@
     { id: 't17', arc: 17, title: 'Trade at Dragonvale',          tasks: [{ k: 'sell', port: 'dragonvale', n: 20 }] },
     { id: 't18', arc: 18, title: 'Trade at Forest Inlet',         tasks: [{ k: 'sell', port: 'forest_inlet', n: 20 }] },
     { id: 't19', arc: 19, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] },
-    { id: 't20', arc: 20, title: 'Trade at Winter Harbor',        tasks: [{ k: 'sell', port: 'winter_harbor', n: 20 }] }
+    { id: 't20', arc: 20, title: 'Trade at Winter Harbor',        tasks: [{ k: 'sell', port: 'winter_harbor', n: 20 }] },
+    { id: 't21', arc: 21, title: 'Trade at Glass Harbor',         tasks: [{ k: 'sell', port: 'glass_harbor', n: 20 }] }
   ];
 
   // MID-ARC GATES (Arc XVIII onward): an arc no longer runs through on story XP alone. After the 5th and
