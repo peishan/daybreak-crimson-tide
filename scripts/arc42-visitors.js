@@ -22,8 +22,9 @@
   // Not work-assignable (the default in residentWorkUnlocked), and no
   // wages: they are guests, not workers.
   //
-  // In the sequel only Sera lives in Fair Tide: she is a resident again
-  // from the Crimson Horizon Prologue and does not leave. Jade, Devon,
+  // In the sequel Sera lives in Fair Tide: she is a resident again
+  // from the Crimson Horizon Prologue and does not leave. Adrian and Fen stay on from the Prologue too, to work
+  // on the Black Pearl study. Eve visits them in the chapters that mention her (SEQUEL_VISITS). Jade, Devon,
   // Sky, Levi and Sally sail with the Crimson Tide from the Prologue
   // (canon-five.js), so they are hidden from this list once they are crew.
   // -------------------------------------------------------------------
@@ -57,7 +58,11 @@
     // Arc XVI: Eve is at Fair Tide for the length of the voyage to Dragonvale (from Ch.157, id 158), and Adrian joins her
     // when the family letters arrive (Ch.169, id 170). Both go home once Ch.170 (id 171) is read.
     {key:'s16_eve', ids:['eve'], arrive:158, depart:171, away:'Tribute Palace', awayCompanion:'Her daughters', inNote:'Stays at Fair Tide while the crew is away in Dragonvale.'},
-    {key:'s16_adrian', ids:['adrian'], arrive:170, depart:171, away:'Tribute Palace', awayCompanion:'Eve', inNote:'Joins Eve at Fair Tide to read the girls’ letters.'}
+    // Eve is at Fair Tide in every chapter that mentions her: she visits Adrian, who lives at Fair Tide for the project.
+    // Each window opens the chapter before the one that mentions her and closes after it is read.
+    {key:'s14_eve', ids:['eve'], arrive:143, depart:145, away:'Tribute Palace', awayCompanion:'Her daughters', inNote:'Visits Adrian at Fair Tide.'},
+    {key:'s20_eve', ids:['eve'], arrive:223, depart:226, away:'Tribute Palace', awayCompanion:'Her daughters', kid:'adrian_eve_daughters', inNote:'Visits Fair Tide with her daughters for the gathering.'},
+    {key:'s21_eve', ids:['eve'], arrive:239, depart:241, away:'Tribute Palace', awayCompanion:'Her daughters', inNote:'Visits Adrian at Fair Tide.'}
   ];
   window.SEQUEL_VISITS = SEQUEL_VISITS;
 
@@ -147,7 +152,7 @@
         }
       });
     });
-    // The sequel: only Sera lives at Fair Tide.
+    // The sequel: Sera lives at Fair Tide, and Adrian and Fen stay on to work on the Black Pearl study.
     const ch = game.comicProgressCrimsonHorizon;
     if (ch && ch[1] && cp[24]) {
       const rec = ensure('sera');
@@ -155,8 +160,19 @@
       if (rec.status !== 'resident') changed = true;
       rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null; rec.room = 'Tribute House';
     }
+    [['adrian', 32], ['fen', 39]].forEach(function(p){
+      if (!(ch && ch[1] && cp[p[1]])) return;
+      const rec = ensure(p[0]);
+      if (RELATION[p[0]] && (!rec.relationship || rec.relationship === 'Visiting Friend' || OLD_RELATION.indexOf(rec.relationship) !== -1)) rec.relationship = RELATION[p[0]];
+      logOnce(p[0] + ':sequel:in', rec, 'join', 'Stays on at Fair Tide to work on the Black Pearl study.');
+      if (rec.status !== 'resident') changed = true;
+      rec.status = 'resident'; rec.awayLocation = null; rec.awayCompanion = null; rec.room = 'Research Quarters';
+      const sn = springNote(p[0]);
+      rec.note = (sn ? sn + ' ' : '') + 'Staying at Fair Tide to work on the Black Pearl study.';
+    });
     // Sequel visits (Crimson Horizon progress): [chapter id the visit starts, chapter id it ends].
-    SEQUEL_VISITS.forEach(function(v){
+    // chronological, so a later visit always has the last word on a resident's status
+    SEQUEL_VISITS.slice().sort(function(a, b){ return a.arrive - b.arrive; }).forEach(function(v){
       if (!(ch && ch[v.arrive])) return;
       const over = !!ch[v.depart] && (v.also || []).every(function(c){ return !!ch[c]; });
       v.ids.forEach(function(id){
