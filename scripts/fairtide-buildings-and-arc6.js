@@ -2234,6 +2234,12 @@
     game.reputation = (game.reputation||0) + 1;
     logEvent('⚔️ Chapter 1 complete: The Captives — Robin and Jeff are prisoners.', 'gold');
     toast('⚔️ Robin and Jeff are captured — two ships and their crews are yours to sort out.', 4200);
+    // This capture doubles as the tutorial for capturing pirates (sea captures only roll from here on, see arc9-and-systems.js).
+    setTimeout(function(){ if (typeof showStoryModal === 'function') showStoryModal({title:'⛓️ How Capturing Works', blurb:
+      'Robin and Jeff are in chains, and now you know how it is done.<br><br>' +
+      'From here on, beating a named pirate captain at sea gives you a chance to <strong>capture</strong> them: 50% the first time, and 80% on any later encounter after they have slipped away once.<br><br>' +
+      'A captured captain does community service at Fair Tide for 20 days, and their ship docks there until you decide what to do with it. Robin\'s term is 20 days. Jeff\'s has no end.<br><br>' +
+      'A captain who escapes is listed as <strong>Still at Large</strong> in Explore, with the odds for next time and a button to hunt them down.'}); }, 900);
     if (typeof saveGame === 'function') saveGame();
     if (typeof renderMainGoal === 'function') renderMainGoal();
     if (typeof renderStory === 'function') renderStory();

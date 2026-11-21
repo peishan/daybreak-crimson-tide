@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V578 · Pirate capture waits for Arc VI Chapter 1';
+window.__CT_BUILD__='V579 · Capture tutorial, Joy & Caelan clip, new Mezstorm clip';

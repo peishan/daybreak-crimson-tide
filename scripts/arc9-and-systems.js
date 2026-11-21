@@ -1315,7 +1315,15 @@
     // Capturing a rival is introduced by Arc VI Chapter 1 (Robin and Jeff, "The Captives"), which works as the
     // tutorial. Until that chapter is done, beating a named rival at sea is an ordinary win: no capture roll,
     // and it does not count as an escape.
-    if (!(game.comicProgress6 && game.comicProgress6[1])) return;
+    if (!(game.comicProgress6 && game.comicProgress6[1])) {
+      // One-time hint, so a win with no capture roll does not look like a bug.
+      if (!game.captureHintShown) {
+        game.captureHintShown = true;
+        const nm = (typeof window.rivalDisplayName === 'function') ? window.rivalDisplayName(rivalKey) : rivalKey;
+        try { if (typeof toast === 'function') toast('🏴‍☠️ ' + nm + ' is beaten, but you have no way to hold a captive yet. That comes later in the story.', 4600); } catch(e) {}
+      }
+      return;
+    }
     // A captured captain does community service at Fair Tide and their ship docks there, so there is
     // nothing to capture them to until that port is open: before then the fight is an ordinary win
     // (no capture roll, and it does not count as an escape).
