@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V592 · Fix chapter images stuck on Loading chapter';
+window.__CT_BUILD__='V593 · Resting tip after the first fight and rest';
