@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V586 · Twins as toddlers, Fair Tide residents in the sequel';
+window.__CT_BUILD__='V587 · New sequel title cover';
