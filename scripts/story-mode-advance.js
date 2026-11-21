@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V595 · Drowned Admiral objective, Story Mode legibility';
+window.__CT_BUILD__='V596 · New Drowned Passage clip';

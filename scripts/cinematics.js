@@ -90,7 +90,7 @@
       clips:['cin15-senedra-zaki-intro.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[23]); } }
     ,{ id:'passage', icon:'🌊', title:'The Drowned Passage', where:'Opens with Chapter 24',
-      clips:['cin16-drowned-passage-intro.mp4'],
+      clips:['cin16-drowned-passage-intro-v2.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[24]); } }
     ,{ id:'kota_batu', icon:'🏯', title:'Arrival at Kota Batu', where:'The first time you sail into Kota Batu', port:'kota_batu',
       clips:['cin17-kota-batu-first-arrival.mp4'],
