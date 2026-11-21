@@ -11,7 +11,7 @@
   //                after the real fight, then the companion's splash (Joel: fight, conversation, embrace; Aisyah: the market fight; Mezstorm: the fight and the reunion)
   //   aboard   Welcome Aboard           -> when the player opens Chapter 7
   //   aisyah, eliz, mezstorm, senedra, zaki, twins, passage   -> when the player opens Chapters 12, 15, 18, 20, 21, 23, 24
-  //   mimi, renn, erynn, twinsbirth, sparks   -> when Arc IV Ch10, Arc V Ch6, Arc VII Ch3, Arc XXXV Ch10 / Ch24 is marked read
+  //   mimi, renn, erynn, twinsbirth, sparks   -> when Arc IV Ch10, Arc V Ch6, Arc VII Ch3, Arc XXXV Ch10 / Ch24, or Arc XXV Ch18 is marked read
   //
   // * Nothing is loaded at startup: no <video> exists until a cinematic is asked for, and
   //   the video is released the moment it ends or is skipped.
@@ -75,7 +75,7 @@
       clips:['cin12-mezstorm-intro-a.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[18]); } }
     ,{ id:'mezstormafter', icon:'⚡', title:'The Storm Idol Falls', where:'When the Storm Idol falls and Mezstorm joins',
-      clips:['cin12-mezstorm-intro-b.mp4', 'cin12-mezstorm-intro-c.mp4'],
+      clips:['cin12-mezstorm-intro-b2.mp4', 'cin12-mezstorm-intro-c.mp4'],
       passed:function(){ return !!(game.foundCompanions && game.foundCompanions.mezstorm); } }
     ,{ id:'senedra', icon:'🏹', title:'Senedra — The Watchful Signal', where:'Opens with Chapter 20',
       clips:['cin13-senedra-intro.mp4'],
@@ -110,9 +110,12 @@
     ,{ id:'sparks', icon:'✨', title:'The Twins\' First Sparks', where:'When Arc XXXV is complete',
       clips:['cin23-twins-first-sparks.mp4'],
       passed:function(){ return !!game.arc35Complete; } }
+    ,{ id:'joycaelan', icon:'💞', title:'Joy & Caelan — A Little More Willing', where:'When Arc XXV is complete',
+      clips:['cin24-joy-caelan-milestone.mp4'],
+      passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -272,6 +275,7 @@
   [ ['markArc4ChapterRead',  'comicProgress4',  { 10:'mimi' }  ],
     ['markArc5ChapterRead',  'comicProgress5',  { 6:'renn' }   ],
     ['markArc7ChapterRead',  'comicProgress7',  { 3:'erynn' }  ],
+    ['markArc25ChapterRead', 'comicProgress25', { 18:'joycaelan' }],
     ['markArc35ChapterRead', 'comicProgress35', { 24:'sparks' }]   // (Chapter 10's clip follows its splash, see milestone-splash.js)
   ].forEach(function(h){
     const old = window[h[0]]; if (typeof old !== 'function') return;
