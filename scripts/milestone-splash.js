@@ -4,8 +4,8 @@
   // few seconds, then closes by itself (tap to close early). Used for the smaller story moments
   // that do not get a video:
   //
-  //   ch10      The Day the Sea Rested -> when Chapter 10 has been read
-  //   ch11      The Day We Chose       -> when Chapter 11 has been read
+  //   ch10      The Day the Sea Rested -> when Chapter 10 has been read (after its clip, "kiss")
+  //   ch11      The Day We Chose       -> when Chapter 11 has been read (after its clip, "catch")
   //   joel      Joel joins             -> the moment the Wreck Warden falls
   //   aisyah    Aisyah joins           -> the moment the Debt Collector falls
   //   eliz      Eliz joins             -> the moment the Plague Hulk falls
@@ -157,7 +157,13 @@
       const r = oldFinish.apply(this, arguments);
       try {
         const now = !!(game.comicProgress && game.comicProgress[n]);
-        if (!was && now && (n === 10 || n === 11)) auto('ch' + n, 700);
+        if (!was && now && (n === 10 || n === 11)) {
+          // the clip first (Chapter 10: the vineyard kiss, Chapter 11: the catch at the shore), then the chapter's splash
+          new Promise(function(r){ setTimeout(r, 700); })
+            .then(function(){ return typeof window.playCinematicOnce === 'function' ? window.playCinematicOnce(n === 10 ? 'kiss' : 'catch') : null; })
+            .catch(function(){})
+            .then(function(){ return auto('ch' + n, 300); });
+        }
         if (!was && now && n === 23 && game.foundCompanions && game.foundCompanions.senedra && game.foundCompanions.zaki) auto('twins', 700);
         if (!was && now && n === 24) auto('finale', 700);
       } catch(e) {}

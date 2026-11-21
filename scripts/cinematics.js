@@ -65,6 +65,12 @@
     ,{ id:'aboard', icon:'⚓', title:'Welcome Aboard', where:'Opens with Chapter 7',
       clips:['cin05-joel-rescue-e.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[7]); } }
+    ,{ id:'kiss', icon:'🍇', title:'Under the Grapevines', where:'After Chapter 10 is read, before its splash',
+      clips:['cin28-ch10-under-the-grapevines.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[10]); } }
+    ,{ id:'catch', icon:'🌅', title:'Caught at the Shore', where:'After Chapter 11 is read, before its splash',
+      clips:['cin29-ch11-the-catch.mp4'],
+      passed:function(){ return !!(game.comicProgress && game.comicProgress[11]); } }
     ,{ id:'aisyah', icon:'🗡️', title:'Aisyah — The Debt', where:'Opens with Chapter 12',
       clips:['cin10-aisyah-intro-a.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[12]); } }
@@ -127,7 +133,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 

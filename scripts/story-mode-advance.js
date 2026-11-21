@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V596 · New Drowned Passage clip';
+window.__CT_BUILD__='V597 · Chapter 10 and 11 clips';
