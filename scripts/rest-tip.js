@@ -1,7 +1,7 @@
 (function(){
   // -------------------------------------------------------------------
   // RESTING TIP. After the first harbor fight (the Bilge Rat Gang, for most players) and the first rest, a one-time tip
-  // explains how to heal when the free rest is spent: rest at the Tavern for 15g. It waits until the player is back on a
+  // explains how to heal when the free rest is spent (a 15g Tavern Rest) and where to buy potions. It waits until the player is back on a
   // normal screen (not mid-fight, no other popup), and only runs for early saves (below Level 30). State: game.restTip.
   // -------------------------------------------------------------------
   function st(){ game.restTip = game.restTip || {}; return game.restTip; }
@@ -18,9 +18,10 @@
       if (busy() || typeof showModal !== 'function') return;
       s.shown = true;
       if (typeof saveGameQuiet === 'function') saveGameQuiet();
-      showModal('💡 Tip: Resting',
+      showModal('💡 Tip: Resting and Potions',
         'Hurt after a fight? Press <b>🛏️ Rest Here</b> on the Port screen: it is free once a day and restores everyone\'s HP and MP.<br><br>' +
-        'When that is used up, open the <b>🍺 Tavern</b> and take a <b>Tavern Rest for 15g</b>. It fully restores everyone aboard, and you can do it as often as you need while you are away from Fair Tide.',
+        'When that is used up, open the <b>🍺 Tavern</b> and take a <b>Tavern Rest for 15g</b>. It fully restores everyone aboard, and you can do it as often as you need while you are away from Fair Tide.<br><br>' +
+        'The Tavern also sells <b>potions</b>: 🧪 Health and 🔵 Mana potions, 🔧 Repair Kits and 💣 Cannon Shot. What you buy waits in your Cargo screen under Consumables, ready to use in a fight or between them. Stronger ones turn up later at the Temple.',
         [{ text:'Got it', action:function(){ if (typeof closeModal === 'function') closeModal(); } }]);
     } catch(e) {}
   }
