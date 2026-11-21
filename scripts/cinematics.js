@@ -29,6 +29,9 @@
   // -------------------------------------------------------------------
   const BASE = 'assets/cinematics/arc1/';
   const CINEMATICS = [
+    { id:'teaser', icon:'🎬', title:'Daybreak: Crimson Tide — Teaser', where:'On the title screen', base:'assets/cinematics/teaser/',
+      clips:['daybreak-crimson-tide-teaser.mp4'],
+      passed:function(){ return false; } },
     { id:'storm', icon:'⛈️', title:'The Storm That Remained', where:'Opens with Chapter 1',
       clips:['cin01-the-storm-that-remained-a.mp4', 'cin01-the-storm-that-remained-b.mp4'],
       passed:function(){ return !!(game.comicProgress && game.comicProgress[1]); } },
@@ -121,7 +124,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -172,7 +175,7 @@
     const def = BY_ID[id];
     if (!def || busy) return Promise.resolve({ played:false });
     busy = true;
-    const urls = def.clips.map(function(c){ return BASE + c; });
+    const urls = def.clips.map(function(c){ return (def.base || BASE) + c; });
     return Promise.all(urls.map(exists)).then(function(ok){
       const list = urls.filter(function(u, i){ return ok[i]; });
       if (!list.length) { busy = false; return { played:false, missing:true }; }
@@ -321,6 +324,10 @@
       '<div class="panel-title">🎬 Cinematics</div>' +
       '<label style="display:flex;align-items:center;gap:8px;font-size:.84rem;margin:4px 0 8px;cursor:pointer;"><input type="checkbox" ' + (autoOn() ? 'checked' : '') + ' onchange="setCinematicsAuto(this.checked)"> Play cinematics automatically</label>' + rows + '</div>';
   }
+  // the teaser on the title screen: always a replay, so it never touches the save
+  window.watchTeaser = function(){
+    window.playCinematic('teaser', { replay:true }).then(function(r){ if (r && r.missing && typeof toast === 'function') toast('🎬 The teaser is not available right now.'); });
+  };
   window.replayCinematic = function(id){
     window.playCinematic(id, { replay:true }).then(function(r){ if (r && r.missing && typeof toast === 'function') toast('🎬 This cinematic is not available yet.'); });
   };

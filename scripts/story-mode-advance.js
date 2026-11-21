@@ -25,4 +25,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V582 · Spyglass splash zoom';
+window.__CT_BUILD__='V583 · Title screen teaser';

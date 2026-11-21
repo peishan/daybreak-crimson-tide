@@ -1180,6 +1180,9 @@ body{
 .comic-archive-sub{margin:6px 0 12px;color:#aeb7b9;font-size:.82rem}
 .ct-v30-avatar{overflow:hidden;padding:0!important}
 .ct-v30-avatar img{width:100%;height:100%;display:block;object-fit:cover}
+.ct-v31-teaser{text-align:center;padding:8px 12px 0;background:#050b10}
+.ct-v31-teaser button{display:inline-block;min-height:40px;padding:8px 20px;border:1px solid rgba(224,187,74,.5);border-radius:999px;background:rgba(16,14,10,.7);color:#e8cf86;font-family:Georgia,serif;font-size:.86rem;letter-spacing:.06em;cursor:pointer}
+.ct-v31-teaser button:hover,.ct-v31-teaser button:focus{border-color:#f4d56f;color:#fff0b8}
 .ct-v30-new-voyage{text-align:center;margin:6px 0 2px}
 .ct-v30-new-voyage .btn{opacity:.72;font-size:.72rem;border-color:rgba(205,163,55,.45)}
 .ct-v30-new-voyage .btn:hover,.ct-v30-new-voyage .btn:focus{opacity:1}
@@ -1296,6 +1299,7 @@ body{
     <div class="ct-v26-begin" id="landingPrimaryAction">
       <button id="landingPrimaryButton" onclick="landingPrimaryAction()" aria-label="Continue or begin voyage">⚓ BEGIN VOYAGE</button>
     </div>
+    <div class="ct-v31-teaser"><button type="button" id="landingTeaserButton" onclick="window.watchTeaser && watchTeaser()" aria-label="Watch the Daybreak Crimson Tide teaser">▶ Watch the Teaser</button></div>
     <div class="ct-v30-new-voyage" id="landingNewVoyage" style="display:none;">
       <button class="btn btn-small" onclick="confirmNewVoyage()">↻ Start New Voyage</button>
     </div>
