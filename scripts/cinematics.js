@@ -101,6 +101,12 @@
     ,{ id:'renn', icon:'🌬️', title:'Renn — The Mage Who Stole the Wind', where:'When Arc V Chapter 6 is marked read',
       clips:['cin20-renn-intro.mp4'],
       passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[6]); } }
+    ,{ id:'arc6encounter', icon:'🔭', title:'Senedra Spots Two Sails', where:'When you start the Arc VI Chapter 1 fight',
+      clips:['cin25-arc6-senedra-spots-two-sails.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[1]); } }
+    ,{ id:'arc6service', icon:'🧹', title:'Community Service Begins', where:'After the Arc VI Chapter 1 capture',
+      clips:['cin26-arc6-community-service.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[1]); } }
     ,{ id:'erynn', icon:'📖', title:'Erynn Farseer — The Man Who Knows the Door', where:'When Arc VII Chapter 3 is marked read',
       clips:['cin21-erynn-intro.mp4'],
       passed:function(){ return !!(game.comicProgress7 && game.comicProgress7[3]); } }
@@ -115,7 +121,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['storm','malacca','joel','rescue','rescueafter','aboard','palembang','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6service','erynn','twinsbirth','sparks','joycaelan']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -264,6 +270,22 @@
       return oldArrive.apply(this, arguments);
     };
   }
+
+  // ---- Arc VI Chapter 1: the splash, then Senedra's spyglass clip, then the fight starts ----
+  (function(){
+    let starting = false;
+    const old = window.startArc6CaptureFight;
+    if (typeof old !== 'function') return;
+    window.startArc6CaptureFight = function(){
+      const self = this, args = arguments;
+      if (starting || (window.arc6ObjectiveState && window.arc6ObjectiveState() !== 'complete_arc6_chapter_1')) return old.apply(self, args);
+      starting = true;
+      Promise.resolve(typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc6ch1') : null)
+        .then(function(){ return window.playCinematicOnce('arc6encounter'); })
+        .catch(function(){})
+        .then(function(){ starting = false; old.apply(self, args); });
+    };
+  })();
 
   // exported so other scripts can chain a clip after something else (for example a splash screen)
   window.playCinematicOnce = function(id){
