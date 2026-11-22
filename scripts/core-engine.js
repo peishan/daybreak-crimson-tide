@@ -2748,6 +2748,9 @@ function todayKey(){ return 'day_' + game.day; }
 function showModal(title, text, buttons) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalText').innerHTML = text;
+  // a new popup always starts at its first line (the text box keeps its scroll position from the last popup otherwise)
+  document.getElementById('modalText').scrollTop = 0;
+  const modalBox = document.querySelector('#modalOverlay .modal'); if (modalBox) modalBox.scrollTop = 0;
   const btnContainer = document.getElementById('modalButtons');
   btnContainer.innerHTML = '';
   buttons.forEach(btn => {
