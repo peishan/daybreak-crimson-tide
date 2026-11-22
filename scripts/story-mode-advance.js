@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V601 · Arc XIV and XV harbour intros';
+window.__CT_BUILD__='V602 · Arc XII, XIII, XVII and XIX clips';
