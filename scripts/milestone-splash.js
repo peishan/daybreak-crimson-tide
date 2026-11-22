@@ -15,7 +15,7 @@
   //   arc3ch1   The Night at the Tavern -> when Arc III Chapter 1 is marked read
   //   sanjoel_t4, sanjoel_t5 -> San & Joel's bond reaching its top two tiers (scripts/sanjoel-tier-scenes.js); art goes in assets/splash/arc1/
   //   arc20ch20  Forever and Ever       -> when Arc XX Chapter 20 is opened: the clip, then this splash, then the chapter
-  //   arc6ch1, arc6svc_a, arc6svc_b -> Arc VI Chapter 1: Senedra's clip then the ships splash before the fight; after the capture, the explainer, the service clip, then Robin's and Jeff's splashes
+  //   arc6ch1, arc6svc_a, arc6svc_b -> Arc VI Chapter 1: Senedra's clip then the ships splash before the fight; after the capture: the explainer, then Robin's clip, Jeff's fall, Renn cutting the binding, Robin's and Jeff's splashes, and the community service clip
   //   twinsborn The twins are born      -> when Arc XXXV Chapter 10 is marked read, then the birth-reveal clip plays
   //
   // Each shows once per save (game.splashSeen) and follows the same "play cinematics
@@ -38,8 +38,8 @@
     { id:'sanjoel_t5', img:'sanjoel-one-ship-one-life.webp', kicker:'San & Joel', title:'One Ship, One Life', where:'When San and Joel\'s bond reaches One Ship, One Life' },
     { id:'arc20ch20', img:'arc20-ch20-forever-and-ever.webp', kicker:'Arc XX · Chapter 20', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened' },
     { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight', zoom:true },
-    { id:'arc6svc_a', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
-    { id:'arc6svc_b', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Jeff Dolan: community service begins', where:'After the Arc VI Chapter 1 capture' }
+    { id:'arc6svc_a', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
+    { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff Dolan: community service begins', where:'After the Arc VI Chapter 1 capture' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
@@ -121,10 +121,15 @@
   // ---- Arc VI Chapter 1 (Robin and Jeff): the splash and the spyglass clip before the fight, the service clip and art after the capture ----
   window.playMilestoneSplashOnce = function(id){ return auto(id, 0); };
   window.playArc6CaptureMedia = function(){
+    const clip = function(id){ return function(){ return typeof window.playCinematicOnce === 'function' ? window.playCinematicOnce(id) : null; }; };
+    // the capture itself (Robin yields, Jeff falls, Renn cuts the binding), then the two captives' splashes, then the service clip
     return new Promise(function(r){ setTimeout(r, 300); })
-      .then(function(){ return typeof window.playCinematicOnce === 'function' ? window.playCinematicOnce('arc6service') : null; })
+      .then(clip('arc6robin'))
+      .then(clip('arc6jeff'))
+      .then(clip('arc6renn'))
       .then(function(){ return auto('arc6svc_a', 300); })
-      .then(function(){ return auto('arc6svc_b', 200); });
+      .then(function(){ return auto('arc6svc_b', 200); })
+      .then(clip('arc6service'));
   };
 
   // ---- Recruitment: Joel, Aisyah, Eliz and Mezstorm join when their guardian falls ----
