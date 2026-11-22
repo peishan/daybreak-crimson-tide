@@ -228,11 +228,13 @@ tr:hover { background: rgba(196,163,90,0.08); }
 .modal {
   background: linear-gradient(135deg, #1a2f3d, #0d1f2d); border: 2px solid var(--sand);
   border-radius: 16px; padding: 25px; max-width: 500px; width: 100%;
-  max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  max-height: 80vh; max-height: 88dvh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column;
 }
-.modal h2 { color: var(--gold); margin-bottom: 15px; text-align: center; }
-.modal-text { line-height: 1.6; margin-bottom: 20px; text-align: center; }
-.modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.modal h2 { color: var(--gold); margin-bottom: 15px; text-align: center; flex: 0 0 auto; }
+/* a long story scene scrolls inside the box; the title stays at the top and the buttons stay in view at the bottom */
+.modal-text { line-height: 1.6; margin-bottom: 20px; text-align: center; overflow-y: auto; flex: 1 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+.modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; flex: 0 0 auto; }
 .event-log {
   max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2);
   border-radius: 8px; padding: 10px; font-size: 0.85rem; line-height: 1.5;
@@ -1276,6 +1278,9 @@ body{
 .story-mode-end h2{font-family:Cinzel,serif;color:var(--gold);font-size:1.45rem;margin:0 0 10px}
 .story-mode-end p{line-height:1.6;opacity:.88;margin:0 auto 18px;max-width:560px}
 .ct-goal-panel .btn{margin-top:10px}.ct-goal-panel .ct-goal-title{line-height:1.25}.ct-goal-panel .ct-goal-text{line-height:1.5}
+/* arc cover splashes: the cover fits the screen and the Begin button stays in view */
+[id$="SplashOverlay"].story-mode-overlay > div > img{width:auto !important;max-width:100% !important;max-height:calc(100vh - 120px);max-height:calc(100dvh - 120px);margin:0 auto;object-fit:contain}
+[id$="SplashOverlay"].story-mode-overlay > div > button{position:sticky;bottom:12px;z-index:2}
 @media(max-width:560px){.story-mode-overlay{padding:10px 9px 18px}.story-mode-title{font-size:1.12rem}.story-mode-image{max-height:54vh}.story-mode-text{font-size:.96rem;padding:14px}.story-mode-panel{padding-top:12px}.story-mode-top{padding-bottom:10px}}
 
 .story-mode-next-objective{margin:18px auto 20px;max-width:560px;padding:14px 16px;border:1px solid rgba(232,201,106,.55);border-radius:12px;background:rgba(30,20,8,.35);text-align:left}.story-mode-next-label{font-family:Cinzel;color:var(--gold);font-size:.72rem;letter-spacing:.18em;margin-bottom:6px}.story-mode-next-text{font-size:1rem;line-height:1.5;color:var(--parchment)}

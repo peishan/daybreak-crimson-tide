@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V617 · Music resumes and sw leaves audio alone';
+window.__CT_BUILD__='V618 · Chapter popups keep their button in view';
