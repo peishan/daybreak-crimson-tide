@@ -94,6 +94,40 @@
     21: {type:'roster', id:'jorvin', name:'Jorvin', role:'Tinkerer / Mechanic', icon:'🔧', desc:"Barely remembers anything clearly — except San. That was enough to stay."}
   };
 
+  // Chapters 3, 4 and 5 are battles in the comic (the ambush in the coastal pass, the shadow-tide wave, the strike aimed at San),
+  // so they complete by winning a real fight instead of a plain "Mark Chapter Read", the same way Arc IV's Robin and Jeff do.
+  // Winning calls markArc5ChapterRead, so XP, reputation and saving behave exactly as for any other chapter.
+  const ARC5_FIGHTS = {
+    3: {label:'⚔️ Fight the Marauders',   goal:['Defend the Pass', 'Fight off the shadow-tide marauders in the coastal pass (Story → Arc V Ch.3).'],
+        enemy:{name:'Shadow-Tide Marauders', icon:'🗡️', hp:800,  dmg:22, xp:420, gold:210, desc:'A pack of raiders from the shadow tide, closing in on a narrow coastal pass. They are stronger than they looked, and they are in no hurry.'}},
+    4: {label:'⚔️ Hold the Line',          goal:['Hold the Line', 'Stand against the wave of shadow-tide creatures (Story → Arc V Ch.4).'],
+        enemy:{name:'The Shadow-Tide Swarm', icon:'🌊', hp:1050, dmg:26, xp:480, gold:240, desc:'A relentless wave of shadow-tide creatures. There are always more of them, and the only way through is to stay close and keep the wall up.'}},
+    5: {label:'⚔️ Face the Powerful Enemy', goal:['Protect San', 'Face the powerful enemy aimed at San (Story → Arc V Ch.5).'],
+        enemy:{name:'The Shadow-Tide Behemoth', icon:'🐙', hp:1250, dmg:30, xp:560, gold:280, desc:'Something far bigger than anything the crew has fought, with one massive strike aimed straight at San.'}}
+  };
+  window.ARC5_FIGHTS = ARC5_FIGHTS;
+  let fightWon = false;   // only a won fight may complete one of these chapters
+  window.startArc5ChapterFight = function(id){
+    id = Number(id);
+    const f = ARC5_FIGHTS[id];
+    if(!f) return;
+    if(window.arc5ObjectiveState() !== 'complete_arc5_chapter_'+id){ toast('🔒 Not available right now.'); return; }
+    const enemy = (typeof scaleCrimsonEnemy==='function') ? Object.assign({}, scaleCrimsonEnemy(f.enemy,'harbor'), {name:f.enemy.name, icon:f.enemy.icon, desc:f.enemy.desc}) : f.enemy;
+    startCombat({kind:'arc5_story', key:'arc5_ch'+id, enemy});
+  };
+  const oldHandleVictoryForArc5 = window.handleVictory;
+  if(typeof oldHandleVictoryForArc5==='function'){
+    window.handleVictory = function(){
+      const r = oldHandleVictoryForArc5.apply(this, arguments);
+      const enemy = game.combatEnemy;
+      if(enemy && enemy.kind==='arc5_story'){
+        const m = /^arc5_ch(\d+)$/.exec(String(enemy.key||''));
+        if(m){ fightWon = true; try { markArc5ChapterRead(Number(m[1])); } finally { fightWon = false; } }
+      }
+      return r;
+    };
+  }
+
   window.markArc5ChapterRead = function(id){
     id = Number(id);
     const ch = ARC5_CHAPTERS.find(c=>c.id===id);
@@ -101,6 +135,7 @@
     game.comicProgress5 = game.comicProgress5||{};
     if(game.comicProgress5[id]){ toast('✓ Already marked read.'); return; }
     if(window.arc5ObjectiveState() !== 'complete_arc5_chapter_'+id){ toast('🔒 Follow the current Objective first.'); return; }
+    if(ARC5_FIGHTS[id] && !fightWon){ toast('⚔️ This chapter is a battle — win the fight from the Story screen.'); return; }
     game.comicProgress5[id] = true;
     gainStoryXP(ch.xp);
     game.reputation = (game.reputation||0)+1;
@@ -168,7 +203,9 @@
       const ready = !done && so===('complete_arc5_chapter_'+ch.id);
       const status = done?'✓ COMPLETE':(ready?'CURRENT':'🔒 LOCKED');
       let action;
-      if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
+      if(ready && ARC5_FIGHTS[ch.id]) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
+        '<button class="btn btn-small btn-danger" onclick="startArc5ChapterFight('+ch.id+')">'+ARC5_FIGHTS[ch.id].label+'</button>';
+      else if(ready) action = '<button class="btn btn-small" onclick="openComicImage(\''+ch.image+'\')">📖 Open Chapter</button> '+
         '<button class="btn btn-small btn-success" onclick="markArc5ChapterRead('+ch.id+')">✓ Mark Chapter Read</button>';
       else action = '<div class="story-chip">Follow the current Objective.</div>';
       html += '<article class="quest-item '+(done?'completed':(ready?'active':''))+'"><strong>Chapter '+ch.id+' — '+esc(ch.title)+'</strong><br>'+
@@ -327,7 +364,7 @@
     if (state === 'arc3_chapters_complete_for_now') return ['Arc III — All Caught Up', 'Every available Arc III chapter is read. More is on the way.'];
     if ((m = /^complete_arc4_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc IV', m[1], window.ARC4_CHAPTERS);
     if (state === 'arc4_chapters_complete_for_now') return ['Arc IV — All Caught Up', 'Every available Arc IV chapter is read. More is on the way.'];
-    if ((m = /^complete_arc5_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc V', m[1], window.ARC5_CHAPTERS);
+    if ((m = /^complete_arc5_chapter_(\d+)$/.exec(state))) return (window.ARC5_FIGHTS && window.ARC5_FIGHTS[m[1]]) ? window.ARC5_FIGHTS[m[1]].goal : chapterLabel('Arc V', m[1], window.ARC5_CHAPTERS);
     if (state === 'arc5_part1_complete_for_now') return ['Arc V — All Caught Up', 'Every available Arc V chapter is read. More is on the way.'];
     if ((m = /^complete_arc6_chapter_(\d+)$/.exec(state))) return chapterLabel('Arc VI', m[1], window.ARC6_CHAPTERS);
     if (state === 'arc6_part1_complete_for_now') return ['Arc VI — All Caught Up', 'Every available Arc VI chapter is read. More is on the way.'];
