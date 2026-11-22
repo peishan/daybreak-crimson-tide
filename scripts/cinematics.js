@@ -140,6 +140,12 @@
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
+    ,{ id:'arc14harbour', icon:'🌊', title:'The Underwater Harbour', where:'The first time you arrive at the Tide Settlement',
+      clips:['cin37-arc14-underwater-harbour.mp4'],
+      passed:function(){ return false; } }
+    ,{ id:'arc15harbour', icon:'🌲', title:'The Shapeshifters\' Harbour', where:'When Arc XV Chapter 1 is opened',
+      clips:['cin38-arc15-shapeshifters-harbour.mp4'],
+      passed:function(){ return !!(game.comicProgress15 && game.comicProgress15[1]); } }
     ,{ id:'erynn', icon:'📖', title:'Erynn Farseer — The Man Who Knows the Door', where:'When Arc VII Chapter 3 is marked read',
       clips:['cin21-erynn-intro.mp4'],
       passed:function(){ return !!(game.comicProgress7 && game.comicProgress7[3]); } }
@@ -154,7 +160,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc14harbour','arc15harbour','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -307,14 +313,30 @@
   // ---- Arc V Chapters 1, 3, 4 and 5 (the bond, Shield Wall, the Mark, First Mate's Aegis): clicking "Open Chapter" plays the clip first ----
   (function(){
     const ARC5_CLIPS = { 1:'arc5bond', 3:'arc5shield', 4:'arc5mark', 5:'arc5aegis' };
+    const ARC15_CLIPS = { 1:'arc15harbour' };   // Arc XV Chapter 1 arrives at the shapeshifters' harbour
     const old = window.openComicImage;
     if (typeof old !== 'function') return;
     window.openComicImage = function(url){
-      const m = /comics\/arc5\/ch0([1-9])-/.exec(String(url || ''));
-      const id = m && ARC5_CLIPS[Number(m[1])];
+      const u = String(url || '');
+      const m = /comics\/arc5\/ch0([1-9])-/.exec(u), m15 = /comics\/arc15\/ch0([1-9])-/.exec(u);
+      const id = (m && ARC5_CLIPS[Number(m[1])]) || (m15 && ARC15_CLIPS[Number(m15[1])]);
       if (id && autoOn() && !isSeen(id) && !busy) {
         const self = this, args = arguments;
         window.playCinematic(id).then(function(){ old.apply(self, args); });
+        return;
+      }
+      return old.apply(this, arguments);
+    };
+  })();
+
+  // ---- Arc XIV: the first arrival at the Tide Settlement (after the voyage) plays the underwater harbour clip ----
+  (function(){
+    const old = window.goScreen;
+    if (typeof old !== 'function') return;
+    window.goScreen = function(name){
+      if (name === 'tidenetwork' && autoOn() && !isSeen('arc14harbour') && !busy) {
+        const self = this, args = arguments;
+        window.playCinematic('arc14harbour').then(function(){ old.apply(self, args); });
         return;
       }
       return old.apply(this, arguments);
