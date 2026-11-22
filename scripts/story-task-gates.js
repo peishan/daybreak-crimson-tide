@@ -116,7 +116,18 @@
     if (g.tasks.some(function(t){ return t.port && typeof isPortUnlocked === 'function' && !isPortUnlocked(t.port); })) return null;
     return { kind: 'trade', g: g, chapter: next };
   }
-  function activeGate(){ return hostGate() || tradeGate(); }
+  function activeGate(){
+    const a = hostGate() || tradeGate();
+    // One-time credit: until V614 a finished delivery contract was often not counted (see checkQuestProgress below). Whoever is held
+    // at a delivery-contract gate on first load of the fix is credited one contract.
+    try {
+      if (!game.contractCountFix) {
+        if (a && a.kind === 'trade' && a.g.tasks.some(function(t){ return t.k === 'contract'; })) { tc().contracts += 1; game.contractCountFix = true; }
+        else if (typeof gameSessionActive !== 'undefined' && gameSessionActive && game.arc42Complete) game.contractCountFix = true;
+      }
+    } catch(e) {}
+    return a;
+  }
 
   // ---- progress ----
   function hostProgress(g){
@@ -127,12 +138,16 @@
   function tradeProgress(g){
     const c = tc();
     const base = starts()[g.id] = starts()[g.id] || { soldAt: Object.assign({}, c.soldAt), contracts: c.contracts };
+    // a gate that was met stays met
+    if (told()[g.id + '_met']) return g.tasks.map(function(t){ return { label: t.k === 'contract' ? 'Finish a delivery contract from the Quest Board' : (t.k === 'sell' ? 'Sell ' + t.n + ' goods at ' + portName(t.port) : (t.k === 'level' ? 'Reach Level ' + t.n : 'Have prices from ' + t.n + ' ports in your Price Book')), have: t.n, need: t.n }; });
+    // contracts count from when the previous gate was passed; fixed the first time this gate is looked at, so passing this one does not undo it
+    if (base.contractsFrom == null) base.contractsFrom = c.contractsAtLastGate || 0;
     return g.tasks.map(function(t){
       if (t.k === 'sell') return { label: 'Sell ' + t.n + ' goods at ' + portName(t.port), have: Math.min(t.n, (c.soldAt[t.port] || 0) - ((base.soldAt || {})[t.port] || 0)), need: t.n };
       if (t.k === 'level') return { label: 'Reach Level ' + t.n, have: Math.min(t.n, typeof level === 'function' ? level() : 0), need: t.n };
       // Delivery contracts count from the last time a gate was passed (or from the start of the count), not from the moment this
       // gate opened: a contract finished while the previous arc was still being read is not lost.
-      if (t.k === 'contract') return { label: 'Finish a delivery contract from the Quest Board', have: Math.min(t.n, c.contracts - (c.contractsAtLastGate || 0)), need: t.n };
+      if (t.k === 'contract') return { label: 'Finish a delivery contract from the Quest Board', have: Math.min(t.n, c.contracts - base.contractsFrom), need: t.n };
       const ports = Object.keys(game.priceBook || {}).length;
       return { label: 'Have prices from ' + t.n + ' ports in your Price Book', have: Math.min(t.n, ports), need: t.n };
     });
@@ -184,11 +199,12 @@
     return r;
   });
   wrap('checkQuestProgress', function(old, self, args){
-    const before = (game.activeQuests || []).filter(function(q){ return q && q.type === 'deliver'; }).map(function(q){ return q.id; });
+    // Quest objects are kept, so a finished one is the object that now says done. (Comparing ids missed it whenever the board
+    // refilled itself with the same contract straight away, which it often does.)
+    const before = (game.activeQuests || []).filter(function(q){ return q && q.type === 'deliver' && !q.done; });
     const r = old.apply(self, args);
     if (args[0] === 'deliver') {
-      const nowIds = (game.activeQuests || []).map(function(q){ return q && q.id; });
-      const finished = before.filter(function(id){ return nowIds.indexOf(id) === -1; }).length;
+      const finished = before.filter(function(q){ return q.done === true; }).length;
       if (finished) { tc().contracts += finished; after(); }
     }
     return r;
