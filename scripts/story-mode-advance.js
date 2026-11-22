@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V603 · Arc XIX chapter art fixed';
+window.__CT_BUILD__='V604 · Crimson Horizon Arc XXII';
