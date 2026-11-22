@@ -40,7 +40,8 @@
     { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight', zoom:true },
     { id:'arc6svc_a', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
     { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff: community service begins', where:'After the Arc VI Chapter 1 capture' },
-    { id:'arc22ch12', img:'arc22-ch12-two.webp', kicker:'Arc XXII · Chapter 12', title:'Two', where:'After the Arc XXII Chapter 12 clip' }
+    { id:'arc22ch12', img:'arc22-ch12-two.webp', kicker:'Arc XXII · Chapter 12', title:'Two', where:'After the Arc XXII Chapter 12 clip' },
+    { id:'arc30ch23', img:'arc30-ch23-n-unknown-fate.webp', kicker:'Arc XXX · Chapter 23', title:'N: Unknown Fate', where:'After the Arc XXX Chapter 23 clip' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;

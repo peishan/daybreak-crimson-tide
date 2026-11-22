@@ -152,6 +152,15 @@
     ,{ id:'arc22ch12', icon:'👶', title:'Two', where:'When Arc XXII Chapter 12 is read (the splash follows it)',
       clips:['cin47-arc22-ch12-two.mp4'],
       passed:function(){ return !!(game.comicProgress22 && game.comicProgress22[12]); } }
+    ,{ id:'arc30ch19', icon:'🌙', title:'N', where:'When Arc XXX Chapter 19 is read',
+      clips:['cin48-arc30-ch19-n.mp4'],
+      passed:function(){ return !!(game.comicProgress30 && game.comicProgress30[19]); } }
+    ,{ id:'arc30ch21', icon:'📜', title:'Not Sairen', where:'When Arc XXX Chapter 21 is read',
+      clips:['cin49-arc30-ch21-not-sairen.mp4'],
+      passed:function(){ return !!(game.comicProgress30 && game.comicProgress30[21]); } }
+    ,{ id:'arc30ch23', icon:'🚪', title:'The Door Closes', where:'When Arc XXX Chapter 23 is read (the splash follows it)',
+      clips:['cin50-arc30-ch23-the-door-closes.mp4'],
+      passed:function(){ return !!(game.comicProgress30 && game.comicProgress30[23]); } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -187,7 +196,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -434,6 +443,24 @@
       opening = true;
       Promise.resolve(window.playCinematicOnce(cid))
         .then(function(){ return (n === 12 && typeof window.playMilestoneSplashOnce === 'function') ? window.playMilestoneSplashOnce('arc22ch12') : null; })
+        .catch(function(){})
+        .then(function(){ opening = false; old.apply(self, args); });
+    };
+  })();
+
+  // ---- Arc XXX Chapters 19, 21 and 23 (N, Not Sairen, The Door Closes): the clip plays when the chapter is read; Chapter 23's splash follows it ----
+  (function(){
+    let opening = false;
+    const CLIP = { 19:'arc30ch19', 21:'arc30ch21', 23:'arc30ch23' };
+    const old = window.markArc30ChapterRead;
+    if (typeof old !== 'function') return;
+    window.markArc30ChapterRead = function(id){
+      const self = this, args = arguments, n = Number(id), cid = CLIP[n];
+      const ready = cid && !opening && window.arc30ObjectiveState && window.arc30ObjectiveState() === ('complete_arc30_chapter_' + n) && !(game.comicProgress30 && game.comicProgress30[n]);
+      if (!ready) return old.apply(self, args);
+      opening = true;
+      Promise.resolve(window.playCinematicOnce(cid))
+        .then(function(){ return (n === 23 && typeof window.playMilestoneSplashOnce === 'function') ? window.playMilestoneSplashOnce('arc30ch23') : null; })
         .catch(function(){})
         .then(function(){ opening = false; old.apply(self, args); });
     };
