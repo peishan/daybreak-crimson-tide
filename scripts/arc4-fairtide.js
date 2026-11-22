@@ -13,11 +13,13 @@
     lighthouse: {label:"Assist clearing the old lighthouse",     need:1,  icon:'🗼', companion:'San'},
     nets:       {label:"Help local fishermen with their nets",   need:3,  icon:'🎣', companion:'Mezstorm'}
   };
+  window.FAIR_TIDE_TASKS = FAIR_TIDE_TASKS;   // the Fair Tide Hub's Dispatch tab shows the same renovation tasks
   const DISPATCH_MS = 5*60*1000;
   const COOLDOWN_MS = 30*60*1000;
   const DECAY_INTERVAL_MS = 2*60*60*1000; // -1 Supply per 2 real hours
 
   function ftRenovation(){ game.fairTideRenovation = game.fairTideRenovation || {timber:0,stone:0,food:0,lighthouse:0,nets:0}; return game.fairTideRenovation; }
+  window.fairTideRenovationProgress = ftRenovation;
   window.fairTideRenovationDone = function(){
     const r = ftRenovation();
     return Object.keys(FAIR_TIDE_TASKS).every(k => r[k] >= FAIR_TIDE_TASKS[k].need);
