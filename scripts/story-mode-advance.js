@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V607 · Read Chapter shows the scene first';
+window.__CT_BUILD__='V608 · Guide: rest before bounty';
