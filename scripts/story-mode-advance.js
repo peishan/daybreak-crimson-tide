@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V610 · Tavern: rest at the top, named crew';
+window.__CT_BUILD__='V611 · Tavern: Quest Board at the bottom';
