@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V609 · Guide: rest, tavern, bounty';
+window.__CT_BUILD__='V610 · Tavern: rest at the top, named crew';

@@ -4311,10 +4311,10 @@ function freeRestAtPort() {
 }
 
 const TEMP_CREW = [
-  { id:'dockhand', name:'Dockhand', role:'Fighter', level:1, maxHp:75, maxMp:30, attack:13, portrait:'⚔️', portraitAsset:'assets/portraits/generic_dockhand.png', icon:'⚔️', cost:5 },
-  { id:'lookout', name:'Lookout', role:'Scout', level:1, maxHp:55, maxMp:30, attack:15, portrait:'🏹', portraitAsset:'assets/portraits/generic_lookout.png', icon:'🏹', cost:5 },
-  { id:'deckhand', name:'Deckhand', role:'Guard', level:1, maxHp:85, maxMp:30, attack:10, portrait:'🛡️', portraitAsset:'assets/portraits/generic_deckhand.png', icon:'🛡️', cost:5 },
-  { id:'shiphealer', name:"Ship's Healer", role:'Healer', level:1, maxHp:48, maxMp:60, attack:7, portrait:'✨', portraitAsset:'assets/portraits/generic_shiphealer.png', icon:'✨', cost:7 }
+  { id:'dockhand', name:'Kael', role:'Fighter', level:1, maxHp:75, maxMp:30, attack:13, portrait:'⚔️', portraitAsset:'assets/portraits/generic_dockhand.png', icon:'⚔️', cost:5 },
+  { id:'lookout', name:'Rian', role:'Scout', level:1, maxHp:55, maxMp:30, attack:15, portrait:'🏹', portraitAsset:'assets/portraits/generic_lookout.png', icon:'🏹', cost:5 },
+  { id:'deckhand', name:'Toran', role:'Guard', level:1, maxHp:85, maxMp:30, attack:10, portrait:'🛡️', portraitAsset:'assets/portraits/generic_deckhand.png', icon:'🛡️', cost:5 },
+  { id:'shiphealer', name:'Mei', role:'Healer', level:1, maxHp:48, maxMp:60, attack:7, portrait:'✨', portraitAsset:'assets/portraits/generic_shiphealer.png', icon:'✨', cost:7 }
 ];
 
 function hireTemporaryCrew(id) {
@@ -4376,6 +4376,8 @@ function getTotalCrewCount() {
 
 function renderTemporaryCrew() {
   const el = document.getElementById('temporaryCrewList');
+  // crew hired before they had names keep their old label in the save: rename them to match
+  (game.temporaryCrew || []).forEach(t => { const h = TEMP_CREW.find(c => c.id === t.id); if (h && t.name !== h.name) t.name = h.name; });
   // Two different labels, two different jobs — used to share one id
   // (only the first ever actually updated; the Tavern's copy was
   // silently stuck). The Port screen's is just an at-a-glance count, so
