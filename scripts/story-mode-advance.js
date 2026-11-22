@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V606 · Chapter scenes for Arcs II to V';
+window.__CT_BUILD__='V607 · Read Chapter shows the scene first';

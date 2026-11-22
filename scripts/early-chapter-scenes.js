@@ -3,7 +3,8 @@
   // EARLY CHAPTER SCENES. Arcs II to V (the early game) were written before chapters got their reading modal, so marking one
   // read only gave a toast. Each now shows the chapter's scene in the same "Continue" popup every later arc uses, built from the
   // chapter's own comic page. Arc VI already has its own scenes, and Arc I has the read-back. The scene shows once, the moment the
-  // chapter is first marked read (or, for a fight chapter, the moment the fight is won).
+  // chapter is first marked read (or, for a fight chapter, the moment the fight is won). For ordinary chapters the scene comes first and the chapter is marked read
+  // (XP, reputation, recruits) when Continue is pressed; the Story screen's button says "Read Chapter".
   // -------------------------------------------------------------------
   const SCENES = {
     2: {
@@ -107,21 +108,58 @@
     if (m && m.classList.contains('active') && (tries || 0) < 80) { setTimeout(function(){ showScene(entry, (tries || 0) + 1); }, 700); return; }
     if (typeof window.showStoryModal === 'function') window.showStoryModal(entry);
   }
+  // Fight chapters complete by winning a fight (Arc IV 8 and 14, Arc V 3 to 5): the win marks the chapter read, so the scene follows it.
+  const FIGHT_CHAPTERS = { 4: [8, 14], 5: [3, 4, 5] };
+  let pending = false;
   [2, 3, 4, 5].forEach(function(arc){
     const fname = 'markArc' + arc + 'ChapterRead', pname = 'comicProgress' + arc;
     const old = window[fname];
     if (typeof old !== 'function') return;
     window[fname] = function(id){
-      const n = Number(id);
-      const before = !!(game[pname] && game[pname][n]);
-      const r = old.apply(this, arguments);
-      try {
-        if (!before && game[pname] && game[pname][n] && SCENES[arc][n]) {
-          const entry = { title: chapterTitle(arc, n), blurb: SCENES[arc][n] };
-          setTimeout(function(){ showScene(entry, 0); }, 500);
-        }
-      } catch(e) {}
-      return r;
+      const self = this, args = arguments, n = Number(id);
+      const isRead = function(){ return !!(game[pname] && game[pname][n]); };
+      const scene = SCENES[arc][n];
+      const isFight = (FIGHT_CHAPTERS[arc] || []).indexOf(n) !== -1;
+      const stateFn = window['arc' + arc + 'ObjectiveState'];
+      const current = typeof stateFn === 'function' && stateFn() === ('complete_arc' + arc + '_chapter_' + n);
+      if (isRead() || !scene || isFight || !current) {
+        // already read, no scene, locked, or a fight win: behave as before (a fight win shows its scene after the XP)
+        const before = isRead();
+        const r = old.apply(self, args);
+        try {
+          if (isFight && !before && isRead() && scene) {
+            const entry = { title: chapterTitle(arc, n), blurb: scene };
+            setTimeout(function(){ showScene(entry, 0); }, 500);
+          }
+        } catch(e) {}
+        return r;
+      }
+      // a normal chapter: the scene first, and the chapter is marked read (XP and all) when Continue is pressed
+      const mo = document.getElementById('modalOverlay');
+      if (pending && mo && mo.classList.contains('active')) return;   // already showing
+      pending = true;
+      const done = function(){
+        pending = false;
+        if (typeof closeModal === 'function') closeModal();
+        old.apply(self, args);
+      };
+      if (typeof showModal === 'function') showModal(chapterTitle(arc, n), scene, [{ text: 'Continue', action: done }]);
+      else done();
     };
   });
+
+  // The Story screen's button for these arcs reads "Read Chapter" rather than "Mark Chapter Read".
+  function relabel(){
+    document.querySelectorAll('#storyContent button[onclick^="markArc2ChapterRead"], #storyContent button[onclick^="markArc3ChapterRead"], #storyContent button[onclick^="markArc4ChapterRead"], #storyContent button[onclick^="markArc5ChapterRead"]').forEach(function(btn){
+      if (btn.textContent.indexOf('Read Chapter') === -1) btn.textContent = '📖 Read Chapter';
+    });
+  }
+  function watch(){
+    const box = document.getElementById('storyContent');
+    if (!box || box.__earlySceneWatch) return;
+    box.__earlySceneWatch = true;
+    new MutationObserver(relabel).observe(box, { childList: true, subtree: true });
+    relabel();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch, { once: true }); else watch();
 })();
