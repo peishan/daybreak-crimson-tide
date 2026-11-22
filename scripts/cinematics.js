@@ -107,6 +107,18 @@
     ,{ id:'mimi', icon:'🔮', title:'Mimi — The Diviner\'s Path', where:'When Arc IV Chapter 10 is marked read',
       clips:['cin19-mimi-intro.mp4'],
       passed:function(){ return !!(game.comicProgress4 && game.comicProgress4[10]); } }
+    ,{ id:'arc5bond', icon:'🌀', title:'The Hidden Cove — The Bond Begins', where:'When Arc V Chapter 1 is opened',
+      clips:['cin33-arc5-hidden-cove.mp4'],
+      passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[1]); } }
+    ,{ id:'arc5shield', icon:'🛡️', title:'Shield Wall', where:'When Arc V Chapter 3 is opened',
+      clips:['cin34-arc5-shield-wall.mp4'],
+      passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[3]); } }
+    ,{ id:'arc5mark', icon:'🔆', title:'The Mark', where:'When Arc V Chapter 4 is opened',
+      clips:['cin35-arc5-the-mark.mp4'],
+      passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[4]); } }
+    ,{ id:'arc5aegis', icon:'✨', title:'First Mate\'s Aegis', where:'When Arc V Chapter 5 is opened',
+      clips:['cin36-arc5-first-mates-aegis.mp4'],
+      passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[5]); } }
     ,{ id:'renn', icon:'🌬️', title:'Renn — The Mage Who Stole the Wind', where:'When Arc V Chapter 6 is marked read',
       clips:['cin20-renn-intro.mp4'],
       passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[6]); } }
@@ -142,7 +154,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -291,6 +303,23 @@
       return oldArrive.apply(this, arguments);
     };
   }
+
+  // ---- Arc V Chapters 1, 3, 4 and 5 (the bond, Shield Wall, the Mark, First Mate's Aegis): clicking "Open Chapter" plays the clip first ----
+  (function(){
+    const ARC5_CLIPS = { 1:'arc5bond', 3:'arc5shield', 4:'arc5mark', 5:'arc5aegis' };
+    const old = window.openComicImage;
+    if (typeof old !== 'function') return;
+    window.openComicImage = function(url){
+      const m = /comics\/arc5\/ch0([1-9])-/.exec(String(url || ''));
+      const id = m && ARC5_CLIPS[Number(m[1])];
+      if (id && autoOn() && !isSeen(id) && !busy) {
+        const self = this, args = arguments;
+        window.playCinematic(id).then(function(){ old.apply(self, args); });
+        return;
+      }
+      return old.apply(this, arguments);
+    };
+  })();
 
   // ---- Arc VI Chapter 1: Senedra's spyglass clip, then the ships splash, then the fight starts ----
   (function(){
