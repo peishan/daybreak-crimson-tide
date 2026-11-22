@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V613 · Delivery gate counts earlier contracts';
+window.__CT_BUILD__='V614 · San and Joel tier splashes in 16:9';
