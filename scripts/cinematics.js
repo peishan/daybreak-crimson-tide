@@ -143,6 +143,9 @@
     ,{ id:'arc19fountain', icon:'⛲', title:'The Fountain of Youth', where:'When Arc XIX Chapter 12 is opened',
       clips:['cin42-arc19-fountain-of-youth.mp4'],
       passed:function(){ return !!(game.comicProgress19 && game.comicProgress19[12]); } }
+    ,{ id:'ftdefence', icon:'🛡️', title:'Ready for Whatever Comes', where:'When Arc XXI Chapter 12 is opened, or the first time you open the Archive after the Warden’s Hall is set up',
+      clips:['cin45-fairtide-ready-for-whatever-comes.mp4'],
+      passed:function(){ return false; } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -151,6 +154,12 @@
       passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[7]); } }
     ,{ id:'arc13harbour', icon:'⚓', title:'The Unknown Harbour', where:'The first time you arrive at the Unknown Harbour',
       clips:['cin40-arc13-unknown-harbour.mp4'],
+      passed:function(){ return false; } }
+    ,{ id:'fthome', icon:'🏘️', title:'A Home Worth Building', where:'The first time you open the Fair Tide Hub',
+      clips:['cin43-fairtide-a-home-worth-building.mp4'],
+      passed:function(){ return false; } }
+    ,{ id:'ftresearch', icon:'🔬', title:'Knowledge Becomes Power', where:'The first time you open the Research Team tab at Fair Tide',
+      clips:['cin44-fairtide-knowledge-becomes-power.mp4'],
       passed:function(){ return false; } }
     ,{ id:'arc14harbour', icon:'🌊', title:'The Underwater Harbour', where:'The first time you arrive at the Tide Settlement',
       clips:['cin37-arc14-underwater-harbour.mp4'],
@@ -172,7 +181,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','arc17archive','arc19fountain','arc20ch20','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -326,12 +335,12 @@
   (function(){
     const ARC5_CLIPS = { 1:'arc5bond', 3:'arc5shield', 4:'arc5mark', 5:'arc5aegis' };
     const ARC15_CLIPS = { 1:'arc15harbour' };   // Arc XV Chapter 1 arrives at the shapeshifters' harbour
-    const OTHER_CLIPS = { '12:7':'arc12harbour', '17:4':'arc17archive', '19:12':'arc19fountain' };   // Arc XII ch7 settlement harbour, Arc XVII ch4 the Archive, Arc XIX ch12 the Fountain
+    const OTHER_CLIPS = { '12:7':'arc12harbour', '17:4':'arc17archive', '19:12':'arc19fountain', '21:12':'ftdefence' };   // Arc XII ch7 settlement harbour, Arc XVII ch4 the Archive, Arc XIX ch12 the Fountain
     const old = window.openComicImage;
     if (typeof old !== 'function') return;
     window.openComicImage = function(url){
       const u = String(url || '');
-      const m = /comics\/arc5\/ch0([1-9])-/.exec(u), m15 = /comics\/arc15\/ch0([1-9])-/.exec(u), mo = /comics\/arc(12|17|19)\/ch(\d+)-/.exec(u);
+      const m = /comics\/arc5\/ch0([1-9])-/.exec(u), m15 = /comics\/arc15\/ch0([1-9])-/.exec(u), mo = /comics\/arc(12|17|19|21)\/ch(\d+)-/.exec(u);
       const id = (m && ARC5_CLIPS[Number(m[1])]) || (m15 && ARC15_CLIPS[Number(m15[1])]) || (mo && OTHER_CLIPS[mo[1] + ':' + Number(mo[2])]);
       if (id && autoOn() && !isSeen(id) && !busy) {
         const self = this, args = arguments;
@@ -347,10 +356,26 @@
     const old = window.goScreen;
     if (typeof old !== 'function') return;
     window.goScreen = function(name){
-      const arrival = { tidenetwork:'arc14harbour', harbour:'arc13harbour', interworld:'arc12harbour' }[name];
+      let arrival = { tidenetwork:'arc14harbour', harbour:'arc13harbour', interworld:'arc12harbour', fairtide:'fthome' }[name];
+      // the Archive: the Warden's Hall clip, once the hall has been set up
+      if (name === 'archive' && typeof window.wardensHallUnlocked === 'function' && window.wardensHallUnlocked()) arrival = 'ftdefence';
       if (arrival && autoOn() && !isSeen(arrival) && !busy) {
         const self = this, args = arguments;
         window.playCinematic(arrival).then(function(){ old.apply(self, args); });
+        return;
+      }
+      return old.apply(this, arguments);
+    };
+  })();
+
+  // ---- Fair Tide's Research Team tab: the first time it is opened ----
+  (function(){
+    const old = window.switchFairTideTab;
+    if (typeof old !== 'function') return;
+    window.switchFairTideTab = function(tab){
+      if (tab === 'research' && autoOn() && !isSeen('ftresearch') && !busy) {
+        const self = this, args = arguments;
+        window.playCinematic('ftresearch').then(function(){ old.apply(self, args); });
         return;
       }
       return old.apply(this, arguments);
