@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V620 · Fair Tide feature clips';
+window.__CT_BUILD__='V621 · Renovation from the Fair Tide hub';

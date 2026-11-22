@@ -216,6 +216,11 @@
     const res = ftResources();
     const b = ftBuildings();
     let html = '';
+    if (typeof window.fairTideRenovationDone === 'function' && !window.fairTideRenovationDone()) {
+      html += '<article class="quest-item" style="border-left-color:var(--gold);margin-bottom:14px;"><strong>🔨 Fair Tide still needs renovating</strong><br>' +
+        '<span style="font-size:.82rem;opacity:.85;">Send gathering parties for timber, stone, food, the lighthouse and the fishing nets. They are sent from the Dispatch tab.</span><br>' +
+        '<button class="btn btn-small btn-success" style="margin-top:6px;" onclick="switchFairTideTab(\'dispatch\')">🔨 Open Dispatch</button></article>';
+    }
     if (typeof window.getReputationRankDef === 'function') {
       const rankIdx = window.getReputationRankIndex();
       const rank = window.getReputationRankDef();
@@ -286,10 +291,27 @@
     if(!el) return;
     const status = window.fairTideDispatchStatus();
     let dispatchHtml = '';
-    if(status.state==='idle') dispatchHtml = '<button class="btn btn-small btn-success" onclick="dispatchGatheringParty(\'supply\')">⛵ Send Gathering Party</button>';
+    if(status.state==='idle') dispatchHtml = '<button class="btn btn-small btn-success" onclick="dispatchGatheringParty(\'supply\'); renderFairTideHub();">⛵ Send Gathering Party</button>';
     else if(status.state==='out') dispatchHtml = '<div class="story-chip">⛵ Out gathering — back in '+fmtClockFT(status.secondsLeft)+'</div>';
-    else if(status.state==='ready') dispatchHtml = '<button class="btn btn-small btn-magic" onclick="claimGatheringParty()">📦 Collect the Gathering Party</button>';
+    else if(status.state==='ready') dispatchHtml = '<button class="btn btn-small btn-magic" onclick="claimGatheringParty(); renderFairTideHub();">📦 Collect the Gathering Party</button>';
     else if(status.state==='cooldown') dispatchHtml = '<div class="story-chip">🌙 Crew resting — ready again in '+fmtClockFT(status.secondsLeft)+'</div>';
+    // Before the port is renovated the party is sent out for one of the renovation jobs, as on the Explore tab's Dock card.
+    if (typeof window.fairTideRenovationDone === 'function' && !window.fairTideRenovationDone() && window.FAIR_TIDE_TASKS && typeof window.fairTideRenovationProgress === 'function') {
+      const T = window.FAIR_TIDE_TASKS, r = window.fairTideRenovationProgress();
+      let reno = '';
+      if (status.state === 'idle') {
+        reno = '<select id="ftHubTaskPick" class="btn btn-small" style="margin-right:6px;max-width:100%;">' +
+          Object.entries(T).filter(([k,t])=>(r[k]||0) < t.need).map(([k,t])=>'<option value="'+k+'">'+t.icon+' '+esc(t.label)+' ('+(r[k]||0)+'/'+t.need+')</option>').join('') +
+          '</select><button class="btn btn-small btn-success" onclick="dispatchGatheringParty(document.getElementById(\'ftHubTaskPick\').value); renderFairTideHub();">⛵ Send Gathering Party</button>';
+      } else if (status.state === 'out') reno = '<div class="story-chip">⛵ Out gathering — back in '+fmtClockFT(status.secondsLeft)+'</div>';
+      else if (status.state === 'ready') reno = '<button class="btn btn-small btn-magic" onclick="claimGatheringParty(); renderFairTideHub();">📦 Collect the Gathering Party</button>';
+      else if (status.state === 'cooldown') reno = '<div class="story-chip">🌙 Crew resting — ready again in '+fmtClockFT(status.secondsLeft)+'</div>';
+      el.innerHTML = '<div class="panel-title">🔨 Renovating Fair Tide</div>'+
+        '<p style="font-size:.85rem;opacity:.85;margin-bottom:8px;">A weathered harbour, worth bringing back to life. Send a gathering party out for whichever job needs it most. Once every job is done the port is open for good and the buildings, trade and clinic are all run from here.</p>'+
+        Object.entries(T).map(([k,t])=>'<div style="font-size:.82rem;margin:3px 0;">'+t.icon+' '+esc(t.label)+' — <strong>'+(r[k]||0)+'/'+t.need+'</strong> <span style="opacity:.7;">('+esc(t.companion)+')</span></div>').join('')+
+        '<div style="margin-top:10px;">'+reno+'</div>';
+      return;
+    }
     const yields = window.fairTideDispatchYield();
     el.innerHTML = '<div class="panel-title">⚓ Dispatch</div>'+
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:8px;">Send a gathering party out — Port HQ and the Warehouse make every run count for more.</p>'+
