@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V618 · Chapter popups keep their button in view';
+window.__CT_BUILD__='V619 · Popups open at the first line';
