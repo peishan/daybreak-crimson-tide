@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V602 · Arc XII, XIII, XVII and XIX clips';
+window.__CT_BUILD__='V603 · Arc XIX chapter art fixed';
