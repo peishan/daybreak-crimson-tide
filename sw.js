@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v394';
+const CACHE_VERSION = 'crimson-tide-v395';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -219,6 +219,7 @@ const PRECACHE_URLS = [
   './scripts/sanjoel-tier-scenes.js',
   './scripts/rest-tip.js',
   './scripts/tutorial-tips.js',
+  './scripts/music-resilience.js',
   './scripts/early-chapter-scenes.js',
   './scripts/horizon-engine-upgrades.js',
   './scripts/quest-board-lock.js',
@@ -349,6 +350,10 @@ self.addEventListener('fetch', event => {
   // Cinematics (video) are never cached here: they are loaded only when played, and caching them breaks
   // range requests on iPhones and would eat storage. The browser handles them directly.
   if (/\.(mp4|webm|m4v|mov)$/i.test(new URL(req.url).pathname)) return;
+
+  // Music (mp3) is left to the browser too. Audio elements ask for byte ranges; a full copy kept here and handed back for a range
+  // request can leave a track silent or unable to start, and the files are large enough to eat storage. The browser's own cache keeps them.
+  if (/\.(mp3|ogg|m4a|wav)$/i.test(new URL(req.url).pathname)) return;
 
   // BUG FIX (San's report — app wouldn't open after a phone reboot, no
   // error, just flashed and closed): found by diffing against Legends of
