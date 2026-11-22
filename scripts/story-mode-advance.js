@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V616 · Delivery contracts counted correctly';
+window.__CT_BUILD__='V617 · Music resumes and sw leaves audio alone';
