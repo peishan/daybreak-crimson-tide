@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V611 · Tavern: Quest Board at the bottom';
+window.__CT_BUILD__='V612 · San and Joel tier splashes trimmed';
