@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V615 · Toddler-age Fair Tide banter';
+window.__CT_BUILD__='V616 · Delivery contracts counted correctly';
