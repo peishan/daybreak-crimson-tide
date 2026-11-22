@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v383';
+const CACHE_VERSION = 'crimson-tide-v384';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -219,6 +219,7 @@ const PRECACHE_URLS = [
   './scripts/sanjoel-tier-scenes.js',
   './scripts/rest-tip.js',
   './scripts/tutorial-tips.js',
+  './scripts/early-chapter-scenes.js',
   './scripts/horizon-engine-upgrades.js',
   './scripts/quest-board-lock.js',
   './scripts/splash-defer.js',
