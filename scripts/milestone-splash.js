@@ -39,7 +39,7 @@
     { id:'arc20ch20', img:'arc20-ch20-forever-and-ever.webp', kicker:'Arc XX · Chapter 20', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened' },
     { id:'arc6ch1',  img:'arc6-ch01-the-captives.webp', kicker:'Arc VI · Chapter 1', title:'The Captives', where:'When you start the Arc VI Chapter 1 fight', zoom:true },
     { id:'arc6svc_a', img:'arc6-ch01-sweeping-the-quay.webp', kicker:'Arc VI · Chapter 1', title:'Robin: community service begins', where:'After the Arc VI Chapter 1 capture' },
-    { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff Dolan: community service begins', where:'After the Arc VI Chapter 1 capture' }
+    { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff: community service begins', where:'After the Arc VI Chapter 1 capture' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
