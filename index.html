@@ -1843,6 +1843,12 @@ body{
 <div class="screen" id="tavernScreen">
   <div class="game-container">
     <div class="header"><h1>🍺 The Rusted Anchor</h1><div class="subtitle">Rumors, rest, and supplies</div>
+      <div class="panel" style="margin:10px 0;border-color:rgba(111,181,125,.55);">
+        <div class="panel-title">🛏️ Rest & Recuperate</div>
+        <p style="font-size: 0.85rem; margin-bottom: 12px;">One rest per day, shared with the free seafarer's site at port — pay 15g here for the same recovery without the risk of an ambush. Fair Tide's Captain's Quarters, once available, rests for free with no daily limit.</p>
+        <button class="btn btn-success" onclick="restAtTavern()">🛏️ Tavern Rest (15g)</button>
+        <button class="btn" onclick="listenForRumors()">👂 Listen for Rumors (5g)</button>
+      </div>
       <div class="panel" style="margin:10px 0;border-color:rgba(232,197,71,.45);">
         <div class="panel-title">🍺 Hire Temporary Crew</div>
         <div id="crewCapacityLabelTavern" style="font-size:.78rem;opacity:.75;margin-bottom:7px;"></div>
@@ -1870,12 +1876,6 @@ body{
         <div class="panel">
           <div class="panel-title">🎁 Captain's Rewards</div>
           <div id="loginRewards"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">🛏️ Rest & Recuperate</div>
-          <p style="font-size: 0.85rem; margin-bottom: 12px;">One rest per day, shared with the free seafarer's site at port — pay 15g here for the same recovery without the risk of an ambush. Fair Tide's Captain's Quarters, once available, rests for free with no daily limit.</p>
-          <button class="btn btn-success" onclick="restAtTavern()">🛏️ Tavern Rest (15g)</button>
-          <button class="btn" onclick="listenForRumors()">👂 Listen for Rumors (5g)</button>
         </div>
         <div class="panel">
           <div class="panel-title">📜 Voyage Insurance</div>
