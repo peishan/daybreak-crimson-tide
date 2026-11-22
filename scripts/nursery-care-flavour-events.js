@@ -28,6 +28,14 @@
   function twinsBorn(){
     return typeof window.fairTideChildrenUnlocked === 'function' && window.fairTideChildrenUnlocked();
   }
+  // From Arc XLI the twins are toddlers (see twins-expedition-status.js): the baby lines (bottles, lullabies, being rocked to sleep,
+  // grabbing a finger) only play while they are still infants, and toddler versions take over after.
+  function toddlers(){
+    const c41 = game.comicProgress41;
+    return !!(game.arc40Complete || (c41 && Object.keys(c41).length));
+  }
+  function infantsOnly(fn){ return function(){ return !toddlers() && fn(); }; }
+  function toddlersOnly(fn){ return function(){ return toddlers() && fn(); }; }
   function joyAvailable(){
     return twinsBorn() && typeof window.sanJoyBondUnlocked === 'function' && window.sanJoyBondUnlocked();
   }
@@ -41,21 +49,35 @@
   const NURSERY_EVENTS = [
     // Ate Joy — the primary carer: feeding, singing, rocking.
     { id:'joy_feeds_both', icon:'🍼', text:'Ate Joy feeds Vaeren while Joelle insists on being fed at the exact same time — somehow, she manages both without spilling a drop.',
-      eligible: joyAvailable },
+      eligible: infantsOnly(joyAvailable) },
     { id:'joy_lullaby', icon:'🎵', text:'Ate Joy hums an old lullaby until both twins finally settle, the same one she must have sung a hundred times by now.',
-      eligible: joyAvailable },
+      eligible: infantsOnly(joyAvailable) },
     { id:'joy_rocks_joelle', icon:'🌙', text:'Ate Joy rocks Joelle to sleep on the porch, murmuring something only the two of them seem to understand.',
-      eligible: joyAvailable },
+      eligible: infantsOnly(joyAvailable) },
 
     // San's friends, dropping by to play.
     { id:'aisyah_plays', icon:'👭', text:"Aisyah lets Vaeren grab her finger and refuses to let go either.",
-      eligible: function(){ return companionAvailable('aisyah'); } },
+      eligible: infantsOnly(function(){ return companionAvailable('aisyah'); }) },
     { id:'mez_plays', icon:'⛈️', text:'Mez tries to teach Joelle a card trick. Joelle eats the card instead.',
-      eligible: function(){ return companionAvailable('mezstorm'); } },
+      eligible: infantsOnly(function(){ return companionAvailable('mezstorm'); }) },
     { id:'eliz_plays', icon:'💚', text:'Eliz sits with the twins in comfortable silence — the same quiet she gives everyone else.',
       eligible: function(){ return companionAvailable('eliz'); } },
     { id:'senedra_plays', icon:'🎯', text:'Senedra points out a bird outside the window. Vaeren is utterly unimpressed.',
-      eligible: function(){ return companionAvailable('senedra'); } },
+      eligible: infantsOnly(function(){ return companionAvailable('senedra'); }) },
+
+    // The same people once the twins are toddlers: walking, talking, and into everything.
+    { id:'joy_snack_time', icon:'🍎', text:'Ate Joy cuts fruit into small pieces. Vaeren eats his and then half of Joelle\'s, and Joelle explains, at length, that she was saving it.',
+      eligible: toddlersOnly(joyAvailable) },
+    { id:'joy_nap_time', icon:'🌙', text:'Ate Joy announces nap time. Both twins announce, equally firmly, that they are not tired, and are asleep on the porch cushions within ten minutes.',
+      eligible: toddlersOnly(joyAvailable) },
+    { id:'joy_chasing', icon:'🏃', text:'Ate Joy has chased Joelle halfway around the courtyard. Joelle is winning, and has no intention of putting her shoes on.',
+      eligible: toddlersOnly(joyAvailable) },
+    { id:'aisyah_toddlers', icon:'👭', text:'Aisyah hands Vaeren a coil of rope and a very serious lesson in knots. He ties it to her boot, and she lets him.',
+      eligible: toddlersOnly(function(){ return companionAvailable('aisyah'); }) },
+    { id:'mez_toddlers', icon:'⛈️', text:'Mez teaches Joelle a card trick. Joelle announces she can do it too, and turns every card in the deck face down.',
+      eligible: toddlersOnly(function(){ return companionAvailable('mezstorm'); }) },
+    { id:'senedra_toddlers', icon:'🎯', text:'Senedra shows Vaeren how to spot a gull before it lands. He points at everything for the rest of the afternoon.',
+      eligible: toddlersOnly(function(){ return companionAvailable('senedra'); }) },
 
     // Jovie — injections and Veyren supplements, same brisk routine she gives everyone.
     { id:'jovie_supplements', icon:'💉', text:'Jovie makes her rounds — a Veyren supplement for each twin, measured out with the same brisk calm she gives every other patient.',

@@ -32,6 +32,13 @@
       });
     } catch(e) {}
   }
+  // The passive state label cycles Sleeping / Feeding / Awake...: for toddlers the baby words become nap and snack time.
+  const oldChildState = window.childCurrentState;
+  if (typeof oldChildState === 'function') window.childCurrentState = function(){
+    const st = oldChildState.apply(this, arguments);
+    if (!toddlerStage()) return st;
+    return st === 'Feeding' ? 'Snack time' : st === 'Sleeping' ? 'Napping' : st;
+  };
   const oldSync = window.syncArc1StoryQuestProgress;
   if (typeof oldSync === 'function') window.syncArc1StoryQuestProgress = function(){ const r = oldSync.apply(this, arguments); reconcile(); return r; };
   const oldPanel = window.renderFairTideChildrenPanel;
