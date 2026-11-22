@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V604 · Crimson Horizon Arc XXII';
+window.__CT_BUILD__='V605 · Tutorial tips and Arc V battles';
