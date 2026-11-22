@@ -111,7 +111,7 @@
     if (mg) return { kind: 'trade', g: mg, chapter: next };
     const g = TRADE.find(function(t){ return t.arc === next.arc; });
     if (!g || done()[g.id]) return null;
-    if (list.some(function(o){ return o.arc === next.arc && ch()[o.id]; })) { done()[g.id] = true; return null; }   // arc already under way
+    if (list.some(function(o){ return o.arc === next.arc && ch()[o.id]; })) { done()[g.id] = true; if (tc().contractsAtLastGate == null || tc().contractsAtLastGate < tc().contracts) tc().contractsAtLastGate = tc().contracts; return null; }   // arc already under way
     // A task at a port you cannot reach cannot be done: skip it.
     if (g.tasks.some(function(t){ return t.port && typeof isPortUnlocked === 'function' && !isPortUnlocked(t.port); })) return null;
     return { kind: 'trade', g: g, chapter: next };
@@ -130,7 +130,9 @@
     return g.tasks.map(function(t){
       if (t.k === 'sell') return { label: 'Sell ' + t.n + ' goods at ' + portName(t.port), have: Math.min(t.n, (c.soldAt[t.port] || 0) - ((base.soldAt || {})[t.port] || 0)), need: t.n };
       if (t.k === 'level') return { label: 'Reach Level ' + t.n, have: Math.min(t.n, typeof level === 'function' ? level() : 0), need: t.n };
-      if (t.k === 'contract') return { label: 'Finish a delivery contract', have: Math.min(t.n, c.contracts - (base.contracts || 0)), need: t.n };
+      // Delivery contracts count from the last time a gate was passed (or from the start of the count), not from the moment this
+      // gate opened: a contract finished while the previous arc was still being read is not lost.
+      if (t.k === 'contract') return { label: 'Finish a delivery contract from the Quest Board', have: Math.min(t.n, c.contracts - (c.contractsAtLastGate || 0)), need: t.n };
       const ports = Object.keys(game.priceBook || {}).length;
       return { label: 'Have prices from ' + t.n + ' ports in your Price Book', have: Math.min(t.n, ports), need: t.n };
     });
@@ -197,7 +199,7 @@
     const a = activeGate(); if (!a) return;
     const key = a.g.id;
     if (met(a)) {
-      if (!told()[key + '_met']) { told()[key + '_met'] = true; if (typeof window.notify === 'function') window.notify({ icon: '📖', title: 'The story can go on', text: 'The next chapter is open.', kind: 'info', duration: 5000 }); }
+      if (!told()[key + '_met']) { told()[key + '_met'] = true; tc().contractsAtLastGate = tc().contracts; if (typeof window.notify === 'function') window.notify({ icon: '📖', title: 'The story can go on', text: 'The next chapter is open.', kind: 'info', duration: 5000 }); }
       return;
     }
     if (!told()[key]) {
