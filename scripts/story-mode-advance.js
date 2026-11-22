@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V621 · Renovation from the Fair Tide hub';
+window.__CT_BUILD__='V622 · Arc XXII chapter 11 and 12 clips';

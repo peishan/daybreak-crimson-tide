@@ -146,6 +146,12 @@
     ,{ id:'ftdefence', icon:'🛡️', title:'Ready for Whatever Comes', where:'When Arc XXI Chapter 12 is opened, or the first time you open the Archive after the Warden’s Hall is set up',
       clips:['cin45-fairtide-ready-for-whatever-comes.mp4'],
       passed:function(){ return false; } }
+    ,{ id:'arc22ch11', icon:'🔮', title:'The Second Examination', where:'When Arc XXII Chapter 11 is read',
+      clips:['cin46-arc22-ch11-the-second-examination.mp4'],
+      passed:function(){ return !!(game.comicProgress22 && game.comicProgress22[11]); } }
+    ,{ id:'arc22ch12', icon:'👶', title:'Two', where:'When Arc XXII Chapter 12 is read (the splash follows it)',
+      clips:['cin47-arc22-ch12-two.mp4'],
+      passed:function(){ return !!(game.comicProgress22 && game.comicProgress22[12]); } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -181,7 +187,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -410,6 +416,24 @@
       opening = true;
       Promise.resolve(window.playCinematicOnce('arc20ch20'))
         .then(function(){ return typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce('arc20ch20') : null; })
+        .catch(function(){})
+        .then(function(){ opening = false; old.apply(self, args); });
+    };
+  })();
+
+  // ---- Arc XXII Chapters 11 and 12 (the second examination, "Two"): the clip plays when the chapter is read; Chapter 12's splash follows it ----
+  (function(){
+    let opening = false;
+    const CLIP = { 11:'arc22ch11', 12:'arc22ch12' };
+    const old = window.markArc22ChapterRead;
+    if (typeof old !== 'function') return;
+    window.markArc22ChapterRead = function(id){
+      const self = this, args = arguments, n = Number(id), cid = CLIP[n];
+      const ready = cid && !opening && window.arc22ObjectiveState && window.arc22ObjectiveState() === ('complete_arc22_chapter_' + n) && !(game.comicProgress22 && game.comicProgress22[n]);
+      if (!ready) return old.apply(self, args);
+      opening = true;
+      Promise.resolve(window.playCinematicOnce(cid))
+        .then(function(){ return (n === 12 && typeof window.playMilestoneSplashOnce === 'function') ? window.playMilestoneSplashOnce('arc22ch12') : null; })
         .catch(function(){})
         .then(function(){ opening = false; old.apply(self, args); });
     };
