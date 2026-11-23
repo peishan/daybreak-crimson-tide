@@ -2765,6 +2765,8 @@ function showModal(title, text, buttons) {
     btnContainer.appendChild(button);
   });
   window.__modalButtons = buttons;
+  window.__lastModal = { title: title, text: text };
+  try { console.log('modal open: "' + String(title).slice(0, 50) + '" buttons=' + buttons.map(function(b){ return b.text; }).join('|') + ' queue=' + ((game.storyModalQueue || []).length)); } catch (e) {}
   document.getElementById('modalOverlay').classList.add('active');
   // Chrome keeps a hidden element's old scroll offset and puts it back when the popup is shown again, and an element that is hidden
   // ignores scrollTop = 0. So the reset has to happen once the popup is showing (and again on the next frame, after layout).
@@ -2835,6 +2837,11 @@ document.addEventListener('keydown', function(ev){
 function closeModal() {
   window.__modalButtons = null;
   document.getElementById('modalOverlay').classList.remove('active');
+  // A queued popup that says exactly what the one just closed said is the same popup again: drop it, so Continue never loops.
+  if (game.storyModalQueue && window.__lastModal) {
+    const lm = window.__lastModal;
+    game.storyModalQueue = game.storyModalQueue.filter(function(e){ return !(e && (e.title || '') === lm.title && (e.postFight || e.blurb) === lm.text); });
+  }
   if (game.storyModalQueue && game.storyModalQueue.length) {
     const next = game.storyModalQueue.shift();
     setTimeout(() => showStoryModal(next), 250);
