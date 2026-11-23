@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V643 · Tougher sea monsters in the new waters';
+window.__CT_BUILD__='V644 · Long chapters read a page at a time';
