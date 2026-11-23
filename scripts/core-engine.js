@@ -2764,6 +2764,7 @@ function showModal(title, text, buttons) {
     button.onclick = btn.action;
     btnContainer.appendChild(button);
   });
+  window.__modalButtons = buttons;
   document.getElementById('modalOverlay').classList.add('active');
   // Chrome keeps a hidden element's old scroll offset and puts it back when the popup is shown again, and an element that is hidden
   // ignores scrollTop = 0. So the reset has to happen once the popup is showing (and again on the next frame, after layout).
@@ -2819,7 +2820,20 @@ function closeComicImage() {
   // load and show a bogus "artwork isn't ready yet" toast on every close.
   if (img) { img.onerror = null; img.src = ''; }
 }
+// The corner X on every popup. A one-button popup (a story scene's Continue) runs that button so the story carries on exactly as
+// if Continue had been tapped; a popup with a real choice is only dismissed, so nothing is picked for the player.
+function dismissModal() {
+  const b = window.__modalButtons;
+  window.__modalButtons = null;
+  try { if (b && b.length === 1 && typeof b[0].action === 'function') { b[0].action(); if (window.__modalButtons || !document.getElementById('modalOverlay').classList.contains('active')) return; } } catch (e) { console.error('dismissModal', e); }
+  closeModal();
+}
+window.dismissModal = dismissModal;
+document.addEventListener('keydown', function(ev){
+  if (ev.key === 'Escape') { const o = document.getElementById('modalOverlay'); if (o && o.classList.contains('active')) dismissModal(); }
+});
 function closeModal() {
+  window.__modalButtons = null;
   document.getElementById('modalOverlay').classList.remove('active');
   if (game.storyModalQueue && game.storyModalQueue.length) {
     const next = game.storyModalQueue.shift();
