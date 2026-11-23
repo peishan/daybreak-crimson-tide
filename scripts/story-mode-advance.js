@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V623 · Arc XXX clips and N splash';
+window.__CT_BUILD__='V624 · Popup scroll reset after it opens';
