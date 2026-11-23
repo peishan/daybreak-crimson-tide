@@ -170,6 +170,21 @@
     ,{ id:'arc40ch13', icon:'💗', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read (the unlock splash follows it)',
       clips:['cin53-arc40-ch13-thought-resonance.mp4'],
       passed:function(){ return !!(game.comicProgress40 && game.comicProgress40[13]); } }
+    ,{ id:'arc36ch10', icon:'🌀', title:'Three-Way Resonance', where:'When Arc XXXVI Chapter 10 is read',
+      clips:['cin54-arc36-ch10-three-way-resonance.mp4'],
+      passed:function(){ return !!(game.comicProgress36 && game.comicProgress36[10]); } }
+    ,{ id:'arc37ch16', icon:'👫', title:'Two Against Two', where:'When Arc XXXVII Chapter 16 is read',
+      clips:['cin55-arc37-ch16-two-against-two.mp4'],
+      passed:function(){ return !!(game.comicProgress37 && game.comicProgress37[16]); } }
+    ,{ id:'arc41ch03', icon:'🎭', title:'A Very Convenient Emergency', where:'When Arc XLI Chapter 3 is read',
+      clips:['cin56-arc41-ch03-a-very-convenient-emergency.mp4'],
+      passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[3]); } }
+    ,{ id:'arc41ch05a', icon:'🚶', title:'Just Visiting', where:'When Arc XLI Chapter 5 is read',
+      clips:['cin57-arc41-ch05-just-visiting-1.mp4'],
+      passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[5]); } }
+    ,{ id:'arc41ch05b', icon:'🍲', title:'Just Visiting: Supper', where:'When Arc XLI Chapter 5 is read',
+      clips:['cin58-arc41-ch05-just-visiting-2.mp4'],
+      passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[5]); } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -205,7 +220,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc38ch21','arc40ch13','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -428,6 +443,7 @@
     const old = window.markArc20ChapterRead;
     if (typeof old !== 'function') return;
     window.markArc20ChapterRead = function(id){
+      if (opening) return;   // a second tap while the clip plays must not complete the chapter early
       const self = this, args = arguments;
       const ready = Number(id) === 20 && !opening && window.arc20ObjectiveState && window.arc20ObjectiveState() === 'complete_arc20_chapter_20' && !(game.comicProgress20 && game.comicProgress20[20]);
       if (!ready) return old.apply(self, args);
@@ -446,6 +462,7 @@
     const old = window.markArc22ChapterRead;
     if (typeof old !== 'function') return;
     window.markArc22ChapterRead = function(id){
+      if (opening) return;   // a second tap while the clip plays must not complete the chapter early
       const self = this, args = arguments, n = Number(id), cid = CLIP[n];
       const ready = cid && !opening && window.arc22ObjectiveState && window.arc22ObjectiveState() === ('complete_arc22_chapter_' + n) && !(game.comicProgress22 && game.comicProgress22[n]);
       if (!ready) return old.apply(self, args);
@@ -464,6 +481,7 @@
     const old = window.markArc30ChapterRead;
     if (typeof old !== 'function') return;
     window.markArc30ChapterRead = function(id){
+      if (opening) return;   // a second tap while the clip plays must not complete the chapter early
       const self = this, args = arguments, n = Number(id), cid = CLIP[n];
       const ready = cid && !opening && window.arc30ObjectiveState && window.arc30ObjectiveState() === ('complete_arc30_chapter_' + n) && !(game.comicProgress30 && game.comicProgress30[n]);
       if (!ready) return old.apply(self, args);
@@ -488,6 +506,7 @@
       const old = window[h.fn];
       if (typeof old !== 'function') return;
       window[h.fn] = function(id){
+        if (opening) return;   // a second tap while the clip plays must not complete the chapter early
         const self = this, args = arguments, n = Number(id);
         const stateFn = window['arc' + h.arc + 'ObjectiveState'];
         const ready = n === h.ch && !opening && typeof stateFn === 'function' && stateFn() === ('complete_arc' + h.arc + '_chapter_' + n) && !(game['comicProgress' + h.arc] && game['comicProgress' + h.arc][n]);
@@ -497,6 +516,37 @@
           .then(function(){ return (h.splash && typeof window.playMilestoneSplashOnce === 'function') ? window.playMilestoneSplashOnce(h.splash) : null; })
           .catch(function(){})
           .then(function(){ opening = false; old.apply(self, args); });
+      };
+    });
+  })();
+
+  // ---- Arc XXXVI Ch.10, Arc XXXVII Ch.16, Arc XLI Ch.3 and Ch.5: the clip(s) play when the chapter is read, with the splashes between, then the chapter completes ----
+  (function(){
+    let opening = false;
+    const STEPS = {
+      'markArc36ChapterRead:10': [['clip','arc36ch10']],
+      'markArc37ChapterRead:16': [['clip','arc37ch16']],
+      'markArc41ChapterRead:3':  [['clip','arc41ch03'], ['splash','arc41ch03']],
+      'markArc41ChapterRead:5':  [['clip','arc41ch05a'], ['splash','arc41ch05a'], ['clip','arc41ch05b'], ['splash','arc41ch05b']]
+    };
+    Object.keys(STEPS).forEach(function(key){
+      const fn = key.split(':')[0], ch = Number(key.split(':')[1]), arc = Number(/Arc(\d+)/.exec(fn)[1]);
+      const old = window[fn];
+      if (typeof old !== 'function') return;
+      window[fn] = function(id){
+        if (opening) return;   // a second tap while the clip plays must not complete the chapter early
+        const self = this, args = arguments, n = Number(id);
+        const stateFn = window['arc' + arc + 'ObjectiveState'];
+        const ready = n === ch && !opening && typeof stateFn === 'function' && stateFn() === ('complete_arc' + arc + '_chapter_' + n) && !(game['comicProgress' + arc] && game['comicProgress' + arc][n]);
+        if (!ready) return old.apply(self, args);
+        opening = true;
+        let chain = Promise.resolve();
+        STEPS[key].forEach(function(st){
+          chain = chain.then(function(){
+            try { return st[0] === 'clip' ? window.playCinematicOnce(st[1]) : (typeof window.playMilestoneSplashOnce === 'function' ? window.playMilestoneSplashOnce(st[1]) : null); } catch(e) { return null; }
+          }).catch(function(){});
+        });
+        chain.then(function(){ opening = false; old.apply(self, args); });
       };
     });
   })();

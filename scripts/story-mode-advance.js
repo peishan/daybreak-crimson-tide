@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V626 · Thought Resonance splash without caption';
+window.__CT_BUILD__='V627 · Arc XXXVI, XXXVII and XLI clips and splashes';
