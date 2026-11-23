@@ -2471,6 +2471,36 @@
     enemy: {name:'The Snow Wyrm', icon:'🐲', hp:6500, dmg:96, xp:2200, gold:1100, twist:'frenzy', twistText:'The cold deepens every round', desc:'A pale wyrm as long as a ferry. The longer the fight, the colder the air, and the harder it hits.'},
     reward: { standing: 60, gear: {id:'snow_wyrm_scale', name:'Wyrm-Scale Charm', icon:'🐲', slot:'amulet', family:'any', hp:40, magic:10, spd:4, tier:4, desc:'A frost-white scale that never quite warms. It is a comfort in a gale.'}, text: 'The wyrm settles into the snow for good, and the house can light its chimney freely.' }
   };
+  // ---- Bestiary release 2: fights with a round rule (scripts/bestiary-round-rules.js) ----
+  OPTIONAL_FIGHTS.opt_nerith = {
+    port: 'terrace_harbor', unlock: function(){ return arcDone(8); },
+    title: '🌊 Nerith, the Harbor Tide', btn: '⚔️ Take her test',
+    text: 'The old tide-spirit who has kept the new landings gentle for generations asks the crew to prove they will not take more than the water gives. She is patient, and she is not going to make it easy.',
+    enemy: {name:'Nerith, the Harbor Tide', icon:'🌊', hp:4800, dmg:80, xp:1500, gold:750, twist:'mender', rule:'tide', twistText:'She heals each round, and every third round the tide rises: a third of your damage comes back to her', desc:'A tall shape of green water with a calm face. She does not hurry. Spread your strength, because the tide rises every third round.'},
+    reward: { standing: 40, mood: 8, gear: {id:'tidekeepers_charm', name:'Tidekeeper’s Charm', icon:'🌊', slot:'amulet', family:'any', hp:32, magic:7, tier:3, desc:'A green glass bead that is always cool. The tide at the landings is gentle around it.'}, text: 'She lowers her head, and the water goes quiet. Fair Tide feels it too. (+8 Fair Tide Mood.)' }
+  };
+  OPTIONAL_FIGHTS.opt_signal_eater = {
+    port: 'west_gate', unlock: function(){ return arcDone(4); },
+    title: '📡 The Signal-Eater', btn: '⚔️ Hunt it',
+    text: 'Something that fed on the old signal now hunts what is left of it: the crew’s lanterns, the charts, the Straits’ own lights. Mimi says it jams whatever it is near.',
+    enemy: {name:'The Signal-Eater', icon:'📡', hp:3200, dmg:70, xp:1000, gold:500, rule:'jam', twistText:'Static: on odd rounds skills and spells are jammed', desc:'A thin, flickering thing that eats light. On odd rounds your skills and spells fail, so save the heavy hits for the even ones.'},
+    reward: { standing: 30, gear: {id:'quiet_line_charm', name:'Quiet-Line Charm', icon:'📡', slot:'amulet', family:'any', hp:26, magic:6, spd:3, tier:3, desc:'A coil of dull wire that hums at the edge of hearing. It keeps the lanterns steady.'}, text: 'The static clears, and the lights along the Straits come up steady.' }
+  };
+  OPTIONAL_FIGHTS.opt_unpaid_oath = {
+    port: 'channel_island', unlock: function(){ return arcDone(9); },
+    title: '📜 The Unpaid Oath', btn: '⚔️ Face it',
+    text: 'A debt-spirit follows crews who took a contract and never finished it. It is not angry. It is owed. You can face it as it is, or settle part of the debt first.',
+    enemy: {name:'The Unpaid Oath', icon:'📜', hp:5000, dmg:78, xp:1400, gold:700, rule:'oath', twistText:'Interest: it takes 1% of your gold each round, and returns all of it if you win', desc:'A pale figure holding a ledger it has never closed. Each round it takes a little of what you carry, and gives all of it back the moment it falls.'},
+    alt: { btn: '💰 Settle 5% first (easier)', goldPct: 0.05, hpMult: 0.7 },
+    reward: { standing: 40, gear: {id:'oathbreakers_seal', name:'Oathbreaker’s Seal', icon:'📜', slot:'amulet', family:'any', hp:30, magic:7, tier:3, desc:'A wax seal with no name on it. Every promise made over it is kept.'}, text: 'The ledger closes at last. The Quest Board remembers who closed it.' }
+  };
+  OPTIONAL_FIGHTS.opt_cantor = {
+    port: 'highbridge_harbor', unlock: function(){ return arcDone(22); },
+    title: '🎼 The Cantor of the Gorge', btn: '⚔️ Meet the Cantor',
+    text: 'A wind-god that keeps every song promised in the mountains. It has been listening to the musician’s unfinished tune, and it would like to hear how it ends. It fights in time.',
+    enemy: {name:'The Cantor of the Gorge', icon:'🎼', hp:7000, dmg:92, xp:2200, gold:1100, rule:'beat', twistText:'The beat: every fourth round your damage is tripled, and off the beat a fifth of it echoes back at the crew', desc:'A tall shape of wind and sound. Rounds fall on a beat of four: land your blows on the fourth, because off the beat the echo comes back at you.'},
+    reward: { standing: 60, gear: {id:'cantors_tuning_fork', name:'Cantor’s Tuning Fork', icon:'🎼', slot:'amulet', family:'any', hp:40, magic:10, spd:4, tier:4, desc:'A fork that rings a note nobody played. It makes the next sound easier to follow.'}, text: 'The wind drops, and the Cantor hums the end of the tune. The gorge has not been this quiet in years.' }
+  };
   function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
   function claimOptionalReward(key){
     const o = OPTIONAL_FIGHTS[key]; if (!o) return;
@@ -2480,16 +2510,25 @@
     game.portStanding = game.portStanding || {};
     game.portStanding[o.port] = (game.portStanding[o.port] || 0) + (o.reward.standing || 0);
     if (o.reward.gear && typeof window.addGearToInventory === 'function') window.addGearToInventory(o.reward.gear);
+    if (o.reward.mood && typeof window.addFairTideMood === 'function') window.addFairTideMood(o.reward.mood);
     if (typeof window.notify === 'function') window.notify({ icon: '🏆', title: o.title.replace(/^\S+\s/, '') + ' — cleared', text: o.reward.text, kind: 'info', duration: 8000 });
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   }
-  window.startCrimsonHorizonOptionalFight = function(key){
+  window.startCrimsonHorizonOptionalFight = function(key, mode){
     const o = OPTIONAL_FIGHTS[key];
     if (!o || optionalDone(key) || !o.unlock() || game.location !== o.port) { toast('Not available right now.'); return; }
     if (typeof startCombat !== 'function') return;
     if (o.waves) { startOptWave(key, 0); return; }
     const enemy = scaleCrimsonEnemy(o.enemy, 'guardian', 465);
     if (o.enemy.twist) { enemy.twist = o.enemy.twist; enemy.twistText = o.enemy.twistText; enemy.baseDmg = enemy.dmg; }
+    if (o.enemy.rule) { enemy.rule = o.enemy.rule; enemy.twistText = o.enemy.twistText; }
+    if (mode === 'alt' && o.alt) {
+      const cost = Math.round((game.gold || 0) * (o.alt.goldPct || 0));
+      game.gold = Math.max(0, (game.gold || 0) - cost);
+      enemy.hp = Math.round(enemy.hp * (o.alt.hpMult || 1));
+      if (typeof toast === 'function') toast('📜 You settle ' + cost.toLocaleString() + 'g of the debt first. The fight is easier.', 3200);
+      if (typeof updateUI === 'function') updateUI();
+    }
     startCombat({ kind: 'crimson_horizon', key: key, enemy: enemy });
   };
   // Optional fights can be several waves (o.waves; the last one is the plain key, the earlier ones "<key>:w<n>"), and can offer a peaceful way out.
@@ -2526,7 +2565,7 @@
           '<article class="quest-item" style="border-left-color:var(--danger);"><strong>' + o.title + '</strong> <span class="story-chip">Optional</span><br>' +
           '<span style="font-size:.82rem;opacity:.85;">' + esc(o.text) + '</span><br>' +
           (done ? '<span style="font-size:.78rem;opacity:.75;">' + (game.crimsonHorizonOptional[key] === 'peaceful' ? '🕊️ Left in peace.' : '✓ Cleared.') + '</span>'
-                : '<span style="font-size:.76rem;opacity:.75;">' + esc(o.enemy.name) + (o.enemy.twistText ? ' · ' + esc(o.enemy.twistText) : '') + '</span><br><button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\')">' + o.btn + '</button>' + (o.peaceful ? ' <button class="btn btn-small" style="margin-top:6px;" onclick="resolveCrimsonHorizonOptionalPeaceful(\'' + key + '\')">' + o.peaceful.btn + '</button>' : '')) +
+                : '<span style="font-size:.76rem;opacity:.75;">' + esc(o.enemy.name) + (o.enemy.twistText ? ' · ' + esc(o.enemy.twistText) : '') + '</span><br><button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\')">' + o.btn + '</button>' + (o.peaceful ? ' <button class="btn btn-small" style="margin-top:6px;" onclick="resolveCrimsonHorizonOptionalPeaceful(\'' + key + '\')">' + o.peaceful.btn + '</button>' : '') + (o.alt ? ' <button class="btn btn-small" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\',\'alt\')">' + o.alt.btn + '</button>' : '')) +
           '</article>');
       });
     } catch (e) {}
