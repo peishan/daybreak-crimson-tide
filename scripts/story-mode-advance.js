@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V650 · Arc XXVI: The Valley Beyond the Sails';
+window.__CT_BUILD__='V651 · Arc XLII Ch.1 and Ch.2 clips';
