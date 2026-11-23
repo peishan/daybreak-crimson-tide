@@ -1903,8 +1903,12 @@
          enemy:{name:"The Toll Collectors", icon:'🛡️', hp:2000, dmg:66, xp:880, gold:440, desc:"Armed men holding an old tollhouse and its yard, charging carts for a road they have no authority over."}},
     235: {label:"⚔️ Defend the Ship", objective:"Hold the ship steady against the surging spirits while the cage is moved to the tender.",
           enemy:{name:"The Surging Sea Spirits", icon:'🌊', hp:2400, dmg:74, xp:960, gold:480, desc:"Larger sea spirits, frightened and furious, lashing the ship's sides with walls of water. They want the captive back, and they will not be reasoned with from this side of the rail."}},
-    249: {label:"⚔️ Defend the Medicine Carrier", objective:"Hold the lower path against the thieves while the medicine is brought through.",
-          enemy:{name:"The Trail Thieves", icon:'🗡️', hp:2500, dmg:76, xp:980, gold:490, desc:"Armed thieves stripping abandoned packs from the damaged trail below the gorge. They saw the medicine pack and decided it was worth taking."}},
+    249: {label:"⚔️ Defend the Medicine Carrier", objective:"Hold the lower path against the thieves while the medicine is brought through. There are two groups: the pack strippers first, then the crew that tries to seize the medicine.",
+          waves:[
+            {name:"The Pack Strippers", icon:'🎒', hp:1500, dmg:66, xp:420, gold:210, desc:"A handful of armed thieves going through the abandoned packs along the damaged trail. They would rather run than fight, until they see what the carrier is wearing."},
+            {name:"The Medicine Thieves", icon:'🗡️', hp:1900, dmg:80, xp:560, gold:280, twist:'frenzy', twistText:'Desperate: hits harder every round', desc:"The rest of the crew, called down the path when they saw the medicine pack. They are not leaving without it, and the longer the fight runs, the more desperate they get."}
+          ],
+          enemy:{name:"The Trail Thieves", icon:'🗡️', hp:2500, dmg:76, xp:980, gold:490, desc:"Armed thieves stripping abandoned packs from the damaged trail below the gorge."}},
     207: {label:"⚔️ Defend the Valley Path", objective:"Hold the narrow valley path against the mountain wolves while the assistant is carried down.",
           enemy:{name:"The Mountain Wolves", icon:'🐺', hp:2300, dmg:72, xp:940, gold:470, desc:"A hungry pack driven down from the high ground by the storm. They want the litter, and they are not easily argued with."}},
     192: {label:"⚔️ Defend the Warehouse Gate", objective:"Hold the warehouse gate beside the captain until the harbor watch arrives.",
@@ -1930,19 +1934,153 @@
 
   window.onCrimsonHorizonFightWon = function(key){
     chState();
+    if (/:w\d+$/.test(String(key))) return;          // an early wave: the chapter is not won until the last one falls
+    if (String(key).indexOf('opt_') === 0) { claimOptionalReward(String(key)); return; }
     game.crimsonHorizonFights[key] = true;
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
 
+  // ---- Optional encounters at Highbridge Harbor (Explore tab): fights you can take or leave, for a keepsake and standing. Once each. ----
+  const OPTIONAL_FIGHTS = {
+    opt_rope_cutters: {
+      port: 'highbridge_harbor', unlock: function(){ return !!prog()[244]; },
+      title: '🪢 Rope-Cutters at the Lift', btn: '⚔️ Chase them off',
+      text: 'Someone has been fraying the basket lift\'s guide ropes at night, a little more each time. The lift keeper cannot watch it and work it. After the musician\'s homecoming, the quay would like it stopped.',
+      enemy: {name:'The Rope-Cutters', icon:'🪢', hp:1800, dmg:68, xp:700, gold:350, desc:'A small crew who have been sawing at the lift ropes for a rival lift owner. They are quick, and they know every ladder on the quay.'},
+      reward: { standing: 30, text: 'The lift keeper hangs a new rope in your honour, and the quay remembers it. (+30 standing at Highbridge Harbor.)' }
+    },
+    opt_gorge_squall: {
+      port: 'highbridge_harbor', unlock: function(){ return !!prog()[247]; },
+      title: '🌪️ The Gorge Squall', btn: '⚔️ Face the squall',
+      text: 'The gust that broke the bridge has not gone. A knot of wind and spray still turns in the gorge above the quay, and the village says it grows stronger the longer you stay in front of it. Mezstorm says it is not hostile. It is simply very loud.',
+      enemy: {name:'The Gorge Squall', icon:'🌪️', hp:3000, dmg:84, xp:1500, gold:750, twist:'frenzy', twistText:'The gale rises every round', desc:'A living knot of wind that gathers strength the longer it is kept up. Strike hard and early, or it will outlast you.'},
+      reward: { standing: 60, gear: {id:'gorge_wind_charm', name:'Gorge-Wind Charm', icon:'🌬️', slot:'amulet', family:'any', hp:25, magic:6, spd:3, tier:3, desc:'A knot of braided bridge rope the squall left in the rocks. It hums in a crosswind.'}, text: 'When the squall breaks it leaves a knot of braided rope in the rocks. (+60 standing at Highbridge Harbor, and the Gorge-Wind Charm, an amulet.)' }
+    }
+  };
+  function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
+  function claimOptionalReward(key){
+    const o = OPTIONAL_FIGHTS[key]; if (!o) return;
+    game.crimsonHorizonOptional = game.crimsonHorizonOptional || {};
+    if (game.crimsonHorizonOptional[key]) return;
+    game.crimsonHorizonOptional[key] = true;
+    game.portStanding = game.portStanding || {};
+    game.portStanding[o.port] = (game.portStanding[o.port] || 0) + (o.reward.standing || 0);
+    if (o.reward.gear && typeof window.addGearToInventory === 'function') window.addGearToInventory(o.reward.gear);
+    if (typeof window.notify === 'function') window.notify({ icon: '🏆', title: o.title.replace(/^\S+\s/, '') + ' — cleared', text: o.reward.text, kind: 'info', duration: 8000 });
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+  }
+  window.startCrimsonHorizonOptionalFight = function(key){
+    const o = OPTIONAL_FIGHTS[key];
+    if (!o || optionalDone(key) || !o.unlock() || game.location !== o.port) { toast('Not available right now.'); return; }
+    if (typeof startCombat !== 'function') return;
+    const enemy = scaleCrimsonEnemy(o.enemy, 'guardian', 465);
+    if (o.enemy.twist) { enemy.twist = o.enemy.twist; enemy.twistText = o.enemy.twistText; enemy.baseDmg = enemy.dmg; }
+    startCombat({ kind: 'crimson_horizon', key: key, enemy: enemy });
+  };
+  const oldRenderExploreForOptional = window.renderExplore;
+  window.renderExplore = function(){
+    if (oldRenderExploreForOptional) oldRenderExploreForOptional.apply(this, arguments);
+    try {
+      const container = document.getElementById('exploreContent');
+      if (!container || !game.arc42Complete) return;
+      Object.keys(OPTIONAL_FIGHTS).forEach(function(key){
+        const o = OPTIONAL_FIGHTS[key];
+        if (game.location !== o.port || !o.unlock()) return;
+        const done = optionalDone(key);
+        container.insertAdjacentHTML('afterbegin',
+          '<article class="quest-item" style="border-left-color:var(--danger);"><strong>' + o.title + '</strong> <span class="story-chip">Optional</span><br>' +
+          '<span style="font-size:.82rem;opacity:.85;">' + esc(o.text) + '</span><br>' +
+          (done ? '<span style="font-size:.78rem;opacity:.75;">✓ Cleared.</span>'
+                : '<span style="font-size:.76rem;opacity:.75;">' + esc(o.enemy.name) + (o.enemy.twistText ? ' · ' + esc(o.enemy.twistText) : '') + '</span><br><button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\')">' + o.btn + '</button>') +
+          '</article>');
+      });
+    } catch (e) {}
+  };
+
+  // Waves: after a wave that is not the last, the party recovers 25% and the next one starts.
+  const oldHandleVictoryForWaves = window.handleVictory;
+  if (typeof oldHandleVictoryForWaves === 'function') {
+    window.handleVictory = function(){
+      const enemy = game.combatEnemy;
+      const r = oldHandleVictoryForWaves.apply(this, arguments);
+      try {
+        const m = enemy && enemy.kind === 'crimson_horizon' ? /^(\d+):w(\d+)$/.exec(String(enemy.key)) : null;
+        if (m && !game.crimsonHorizonWaveQueued) {
+          game.crimsonHorizonWaveQueued = true;
+          const id = Number(m[1]), w = Number(m[2]);
+          const party = (typeof getCrimsonCombatParty === 'function') ? getCrimsonCombatParty() : [];
+          party.forEach(function(mem){
+            const mh = effectiveMaxHp(mem), mm = effectiveMaxMp(mem);
+            game.partyHp[mem.id] = Math.min(mh, (game.partyHp[mem.id] || 0) + Math.round(mh * 0.25));
+            game.partyMp[mem.id] = Math.min(mm, (game.partyMp[mem.id] || 0) + Math.round(mm * 0.25));
+          });
+          toast('💨 A brief respite: the crew recovers 25% before the next group.', 3000);
+          setTimeout(function(){ game.crimsonHorizonWaveQueued = false; startFightWave(id, w + 1); }, 1100);
+        }
+      } catch (e) { game.crimsonHorizonWaveQueued = false; }
+      return r;
+    };
+  }
+  // Twists: a 'frenzy' enemy hits harder every round (up to +48%); a 'mender' heals 3% of its health each round.
+  const oldEnemyCounter = window.enemyCounterAttack;
+  if (typeof oldEnemyCounter === 'function') {
+    window.enemyCounterAttack = function(){
+      try {
+        const e = game.combatEnemy;
+        if (e && e.twist && e.kind === 'crimson_horizon') {
+          e.twistRounds = (e.twistRounds || 0) + 1;
+          if (e.twist === 'frenzy') e.dmg = Math.round((e.baseDmg || e.dmg) * (1 + 0.06 * Math.min(e.twistRounds, 8)));
+          if (e.twist === 'mender') game.combatEnemyHp = Math.min(e.hp, game.combatEnemyHp + Math.round(e.hp * 0.03));
+        }
+      } catch (er) {}
+      return oldEnemyCounter.apply(this, arguments);
+    };
+  }
+  const oldRenderCombatForTwist = window.renderCombat;
+  if (typeof oldRenderCombatForTwist === 'function') {
+    window.renderCombat = function(){
+      const r = oldRenderCombatForTwist.apply(this, arguments);
+      try {
+        const e = game.combatEnemy, el = document.getElementById('enemyBuffs');
+        if (e && e.twistText && el) {
+          const pct = e.twist === 'frenzy' ? ' (+' + Math.round(6 * Math.min(e.twistRounds || 0, 8)) + '%)' : '';
+          el.insertAdjacentHTML('beforeend', '<span class="buff-icon buff-mark">🔥 ' + esc(e.twistText) + pct + '</span>');
+        }
+      } catch (er) {}
+      return r;
+    };
+  }
+
+  // Fights can have several waves (f.waves: the first ones keep the key "<id>:w<n>", the last one the plain chapter key), and an enemy can carry a
+  // twist: 'frenzy' (it hits harder every round it survives) or 'mender' (it heals a little every round). The chapter counts as won only when the last
+  // wave falls. Between waves the party recovers 25%, as in Raid Mode.
+  function waveEnemy(f, id, w){
+    const base = w == null ? f.enemy : f.waves[w];
+    const enemy = scaleCrimsonEnemy(base, 'guardian', 465);
+    if (base.twist) { enemy.twist = base.twist; enemy.twistText = base.twistText; enemy.baseDmg = enemy.dmg; }
+    const mods = (game.crimsonHorizonFightMods || {})[String(id)] || {};
+    if (mods.fightHpMult) { enemy.hp = Math.round(enemy.hp * mods.fightHpMult); if (enemy.maxHp) enemy.maxHp = Math.round(enemy.maxHp * mods.fightHpMult); }
+    if (mods.fightGoldMult) enemy.gold = Math.round((enemy.gold || 0) * mods.fightGoldMult);
+    return enemy;
+  }
+  function startFightWave(id, w){
+    const f = CH_FIGHTS[id]; if (!f) return;
+    const last = !f.waves || w >= f.waves.length - 1;
+    game.crimsonHorizonWave = f.waves ? { id: id, index: w } : null;
+    if (f.waves) toast('⚔️ Wave ' + (w + 1) + '/' + f.waves.length + ': ' + f.waves[w].name, 3000);
+    startCombat({ kind: 'crimson_horizon', key: last ? String(id) : (id + ':w' + w), enemy: waveEnemy(f, id, f.waves ? w : null) });
+  }
   function startChapterFight(id){
     const f = CH_FIGHTS[id];
     if (!f || typeof startCombat !== 'function') return;
     if (typeof closeModal === 'function') closeModal();
+    const mods0 = (game.crimsonHorizonFightMods || {})[String(id)] || {};
+    if (mods0.fightHeal && typeof window.restoreAllAboardCrew === 'function') { try { window.restoreAllAboardCrew(); } catch(e) {} }
+    if (f.waves) { startFightWave(id, 0); return; }
     const enemy = scaleCrimsonEnemy(f.enemy, 'guardian', 465);
     const mods = (game.crimsonHorizonFightMods || {})[String(id)] || {};
     if (mods.fightHpMult) { enemy.hp = Math.round(enemy.hp * mods.fightHpMult); if (enemy.maxHp) enemy.maxHp = Math.round(enemy.maxHp * mods.fightHpMult); }
     if (mods.fightGoldMult) enemy.gold = Math.round((enemy.gold || 0) * mods.fightGoldMult);
-    if (mods.fightHeal && typeof window.restoreAllAboardCrew === 'function') { try { window.restoreAllAboardCrew(); } catch(e) {} }
     startCombat({ kind: 'crimson_horizon', key: String(id), enemy: enemy });
   }
 

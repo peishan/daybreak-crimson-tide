@@ -6263,8 +6263,16 @@ function handleVictory() {
     postBattleMessage = enemy.name + ' backs off. Whatever this was, it\'s settled for now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
   } else if (enemy.kind === 'crimson_horizon') {
+    if (/:w\d+$/.test(String(enemy.key))) {
+      postBattleMessage = enemy.name + ' is beaten, and another group is closing in.';
+      postBattleButtonsHtml = '';
+    } else if (String(enemy.key).indexOf('opt_') === 0) {
+      postBattleMessage = enemy.name + ' is beaten.';
+      postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+    } else {
     postBattleMessage = enemy.name + ' is beaten. The chapter is waiting.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort(); setTimeout(function(){ if (window.__ctResumeCrimsonHorizonChapter) window.__ctResumeCrimsonHorizonChapter(); }, 600);">📖 Back to the Chapter</button>';
+    }
   } else if (enemy.kind === 'raid') {
     // See exitRaidBattleToArchive()'s own comment for why this branch
     // exists at all — the generic default below built a broken "Challenge
