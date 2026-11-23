@@ -2745,7 +2745,36 @@ function todayKey(){ return 'day_' + game.day; }
 // ---------------------------------------------------------------------------
 // MODAL
 // ---------------------------------------------------------------------------
+// A long story scene is shown a page at a time (Back / Next), so reading it never depends on scrolling a small text box. Only plain text
+// (paragraphs split by <br><br>) is paged; anything with blocks, images or buttons in it is shown whole.
+function paginateModalText(text) {
+  const t = String(text == null ? '' : text);
+  if (/<(div|img|button|table|ul|ol|article|section|p|h\d)\b/i.test(t)) return [t];
+  if (t.replace(/<[^>]*>/g, '').length < 800) return [t];
+  const paras = t.split(/(?:<br\s*\/?>\s*){2,}/i).filter(function(x){ return x.trim().length; });
+  const pages = []; let cur = [];
+  paras.forEach(function(para){
+    const len = cur.join('').replace(/<[^>]*>/g, '').length;
+    if (cur.length && len + para.replace(/<[^>]*>/g, '').length > 650) { pages.push(cur.join('<br><br>')); cur = []; }
+    cur.push(para);
+  });
+  if (cur.length) pages.push(cur.join('<br><br>'));
+  return pages.length ? pages : [t];
+}
 function showModal(title, text, buttons) {
+  const pages = paginateModalText(text);
+  if (pages.length <= 1) return showModalPage(title, text, buttons, buttons, text, title);
+  let i = 0;
+  const render = function(){
+    const last = i === pages.length - 1, btns = [];
+    if (i > 0) btns.push({ text: '◂ Back', action: function(){ i--; render(); } });
+    if (!last) btns.push({ text: 'Next ▸ (' + (i + 1) + '/' + pages.length + ')', action: function(){ i++; render(); } });
+    else buttons.forEach(function(b){ btns.push(b); });
+    showModalPage(title, pages[i], btns, buttons, text, title);
+  };
+  render();
+}
+function showModalPage(title, text, buttons, originalButtons, fullText, fullTitle) {
   document.getElementById('modalTitle').textContent = title;
   // A new popup always starts at its first line. The text box is replaced by a fresh element each time, because a browser can keep and
   // restore the scroll offset of the old one (a long scene read to the end, then the next popup opening already scrolled down).
@@ -2764,8 +2793,8 @@ function showModal(title, text, buttons) {
     button.onclick = btn.action;
     btnContainer.appendChild(button);
   });
-  window.__modalButtons = buttons;
-  window.__lastModal = { title: title, text: text };
+  window.__modalButtons = originalButtons;
+  window.__lastModal = { title: fullTitle, text: fullText };
   try { console.log('modal open: "' + String(title).slice(0, 50) + '" buttons=' + buttons.map(function(b){ return b.text; }).join('|') + ' queue=' + ((game.storyModalQueue || []).length)); } catch (e) {}
   document.getElementById('modalOverlay').classList.add('active');
   // Chrome keeps a hidden element's old scroll offset and puts it back when the popup is shown again, and an element that is hidden
