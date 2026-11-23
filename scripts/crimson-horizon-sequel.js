@@ -2026,6 +2026,54 @@
     enemy: {name:'The Beam Thieves', icon:'🪓', hp:2100, dmg:72, xp:800, gold:400, desc:'A crew with a sledge and a rope, taking stamped timber to sell unmarked. They run when the lamps come on, and fight when cornered.'},
     reward: { standing: 40, text: 'The keeper stamps a new beam with the Crimson Tide\'s mark and keeps it for you. (+40 standing at Timber Port.)' }
   };
+  function arcDone(n){ const l = CRIMSON_HORIZON_CHAPTERS.filter(function(c){ return c.arc === n && !CH_SIDE[c.id]; }); return l.length > 0 && l.every(function(c){ return prog()[c.id]; }); }
+  // ---- Creatures (bestiary draft, release 1): optional fights at the arc's own port, after the arc is done ----
+  OPTIONAL_FIGHTS.opt_ridgeback_drake = {
+    port: 'outer_island', unlock: function(){ return arcDone(7); },
+    title: '🐉 The Ridgeback Drake', btn: '⚔️ Climb the ridge',
+    text: 'A drake has taken the high ground above the ridge road since it reopened. It does not chase anyone. It simply will not let the road be used while it is there.',
+    enemy: {name:'The Ridgeback Drake', icon:'🐉', hp:2600, dmg:74, xp:900, gold:450, twist:'frenzy', twistText:'It hits harder every round', desc:'A territorial drake with a ridge of hard plates along its back. Strike fast, because it only gets angrier.'},
+    reward: { standing: 30, gear: {id:'ridgeback_scale', name:'Ridgeback Scale', icon:'🐉', slot:'amulet', family:'any', hp:26, spd:3, tier:3, desc:'A plate from the drake\'s back, worn smooth. It is warm in the cold.'}, text: 'The drake leaves a plate on the ridge as it goes.' }
+  };
+  OPTIONAL_FIGHTS.opt_mudgill_chorus = {
+    port: 'river_mouth', unlock: function(){ return arcDone(10); },
+    title: '🐸 The Mudgill Chorus', btn: '⚔️ Hold the bank',
+    text: 'After the rains a brood of mudgills comes up the bank in waves, loud and hungry. The barge crews will not tie up until it is dealt with.',
+    waves: [
+      {name:'The First Mudgills', icon:'🐸', hp:1800, dmg:62, xp:380, gold:190, desc:'The leading edge of the brood, quick and snapping.'},
+      {name:'The Bank Brood', icon:'🐸', hp:2000, dmg:68, xp:420, gold:210, desc:'The main body, filling the shallows.'},
+      {name:'The Old Mother Mudgill', icon:'🐸', hp:2400, dmg:74, xp:520, gold:260, twist:'mender', twistText:'She heals in the mud', desc:'The brood\'s mother, who mends herself in the mud as fast as you can strike.'}
+    ],
+    enemy: {name:'The Old Mother Mudgill', icon:'🐸', hp:2400, dmg:74, xp:520, gold:260, twist:'mender', twistText:'She heals in the mud', desc:'The brood\'s mother.'},
+    reward: { standing: 30, gear: {id:'mudgill_pearl', name:'Mudgill Pearl', icon:'🫧', slot:'amulet', family:'any', hp:22, magic:6, tier:3, desc:'A cloudy pearl from the old mother\'s throat. It hums near running water.'}, text: 'The barges tie up again, and a bargeman presses a cloudy pearl into your hand.' }
+  };
+  OPTIONAL_FIGHTS.opt_salt_wolves = {
+    port: 'salt_coast_harbor', unlock: function(){ return arcDone(15); },
+    title: '🐺 The Salt-Wolf Pack', btn: '⚔️ Meet the pack',
+    text: 'Wolves have been following the salt carts along the coast road, taking a little each night. The carters want it stopped before winter.',
+    waves: [
+      {name:'The Scouts', icon:'🐺', hp:2000, dmg:76, xp:460, gold:230, desc:'Two lean wolves testing the line.'},
+      {name:'The Pack', icon:'🐺', hp:2400, dmg:84, xp:540, gold:270, desc:'The main pack, working as one.'},
+      {name:'The Alpha Salt-Wolf', icon:'🐺', hp:2800, dmg:92, xp:640, gold:320, twist:'frenzy', twistText:'The alpha hits harder every round', desc:'A scarred alpha that has led the pack for years, and fights harder the longer it is held.'}
+    ],
+    enemy: {name:'The Alpha Salt-Wolf', icon:'🐺', hp:2800, dmg:92, xp:640, gold:320, twist:'frenzy', twistText:'The alpha hits harder every round', desc:'A scarred alpha.'},
+    reward: { standing: 40, gear: {id:'salt_wolf_fang', name:'Salt-Wolf Fang', icon:'🐺', slot:'amulet', family:'any', hp:30, spd:4, tier:3, desc:'A fang on a salt-stained cord. The carters swear by it.'}, text: 'The carts run unwatched again, and the carters give you the alpha\'s fang.' }
+  };
+  OPTIONAL_FIGHTS.opt_hollow_elk = {
+    port: 'forest_inlet', unlock: function(){ return arcDone(17); },
+    title: '🦌 The Hollow Elk', btn: '⚔️ Cut and face it',
+    text: 'A great elk guards the tide-woods. It has never hurt anyone who left the trees alone. Whether the crew needs the timber it stands over is up to you.',
+    enemy: {name:'The Hollow Elk', icon:'🦌', hp:4200, dmg:80, xp:1300, gold:650, twist:'mender', twistText:'It heals as the woods answer', desc:'A great antlered elk, half tree. The woods heal it for as long as it stands among them.'},
+    peaceful: { btn: '🕊️ Leave it be', standing: 20, text: 'You leave the woods as they are. The elk watches you go, and Forest Inlet remembers it. (+20 standing.)' },
+    reward: { standing: 40, gear: {id:'elk_antler_charm', name:'Antler Charm', icon:'🦌', slot:'amulet', family:'any', hp:32, magic:6, tier:3, desc:'A small antler from the great elk. The tide-woods go quiet around it.'}, text: 'The elk falls, and the woods go very still. You take one antler.' }
+  };
+  OPTIONAL_FIGHTS.opt_snow_wyrm = {
+    port: 'winter_harbor', unlock: function(){ return arcDone(19); },
+    title: '🐲 The Snow Wyrm', btn: '⚔️ Wake the wyrm',
+    text: 'A wyrm sleeps under the drifts behind the house, and wakes when the chimney is lit. The innkeepers keep the fire low for it. Someone could end that worry.',
+    enemy: {name:'The Snow Wyrm', icon:'🐲', hp:6500, dmg:96, xp:2200, gold:1100, twist:'frenzy', twistText:'The cold deepens every round', desc:'A pale wyrm as long as a ferry. The longer the fight, the colder the air, and the harder it hits.'},
+    reward: { standing: 60, gear: {id:'snow_wyrm_scale', name:'Wyrm-Scale Charm', icon:'🐲', slot:'amulet', family:'any', hp:40, magic:10, spd:4, tier:4, desc:'A frost-white scale that never quite warms. It is a comfort in a gale.'}, text: 'The wyrm settles into the snow for good, and the house can light its chimney freely.' }
+  };
   function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
   function claimOptionalReward(key){
     const o = OPTIONAL_FIGHTS[key]; if (!o) return;
@@ -2042,9 +2090,30 @@
     const o = OPTIONAL_FIGHTS[key];
     if (!o || optionalDone(key) || !o.unlock() || game.location !== o.port) { toast('Not available right now.'); return; }
     if (typeof startCombat !== 'function') return;
+    if (o.waves) { startOptWave(key, 0); return; }
     const enemy = scaleCrimsonEnemy(o.enemy, 'guardian', 465);
     if (o.enemy.twist) { enemy.twist = o.enemy.twist; enemy.twistText = o.enemy.twistText; enemy.baseDmg = enemy.dmg; }
     startCombat({ kind: 'crimson_horizon', key: key, enemy: enemy });
+  };
+  // Optional fights can be several waves (o.waves; the last one is the plain key, the earlier ones "<key>:w<n>"), and can offer a peaceful way out.
+  function startOptWave(key, w){
+    const o = OPTIONAL_FIGHTS[key]; if (!o || !o.waves || typeof startCombat !== 'function') return;
+    const last = w >= o.waves.length - 1, base = o.waves[w];
+    const enemy = scaleCrimsonEnemy(base, 'guardian', 465);
+    if (base.twist) { enemy.twist = base.twist; enemy.twistText = base.twistText; enemy.baseDmg = enemy.dmg; }
+    if (!last) toast('⚔️ Wave ' + (w + 1) + '/' + o.waves.length + ': ' + base.name, 3000);
+    startCombat({ kind: 'crimson_horizon', key: last ? key : key + ':w' + w, enemy: enemy });
+  }
+  window.resolveCrimsonHorizonOptionalPeaceful = function(key){
+    const o = OPTIONAL_FIGHTS[key];
+    if (!o || !o.peaceful || optionalDone(key) || !o.unlock() || game.location !== o.port) { toast('Not available right now.'); return; }
+    game.crimsonHorizonOptional = game.crimsonHorizonOptional || {};
+    game.crimsonHorizonOptional[key] = 'peaceful';
+    game.portStanding = game.portStanding || {};
+    game.portStanding[o.port] = (game.portStanding[o.port] || 0) + (o.peaceful.standing || 0);
+    if (typeof window.notify === 'function') window.notify({ icon: '🕊️', title: o.title.replace(/^\S+\s/, '') + ' — left in peace', text: o.peaceful.text, kind: 'info', duration: 7000 });
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof window.renderExplore === 'function') window.renderExplore();
   };
   const oldRenderExploreForOptional = window.renderExplore;
   window.renderExplore = function(){
@@ -2059,8 +2128,8 @@
         container.insertAdjacentHTML('afterbegin',
           '<article class="quest-item" style="border-left-color:var(--danger);"><strong>' + o.title + '</strong> <span class="story-chip">Optional</span><br>' +
           '<span style="font-size:.82rem;opacity:.85;">' + esc(o.text) + '</span><br>' +
-          (done ? '<span style="font-size:.78rem;opacity:.75;">✓ Cleared.</span>'
-                : '<span style="font-size:.76rem;opacity:.75;">' + esc(o.enemy.name) + (o.enemy.twistText ? ' · ' + esc(o.enemy.twistText) : '') + '</span><br><button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\')">' + o.btn + '</button>') +
+          (done ? '<span style="font-size:.78rem;opacity:.75;">' + (game.crimsonHorizonOptional[key] === 'peaceful' ? '🕊️ Left in peace.' : '✓ Cleared.') + '</span>'
+                : '<span style="font-size:.76rem;opacity:.75;">' + esc(o.enemy.name) + (o.enemy.twistText ? ' · ' + esc(o.enemy.twistText) : '') + '</span><br><button class="btn btn-small btn-danger" style="margin-top:6px;" onclick="startCrimsonHorizonOptionalFight(\'' + key + '\')">' + o.btn + '</button>' + (o.peaceful ? ' <button class="btn btn-small" style="margin-top:6px;" onclick="resolveCrimsonHorizonOptionalPeaceful(\'' + key + '\')">' + o.peaceful.btn + '</button>' : '')) +
           '</article>');
       });
     } catch (e) {}
@@ -2073,9 +2142,10 @@
       const enemy = game.combatEnemy;
       const r = oldHandleVictoryForWaves.apply(this, arguments);
       try {
-        const m = enemy && enemy.kind === 'crimson_horizon' ? /^(\d+):w(\d+)$/.exec(String(enemy.key)) : null;
+        const m = enemy && enemy.kind === 'crimson_horizon' ? /^(\d+|opt_[a-z0-9_]+):w(\d+)$/.exec(String(enemy.key)) : null;
         if (m && !game.crimsonHorizonWaveQueued) {
           game.crimsonHorizonWaveQueued = true;
+          const optKey = /^\d+$/.test(m[1]) ? null : m[1];
           const id = Number(m[1]), w = Number(m[2]);
           const party = (typeof getCrimsonCombatParty === 'function') ? getCrimsonCombatParty() : [];
           party.forEach(function(mem){
@@ -2084,7 +2154,7 @@
             game.partyMp[mem.id] = Math.min(mm, (game.partyMp[mem.id] || 0) + Math.round(mm * 0.25));
           });
           toast('💨 A brief respite: the crew recovers 25% before the next group.', 3000);
-          setTimeout(function(){ game.crimsonHorizonWaveQueued = false; startFightWave(id, w + 1); }, 1100);
+          setTimeout(function(){ game.crimsonHorizonWaveQueued = false; if (optKey) startOptWave(optKey, w + 1); else startFightWave(id, w + 1); }, 1100);
         }
       } catch (e) { game.crimsonHorizonWaveQueued = false; }
       return r;
