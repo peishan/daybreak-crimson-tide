@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V636 · Choices, fights and optional encounters in Arcs IX to XI';
+window.__CT_BUILD__='V637 · Meet the Farseer card; Arc VII and VIII pilot removed';
