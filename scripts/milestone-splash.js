@@ -42,7 +42,10 @@
     { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff: community service begins', where:'After the Arc VI Chapter 1 capture' },
     { id:'arc22ch12', img:'arc22-ch12-two.webp', kicker:'Arc XXII · Chapter 12', title:'Two', where:'After the Arc XXII Chapter 12 clip' },
     { id:'arc30ch23', img:'arc30-ch23-n-unknown-fate.webp', kicker:'Arc XXX · Chapter 23', title:'N: Unknown Fate', where:'After the Arc XXX Chapter 23 clip' },
-    { id:'thought_resonance', img:'thought-resonance-bond-unlock.webp', kicker:'Bond Unlock', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read, after its clip', nocaption:true }
+    { id:'thought_resonance', img:'thought-resonance-bond-unlock.webp', kicker:'Bond Unlock', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read, after its clip', nocaption:true },
+    { id:'arc41ch03', img:'arc41-ch03-a-very-convenient-emergency.webp', kicker:'Arc XLI · Chapter 3', title:'A Very Convenient Emergency', where:'After the Arc XLI Chapter 3 clip' },
+    { id:'arc41ch05a', img:'arc41-ch05-just-visiting-1.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting', where:'After the first Arc XLI Chapter 5 clip' },
+    { id:'arc41ch05b', img:'arc41-ch05-just-visiting-2.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting: Supper', where:'After the second Arc XLI Chapter 5 clip' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
