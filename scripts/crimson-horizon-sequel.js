@@ -894,7 +894,13 @@
   // (Arc V at 525, Arc XIV at 660), which story XP could never reach: a player at Level 517 was
   // stuck. The gate only applies at the START of an arc: once any chapter of an arc has been read,
   // the rest of that arc is never held back.
-  window.crimsonHorizonArcLevel = function(arc){ return arc <= 1 ? 0 : arc <= 18 ? 467 + 4 * (arc - 2) : 531 + 6 * (arc - 18); };   // 4 levels per arc up to Arc XVIII (531); 6 per arc from Arc XIX, so story XP alone (about 4.8 levels an arc) no longer carries you through
+  // From Arc X on the gate climbs about twice as fast (8 levels an arc up to Arc XVIII, 12 an arc from Arc XIX). The arcs up to Arc IX keep their old gates, so a
+  // save partway through is not suddenly short of levels. The gate still only applies at the start of an arc.
+  window.crimsonHorizonArcLevel = function(arc){
+    const base = arc <= 1 ? 0 : arc <= 18 ? 467 + 4 * (arc - 2) : 531 + 6 * (arc - 18);
+    const extra = arc <= 9 ? 0 : arc <= 18 ? 4 * (arc - 9) : 36 + 6 * (arc - 18);
+    return base + extra;
+  };   // 4 levels per arc up to Arc XVIII (531); 6 per arc from Arc XIX, so story XP alone (about 4.8 levels an arc) no longer carries you through
   window.crimsonHorizonObjectiveState = function(){
     if (!game.arc42Complete) return null;
     game.comicProgressCrimsonHorizon = game.comicProgressCrimsonHorizon || {};
