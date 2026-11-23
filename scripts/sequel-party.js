@@ -80,6 +80,21 @@
     game.sequelHomeRepaired = true;
     if (stillAboard().length) apply(true);
   }
+  // One-time repair (V642): Renn, Erynn and Mimi found back in the fielded party after the sequel crew was set go home to Fair Tide again, and are kept
+  // out of open slots. Anyone the player fields by hand afterwards is left alone.
+  function repairTrioOnce(){
+    if (!game.sequelCrewApplied || game.sequelTrioRepaired) return;
+    game.sequelTrioRepaired = true;
+    const trio = ['renn', 'erynn', 'mimi'];
+    game.fieldingDecided = game.fieldingDecided || ['san'];
+    trio.forEach(function(id){ if (game.fieldingDecided.indexOf(id) === -1) game.fieldingDecided.push(id); });
+    const back = trio.filter(function(id){ return (game.fieldedIds || []).indexOf(id) !== -1; });
+    if (!back.length) return;
+    game.fieldedIds = game.fieldedIds.filter(function(id){ return back.indexOf(id) === -1; });
+    const msg = back.map(nm).join(', ') + (back.length > 1 ? ' go' : ' goes') + ' back to Fair Tide with the research team.';
+    if (typeof window.notify === 'function') window.notify({ icon: '🔬', title: 'Back to the research team', text: msg, kind: 'info', duration: 6000 });
+    else if (typeof toast === 'function') toast('🔬 ' + msg, 4200);
+  }
   const oldRenderParty = window.renderPartyScreen;
   if (typeof oldRenderParty === 'function') {
     window.renderPartyScreen = function(){
@@ -114,7 +129,7 @@
   const oldGetFielded = window.getFieldedIds;
   if (typeof oldGetFielded === 'function') {
     window.getFieldedIds = function(){
-      try { apply(); repairOnce(); } catch(e) {}
+      try { apply(); repairOnce(); repairTrioOnce(); } catch(e) {}
       return oldGetFielded.apply(this, arguments);
     };
   }
