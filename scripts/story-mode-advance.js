@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V625 · Arc XXXIV, XXXVIII and XL clips';
+window.__CT_BUILD__='V626 · Thought Resonance splash without caption';
