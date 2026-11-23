@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V652 · Bestiary: four round-rule bosses';
+window.__CT_BUILD__='V653 · Arc XLII Ch.14 and Ch.15 clips';
