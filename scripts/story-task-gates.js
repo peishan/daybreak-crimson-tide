@@ -47,7 +47,8 @@
     { id: 't19', arc: 19, title: 'Trade at Outer Quay Harbor',    tasks: [{ k: 'sell', port: 'outer_quay_harbor', n: 20 }] },
     { id: 't20', arc: 20, title: 'Trade at Winter Harbor',        tasks: [{ k: 'sell', port: 'winter_harbor', n: 20 }] },
     { id: 't21', arc: 21, title: 'Trade at Glass Harbor',         tasks: [{ k: 'sell', port: 'glass_harbor', n: 20 }] },
-    { id: 't22', arc: 22, title: 'Trade at Star Cove Harbor',     tasks: [{ k: 'sell', port: 'star_cove_harbor', n: 20 }] }
+    { id: 't22', arc: 22, title: 'Trade at Star Cove Harbor',     tasks: [{ k: 'sell', port: 'star_cove_harbor', n: 20 }] },
+    { id: 't23', arc: 23, title: 'Trade at Highbridge Harbor',    tasks: [{ k: 'sell', port: 'highbridge_harbor', n: 20 }] }
   ];
 
   // More than one trade task per gate: every gate now asks for delivery contracts as well as selling, and the asks grow with the arcs.

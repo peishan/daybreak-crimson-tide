@@ -339,6 +339,14 @@
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
   };
+  // Arc XXIII (The Things We Carry): the search for the copied source's owner. Notes only; the owner's identity is left open.
+  window.onPearlProvenanceRead = function(stage){
+    if (stage === 'stitching') pearlNote('provenance_stitching', "Lost Ownership, the stitching: a workshop master compared the two copies with old sample bindings. The stitch belongs to one tradition taught for four generations, but apprentices carried it to other towns, so it places the copyist in a school and not a place.");
+    if (stage === 'repairs') pearlNote('provenance_repairs', "Lost Ownership, the repairs: both copies contain repairs over damage that was already on the source they were copied from. The owner's name was missing from that earlier source, so it was lost before either copy was made. The workshop master will check surviving customer ledgers.");
+    if (stage === 'record') pearlNote('provenance_record', "Lost Ownership, the record: the trail now ends at an earlier source. The owner's identity stays open; the team has not guessed.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
   window.__ctReadPearlArchive = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(ARCHIVE_CH_ID); };
   window.__ctReadPearlNetwork = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(NETWORK_CH_ID); };
   window.__ctReadPearlAuthorise = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(AUTHORISE_CH_ID); };
