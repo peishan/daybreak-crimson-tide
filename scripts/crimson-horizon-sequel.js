@@ -1493,10 +1493,28 @@
     86: {label:'🛒 Visit the Market', objective:'Climb the stairs to the market and see what the port trades.',
          result:'Sailors buy sailcloth and garden growers trade dried fruit. The upper market has room for both, but the lower quay is packed with cargo and there is only one working hoist.'},
     87: {label:'🪢 Take the Line', objective:'Clear the berth, then help the arriving ship when the gust pushes it toward the quay.',
+         choices:[
+           {label:"🚤 Run the tender in at once", result:"Joel puts the tender between the drifting ship and the quay wall and takes its line before the next gust. It is fast and it is close, and the harbor master watches the whole thing without blinking. (+90g from the grateful master of the other ship.)", effect:{gold:90}},
+           {label:"⚓ Hold the anchorage and throw lines", result:"Joel keeps the Crimson Tide where she is and sends lines across with San and Sally on the rail. Nothing comes near the quay wall. It is slower and calmer, and the whole crew feels it afterwards. (+3 Fair Tide Mood.)", effect:{mood:3}},
+           {label:"📣 Have San clear the quay first", result:"San sends the unloading crews up the steps before anything else, and the tender goes in to an empty berth. The market stays whole, and a stall-holder presses a parcel of tea on the crew. (+40g, +2 Fair Tide Mood.)", effect:{gold:40, mood:2}}
+         ],
          result:'Joel moves the Crimson Tide to the outer anchorage. When the arriving ship drifts, Joel brings the tender alongside and takes its line in, and San keeps the unloading crews clear until both ships are secure.'},
     88: {label:'✉️ Send the Letter', objective:'Write to Jovie, and find someone to carry it to Fair Tide.',
+         resultFn:function(){
+           const c = (game.crimsonHorizonChoice || {})[87];
+           const echo = c === 0 ? " He mentions the tender, and the line, and leaves out how close it was. She will hear that part from Joel."
+                      : c === 1 ? " He tells her how quiet the anchorage was, and that for once the day at sea had no fright in it."
+                      : c === 2 ? " He tells her about the parcel of tea pressed on the crew, and that he saved her the first cup."
+                      : "";
+           return "The first attempt reads like a watch report, so Sairen starts again. The second tells Jovie about the stairs, the view and the stall she would stop at first. A homebound trader agrees to carry it to Fair Tide." + echo;
+         },
          result:'The first attempt reads like a watch report, so Sairen starts again. The second tells Jovie about the stairs, the view and the stall she would stop at first. A homebound trader agrees to carry it to Fair Tide.'},
     89: {label:'⚖️ Trade at the Quay', objective:'Help the cloth trader make the case for selling at quay level.',
+         choices:[
+           {label:"🧵 Back the cloth trader's case", result:"Aisyah puts her name beside the trader's and argues for quay-level stalls on busy days. The harbor master agrees to try it, and the first sailcloth stall comes down to the lower quay. The trader sets a bolt aside for the Crimson Tide. (+3 silk in the hold.)", effect:{goods:{silk:3}}},
+           {label:"🍑 Share the stalls with the fruit growers", result:"Aisyah brings the growers into the same case, so the lower quay gets cloth and dried fruit together. Nobody on the steps feels left out. (+70g and +2 Fair Tide Mood.)", effect:{gold:70, mood:2}},
+           {label:"📋 Put in a standing order and let the quay decide", result:"Aisyah puts in a standing order for sailcloth, collected at the quay, and leaves the argument to the stall-holders. The harbor master agrees to try it on busy days. It is the quietest way to win, and the most profitable. (+120g.)", effect:{gold:120}}
+         ],
          result:'Aisyah puts in a standing order for sailcloth that can be collected at the quay. The harbor master agrees to try it on busy days, and the first stall comes down to the lower quay.'},
     90: {label:'📖 Read the Observations', objective:"Read Renn's conditions record and Mimi's separate account together.",
          result:"Renn's record of conditions and Mimi's account of her impressions are compared only after both are finished, and filed together. Neither says what the Pearl is. A copy goes to Devon."},
@@ -1511,10 +1529,23 @@
     95: {label:"🛶 Take the Barge Upriver", objective:"Board the barge with the shore party and ride it upriver to the ropewalk town.",
          result:"The barge turns through the bends on long poles, and by late afternoon the town of the long ropewalk is in sight. Aisyah spots coils thick enough for the ship's moorings."},
     96: {label:"🪢 Visit the Ropewalk", objective:"Negotiate for mooring lines, and walk the length of the ropewalk.",
+         choices:[
+           {label:"🔧 Let Renn make the repair he spotted", result:"Renn spends the afternoon on the winding gear with two of the ropewalk hands, and the whole walk runs a little smoother afterwards. The barge captain notices the new pins in the landing stairs too. (The water in Chapter 96 will be weaker.)", effect:{fightHpMult:{97:0.85}}},
+           {label:"🧮 Let Maera walk the river marks with the captain", result:"Maera follows the captain up the bank and writes down every mark the river has left, high and low. Whatever the rain does tomorrow, the crew will know where the stairs are safe. (Your party is fully restored at the start of Chapter 96.)", effect:{fightHeal:{97:true}}},
+           {label:"💰 Let Aisyah press for the mooring price", result:"Aisyah settles on mooring lines at a price worth shouting about, and the ropewalk keeps a coil aside for the Crimson Tide. (Chapter 96 will pay 25% more gold.)", effect:{fightGoldMult:{97:1.25}}}
+         ],
          result:"Aisyah settles on mooring lines at a price worth shouting about. Renn and Maera walk the whole ropewalk, and at the far end Renn asks when she is free again."},
-    97: {label:"🌧️ Board at the Upper Stairs", objective:"Board at the upper stairs while the river is up, and learn which marks to watch on the way out.",
-         result:"The new coils come down the upper flight hand to hand, San carries an older passenger's bags, and the captain teaches Joel which river marks to watch."},
+    // Chapter 096 (id 97) is now a fight: the river rising over the lower steps, with the crew holding the upper flight while the passengers get down.
+
     98: {label:"🪢 Load the Rope", objective:"Arrange future rope orders and load a sample lot of smaller coils.",
+         resultFn:function(){
+           const c = (game.crimsonHorizonChoice || {})[96];
+           const echo = c === 0 ? " The captain mentions Renn's pins on the landing stairs, unprompted, and asks whether he does repairs for anyone else."
+                      : c === 1 ? " Maera's list of river marks is pinned inside the barge cabin now, in her own handwriting."
+                      : c === 2 ? " The ropewalk's own price holds, and the captain says the other barges have already asked how it was done."
+                      : "";
+           return "Rope orders will come down on the barge's regular run. Aisyah buys a sample lot of smaller coils for the market, and Joel adds the barge landing to the route chart." + echo;
+         },
          result:"Rope orders will come down on the barge's regular run. Aisyah buys a sample lot of smaller coils for the market, and Joel adds the barge landing to the route chart."},
     99: {label:"📖 Review the Pearl Report", objective:"Read the first observation report with Devon, and agree how his notes are kept.",
          result:"Devon marks where his account rests on memory and offers to annotate the report for the archive. San and Joel keep his notes with the study so the team can consult him as new questions come up. The Pearl stays in their custody."},
@@ -1533,6 +1564,11 @@
     106: {label:"⛵ Enter the Timber Port", objective:"Sail to the headland port and find the timber market.",
          result:"The timber market climbs the headland in terraces above the quay, every plank stamped with its yard and year. The yard keeper invites you uphill to choose the wood yourselves. The headland port is on your charts."},
     107: {label:"🌲 Visit the Timber Yard", objective:"Choose the wood for the hoist housing, and decide what to do about the swell.",
+         choices:[
+           {label:"🌙 Take the keeper's night in the inner harbor", result:"San accepts the keeper's offer of a night in the inner harbor and gives the crew the evening ashore. The beams will wait for the morning raft, and nobody minds. (+3 Fair Tide Mood.)", effect:{mood:3}},
+           {label:"⚓ Load at the exposed quay before the swell builds", result:"Joel takes the first beams aboard at the quay while the swell is still low. It is wet, hard work, but the keeper is impressed and knocks something off the price. (+110g.)", effect:{gold:110}},
+           {label:"🌲 Spend the evening choosing a second lot", result:"Aisyah uses the extra evening to go through the yard's seasoned stock a second time and finds a fine lot at the back. (+3 timber in the hold.)", effect:{goods:{timber:3}}}
+         ],
          result:"The yard stores its good stock above the spray, and Aisyah finds the right beams. With a swell running at the quay, San accepts the keeper's offer of a night in the inner harbor and gives the crew the evening ashore."},
     108: {label:"🪵 Load the Timber", objective:"Load the beams at high tide with the yard's raft, and settle the price.",
          result:"The yard's raft comes alongside at first light and the beams go aboard. Aisyah leaves a bundle of river rope with the keeper and comes away with a standing timber price for future visits."},
@@ -1915,6 +1951,12 @@
           enemy:{name:"The Warehouse Guards", icon:'🛡️', hp:2200, dmg:70, xp:920, gold:460, desc:"Armed guards moving disputed cloth through a side gate before the hearing. They would rather not be stopped, and they are not arguing about it."}},
     176: {label:"⚔️ Defend the Crossing", objective:"Hold the narrow crossing against the adult marsh drakes until the party can withdraw to open ground.",
          enemy:{name:"The Marsh Drakes", icon:'🐊', hp:2100, dmg:68, xp:900, gold:450, desc:"Adult marsh drakes defending a den of young beneath a fallen tree. They want the party gone, not dead."}},
+    97: {label:"⚔️ Hold the Upper Stairs", objective:"Hold the upper flight while the river rises, so the passengers and the new coils get down it in two surges.",
+         waves:[
+           {name:"The Drift Surge", icon:"🪵", hp:1600, dmg:62, xp:400, gold:200, desc:"The first push of the river: drift logs and loose boats, shouldered up the lower steps by the rising water."},
+           {name:"The Rising Crest", icon:"🌊", hp:2000, dmg:76, xp:560, gold:280, twist:'frenzy', twistText:'The water rises every round', desc:"The crest itself, with the river behind it. The longer the stairs are held, the higher it climbs."}
+         ],
+         enemy:{name:"The Rising River", icon:"🌊", hp:2400, dmg:72, xp:960, gold:480, desc:"The river in spate, coming up the stairs."}},
     60: {label:'⚔️ Take the Control Room', objective:"Defeat the Keeper's guard and secure the controls.",
          enemy:{name:"The Keeper's Guard", icon:'🛡️', hp:1500, dmg:52, xp:720, gold:360, desc:'The last line between the party and the gate mechanism.'}}
   };
@@ -1956,6 +1998,27 @@
       enemy: {name:'The Gorge Squall', icon:'🌪️', hp:3000, dmg:84, xp:1500, gold:750, twist:'frenzy', twistText:'The gale rises every round', desc:'A living knot of wind that gathers strength the longer it is kept up. Strike hard and early, or it will outlast you.'},
       reward: { standing: 60, gear: {id:'gorge_wind_charm', name:'Gorge-Wind Charm', icon:'🌬️', slot:'amulet', family:'any', hp:25, magic:6, spd:3, tier:3, desc:'A knot of braided bridge rope the squall left in the rocks. It hums in a crosswind.'}, text: 'When the squall breaks it leaves a knot of braided rope in the rocks. (+60 standing at Highbridge Harbor, and the Gorge-Wind Charm, an amulet.)' }
     }
+  };
+  OPTIONAL_FIGHTS.opt_quay_smugglers = {
+    port: 'terrace_harbor', unlock: function(){ return !!prog()[86]; },
+    title: '🕯️ Lamps Under the Quay', btn: '⚔️ Go down the steps',
+    text: 'A light has been seen moving under the lower quay after dark, where no cargo is meant to go. The harbor master would rather not send his own watch down alone.',
+    enemy: {name:'The Quay Smugglers', icon:'🕯️', hp:1900, dmg:70, xp:760, gold:380, desc:'A crew stashing untaxed bales in the hollow under the lower quay. They know every plank, and they would rather push you in than argue.'},
+    reward: { standing: 30, text: 'The harbor master has a lamp hung at the foot of the steps in your name. (+30 standing at Terrace Harbor.)' }
+  };
+  OPTIONAL_FIGHTS.opt_river_logjam = {
+    port: 'river_mouth', unlock: function(){ return !!prog()[97]; },
+    title: '🪵 The Logjam at the Mouth', btn: '⚔️ Clear the jam',
+    text: 'After the rain, a jam of drift has packed itself into the river mouth, and something in it is not drift. The barges cannot get out until it is cleared, and it is getting stronger as the water comes down.',
+    enemy: {name:'The Living Logjam', icon:'🪵', hp:3000, dmg:82, xp:1450, gold:720, twist:'frenzy', twistText:'The jam tightens every round', desc:'A river spirit tangled into the wreckage of the flood. The longer it is left, the harder it grips.'},
+    reward: { standing: 60, gear: {id:'logjam_knot_charm', name:'Logjam Knot Charm', icon:'🪢', slot:'amulet', family:'any', hp:25, magic:6, spd:3, tier:3, desc:'A hard knot of river rope the logjam left behind. It tightens when the water rises.'}, text: 'When the jam breaks it leaves a hard knot of river rope in the shallows.' }
+  };
+  OPTIONAL_FIGHTS.opt_beam_thieves = {
+    port: 'timber_port', unlock: function(){ return !!prog()[107]; },
+    title: '🌲 Beams Gone from the Yard', btn: '⚔️ Watch the yard tonight',
+    text: 'Seasoned beams keep going missing from the upper yard, one stack a night. The keeper cannot guard it and run the yard. After the morning load, the yard would like it ended.',
+    enemy: {name:'The Beam Thieves', icon:'🪓', hp:2100, dmg:72, xp:800, gold:400, desc:'A crew with a sledge and a rope, taking stamped timber to sell unmarked. They run when the lamps come on, and fight when cornered.'},
+    reward: { standing: 40, text: 'The keeper stamps a new beam with the Crimson Tide\'s mark and keeps it for you. (+40 standing at Timber Port.)' }
   };
   function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
   function claimOptionalReward(key){
@@ -2280,6 +2343,21 @@
       game.portStanding.highbridge_harbor = (game.portStanding.highbridge_harbor || 0) + 60;
       if (typeof window.notify === 'function') window.notify({ icon:'🎼', title:'A keepsake from the mountain port', text:'The musician left her tuning fork aboard (an amulet, in your inventory), and Highbridge Harbor now counts you among its friends: +60 standing, so better prices there.', kind:'info', duration: 9000 });
       if (typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('The musician leaves her tuning fork aboard the Crimson Tide, and Highbridge Harbor takes the crew in as friends.', '🎼');
+    }
+    // Arc end keepsakes (Arcs IX to XI): a small amulet and standing at the arc's port, once each.
+    const ARC_KEEPSAKES = {
+      91:  { port:'terrace_harbor', standing:40, gear:{id:'terrace_stair_lamp', name:'Terrace Stair Lamp', icon:'🏮', slot:'amulet', family:'any', hp:22, magic:5, tier:3, desc:'A small lamp from the market steps, lit by the first stall that opened for the Crimson Tide.'}, text:'The market on the steps gives the crew a small lamp (an amulet, in your inventory), and Terrace Harbor now counts you as friends.', icon:'🏮' },
+      101: { port:'river_mouth', standing:40, gear:{id:'river_pole_charm', name:'River Pole Charm', icon:'🛶', slot:'amulet', family:'any', hp:22, spd:3, tier:3, desc:'A short length of barge pole, bound with rope from the ropewalk. The captain gave it with a warning about the marks.'}, text:'The barge captain gives Joel a bound length of river pole (an amulet, in your inventory), and the River Mouth now counts you as friends.', icon:'🛶' },
+      113: { port:'timber_port', standing:40, gear:{id:'timber_stamp_charm', name:'Timber Stamp Charm', icon:'🌲', slot:'amulet', family:'any', hp:22, magic:5, tier:3, desc:'An offcut from the first beam the yard stamped for the Crimson Tide, carved into a charm.'}, text:'The timber yard cuts a charm from the first beam stamped for the ship (an amulet, in your inventory), and Timber Port now counts you as friends.', icon:'🌲' }
+    };
+    const keep = ARC_KEEPSAKES[id];
+    game.crimsonHorizonKeepsakes = game.crimsonHorizonKeepsakes || {};
+    if (keep && !game.crimsonHorizonKeepsakes[id]) {
+      game.crimsonHorizonKeepsakes[id] = true;
+      if (typeof window.addGearToInventory === 'function') window.addGearToInventory(keep.gear);
+      game.portStanding = game.portStanding || {};
+      game.portStanding[keep.port] = (game.portStanding[keep.port] || 0) + keep.standing;
+      if (typeof window.notify === 'function') window.notify({ icon: keep.icon, title: 'A keepsake from the arc', text: keep.text, kind: 'info', duration: 8000 });
     }
     // Arc XXII: the father sets another cup (Ch.244, id 245), the song they both know (Ch.251, id 252) and Erynn moving his appointment (Ch.254, id 255).
     if (id === 245 && typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('In the mountain port, the musician’s father listens to her newer piece from the kitchen, then quietly sets another cup on the table.', '🍵');

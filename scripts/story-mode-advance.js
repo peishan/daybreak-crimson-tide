@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V635 · Quick buy on gear suggestions';
+window.__CT_BUILD__='V636 · Choices, fights and optional encounters in Arcs IX to XI';
