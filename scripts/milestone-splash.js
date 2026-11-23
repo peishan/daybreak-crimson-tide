@@ -42,7 +42,7 @@
     { id:'arc6svc_b', img:'arc6-ch01-hauling-at-the-dock.webp', kicker:'Arc VI · Chapter 1', title:'Jeff: community service begins', where:'After the Arc VI Chapter 1 capture' },
     { id:'arc22ch12', img:'arc22-ch12-two.webp', kicker:'Arc XXII · Chapter 12', title:'Two', where:'After the Arc XXII Chapter 12 clip' },
     { id:'arc30ch23', img:'arc30-ch23-n-unknown-fate.webp', kicker:'Arc XXX · Chapter 23', title:'N: Unknown Fate', where:'After the Arc XXX Chapter 23 clip' },
-    { id:'thought_resonance', img:'thought-resonance-bond-unlock.webp', kicker:'Bond Unlock', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read, after its clip' }
+    { id:'thought_resonance', img:'thought-resonance-bond-unlock.webp', kicker:'Bond Unlock', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read, after its clip', nocaption:true }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
@@ -99,7 +99,7 @@
         img.onerror = function(){ if (!born) { done = true; clearTimeout(timer); resolve(false); } };
         img.onload = function(){
           if (done) return;
-          wrap.innerHTML = '<div class="sp-frame"><div class="sp-art"></div><div class="sp-cap"><small>' + esc(def.kicker) + '</small><b>' + esc(def.title) + '</b></div></div>';
+          wrap.innerHTML = '<div class="sp-frame"><div class="sp-art"></div>' + (def.nocaption ? '' : '<div class="sp-cap"><small>' + esc(def.kicker) + '</small><b>' + esc(def.title) + '</b></div>') + '</div>';
           wrap.querySelector('.sp-art').appendChild(img);
           document.body.appendChild(wrap); born = Date.now();
           if (!replay) { seenMap()[id] = true; if (typeof saveGameQuiet === 'function') saveGameQuiet(); }
