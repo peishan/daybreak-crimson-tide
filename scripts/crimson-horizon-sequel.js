@@ -1056,6 +1056,8 @@
   window.CRIMSON_HORIZON_GOODS = ['sailcloth', 'dried_fruit', 'rope', 'smoked_fish', 'lamp_oil', 'salt', 'crockery', 'reed_mats', 'preserves', 'cider', 'baskets', 'wool', 'glass_lamps', 'moonleaf_tea', 'highland_cheese', 'river_slate', 'forest_herbs', 'moon_tonic', 'temple_incense', 'barrier_glass', 'school_scrolls', 'mountain_tea', 'woven_cloth'];   // sequel-only trade goods
   // ---- Lunareth contracts: fixed deliveries on the Tavern quest board, added once the Arrival Shore is open ----
   const LUNARETH_QUESTS = [
+    {id:'q_hb_tea',     good:'mountain_tea',    port:'fair_tide',        need:8,  needs:'highbridge_harbor', name:"The Village's Tea Order",  desc:'The far village\'s pickers want the first leaf carried home to Fair Tide\'s tables while the gorge bridge is down. Sell {need}x {good} at Fair Tide.'},
+    {id:'q_hb_cloth',   good:'woven_cloth',     port:'star_cove_harbor', need:10, needs:'highbridge_harbor', name:'Blue-and-Ochre Weave',      desc:'The weavers across the gorge want their cloth seen on the coast. Sell {need}x {good} at Star Cove Harbor.'},
     {id:'q_lun_lamps',  good:'glass_lamps',     port:'lunareth_shore', need:12, name:'The Coast Road Lights',   desc:'The lamps along the Arrival Shore\'s coast road have gone dark one by one, and nobody there can make new ones. Sell {need}x {good} at the shore.'},
     {id:'q_lun_sails',  good:'sailcloth',       port:'lunareth_shore', need:15, name:'Sails for the Shore Boats', desc:'The shore fishers are patching sails with sacking. Sell {need}x {good} at the Arrival Shore and they will be grateful for a season.'},
     {id:'q_lun_tea',    good:'moonleaf_tea',    port:'dragonvale',     need:14, name:'A Taste of the Mountains',  desc:'Dragonvale\'s harbor stalls cannot keep Lunareth tea on the shelf. Carry {need}x {good} across the crossing and sell it in Dragonvale.'},
@@ -1788,22 +1790,45 @@
          result:"The Crimson Tide crosses into a world of steep coastal mountains and enters a deep harbor beneath sheer green cliffs. Rope bridges link the houses high above the quay, and Joel watches the passenger rise out of sight in a basket lift and asks whether anyone mentioned how many stairs there would be. Highbridge Harbor (working name) is now on your charts."},
     244: {label:"🏠 Visit the Musician’s Home", objective:"Walk the musician up to her father’s house.",
          result:"San, Joel, and Sally accompany the musician up to her father’s house. Music drifts from an open window and stops when he sees her, and he invites everyone inside and immediately starts asking about the instrument rather than her journey."},
-    245: {label:"🍲 Stay for Supper", objective:"Stay for supper and listen to father and daughter.",
-         result:"Over supper, father and daughter disagree about how their old songs should be played. Sally asks to hear one of the daughter’s newer pieces, and her father listens from the kitchen and then quietly sets another cup on the table."},
+    245: {label:"🍲 Stay for Supper", objective:"Stay for supper, and decide whose song to ask for.",
+         choices:[
+           {label:"🎵 Ask the father for the old harvest tune", result:"You ask the father for the harvest tune, slow, the way it has always been played. He plays it without looking at his daughter, and she listens with her eyes on the table. When it ends, he quietly sets another cup beside hers. The household is pleased to be asked: +60g.", effect:{gold:60}},
+           {label:"🎼 Ask the daughter for her newer piece", result:"You ask the daughter for the piece she wrote on the road. She plays it. Her father listens from the kitchen with his back to the room, and then quietly sets another cup on the table beside hers. Sally takes the tune away with her, humming. (+3 Fair Tide Mood.)", effect:{mood:3}},
+           {label:"🍵 Pour the tea and say nothing", result:"You pour the tea and let them argue. The argument runs out on its own, and in the quiet that follows the father sets another cup beside his daughter’s. Joel says afterwards that it was the cleverest thing anyone did all day. (+40g, +2 Fair Tide Mood.)", effect:{gold:40, mood:2}}
+         ],
+         result:"Over supper, father and daughter disagree about how their old songs should be played, and the father quietly sets another cup on the table."},
     246: {label:"🥾 Prepare for the Mountain Walk", objective:"Check the path across the gorge and learn what the far village is waiting for.",
          result:"The musician has promised to play at a village gathering across the gorge. Levi goes with a local guide to check the path while Sky visits the port’s healer, and they learn that several villagers are waiting for medicine coming on the same journey."},
     247: {label:"🌉 Return to the Near Landing", objective:"Get everyone back to the near landing before the gust arrives.",
          result:"The shore party starts across the bridge with the musician and a medicine carrier. Mezstorm notices a gust coming up the gorge and calls everyone back, and a supporting rope parts moments later, leaving the far span hanging against the cliff."},
-    248: {label:"🥾 Take the Lower Path", objective:"Divide the party: the lower path on foot, and a boat around the headland.",
-         result:"The guide takes Joel, Devon, Levi, and Sky toward an older path below the gorge. San returns to the harbor to arrange a boat around the headland to the far village’s landing, and Jade and Sally help her prepare the passengers and supplies."},
+    248: {label:"🥾 Take the Lower Path", objective:"Divide the party. Choose who scouts the lower path ahead of the walkers.",
+         choices:[
+           {label:"🏹 Send Levi ahead to read the path", result:"Levi goes ahead of the walkers and comes back with a short list: where the hillside has slipped, where the packs lie, and which turn hides a good place to be waiting. The party will know the ground before the thieves do. (The thieves in Chapter 248 will be weaker.)", effect:{fightHpMult:{249:0.85}}},
+           {label:"🛠️ Send Devon to rig the bad stretches", result:"Devon spends the morning with the guide, roping off the slip and marking a safe line across it. Whatever happens on the path, the carrier will cross it in one piece, and the walkers will be ready to carry more out of it. (Chapter 248 will pay 25% more gold.)", effect:{fightGoldMult:{249:1.25}}},
+           {label:"🩺 Send Sky ahead with the medicine bag", result:"Sky goes up the path with the bag and a wet cloth, and sets up two rest points before the walkers arrive. Nobody on the lower path will be tired when they need to fight. (Your party is fully restored at the start of Chapter 248.)", effect:{fightHeal:{249:true}}}
+         ],
+         result:"The guide takes Joel, Devon, Levi, and Sky toward an older path below the gorge, and San goes back down to the harbor to find a boat around the headland."},
     250: {label:"⛵ Reach the Far Village", objective:"Land the tender below the far village and bring everyone up to the gathering place.",
          result:"San brings the tender to the far village’s coastal landing. Jade organises the unloading while Sally accompanies the musician uphill, and they reach the gathering place just as Sky and the medicine carrier arrive by the lower path."},
     251: {label:"🎶 Attend the Village Gathering", objective:"Take a place at the gathering and wait for the musician to begin.",
          result:"The musician prepares to play alone. Her father arrives on the next local boat with his own instrument, complaining about the journey, and she shifts her seat to make room before he can ask."},
     252: {label:"🎼 Listen to the Performance", objective:"Listen to the song father and daughter used to play together.",
+         resultFn:function(){
+           const c = (game.crimsonHorizonChoice || {})[245];
+           const echo = c === 0 ? " The harvest tune you asked for at supper is the one they begin with, played slowly, the way it has always been played, and then, for the first time, not quite the same."
+                      : c === 1 ? " The piece you asked her for at supper is the one she plays second, and this time her father plays it back to her."
+                      : c === 2 ? " Neither of them mentions the supper at which nobody chose a song. It is, Joel thinks, the reason they are playing this one together."
+                      : "";
+           return "Father and daughter begin with a song they used to play together. She adds her own variation, and this time he follows it. San leans against Joel as the villagers join the final verse." + echo;
+         },
          result:"Father and daughter begin with a song they used to play together. She adds her own variation, and this time he follows it. San leans against Joel as the villagers join the final verse."},
-    253: {label:"📦 Trade with the Village", objective:"Help the village boat crews set up their temporary service.",
-         result:"Village boat crews arrange extra coastal trips while local workers repair the bridge. Aisyah books a modest shipment of mountain tea and woven cloth, which gives the temporary boat service paying cargo for its return journeys."},
+    253: {label:"📦 Trade with the Village", objective:"Help the village boat crews set up their temporary service by choosing what Aisyah books for the return runs.",
+         choices:[
+           {label:"🍃 Book the mountain tea", result:"Aisyah books the tea: the first picking, packed in paper and cedar. The boat crews have something light and valuable to carry back each day, and a share of it comes aboard the Crimson Tide. (+8 Mountain Tea in your hold.)", effect:{goods:{mountain_tea:8}}},
+           {label:"🧵 Book the woven cloth", result:"Aisyah books the cloth, bolts of it in the village’s blue-and-ochre weave. It travels flat and keeps, and the weavers insist on sending some home with the Crimson Tide. (+8 Woven Mountain Cloth in your hold.)", effect:{goods:{woven_cloth:8}}},
+           {label:"⚖️ Book a modest share of both", result:"Aisyah books both, smaller, so no boat crew has to depend on one thing. The village is safer for the spread, and the Crimson Tide takes a little of each. (+4 Mountain Tea and +4 Woven Mountain Cloth in your hold.)", effect:{goods:{mountain_tea:4, woven_cloth:4}}}
+         ],
+         result:"Village boat crews arrange extra coastal trips while local workers repair the bridge, and Aisyah books a modest shipment for the temporary boat service."},
     254: {label:"⚓ Leave the Mountain Port", objective:"Say goodbye to the musician and cast off from the mountain harbor.",
          result:"The musician stays in her home port to help her father prepare another performance. Before the crew leaves she plays for them on the quay, and Joel waits until the last note before giving the order to cast off."},
     255: {label:"💌 Reply to Aaliyah", objective:"Visit Erynn at Fair Tide as Aaliyah’s reply arrives.",
@@ -1914,7 +1939,47 @@
     if (!f || typeof startCombat !== 'function') return;
     if (typeof closeModal === 'function') closeModal();
     const enemy = scaleCrimsonEnemy(f.enemy, 'guardian', 465);
+    const mods = (game.crimsonHorizonFightMods || {})[String(id)] || {};
+    if (mods.fightHpMult) { enemy.hp = Math.round(enemy.hp * mods.fightHpMult); if (enemy.maxHp) enemy.maxHp = Math.round(enemy.maxHp * mods.fightHpMult); }
+    if (mods.fightGoldMult) enemy.gold = Math.round((enemy.gold || 0) * mods.fightGoldMult);
+    if (mods.fightHeal && typeof window.restoreAllAboardCrew === 'function') { try { window.restoreAllAboardCrew(); } catch(e) {} }
     startCombat({ kind: 'crimson_horizon', key: String(id), enemy: enemy });
+  }
+
+  // A check can offer choices instead of a single button. The pick is saved (game.crimsonHorizonChoice[chapterId] = index), gives its
+  // own result and effect, and later chapters can read it back (resultFn, fight modifiers below).
+  function checkResult(id, check){
+    const pick = (game.crimsonHorizonChoice || {})[id];
+    if (check.choices && pick != null && check.choices[pick]) return check.choices[pick].result;
+    if (typeof check.resultFn === 'function') { try { return check.resultFn(); } catch(e) {} }
+    return check.result;
+  }
+  function applyChoiceEffect(e){
+    if (!e) return;
+    if (e.gold) { game.gold = (game.gold || 0) + e.gold; }
+    if (e.mood && typeof window.addFairTideMood === 'function') window.addFairTideMood(e.mood);
+    if (e.goods) Object.keys(e.goods).forEach(function(g){
+      const n = e.goods[g];
+      if (typeof GOODS === 'undefined' || !GOODS[g]) return;
+      game.cargo = game.cargo || {}; game.cargo[g] = (game.cargo[g] || 0) + n;
+      game.cargoUsed = (game.cargoUsed || 0) + n * ((GOODS[g] && GOODS[g].weight) || 1);
+    });
+    ['fightHpMult','fightGoldMult','fightHeal'].forEach(function(k){
+      if (!e[k]) return;
+      game.crimsonHorizonFightMods = game.crimsonHorizonFightMods || {};
+      Object.keys(e[k]).forEach(function(fid){ (game.crimsonHorizonFightMods[fid] = game.crimsonHorizonFightMods[fid] || {})[k] = e[k][fid]; });
+    });
+  }
+  function chooseOption(id, check, i){
+    chState();
+    if (game.crimsonHorizonChecked[id]) return;
+    game.crimsonHorizonChoice = game.crimsonHorizonChoice || {};
+    game.crimsonHorizonChoice[id] = i;
+    game.crimsonHorizonChecked[id] = true;
+    applyChoiceEffect(check.choices[i].effect);
+    if (typeof saveGameQuiet === 'function') saveGameQuiet();
+    if (typeof updateUI === 'function') { try { updateUI(); } catch(e) {} }
+    openObjective(id);
   }
 
   function openObjective(id, resultHtml){
@@ -1929,19 +1994,25 @@
       '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>' + esc(ch.focus) + '</div>' +
       '<div><strong>Objective</strong><br>' + esc(objective) + '</div>';
     if (fight && fightWon) html += '<div style="margin-top:10px;color:var(--success);">✓ Victory. The way is clear.</div>';
-    if (check && checked) html += '<div style="margin-top:10px;">' + esc(resultHtml || check.result) + '</div>';
+    if (check && checked) html += '<div style="margin-top:10px;">' + esc(resultHtml || checkResult(id, check)) + '</div>';
+    if (check && check.choices && !checked) html += '<div style="margin-top:10px;font-size:.84rem;opacity:.85;">Choose how to do it. Each choice has its own result.</div>';
     const buttons = [];
     let canContinue = true;
     if (fight && !fightWon) {
       canContinue = false;
       buttons.push({text: fight.label, action: function(){ startChapterFight(id); }});
+    } else if (check && !checked && check.choices) {
+      canContinue = false;
+      check.choices.forEach(function(c, i){
+        buttons.push({text: c.label, action: function(){ chooseOption(id, check, i); }});
+      });
     } else if (check && !checked) {
       canContinue = false;
       buttons.push({text: check.label, action: function(){
         chState();
         game.crimsonHorizonChecked[id] = true;
         if (typeof saveGameQuiet === 'function') saveGameQuiet();
-        openObjective(id, check.result);
+        openObjective(id, checkResult(id, check));
       }});
     }
     buttons.push({text: 'Continue', action: function(){
@@ -2054,6 +2125,15 @@
       game.crimsonHorizonFittedGear = true;
       window.addGearToInventory({id:'sallys_quick_fasten_harness', name:"Sally's Quick-Fasten Harness", icon:'🥋', slot:'armor', family:'any', defense:3, spd:2, tier:1, forCompanion:'Sally', desc:'Her old gear refitted with fewer buckles, each one opened in a single motion.'});
       window.addGearToInventory({id:'jades_fitted_support', name:"Jade's Fitted Support", icon:'🛡️', slot:'armor', family:'any', defense:4, hp:10, tier:1, forCompanion:'Jade', desc:'Her old gear refitted to sit close and stay comfortable when she draws and holds.'});
+    }
+    // Arc XXII keepsake (Ch.254, id 255): the musician's tuning fork, and standing at Highbridge Harbor.
+    if (id === 255 && !game.crimsonHorizonHighbridgeKeepsake) {
+      game.crimsonHorizonHighbridgeKeepsake = true;
+      if (typeof window.addGearToInventory === 'function') window.addGearToInventory({id:'musicians_tuning_fork', name:"The Musician's Tuning Fork", icon:'🎼', slot:'amulet', family:'any', hp:30, magic:8, tier:3, desc:'Left on the Crimson Tide after the quay concert. Whoever carries it hears a half-beat sooner when the crew is about to move together.'});
+      game.portStanding = game.portStanding || {};
+      game.portStanding.highbridge_harbor = (game.portStanding.highbridge_harbor || 0) + 60;
+      if (typeof window.notify === 'function') window.notify({ icon:'🎼', title:'A keepsake from the mountain port', text:'The musician left her tuning fork aboard (an amulet, in your inventory), and Highbridge Harbor now counts you among its friends: +60 standing, so better prices there.', kind:'info', duration: 9000 });
+      if (typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('The musician leaves her tuning fork aboard the Crimson Tide, and Highbridge Harbor takes the crew in as friends.', '🎼');
     }
     // Arc XXII: the father sets another cup (Ch.244, id 245), the song they both know (Ch.251, id 252) and Erynn moving his appointment (Ch.254, id 255).
     if (id === 245 && typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('In the mountain port, the musician’s father listens to her newer piece from the kitchen, then quietly sets another cup on the table.', '🍵');
