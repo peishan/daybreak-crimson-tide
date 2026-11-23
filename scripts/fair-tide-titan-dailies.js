@@ -187,6 +187,7 @@
     { id: 'quests',   label: 'Finish a quest or bounty',           need: 1 },
     { id: 'checkins', label: 'Check in on 2 Fair Tide residents',  need: 2 },
     { id: 'hall',     label: 'Visit the Guild Hall',               need: 1 },
+    { id: 'play',     label: 'Play a game at Game Night',          need: 1 },
     { id: 'titan',    label: 'Challenge the Titan 3 times',        need: 3 }
   ];
   function dailies(){

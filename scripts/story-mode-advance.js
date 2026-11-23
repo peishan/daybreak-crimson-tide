@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V641 · More trade tasks per story gate';
+window.__CT_BUILD__='V642 · Game Night minigames; arcane trio back home';
