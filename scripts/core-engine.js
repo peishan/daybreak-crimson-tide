@@ -4163,7 +4163,8 @@ function doVoyage(portId, days, dangerLevel) {
     // Weather and raider activity change from day to day (scripts/sea-conditions.js).
     const sea = (typeof window.seaVoyageMods === 'function') ? window.seaVoyageMods(portId) : { event: 1, hostile: 1, stormy: false };
     if (Math.random() < (0.3 + (dangerLevel * 0.07)) * (1 - 0.45 * safety) * sea.event) {
-      let event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+      const voyagePool = (typeof window.voyageEventPool === 'function') ? window.voyageEventPool(portId) : EVENTS;
+      let event = voyagePool[Math.floor(Math.random() * voyagePool.length)];
       if (sea.stormy && !event.combat && Math.random() < 0.35) event = EVENTS.find(e => e.type === 'storm') || event;
       if (event.combat && Math.random() > sea.hostile) {
         event = { type: 'calm', text: 'The raiders and sea beasts seem to be keeping their distance today.' };
@@ -6303,7 +6304,7 @@ function handleVictory() {
     if (/:w\d+$/.test(String(enemy.key))) {
       postBattleMessage = enemy.name + ' is beaten, and another group is closing in.';
       postBattleButtonsHtml = '';
-    } else if (String(enemy.key).indexOf('opt_') === 0) {
+    } else if (String(enemy.key).indexOf('opt_') === 0 || String(enemy.key).indexOf('chsea_') === 0) {
       postBattleMessage = enemy.name + ' is beaten.';
       postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
     } else {
