@@ -152,7 +152,9 @@
               sel.classList.add('has-shop-upgrade');
               const afford = (game.gold || 0) >= a.shopBest.price;
               html = '<div class="gear-upg shop' + (afford ? '' : ' poor') + '">🛒 ' + esc(a.shopBest.item.name) + ' <b>' + fmt(a.shopBest.delta) + '</b> · ' +
-                a.shopBest.price.toLocaleString() + 'g' + (afford ? '' : ' (need ' + (a.shopBest.price - (game.gold || 0)).toLocaleString() + 'g more)') + ' · ' + esc(a.shopBest.trader.name) + '</div>';
+                a.shopBest.price.toLocaleString() + 'g' + (afford ? '' : ' (need ' + (a.shopBest.price - (game.gold || 0)).toLocaleString() + 'g more)') + ' · ' + esc(a.shopBest.trader.name) +
+                (afford ? '<br><button class="btn btn-small btn-success" onclick="quickBuyGear(\'' + a.shopBest.trader.id + '\',\'' + a.shopBest.item.id + '\',\'' + m.id + '\')">🛒 Buy &amp; Equip</button> ' +
+                  '<button class="btn btn-small" onclick="quickBuyGear(\'' + a.shopBest.trader.id + '\',\'' + a.shopBest.item.id + '\')">Buy only</button>' : '') + '</div>';
             } else if (a.cur) {
               html = '<div class="gear-upg ok">✓ Best you have access to</div>';
             }
@@ -218,6 +220,16 @@
     html += '</div>';
     roster.insertAdjacentHTML('beforebegin', html);
   }
+
+  // Quick buy from the suggestion on a slot: buys the piece from the shop and, if a member is given, equips it straight away.
+  window.quickBuyGear = function(traderId, itemId, memberId){
+    const before = (game.equipmentInventory || []).length, gold = game.gold || 0;
+    if (typeof buyEquipment === 'function') buyEquipment(traderId, itemId);
+    if ((game.equipmentInventory || []).length <= before || (game.gold || 0) >= gold) return;   // the purchase did not go through
+    if (!memberId) return;
+    const idx = (game.equipmentInventory || []).length - 1;
+    if (typeof equipGear === 'function') equipGear(memberId, idx);
+  };
 
   const oldRender = window.renderEquipment;
   window.renderEquipment = function(){
