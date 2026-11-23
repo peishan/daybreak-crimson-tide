@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V645 · Bestiary: five creatures';
+window.__CT_BUILD__='V646 · Arc XXIII: The Things We Carry';
