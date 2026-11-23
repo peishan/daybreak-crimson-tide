@@ -50,6 +50,19 @@
     { id: 't22', arc: 22, title: 'Trade at Star Cove Harbor',     tasks: [{ k: 'sell', port: 'star_cove_harbor', n: 20 }] }
   ];
 
+  // More than one trade task per gate: every gate now asks for delivery contracts as well as selling, and the asks grow with the arcs.
+  // A gate with a sell task gets a delivery contract added (1, then 2 from Arc XII); a contract-only gate asks for 2 (3 from Arc XII).
+  // Selling asks for more later on (30 from Arc XII, 40 from Arc XVIII). A gate that was already met stays met.
+  TRADE.forEach(function(g){
+    const hasContract = g.tasks.some(function(t){ return t.k === 'contract'; });
+    if (!hasContract) g.tasks.push({ k: 'contract', n: g.arc >= 12 ? 2 : 1 });
+    g.tasks.forEach(function(t){
+      if (t.k === 'contract' && hasContract) t.n = g.arc >= 12 ? 3 : 2;
+      if (t.k === 'sell') t.n = g.arc >= 18 ? 40 : g.arc >= 12 ? 30 : t.n;
+    });
+    if (g.tasks.length === 1) g.tasks.push({ k: 'sell', port: g.arc <= 4 ? 'harbor_beyond_charts' : g.arc <= 8 ? 'island_harbor' : 'terrace_harbor', n: 20 });
+  });
+
   // MID-ARC GATES (Arc XVIII onward): an arc no longer runs through on story XP alone. After the 5th and
   // the 10th chapter of each arc, the next chapter waits for some trading and a level a little ahead of
   // what the chapters themselves give. Tune here: where the gates fall, the extra levels, the trade needed.
@@ -65,8 +78,8 @@
     const port = typeof window.crimsonHorizonChapterPort === 'function' ? window.crimsonHorizonChapterPort(next.id) : null;
     const lvl = (typeof window.crimsonHorizonArcLevel === 'function' ? window.crimsonHorizonArcLevel(next.arc) : 0) + MID_LEVEL_OVER_ARC_GATE[k];
     const tasks = [];
-    if (k === 0 && port && typeof isPortUnlocked === 'function' && isPortUnlocked(port)) tasks.push({ k: 'sell', port: port, n: MID_SELL });
-    else tasks.push({ k: 'contract', n: 1 });
+    if (k === 0 && port && typeof isPortUnlocked === 'function' && isPortUnlocked(port)) { tasks.push({ k: 'sell', port: port, n: MID_SELL }); tasks.push({ k: 'contract', n: 1 }); }
+    else tasks.push({ k: 'contract', n: 2 });
     tasks.push({ k: 'level', n: lvl });
     return { id: id, arc: next.arc, mid: true, title: k === 0 ? 'Restock before the next leg' : 'Earn your keep on the water', tasks: tasks };
   }
