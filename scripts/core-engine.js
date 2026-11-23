@@ -6262,6 +6262,18 @@ function handleVictory() {
     // Ch.12 guardian fight uses) is the correct, already-established exit.
     postBattleMessage = enemy.name + ' backs off. Whatever this was, it\'s settled for now.';
     postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+  } else if (enemy.kind === 'arc_story') {
+    // Main-game arc fights (scripts/arc-engagement.js): a non-final wave rolls straight into the next one; the last one completes its chapter.
+    if (/:w\d+$/.test(String(enemy.key))) {
+      postBattleMessage = enemy.name + ' is beaten, and more is coming.';
+      postBattleButtonsHtml = '';
+    } else if (String(enemy.key).indexOf('arcopt_') === 0) {
+      postBattleMessage = enemy.name + ' is beaten.';
+      postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort()">🏛️ Return to Port</button>';
+    } else {
+      postBattleMessage = enemy.name + ' is beaten. The chapter is done.';
+      postBattleButtonsHtml = '<button class="btn btn-success" onclick="exitBattleToPort(); setTimeout(function(){ goScreen(\'story\'); }, 400);">📖 Back to the Story</button>';
+    }
   } else if (enemy.kind === 'crimson_horizon') {
     if (/:w\d+$/.test(String(enemy.key))) {
       postBattleMessage = enemy.name + ' is beaten, and another group is closing in.';
