@@ -13,6 +13,57 @@
   function prog(arc){ return game['comicProgress' + arc] || {}; }
 
   const ARCS = {
+    7: {
+      choices: {
+        14: {
+          title: "Renn's Theory",
+          prompt: "Renn has a theory. Erynn disagrees with part of it, and Mimi has noticed something neither of them considered. All three are right about something. Whose reading do you back when the crew acts on it?",
+          options: [
+            { label: '🔧 Back Renn: test it now', result: 'You back Renn, and he is at the bench before you finish the sentence. The test is rough and fast, and it throws up a surprise or two, some of them valuable. (+80g from the salvage. In Chapter 16 the anomaly pays 25% more gold and is 10% tougher.)', effect: { gold: 80, mods: { '16': { hpMult: 1.1, goldMult: 1.25 } } } },
+            { label: '📜 Back Erynn: check the records first', result: 'You hold the test until Erynn has gone through what the Farseers wrote about the same region. It takes an evening and costs a little patience. (In Chapter 16 the anomaly is 10% weaker, because you know what it does.)', effect: { mods: { '16': { hpMult: 0.9 } } } },
+            { label: '🔮 Back Mimi: follow what she noticed', result: 'You ask Mimi what she saw, and she tells it in her own sideways way. It changes where the other two look. (Your party is fully restored at the start of Chapter 16.)', effect: { mods: { '16': { heal: true } } } }
+          ]
+        },
+        22: {
+          title: "Don't Open It",
+          prompt: 'Renn and Erynn want to investigate further. Mimi says no, and San sides with her. Not every mystery needs opening today. But how you tell them is up to you.',
+          options: [
+            { label: '🚪 Close the matter, kindly but firmly', result: 'You close the matter in one sentence. Renn argues for a minute and then does not. It is not the last time he will bring it up. (+2 reputation.)', effect: { rep: 2 } },
+            { label: '📓 Offer a compromise: document it, do not open it', result: 'You offer them a way to keep working without opening anything: measure it, draw it, write it down. Both of them take the offer a little too quickly. (+100g in survey fees from the Farseer archives.)', effect: { gold: 100 } },
+            { label: '🔮 Let Mimi explain', result: 'You let Mimi say why. She does, at length and without once raising her voice, and neither of them can find anything to argue with. (+3 Fair Tide Mood.)', effect: { mood: 3 } }
+          ]
+        }
+      },
+      echoes: {
+        16: function(c){ const p = c[14]; return p === 0 ? '<br><br>They were in this much trouble because the test went ahead at once, and everyone knows it. Joel does not need to say so. He says so anyway.' : p === 1 ? '<br><br>The Farseer notes are the only reason Joel found them at all. Erynn is quietly smug about it. Renn is quietly furious that it worked.' : p === 2 ? '<br><br>Mimi had told them where not to look, in so many words. They went anyway. She does not say a word, and she is very good at it.' : ''; },
+        23: function(c){ const p = c[22]; return p === 0 ? '<br><br>The matter closed, and it stayed closed. Erynn still works late, but he works on something else, and it is noticeable.' : p === 1 ? '<br><br>The documents are in order, and the survey is the most thorough anyone has made. It is also, Erynn admits, what made him stay.' : p === 2 ? '<br><br>Mimi\'s reason is still the one thing none of them has answered. It sits in the room with them, and nobody minds.' : ''; }
+      },
+      fights: {
+        16: {
+          label: '⚔️ Rescue the Researchers',
+          waves: [
+            { name: 'The Anomaly\'s Strays', icon: '🌫️', hp: 800, dmg: 24, xp: 240, gold: 130, desc: 'Odd, half-formed shapes thrown out by the anomaly, drifting along the path Renn and Erynn took in.' },
+            { name: 'The Pulling Edge', icon: '🌀', hp: 1000, dmg: 28, xp: 300, gold: 170, twist: 'frenzy', twistText: 'The anomaly pulls harder every round', desc: 'The anomaly itself. It tightens the longer you are in it, and it will not let two scholars go without a fight.' }
+          ]
+        }
+      },
+      optional: {
+        arc7_returning_ship: {
+          unlock: function(){ return !!prog(7)[12]; },
+          title: '⛵ The Ship That Keeps Returning', btn: '⚔️ Cut it loose',
+          text: 'A hulk keeps turning up at the harbor mouth, a day after it was towed out to sea. The sailors say it returns to wherever it started, no matter how far it is taken. Whoever it belonged to is not aboard. Something else is.',
+          enemy: { name: 'The Returning Crew', icon: '⛵', hp: 800, dmg: 24, xp: 230, gold: 150, desc: 'What is left aboard a ship that cannot leave: a crew that keeps coming back to the same fight.' },
+          reward: { rep: 3, text: 'The hulk breaks up on the second tide and stays gone. (+3 reputation.)' }
+        },
+        arc7_marker_echo: {
+          unlock: function(){ return !!prog(7)[20]; },
+          title: '🗿 The Marker\'s Echo', btn: '⚔️ Quiet the echo',
+          text: 'Since the marker answered Renn\'s door, something in the old stone keeps answering back, and it keeps getting back up. The Farseers\' notes say nothing about it, which is a note in itself.',
+          enemy: { name: 'The Marker\'s Echo', icon: '🗿', hp: 1100, dmg: 28, xp: 360, gold: 210, twist: 'mender', twistText: 'It restores itself every round', desc: 'The marker\'s own answer, made of old stone and old magic, closing every wound it takes.' },
+          reward: { rep: 5, gear: { id: 'farseer_waymark_charm', name: "Farseer's Waymark Charm", icon: '🗿', slot: 'amulet', family: 'any', hp: 12, magic: 3, tier: 2, desc: 'A chip of the old marker. It is warmer on the side that faces the nearest door.' }, text: 'It stops answering. A chip of the marker falls loose. (+5 reputation and the Farseer\'s Waymark Charm, an amulet.)' }
+        }
+      }
+    },
     8: {
       choices: {
         10: {
