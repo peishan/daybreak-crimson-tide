@@ -50,7 +50,8 @@
     { id: 't22', arc: 22, title: 'Trade at Star Cove Harbor',     tasks: [{ k: 'sell', port: 'star_cove_harbor', n: 20 }] },
     { id: 't23', arc: 23, title: 'Trade at Highbridge Harbor',    tasks: [{ k: 'sell', port: 'highbridge_harbor', n: 20 }] },
     { id: 't24', arc: 24, title: 'Trade at Paper Harbor',         tasks: [{ k: 'sell', port: 'paper_harbor', n: 20 }] },
-    { id: 't25', arc: 25, title: 'Trade at Black-Sand Harbor',    tasks: [{ k: 'sell', port: 'black_sand_harbor', n: 20 }] }
+    { id: 't25', arc: 25, title: 'Trade at Black-Sand Harbor',    tasks: [{ k: 'sell', port: 'black_sand_harbor', n: 20 }] },
+    { id: 't26', arc: 26, title: 'Trade at Cedar Reach',          tasks: [{ k: 'sell', port: 'cedar_reach', n: 20 }] }
   ];
 
   // More than one trade task per gate: every gate now asks for delivery contracts as well as selling, and the asks grow with the arcs.
