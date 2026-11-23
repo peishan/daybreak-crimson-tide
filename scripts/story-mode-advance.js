@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V633 · Close button on every popup';
+window.__CT_BUILD__='V634 · Continue guards';

@@ -2167,6 +2167,14 @@
 
   function completeChapter(id){
     window.markCrimsonHorizonChapterRead(id);
+    // If the chapter did not complete, say why instead of closing the popup and doing nothing.
+    if (!prog()[id]) {
+      const so = window.crimsonHorizonObjectiveState();
+      try { console.warn('chapter ' + id + ' did not complete; objective state = ' + so); } catch (e) {}
+      if (typeof window.notify === 'function') window.notify({ icon: '🧭', title: 'This chapter is not open yet', text: 'The story is waiting on something else first. Check the Current Objective on the Story screen.', kind: 'info', duration: 6000 });
+      else if (typeof toast === 'function') toast('🧭 This chapter is not open yet. Check the Current Objective.', 4200);
+      return;
+    }
     if (CH_CHAIN.indexOf(id) !== -1) {
       setTimeout(function(){
         if (window.crimsonHorizonObjectiveState() === ('complete_crimson_horizon_chapter_' + (id + 1))) window.__ctReadCrimsonHorizonChapter(id + 1);
