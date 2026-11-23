@@ -185,6 +185,12 @@
     ,{ id:'arc41ch05b', icon:'🍲', title:'Just Visiting: Supper', where:'When Arc XLI Chapter 5 is read',
       clips:['cin58-arc41-ch05-just-visiting-2.mp4'],
       passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[5]); } }
+    ,{ id:'arc42ch01', icon:'🛳️', title:'A Strange New Shore', where:'When Arc XLII Chapter 1 is read',
+      clips:['cin59-arc42-ch01-a-strange-new-shore.mp4'],
+      passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[1]); } }
+    ,{ id:'arc42ch02', icon:'🏮', title:'Another Visitor?', where:'When Arc XLII Chapter 2 is read',
+      clips:['cin60-arc42-ch02-another-visitor.mp4'],
+      passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[2]); } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -220,7 +226,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -500,7 +506,9 @@
     const HOOKS = [
       { fn:'markArc34ChapterRead', arc:34, ch:24, clip:'arc34ch24' },
       { fn:'markArc38ChapterRead', arc:38, ch:21, clip:'arc38ch21' },
-      { fn:'markArc40ChapterRead', arc:40, ch:13, clip:'arc40ch13', splash:'thought_resonance' }
+      { fn:'markArc40ChapterRead', arc:40, ch:13, clip:'arc40ch13', splash:'thought_resonance' },
+      { fn:'markArc42ChapterRead', arc:42, ch:1, clip:'arc42ch01' },
+      { fn:'markArc42ChapterRead', arc:42, ch:2, clip:'arc42ch02' }
     ];
     HOOKS.forEach(function(h){
       const old = window[h.fn];
