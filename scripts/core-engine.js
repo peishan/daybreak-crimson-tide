@@ -2747,9 +2747,13 @@ function todayKey(){ return 'day_' + game.day; }
 // ---------------------------------------------------------------------------
 function showModal(title, text, buttons) {
   document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalText').innerHTML = text;
-  // a new popup always starts at its first line (the text box keeps its scroll position from the last popup otherwise)
-  document.getElementById('modalText').scrollTop = 0;
+  // A new popup always starts at its first line. The text box is replaced by a fresh element each time, because a browser can keep and
+  // restore the scroll offset of the old one (a long scene read to the end, then the next popup opening already scrolled down).
+  const oldText = document.getElementById('modalText');
+  const freshText = oldText.cloneNode(false);
+  freshText.id = 'modalText';
+  freshText.innerHTML = text;
+  oldText.replaceWith(freshText);
   const modalBox = document.querySelector('#modalOverlay .modal'); if (modalBox) modalBox.scrollTop = 0;
   const btnContainer = document.getElementById('modalButtons');
   btnContainer.innerHTML = '';
