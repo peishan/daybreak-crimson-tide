@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V647 · Renown gates the sequel arcs';
+window.__CT_BUILD__='V648 · Arc XXIV: The Shore That Sings';
