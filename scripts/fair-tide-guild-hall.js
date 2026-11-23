@@ -71,6 +71,11 @@
     return gain;
   }
   window.guildHallTick = tick;
+  window.guildHallMembers = members;
+  window.guildHallWindowHours = windowHours;
+  window.guildHallSpend = function(n){ const h = hall(); if (h.fund < n) return false; h.fund -= n; return true; };
+  window.guildHallFund = function(){ return hall().fund; };
+  window.guildHallAdd = function(n){ const h = hall(); h.fund += n; h.totalEarned += n; };
 
   function unlockedChests(){ const t = hall().totalEarned; return CHEST_STEPS.filter(function(s){ return t >= s; }).length; }
 
