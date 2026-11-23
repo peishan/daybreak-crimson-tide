@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V649 · Arc XXV: Room for Tomorrow';
+window.__CT_BUILD__='V650 · Arc XXVI: The Valley Beyond the Sails';
