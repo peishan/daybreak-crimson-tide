@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V628 · Arc XXII pilot: choices, keepsake, story gates';
+window.__CT_BUILD__='V629 · Arc XXII pilot: waves, twists, optional fights';
