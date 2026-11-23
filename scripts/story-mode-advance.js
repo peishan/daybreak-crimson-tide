@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V639 · Fair Tide Guild Hall; steeper sequel gates';
+window.__CT_BUILD__='V640 · Tide Titan world boss and Dailies (sequel)';
