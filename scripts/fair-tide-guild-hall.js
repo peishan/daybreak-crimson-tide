@@ -117,6 +117,7 @@
     if (!ev || ev.claimed || Date.now() < ev.endsAt) return;
     const e = EVENTS[ev.key]; if (!e) { h.event = null; return; }
     ev.claimed = true; h.event = null;
+    if (typeof window.addRenown === 'function') window.addRenown('hall_event');
     const scale = Math.max(1, lvl() / 400);
     const gold = Math.round(e.reward.gold * scale);
     game.gold = (game.gold || 0) + gold;
@@ -133,6 +134,7 @@
     if (h.chests >= unlockedChests()) return;
     const step = CHEST_STEPS[h.chests];
     h.chests += 1;
+    if (typeof window.addRenown === 'function') window.addRenown('hall_chest');
     const gold = Math.round(step * 0.2), rep = 2 + h.chests;
     game.gold = (game.gold || 0) + gold;
     game.reputation = (game.reputation || 0) + rep;

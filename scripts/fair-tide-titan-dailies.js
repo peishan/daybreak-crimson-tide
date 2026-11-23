@@ -72,6 +72,7 @@
     [[75, 4000], [50, 8000], [25, 14000]].forEach(function(m){
       if (t.hp / t.maxHp * 100 <= m[0] && !t.milestones[m[0]]) {
         t.milestones[m[0]] = true;
+        if (typeof window.addRenown === 'function') window.addRenown('titan_milestone');
         const f = m[1] * t.tier;
         if (typeof window.guildHallAdd === 'function') window.guildHallAdd(f);
         logT(t, '🎯 The Titan is down to ' + m[0] + '%: +' + fmt(f) + ' to the Hall Fund.');
@@ -115,6 +116,7 @@
     const gold = Math.round((100 + lvl() * 6) * (0.5 + frac));
     game.gold = (game.gold || 0) + gold; game.reputation = (game.reputation || 0) + 1;
     logT(t, '⚔️ You dealt ' + fmt(dealt) + ' damage (+' + fmt(gold) + 'g).');
+    if (typeof window.addRenown === 'function') window.addRenown('titan_attempt');
     checkMilestones(t);
     let extra = '';
     const shownHp = t.hp, shownMax = t.maxHp;
@@ -140,6 +142,7 @@
       charter = ' A trophy amulet is in your inventory.';
     }
     t.kills = (t.kills || 0) + 1;
+    if (typeof window.addRenown === 'function') window.addRenown('titan_kill');
     logT(t, '🏆 ' + info.name + ' fell: +' + fmt(gold) + 'g, +' + fmt(25000 * tier) + ' to the Hall Fund.');
     if (typeof window.notify === 'function') window.notify({ icon: '🏆', title: info.name + ' has fallen', text: '+' + fmt(gold) + 'g, +' + fmt(25000 * tier) + ' to the Hall Fund.' + charter + ' A stronger one is already rising.', kind: 'info', duration: 9000 });
     spawn(t, tier + 1);
@@ -211,7 +214,8 @@
     const r = taskReward();
     game.gold = (game.gold || 0) + r.gold;
     if (typeof window.guildHallAdd === 'function') window.guildHallAdd(r.fund);
-    toast('📅 ' + t.label + ': +' + fmt(r.gold) + 'g, +' + fmt(r.fund) + ' to the Hall Fund.', 3600);
+    if (typeof window.addRenown === 'function') window.addRenown('daily');
+    toast('📅 ' + t.label + ': +' + fmt(r.gold) + 'g, +' + fmt(r.fund) + ' to the Hall Fund. +10 Renown.', 3600);
     if (typeof updateUI === 'function') updateUI();
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     refresh();
@@ -220,6 +224,7 @@
     const d = dailies();
     if (d.bonus || !TASKS.every(function(t){ return d.claimed[t.id]; })) return;
     d.bonus = true;
+    if (typeof window.addRenown === 'function') window.addRenown('daily_bonus');
     const tt = titan(); tt.bonus = (tt.bonus || 0) + 1;
     const gold = Math.round(lvl() * 10);
     game.gold = (game.gold || 0) + gold; game.reputation = (game.reputation || 0) + 3;
@@ -299,7 +304,8 @@
     if (!sequel()) { el.innerHTML = '<div class="story-chip">Dailies begin with the sequel.</div>'; return; }
     const d = dailies(), r = taskReward();
     const allClaimed = TASKS.every(function(t){ return d.claimed[t.id]; });
-    let html = '<div class="panel-title">📅 Dailies</div><p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Small things you already do, tallied for today. They reset at midnight. Quests and bounties work exactly as before.</p>';
+    let html = '<div class="panel-title">📅 Dailies</div><p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Small things you already do, tallied for today. They reset at midnight. Quests and bounties work exactly as before.</p>' +
+      (typeof window.renownLine === 'function' ? '<div class="story-chip" style="margin-bottom:8px;">🏅 ' + window.renownLine() + ' Each claimed daily adds 10 Renown.</div>' : '');
     TASKS.forEach(function(t){
       const p = prog(t.id), done = p >= t.need, claimed = d.claimed[t.id];
       html += '<article class="quest-item"><strong>' + (claimed ? '✓ ' : done ? '🎁 ' : '○ ') + t.label + '</strong> <span class="story-chip">' + p + '/' + t.need + '</span><br>' +
