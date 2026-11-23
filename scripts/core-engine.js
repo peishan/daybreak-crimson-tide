@@ -2761,6 +2761,14 @@ function showModal(title, text, buttons) {
     btnContainer.appendChild(button);
   });
   document.getElementById('modalOverlay').classList.add('active');
+  // Chrome keeps a hidden element's old scroll offset and puts it back when the popup is shown again, and an element that is hidden
+  // ignores scrollTop = 0. So the reset has to happen once the popup is showing (and again on the next frame, after layout).
+  const resetScroll = function(){
+    const t = document.getElementById('modalText'), m = document.querySelector('#modalOverlay .modal');
+    if (t) t.scrollTop = 0; if (m) m.scrollTop = 0;
+  };
+  resetScroll();
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(function(){ resetScroll(); requestAnimationFrame(resetScroll); });
 }
 // Comic chapter image lightbox — see the #comicImageOverlay markup comment
 // for why this replaced target="_blank" links. Never navigates, so there's
