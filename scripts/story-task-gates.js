@@ -182,7 +182,8 @@
   }
   function progress(a){ return a.kind === 'host' ? hostProgress(a.g) : tradeProgress(a.g); }
   function met(a){ return progress(a).every(function(p){ return p.have >= p.need; }); }
-  window.storyTaskGate = function(){ const a = activeGate(); return a && !met(a) ? { gate: a.g, kind: a.kind, progress: progress(a), chapter: a.kind === 'host' ? a.g.before : (a.chapter && a.chapter.id) } : null; };
+  window.storyTaskGate = function(){ try { if (/^crimson_horizon_renown_gate_/.test(String(window.crimsonHorizonObjectiveState()))) return null; } catch (e) {}   // the Renown gate is shown first
+  const a = activeGate(); return a && !met(a) ? { gate: a.g, kind: a.kind, progress: progress(a), chapter: a.kind === 'host' ? a.g.before : (a.chapter && a.chapter.id) } : null; };
 
   // ---- hold the chapter back ----
   const oldArc42 = window.arc42ObjectiveState;

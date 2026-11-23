@@ -107,6 +107,7 @@
         const m = BY_ID[e.chseaId], c = st();
         c.kills[m.id] = (c.kills[m.id] || 0) + 1;
         game.reputation = (game.reputation || 0) + (e.alpha ? 3 : 1);
+        if (typeof window.addRenown === 'function') window.addRenown(e.alpha ? 'sea_alpha' : 'sea_monster');
         let extra = '';
         if (!c.trophies[m.id] && typeof window.addGearToInventory === 'function') {
           c.trophies[m.id] = true;

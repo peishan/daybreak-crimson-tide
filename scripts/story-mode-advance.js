@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V646 · Arc XXIII: The Things We Carry';
+window.__CT_BUILD__='V647 · Renown gates the sequel arcs';

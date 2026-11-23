@@ -43,7 +43,7 @@
     const base = Math.round(40 + lvl() * 1.5);
     const gold = won ? Math.round(base * (gn.s && gn.s.prize ? gn.s.prize : 1)) : Math.round(base * 0.25);
     game.gold = (game.gold || 0) + gold;
-    if (won) { game.reputation = (game.reputation || 0) + 1; if (typeof window.guildHallAdd === 'function') window.guildHallAdd(500); if (typeof window.addFairTideMood === 'function') window.addFairTideMood(1); }
+    if (won) { if (typeof window.addRenown === 'function') window.addRenown('game_night_win'); game.reputation = (game.reputation || 0) + 1; if (typeof window.guildHallAdd === 'function') window.guildHallAdd(500); if (typeof window.addFairTideMood === 'function') window.addFairTideMood(1); }
     let bond = '';
     try {
       const rec = typeof window.fairTideResidentsState === 'function' ? window.fairTideResidentsState()[p.id] : null;
