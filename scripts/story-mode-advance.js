@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V637 · Meet the Farseer card; Arc VII and VIII pilot removed';
+window.__CT_BUILD__='V638 · Learn-about cards in Arcs VII and VIII';
