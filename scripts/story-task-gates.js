@@ -102,19 +102,33 @@
   }
   function chapterList(){ return window.CRIMSON_HORIZON_CHAPTERS || []; }
   function sideIds(){ return window.CRIMSON_HORIZON_SIDE_IDS || []; }
+  // Story-flavoured gates (pilot: Arc XXII). A gate listed here keeps its task, but is dressed as part of the plot: its own title, a line
+  // for the Current Objective, and the notice shown when it opens. Gates not listed keep the generic wording.
+  const FLAVOUR = {
+    t22:   { title: 'Fill the hold for the new crossing',
+             text: 'A recently charted crossing means a long haul, and Aisyah will not take a passenger across it with a half-empty hold. Sell some goods at Star Cove Harbor and she will price the run',
+             why: 'Aisyah wants the hold earning before anyone is taken across the new crossing.' },
+    m22_1: { title: 'Find out what the mountain buys',
+             text: 'Before the walk to the far village, Aisyah wants to know what Highbridge Harbor pays for. Sell some goods here and she will know what the temporary boat service can carry back',
+             why: 'Aisyah wants a feel for the mountain market before the walk across the gorge.' },
+    m22_2: { title: "Carry the village's tea order",
+             text: "The far village's pickers have asked for their first leaf to reach Fair Tide while the bridge is down. Take the Village's Tea Order from the Quest Board (or any delivery) and finish it",
+             why: "The village's tea order is on the Quest Board once Highbridge Harbor is charted." }
+  };
+  function flavoured(g){ const f = FLAVOUR[g.id]; return f ? Object.assign({}, g, { title: f.title, flavour: f }) : g; }
   function tradeGate(){
     if (!game.arc42Complete) return null;
     const list = chapterList(), side = sideIds();
     const next = list.find(function(c){ return side.indexOf(c.id) === -1 && !ch()[c.id]; });
     if (!next || next.arc < 2) return null;
     const mg = midGate(next);
-    if (mg) return { kind: 'trade', g: mg, chapter: next };
+    if (mg) return { kind: 'trade', g: flavoured(mg), chapter: next };
     const g = TRADE.find(function(t){ return t.arc === next.arc; });
     if (!g || done()[g.id]) return null;
     if (list.some(function(o){ return o.arc === next.arc && ch()[o.id]; })) { done()[g.id] = true; if (tc().contractsAtLastGate == null || tc().contractsAtLastGate < tc().contracts) tc().contractsAtLastGate = tc().contracts; return null; }   // arc already under way
     // A task at a port you cannot reach cannot be done: skip it.
     if (g.tasks.some(function(t){ return t.port && typeof isPortUnlocked === 'function' && !isPortUnlocked(t.port); })) return null;
-    return { kind: 'trade', g: g, chapter: next };
+    return { kind: 'trade', g: flavoured(g), chapter: next };
   }
   function activeGate(){
     const a = hostGate() || tradeGate();
@@ -220,7 +234,7 @@
     }
     if (!told()[key]) {
       told()[key] = true;
-      const why = a.kind === 'host' ? 'Your guests are here for a few chapters. Spend a little time with them.' : (a.g.mid ? 'The next chapters are waiting on some trade and a few levels. See the Current Objective.' : 'The next arc is waiting on a bit of trade. See the Current Objective.');
+      const why = a.g.flavour ? a.g.flavour.why : a.kind === 'host' ? 'Your guests are here for a few chapters. Spend a little time with them.' : (a.g.mid ? 'The next chapters are waiting on some trade and a few levels. See the Current Objective.' : 'The next arc is waiting on a bit of trade. See the Current Objective.');
       if (typeof window.notify === 'function') window.notify({ icon: a.kind === 'host' ? '🤝' : '⚖️', title: a.g.title, text: why, kind: 'info', duration: 6000 });
     }
   }
@@ -244,7 +258,7 @@
               : '<button class="btn btn-small btn-magic" onclick="sailTo(\'fair_tide\')">⛵ Sail to Fair Tide</button>';
           } else {
             const sell = t.gate.tasks.find(function(x){ return x.k === 'sell'; });
-            text = lines + (t.gate.mid ? '. The next chapters of Arc ' + t.gate.arc + ' open once you have kept the voyage going: trade, and earn XP from the Reach, raids and bounties.' : '. Arc ' + t.gate.arc + ' of the voyage opens once you have done a little trading.');
+            text = t.gate.flavour ? (lines + '. ' + t.gate.flavour.text + '.') : (lines + (t.gate.mid ? '. The next chapters of Arc ' + t.gate.arc + ' open once you have kept the voyage going: trade, and earn XP from the Reach, raids and bounties.' : '. Arc ' + t.gate.arc + ' of the voyage opens once you have done a little trading.'));
             if (sell && game.location !== sell.port) button = '<button class="btn btn-small btn-magic" onclick="sailTo(\'' + sell.port + '\')">⛵ Sail to ' + esc(portName(sell.port)) + '</button>';
             else if (t.gate.tasks.some(function(x){ return x.k === 'contract'; })) button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'tavern\')">📜 Open the Quest Board</button>';
             else button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'port\')">🏛️ Open the Market</button>';

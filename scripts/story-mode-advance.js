@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V627 · Arc XXXVI, XXXVII and XLI clips and splashes';
+window.__CT_BUILD__='V628 · Arc XXII pilot: choices, keepsake, story gates';
