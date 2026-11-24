@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V666 · Sequel level gate re-based on your level';
+window.__CT_BUILD__='V667 · Arc XII Ch.19-21 clips';
