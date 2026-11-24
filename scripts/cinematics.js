@@ -146,6 +146,18 @@
     ,{ id:'arc6didnt3', icon:'🌾', title:'Didn\'t Have Rice?: The Crowd\'s Answer', where:'When Arc VI Chapter 3 is read',
       clips:['cin65-arc6-ch03-didnt-have-rice-3.mp4'],
       passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
+    ,{ id:'arc6joel1', icon:'🕯️', title:'Joel\'s Rest: The Cabin', where:'When Arc VI Chapter 8 is read',
+      clips:['cin66-arc6-ch08-joels-rest-1.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[8]); } }
+    ,{ id:'arc6joel2', icon:'🕯️', title:'Joel\'s Rest: The Old Warehouse', where:'When Arc VI Chapter 8 is read',
+      clips:['cin67-arc6-ch08-joels-rest-2.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[8]); } }
+    ,{ id:'arc6joel3', icon:'🕯️', title:'Joel\'s Rest: Beside Him', where:'When Arc VI Chapter 8 is read',
+      clips:['cin68-arc6-ch08-joels-rest-3.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[8]); } }
+    ,{ id:'arc6joel4', icon:'🕯️', title:'Joel\'s Rest: Rest', where:'When Arc VI Chapter 8 is read',
+      clips:['cin69-arc6-ch08-joels-rest-4.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[8]); } }
     ,{ id:'arc17archive', icon:'🏛️', title:'The Archive Between Worlds', where:'When Arc XVII Chapter 4 is opened',
       clips:['cin41-arc17-archive-between-worlds.mp4'],
       passed:function(){ return !!(game.comicProgress17 && game.comicProgress17[4]); } }
@@ -241,7 +253,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -549,6 +561,7 @@
   (function(){
     let opening = false;
     const STEPS = {
+      'markArc6ChapterRead:8': [['clip','arc6joel1'], ['clip','arc6joel2'], ['splash','arc6joel2'], ['clip','arc6joel3'], ['clip','arc6joel4'], ['splash','arc6joel4']],
       'markArc6ChapterRead:3': [['clip','arc6didnt1'], ['clip','arc6didnt2'], ['clip','arc6didnt3']],
       'markArc36ChapterRead:10': [['clip','arc36ch10']],
       'markArc37ChapterRead:16': [['clip','arc37ch16']],
