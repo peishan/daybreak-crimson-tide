@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V660 · Arc XII Ch.4-8 clips';
+window.__CT_BUILD__='V661 · Arc XII Ch.16-17 clips';
