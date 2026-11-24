@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V662 · Ate Joy home in the sequel';
+window.__CT_BUILD__='V663 · Popup Continue no longer blocked by toasts';
