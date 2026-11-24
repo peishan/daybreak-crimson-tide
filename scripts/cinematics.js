@@ -137,6 +137,15 @@
     ,{ id:'arc6service', icon:'🧹', title:'Community Service Begins', where:'After the Arc VI Chapter 1 capture',
       clips:['cin26-arc6-community-service.mp4'],
       passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[1]); } }
+    ,{ id:'arc6didnt1', icon:'🌾', title:'Didn\'t Have Rice?: Joel Finds Jeff', where:'When Arc VI Chapter 3 is read',
+      clips:['cin63-arc6-ch03-didnt-have-rice-1.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
+    ,{ id:'arc6didnt2', icon:'🌾', title:'Didn\'t Have Rice?: What He Never Said', where:'When Arc VI Chapter 3 is read',
+      clips:['cin64-arc6-ch03-didnt-have-rice-2.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
+    ,{ id:'arc6didnt3', icon:'🌾', title:'Didn\'t Have Rice?: The Crowd\'s Answer', where:'When Arc VI Chapter 3 is read',
+      clips:['cin65-arc6-ch03-didnt-have-rice-3.mp4'],
+      passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
     ,{ id:'arc17archive', icon:'🏛️', title:'The Archive Between Worlds', where:'When Arc XVII Chapter 4 is opened',
       clips:['cin41-arc17-archive-between-worlds.mp4'],
       passed:function(){ return !!(game.comicProgress17 && game.comicProgress17[4]); } }
@@ -232,7 +241,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -540,6 +549,7 @@
   (function(){
     let opening = false;
     const STEPS = {
+      'markArc6ChapterRead:3': [['clip','arc6didnt1'], ['clip','arc6didnt2'], ['clip','arc6didnt3']],
       'markArc36ChapterRead:10': [['clip','arc36ch10']],
       'markArc37ChapterRead:16': [['clip','arc37ch16']],
       'markArc41ChapterRead:3':  [['clip','arc41ch03'], ['splash','arc41ch03']],
