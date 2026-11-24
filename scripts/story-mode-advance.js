@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V657 · Tide Titan fights to the round limit';
+window.__CT_BUILD__='V658 · Arc VI Ch.8 clips';
