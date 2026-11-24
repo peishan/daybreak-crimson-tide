@@ -1026,7 +1026,8 @@
         const gate = window.crimsonHorizonArcLevel(ch.arc);
         const arcStarted = CRIMSON_HORIZON_CHAPTERS.some(function(o){ return o.arc === ch.arc && game.comicProgressCrimsonHorizon[o.id]; });
         if (!arcStarted && level() < gate) return 'crimson_horizon_level_gate_' + ch.arc;
-        if (!arcStarted && typeof window.renownShort === 'function' && window.renownShort(ch.arc)) return 'crimson_horizon_renown_gate_' + ch.arc;
+        if (typeof window.renownShortForChapter === 'function' && window.renownShortForChapter(ch)) return 'crimson_horizon_renown_gate_' + ch.arc;
+        if (typeof window.pacingHold === 'function' && window.pacingHold()) return 'crimson_horizon_pacing_hold';
         return 'complete_crimson_horizon_chapter_' + ch.id;
       }
     }
@@ -2303,6 +2304,7 @@
       reason: function(){ return (typeof window.blackPearlBriefingReason === 'function') ? window.blackPearlBriefingReason() : 'Not ready yet.'; }
     }
   };
+  window.CH_SIDE = CH_SIDE;
   window.CRIMSON_HORIZON_SIDE_IDS = Object.keys(CH_SIDE).map(Number);
   // Chapters that open the next one automatically: the Prologue-003 run at
   // sea, then landfall (004); and the voyage home (079) into Fair Tide (080).
@@ -2981,10 +2983,11 @@
       html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + gateArc + ' opens at Level ' + gate + '</div><div class="story-chapter-sub">Level ' + level() + ' / ' + gate + '. Earn XP from the Reach, raids, bounties and trading.</div></div>';
     }
     if (typeof so === 'string' && so.indexOf('crimson_horizon_renown_gate_') === 0) {
-      const gateArc = Number(so.split('_').pop()), need = window.renownNeededForArc(gateArc);
-      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 Arc ' + gateArc + ' opens at ' + need + ' Renown</div><div class="story-chapter-sub">Renown ' + window.sequelRenown() + ' / ' + need + '. Earn it from Dailies, the Tide Titan, optional bosses, sea monsters, Hall events and chests, and quests and bounties.<br><button class="btn btn-small btn-magic" style="margin-top:6px;" onclick="goScreen(\'fairtide\'); switchFairTideTab(\'dailies\')">📅 Open Dailies</button></div></div>';
+      const gateArc = Number(so.split('_').pop()), gi = (typeof window.renownGateInfo === 'function') ? window.renownGateInfo() : null, need = gi ? gi.need : window.renownNeededForArc(gateArc);
+      html += '<div class="story-chapter locked"><div class="story-chapter-title">🔒 The next chapter of Arc ' + gateArc + ' needs ' + need + ' Renown</div><div class="story-chapter-sub">Renown ' + window.sequelRenown() + ' / ' + need + '. Earn it from Dailies, the Tide Titan, optional bosses, sea monsters, Hall events and chests, and quests and bounties.<br><button class="btn btn-small btn-magic" style="margin-top:6px;" onclick="goScreen(\'fairtide\'); switchFairTideTab(\'dailies\')">📅 Open Dailies</button></div></div>';
     }
     if (typeof so === 'string' && so.indexOf('crimson_horizon_task_') === 0 && typeof window.storyTaskNoticeHtml === 'function') html += window.storyTaskNoticeHtml();
+    if (so === 'crimson_horizon_pacing_hold' && typeof window.pacingNoticeHtml === 'function') html += window.pacingNoticeHtml();
     CRIMSON_HORIZON_CHAPTERS.forEach(function(ch){
       const done = !!prog()[ch.id];
       const side = CH_SIDE[ch.id];

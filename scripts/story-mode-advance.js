@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V664 · Arc XII Ch.1 clip, new Arc VI Ch.3 clips';
+window.__CT_BUILD__='V665 · Sequel pacing: 3 chapters a day, Renown spread across each arc';
