@@ -23,6 +23,30 @@
       '<button class="btn btn-small btn-magic" style="margin-top:6px;" onclick="goScreen(\'navigate\')">⛵ Set Sail</button></div></div>';
   };
 
+  // ---- level gate, re-based on where you are ----
+  // The sequel's own level gates (467 and up) sit far below a save that came through the main story (Level 600+), so they never bite. From the
+  // first time this runs, each arc after the one you are on also needs LEVELS_PER_ARC more levels than the one before, counted from your level then
+  // (the higher of that and the old gate applies). Story XP alone pays only about 3 levels an arc at these levels, so there is some play between arcs.
+  // Like the old gates it hits only at the START of an arc. State: game.chLevelBase = { level, arc }. Tune: LEVELS_PER_ARC.
+  const LEVELS_PER_ARC = 6;
+  function levelBase(){
+    if (game.chLevelBase) return game.chLevelBase;
+    const prog = game.comicProgressCrimsonHorizon || {};
+    const cur = (window.CRIMSON_HORIZON_CHAPTERS || []).find(function(c){ return !(window.CH_SIDE && window.CH_SIDE[c.id]) && !prog[c.id]; });
+    if (!cur || typeof level !== 'function') return null;
+    game.chLevelBase = { level: level(), arc: cur.arc };
+    return game.chLevelBase;
+  }
+  const oldArcLevel = window.crimsonHorizonArcLevel;
+  if (typeof oldArcLevel === 'function') {
+    window.crimsonHorizonArcLevel = function(arc){
+      const g = oldArcLevel.apply(this, arguments);
+      if (!sequel()) return g;
+      const b = levelBase();
+      return (b && arc > b.arc) ? Math.max(g, b.level + LEVELS_PER_ARC * (arc - b.arc)) : g;
+    };
+  }
+
   // count a story chapter the moment it is read
   const oldRead = window.markCrimsonHorizonChapterRead;
   if (typeof oldRead === 'function') {

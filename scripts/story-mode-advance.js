@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V665 · Sequel pacing: 3 chapters a day, Renown spread across each arc';
+window.__CT_BUILD__='V666 · Sequel level gate re-based on your level';
