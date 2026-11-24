@@ -2598,11 +2598,13 @@ function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&
 function logEvent(text, type) { game.log.push({day: game.day, text, type}); if (game.log.length > 200) game.log.shift(); }
 function toast(msg, duration=2800) {
   let t = document.getElementById('toast');
-  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);border:1px solid var(--sand);color:var(--parchment);padding:11px 18px;border-radius:10px;z-index:1300;font-family:Cinzel;transition:opacity 0.3s;max-width:92vw;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.35);'; document.body.appendChild(t); }
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);border:1px solid var(--sand);color:var(--parchment);padding:11px 18px;border-radius:10px;z-index:1300;font-family:Cinzel;transition:opacity 0.3s;max-width:92vw;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.35);pointer-events:none;'; document.body.appendChild(t); }
   // Shorter than the callers ask for (they were written for a slower read): 70% of the time, never under 1.6s.
   duration = Math.max(1600, Math.round(duration * 0.7));
   t.textContent = msg; t.style.opacity = '1'; clearTimeout(window.__toast); window.__toast = setTimeout(() => t.style.opacity = '0', duration);
-  t.onclick = function(){ t.style.opacity = '0'; };   // tap to dismiss
+  // A toast never takes a tap. It floats above every popup (z-index 1300) at the bottom centre, where a long popup's Continue button sits; even
+  // when faded out (opacity 0) it still sat there and swallowed the tap, so Continue looked dead while the corner X (top of the popup) worked.
+  t.style.pointerEvents = 'none';
 }
 function goalToast(completed, next, duration=5200) {
   toast(`🎯 Objective completed: ${completed}\n➡️ New Objective: ${next}`, duration);
