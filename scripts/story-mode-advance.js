@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V656 · Tide Titan cannot fell the crew; readable dropdowns';
+window.__CT_BUILD__='V657 · Tide Titan fights to the round limit';
