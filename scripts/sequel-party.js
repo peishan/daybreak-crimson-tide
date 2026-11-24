@@ -18,7 +18,7 @@
   // -------------------------------------------------------------------
   const CANON = ['jade', 'devon', 'sky', 'levi', 'sally'];
   const REQUIRED = CANON.concat(['aisyah', 'mezstorm']);
-  const HOME_NAMED = ['senedra', 'eliz', 'zaki', 'mimi', 'renn', 'erynn'];
+  const HOME_NAMED = ['senedra', 'eliz', 'zaki', 'mimi', 'renn', 'erynn', 'ate_joy'];
   function prologueRead(){ return !!(game.arc42Complete && game.comicProgressCrimsonHorizon && game.comicProgressCrimsonHorizon[1]); }
   function inParty(id){ return (typeof getActiveParty !== 'function') || getActiveParty().some(function(m){ return m.id === id; }); }
   function joined(id){ return !!(game.foundCompanions && game.foundCompanions[id]) && inParty(id); }
@@ -95,6 +95,19 @@
     if (typeof window.notify === 'function') window.notify({ icon: '🔬', title: 'Back to the research team', text: msg, kind: 'info', duration: 6000 });
     else if (typeof toast === 'function') toast('🔬 ' + msg, 4200);
   }
+  // One-time repair (V662): Ate Joy stays in the party through the main game and goes back to Fair Tide with the old crew in the sequel.
+  // A save already in the sequel gets her sent home once; she is kept out of open slots, and can still be fielded by hand afterwards.
+  function repairJoyOnce(){
+    if (!game.sequelCrewApplied || game.sequelJoyHomed) return;
+    game.sequelJoyHomed = true;
+    game.fieldingDecided = game.fieldingDecided || ['san'];
+    if (game.fieldingDecided.indexOf('ate_joy') === -1) game.fieldingDecided.push('ate_joy');
+    if ((game.fieldedIds || []).indexOf('ate_joy') === -1) return;
+    game.fieldedIds = game.fieldedIds.filter(function(id){ return id !== 'ate_joy'; });
+    const msg = 'Ate Joy goes back to Fair Tide with the settlement.';
+    if (typeof window.notify === 'function') window.notify({ icon: '🌸', title: 'Ate Joy stays home', text: msg, kind: 'info', duration: 6000 });
+    else if (typeof toast === 'function') toast('🌸 ' + msg, 4200);
+  }
   const oldRenderParty = window.renderPartyScreen;
   if (typeof oldRenderParty === 'function') {
     window.renderPartyScreen = function(){
@@ -129,7 +142,7 @@
   const oldGetFielded = window.getFieldedIds;
   if (typeof oldGetFielded === 'function') {
     window.getFieldedIds = function(){
-      try { apply(); repairOnce(); repairTrioOnce(); } catch(e) {}
+      try { apply(); repairOnce(); repairTrioOnce(); repairJoyOnce(); } catch(e) {}
       return oldGetFielded.apply(this, arguments);
     };
   }
