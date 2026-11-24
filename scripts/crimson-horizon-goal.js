@@ -27,10 +27,14 @@
       title = 'Crimson Horizon — Reach Level ' + gate;
       text = 'Level ' + level() + ' / ' + gate + '. Arc ' + arc + ' opens at Level ' + gate + ': earn XP from the Reach, raids, bounties and trading.';
     } else if (typeof so === 'string' && so.indexOf('crimson_horizon_renown_gate_') === 0) {
-      const arc = Number(so.split('_').pop()), need = window.renownNeededForArc(arc);
+      const arc = Number(so.split('_').pop()), gi = (typeof window.renownGateInfo === 'function') ? window.renownGateInfo() : null, need = gi ? gi.need : window.renownNeededForArc(arc);
       title = 'Crimson Horizon — Earn Renown for Arc ' + arc;
-      text = 'Renown ' + window.sequelRenown() + ' / ' + need + '. Arc ' + arc + ' opens at ' + need + ' Renown: finish Dailies, challenge the Tide Titan, clear optional bosses and sea monsters, hold Hall events, and do quests and bounties.';
+      text = 'Renown ' + window.sequelRenown() + ' / ' + need + '. The next chapter of Arc ' + arc + ' needs ' + need + ' Renown: finish Dailies, challenge the Tide Titan, clear optional bosses and sea monsters, hold Hall events, and do quests and bounties.';
       button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'fairtide\'); switchFairTideTab(\'dailies\')">📅 Open Dailies</button>';
+    } else if (so === 'crimson_horizon_pacing_hold') {
+      title = 'Crimson Horizon — A New Day';
+      text = (typeof window.pacingLine === 'function' ? window.pacingLine() : 'That is enough story for today.') + ' A new game day begins when you set sail.';
+      button = '<button class="btn btn-small btn-magic" onclick="goScreen(\'navigate\')">⛵ Set Sail</button>';
     } else if (so === 'crimson_horizon_part1_complete_for_now') {
       title = 'Crimson Horizon — All Caught Up';
       text = 'Every available chapter is read. More is on the way.';

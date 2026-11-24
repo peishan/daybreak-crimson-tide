@@ -22,6 +22,23 @@
   function st(){ const r = game.renown = game.renown || {}; if (r.earned == null) r.earned = 0; r.by = r.by || {}; return r; }
   window.sequelRenown = function(){ return sequel() ? st().earned : 0; };
   window.renownNeededForArc = function(arc){ return arc < FIRST_ARC ? 0 : RENOWN_PER_ARC * (arc - FIRST_ARC + 1); };
+  // Renown is spread across the arc: chapter j of an N-chapter arc needs the earlier arcs' full amount plus (j+1)/N of this arc's share, so a
+  // player keeps earning Renown while reading instead of clearing one gate at the start and then reading straight through.
+  function arcChapters(arc){ return (window.CRIMSON_HORIZON_CHAPTERS || []).filter(function(c){ return c.arc === arc && !(window.CH_SIDE && window.CH_SIDE[c.id]); }); }
+  window.renownNeededForChapter = function(ch){
+    if (!ch || ch.arc < FIRST_ARC) return 0;
+    const list = arcChapters(ch.arc), j = Math.max(0, list.findIndex(function(c){ return c.id === ch.id; })), n = Math.max(1, list.length);
+    return RENOWN_PER_ARC * (ch.arc - FIRST_ARC) + Math.ceil(RENOWN_PER_ARC * (j + 1) / n);
+  };
+  window.renownShortForChapter = function(ch){ return sequel() && !!ch && ch.arc >= FIRST_ARC && window.sequelRenown() < window.renownNeededForChapter(ch); };
+  // the chapter waiting on Renown right now: { chapter, arc, need } or null
+  window.renownGateInfo = function(){
+    try {
+      const prog = game.comicProgressCrimsonHorizon || {};
+      const ch = (window.CRIMSON_HORIZON_CHAPTERS || []).find(function(c){ return !(window.CH_SIDE && window.CH_SIDE[c.id]) && !prog[c.id]; });
+      return ch ? { chapter: ch, arc: ch.arc, need: window.renownNeededForChapter(ch) } : null;
+    } catch (e) { return null; }
+  };
   window.renownShort = function(arc){ return sequel() && arc >= FIRST_ARC && window.sequelRenown() < window.renownNeededForArc(arc); };
   window.renownBreakdown = function(){ const r = st(); return Object.keys(r.by).map(function(k){ return { key: k, label: LABELS[k] || k, n: r.by[k] }; }).sort(function(a, b){ return b.n - a.n; }); };
 
@@ -68,7 +85,7 @@
   // a one-line status for tabs and the banner
   window.renownLine = function(){
     const arc = waitingArc(), have = window.sequelRenown();
-    if (arc) return 'Renown ' + have + ' / ' + window.renownNeededForArc(arc) + ' for Arc ' + arc + '.';
+    if (arc) { const g = window.renownGateInfo(); return 'Renown ' + have + ' / ' + (g ? g.need : window.renownNeededForArc(arc)) + ' for the next chapter of Arc ' + arc + '.'; }
     return 'Renown ' + have + '.';
   };
 })();
