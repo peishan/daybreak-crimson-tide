@@ -218,6 +218,15 @@
     ,{ id:'arc42ch15', icon:'♨️', title:'A Rather Nice Spring', where:'When Arc XLII Chapter 15 is read',
       clips:['cin62-arc42-ch15-a-rather-nice-spring.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[15]); } }
+    ,{ id:'arc20ch09', icon:'⚔️', title:'Ate Joy: Wooden Swords', where:'When Arc XX Chapter 9 is read',
+      clips:['cin70-arc20-ch09-ate-joy.mp4'],
+      passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[9]); } }
+    ,{ id:'arc20ch17a', icon:'😅', title:'The Brother Thing: The Market', where:'When Arc XX Chapter 17 is read',
+      clips:['cin71-arc20-ch17-the-brother-thing-1.mp4'],
+      passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[17]); } }
+    ,{ id:'arc20ch17b', icon:'😅', title:'The Brother Thing: Joel Panics', where:'When Arc XX Chapter 17 is read',
+      clips:['cin72-arc20-ch17-the-brother-thing-2.mp4'],
+      passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[17]); } }
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
@@ -253,7 +262,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -561,6 +570,8 @@
   (function(){
     let opening = false;
     const STEPS = {
+      'markArc20ChapterRead:9': [['clip','arc20ch09'], ['splash','arc20ch09a'], ['splash','arc20ch09b']],
+      'markArc20ChapterRead:17': [['clip','arc20ch17a'], ['clip','arc20ch17b'], ['splash','arc20ch17']],
       'markArc6ChapterRead:8': [['clip','arc6joel1'], ['clip','arc6joel2'], ['splash','arc6joel2'], ['clip','arc6joel3'], ['clip','arc6joel4'], ['splash','arc6joel4']],
       'markArc6ChapterRead:3': [['clip','arc6didnt1'], ['clip','arc6didnt2'], ['clip','arc6didnt3']],
       'markArc36ChapterRead:10': [['clip','arc36ch10']],
