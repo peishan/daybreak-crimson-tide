@@ -47,7 +47,10 @@
     { id:'arc41ch05a', img:'arc41-ch05-just-visiting-1.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting', where:'After the first Arc XLI Chapter 5 clip' },
     { id:'arc41ch05b', img:'arc41-ch05-just-visiting-2.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting: Supper', where:'After the second Arc XLI Chapter 5 clip' },
     { id:'arc6joel2', img:'arc6-ch08-joels-rest-1.webp', kicker:'Arc VI · Chapter 8', title:'Joel\'s Rest', where:'After the second Arc VI Chapter 8 clip' },
-    { id:'arc6joel4', img:'arc6-ch08-joels-rest-2.webp', kicker:'Arc VI · Chapter 8', title:'Joel\'s Rest: Beside Him', where:'After the last Arc VI Chapter 8 clip' }
+    { id:'arc6joel4', img:'arc6-ch08-joels-rest-2.webp', kicker:'Arc VI · Chapter 8', title:'Joel\'s Rest: Beside Him', where:'After the last Arc VI Chapter 8 clip' },
+    { id:'arc20ch09a', img:'arc20-ch09-wooden-swords.webp', kicker:'Arc XX · Chapter 9', title:'Ate Joy: Wooden Swords', where:'After the Arc XX Chapter 9 clip' },
+    { id:'arc20ch09b', img:'arc20-ch09-ate-joy.webp', kicker:'Arc XX · Chapter 9', title:'Ate Joy joins the crew', where:'When Arc XX Chapter 9 is read, as Joy is recruited' },
+    { id:'arc20ch17', img:'arc20-ch17-the-brother-thing.webp', kicker:'Arc XX · Chapter 17', title:'The Brother Thing', where:'After the Arc XX Chapter 17 clips' }
   ];
   const BY_ID = {}; SPLASH.forEach(function(s){ BY_ID[s.id] = s; });
   const SHOW_MS = 4300;
