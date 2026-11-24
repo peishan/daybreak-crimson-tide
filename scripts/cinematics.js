@@ -144,7 +144,7 @@
       clips:['cin64-arc6-ch03-didnt-have-rice-2.mp4'],
       passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
     ,{ id:'arc6didnt3', icon:'🌾', title:'Didn\'t Have Rice?: The Crowd\'s Answer', where:'When Arc VI Chapter 3 is read',
-      clips:['cin65-arc6-ch03-didnt-have-rice-3.mp4'],
+      clips:['cin73-arc6-ch03-didnt-have-rice-3b.mp4'],
       passed:function(){ return !!(game.comicProgress6 && game.comicProgress6[3]); } }
     ,{ id:'arc6joel1', icon:'🕯️', title:'Joel\'s Rest: The Cabin', where:'When Arc VI Chapter 8 is read',
       clips:['cin66-arc6-ch08-joels-rest-1.mp4'],
@@ -230,6 +230,21 @@
     ,{ id:'arc20ch20', icon:'💞', title:'Forever and Ever', where:'When Arc XX Chapter 20 is opened',
       clips:['cin27-arc20-forever-and-ever.mp4'],
       passed:function(){ return !!(game.comicProgress20 && game.comicProgress20[20]); } }
+    ,{ id:'arc12ch04', icon:'🌀', title:'The Door Opens', where:'When Arc XII Chapter 4 is read',
+      clips:['cin74-arc12-ch04-the-door-opens.mp4'],
+      passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[4]); } }
+    ,{ id:'arc12ch05', icon:'👣', title:'One Step', where:'When Arc XII Chapter 5 is read',
+      clips:['cin75-arc12-ch05-one-step.mp4'],
+      passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[5]); } }
+    ,{ id:'arc12ch06', icon:'🧭', title:'A Different Sea', where:'When Arc XII Chapter 6 is read',
+      clips:['cin76-arc12-ch06-a-different-sea.mp4'],
+      passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[6]); } }
+    ,{ id:'arc12ch07', icon:'🏘️', title:'The Empty Settlement', where:'When Arc XII Chapter 7 is read',
+      clips:['cin77-arc12-ch07-the-empty-settlement.mp4'],
+      passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[7]); } }
+    ,{ id:'arc12ch08', icon:'🧸', title:'Someone Lived Here', where:'When Arc XII Chapter 8 is read',
+      clips:['cin78-arc12-ch08-someone-lived-here.mp4'],
+      passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[8]); } }
     ,{ id:'arc12harbour', icon:'🌉', title:'The First Crossing Harbour', where:'When Arc XII Chapter 7 is opened, or the first time you open the expedition screen',
       clips:['cin39-arc12-first-crossing-harbour.mp4'],
       passed:function(){ return !!(game.comicProgress12 && game.comicProgress12[7]); } }
@@ -262,7 +277,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -570,6 +585,11 @@
   (function(){
     let opening = false;
     const STEPS = {
+      'markArc12ChapterRead:4': [['clip','arc12ch04']],
+      'markArc12ChapterRead:5': [['clip','arc12ch05']],
+      'markArc12ChapterRead:6': [['clip','arc12ch06']],
+      'markArc12ChapterRead:7': [['clip','arc12ch07']],
+      'markArc12ChapterRead:8': [['clip','arc12ch08']],
       'markArc20ChapterRead:9': [['clip','arc20ch09'], ['splash','arc20ch09a'], ['splash','arc20ch09b']],
       'markArc20ChapterRead:17': [['clip','arc20ch17a'], ['clip','arc20ch17b'], ['splash','arc20ch17']],
       'markArc6ChapterRead:8': [['clip','arc6joel1'], ['clip','arc6joel2'], ['splash','arc6joel2'], ['clip','arc6joel3'], ['clip','arc6joel4'], ['splash','arc6joel4']],
