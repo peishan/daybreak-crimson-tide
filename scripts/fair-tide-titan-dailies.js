@@ -89,11 +89,11 @@
     if (t.hp <= 0) { toast('The Titan has fallen. Another is rising.'); return; }
     if (attemptsLeft(t) <= 0) { toast('No attempts left today. They reset at midnight.'); return; }
     const info = nameFor(t.tier);
-    const dmg = Math.max(20, Math.round(0.32 * avgMaxHp() * (1 + 0.1 * (t.tier - 1))));
+    const dmg = Math.max(20, Math.round(0.16 * avgMaxHp() * (1 + 0.08 * (t.tier - 1))));
     t.used += 1; t.attemptStart = t.hp; t.attemptDmg = dmg;
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
     startCombat({ kind: 'tide_titan', key: 'tide_titan', enemy: { name: info.name, icon: info.icon, hp: t.hp, dmg: dmg, xp: 0, gold: 0,
-      desc: 'A shared health bar the whole of Fair Tide is working down. You have ' + LIMIT + ' rounds. Every point of damage counts, and it hits harder each round.' } });
+      desc: 'A shared health bar the whole of Fair Tide is working down. You have ' + LIMIT + ' rounds. Every point of damage counts, and it hits harder each round, but it cannot put your crew down: at worst they are left on their feet at 1 health, and everyone is restored when the attempt ends.' } });
     if (typeof logCombat === 'function') logCombat('⏳ <b>' + LIMIT + ' rounds.</b> The surge builds every round.');
   }
   function afterAttemptMessage(hp, max, dealt, how){
@@ -108,6 +108,12 @@
       if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
       try { if (typeof stopAutoBattle === 'function') stopAutoBattle(); } catch (er) {}
     }
+    // the attempt costs the crew nothing: everyone is restored when it ends
+    try {
+      (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).forEach(function(m){
+        game.partyHp[m.id] = effectiveMaxHp(m); game.partyMp[m.id] = effectiveMaxMp(m);
+      });
+    } catch (er) {}
     const left = how === 'down' ? 0 : Math.max(0, game.combatEnemyHp);
     const dealt = Math.max(0, (t.attemptStart || t.hp) - left);
     t.hp = left;
@@ -170,8 +176,12 @@
   };
   const oldCounter = window.enemyCounterAttack;
   if (typeof oldCounter === 'function') window.enemyCounterAttack = function(){
-    try { const e = game.combatEnemy; if (e && e.kind === 'tide_titan') { e.baseDmg = e.baseDmg || e.dmg; e.dmg = Math.round(e.baseDmg * (1 + 0.05 * Math.min(8, Math.max(0, (game.combatRound || 1) - 1)))); } } catch (er) {}
-    return oldCounter.apply(this, arguments);
+    let isT = false;
+    try { const e = game.combatEnemy; if (e && e.kind === 'tide_titan') { isT = true; e.baseDmg = e.baseDmg || e.dmg; e.dmg = Math.round(e.baseDmg * (1 + 0.05 * Math.min(8, Math.max(0, (game.combatRound || 1) - 1)))); } } catch (er) {}
+    const res = oldCounter.apply(this, arguments);
+    // A boss attempt never knocks the crew out: anyone the blow would have felled is left at 1 health.
+    if (isT) { try { (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).forEach(function(m){ if ((game.partyHp[m.id] != null ? game.partyHp[m.id] : 1) < 1) game.partyHp[m.id] = 1; }); } catch (er) {} }
+    return res;
   };
   const oldRenderCombat = window.renderCombat;
   if (typeof oldRenderCombat === 'function') window.renderCombat = function(){
