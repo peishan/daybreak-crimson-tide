@@ -2967,10 +2967,11 @@
     const checked = !!game.crimsonHorizonChecked[id];
     const objective = fight ? fight.objective : (check ? check.objective : (CH_NOTES[id] || 'Take in what the crew learns here, then continue the voyage.'));
     let html = '<div style="font-size:.78rem;opacity:.75;margin-bottom:8px;">' + esc(chapterPlace(id)) + '</div>' +
-      '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>' + esc(ch.focus) + '</div>' +
+      // once the objective is done its result tells the same story as the Purpose line, so the Purpose is shown only until then
+      ((check && checked) ? '' : '<div style="margin-bottom:8px;"><strong>Purpose</strong><br>' + esc(ch.focus) + '</div>') +
       '<div><strong>Objective</strong><br>' + esc(objective) + '</div>';
     if (fight && fightWon) html += '<div style="margin-top:10px;color:var(--success);">✓ Victory. The way is clear.</div>';
-    if (check && checked) html += '<div style="margin-top:10px;">' + esc(resultHtml || checkResult(id, check)) + '</div>';
+    if (check && checked) html += '<div style="margin-top:10px;"><strong>Result</strong><br>' + esc(resultHtml || checkResult(id, check)) + '</div>';
     if (check && check.choices && !checked) html += '<div style="margin-top:10px;font-size:.84rem;opacity:.85;">Choose how to do it. Each choice has its own result.</div>';
     const buttons = [];
     let canContinue = true;
