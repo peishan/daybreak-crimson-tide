@@ -2943,10 +2943,13 @@
   window.__ctShowCrimsonHorizonSplash = function(){
     const overlay = document.getElementById('crimsonHorizonSplashOverlay');
     if (overlay) overlay.style.display = 'flex';
+    // the cover plays as a short animation (muted: the title theme plays); the still cover is its poster if the video cannot start
+    try { const v = document.getElementById('crimsonHorizonSplashVideo'); if (v) { v.currentTime = 0; const pr = v.play(); if (pr && pr.catch) pr.catch(function(){}); } } catch (e) {}
   };
   window.__ctCloseCrimsonHorizonSplash = function(){
     const overlay = document.getElementById('crimsonHorizonSplashOverlay');
     if (overlay) overlay.style.display = 'none';
+    try { const v = document.getElementById('crimsonHorizonSplashVideo'); if (v) v.pause(); } catch (e) {}
     game.crimsonHorizonSplashSeen = true;
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   };
