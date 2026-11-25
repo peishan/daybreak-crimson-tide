@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V676 · Arc XLII Ch.35, 39, 43 clips';
+window.__CT_BUILD__='V677 · Crimson Horizon Arc XXVII: Days We Choose';
