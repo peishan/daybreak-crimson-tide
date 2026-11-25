@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V680 · Crimson Horizon Arc XXIX and Custodians’ Accord';
+window.__CT_BUILD__='V681 · Objective popup no longer repeats the Purpose after the result';
