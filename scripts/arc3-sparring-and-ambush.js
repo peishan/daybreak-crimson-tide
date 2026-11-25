@@ -80,6 +80,36 @@
       return oldMark.apply(this, arguments);
     };
   }
+  // The raiders do not fight to the end: the scene has them retreat, so this is not a battle to the death. They break and run once they are down to 35%
+  // of their strength, which ends the fight as a win. And, like a sparring bout, losing it costs nothing (no gold, no hull damage): the crew just regroups.
+  const FLEE_AT = 0.35;
+  function isAmbush(){ const e = game.combatEnemy; return !!(e && e.kind === 'arc_story' && e.key === 'arc3_5' && game.inCombat && !game.combatResolved); }
+  const oldRenderCombat = window.renderCombat;
+  if (typeof oldRenderCombat === 'function') {
+    window.renderCombat = function(){
+      try {
+        if (isAmbush() && game.combatEnemyHp > 0 && game.combatEnemyHp <= Math.round(game.combatEnemy.hp * FLEE_AT)) {
+          game.combatEnemyHp = 0;
+          if (typeof logCombat === 'function') logCombat('🏃 <b>The raiders break and run,</b> leaving broken crates behind.');
+        }
+      } catch(e) {}
+      return oldRenderCombat.apply(this, arguments);
+    };
+  }
+  const oldDefeat = window.handleDefeat;
+  if (typeof oldDefeat === 'function') {
+    window.handleDefeat = function(){
+      if (!isAmbush()) return oldDefeat.apply(this, arguments);
+      game.combatResolved = true;
+      game.inCombat = false;
+      game.combatPartyOverride = null;
+      if (game.combatActionTimer) { clearTimeout(game.combatActionTimer); game.combatActionTimer = null; }
+      if (typeof logCombat === 'function') logCombat('🛡️ <b>The raiders push the crew back.</b> Nothing is lost: regroup and try again.');
+      game.pendingPostBattle = { message: 'The raiders push you back. Nothing is lost.', buttonsHtml: '<button class="btn btn-success" onclick="exitBattleToPort(); setTimeout(function(){ goScreen(\'story\'); }, 400);">📖 Back to the Story</button>' };
+      if (typeof renderPendingPostBattle === 'function') renderPendingPostBattle();
+      if (typeof renderCombat === 'function') renderCombat();
+    };
+  }
   const oldVictory = window.handleVictory;
   if (typeof oldVictory === 'function') {
     window.handleVictory = function(){
@@ -88,6 +118,12 @@
       try {
         if (enemy && enemy.kind === 'arc_story' && enemy.key === 'arc3_5' && !game.arc3AmbushWon) {
           game.arc3AmbushWon = true;
+          // they ran: nothing to take from them
+          game.inventory = (game.inventory || []).filter(function(it){ return !(it && it.desc === 'Taken from ' + enemy.name); });
+          game.combatLog = (game.combatLog || []).map(function(l){ return /VICTORY/.test(l) ? l.replace(/, and [^!]*Trophy!/, '.') : l; });
+          if (typeof renderCombat === 'function') renderCombat();
+          game.pendingPostBattle = { message: 'The raiders break and run. The docks are safe.', buttonsHtml: (game.pendingPostBattle && game.pendingPostBattle.buttonsHtml) || '' };
+          if (typeof renderPendingPostBattle === 'function') renderPendingPostBattle();
           if (typeof saveGameQuiet === 'function') saveGameQuiet();
           setTimeout(function(){ window.markArc3ChapterRead(5); }, 1300);   // the chapter's scene and clip follow the win
         }
