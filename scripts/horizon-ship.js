@@ -58,6 +58,7 @@
         if (typeof window.notify === 'function') window.notify({ icon: '🧭', title: 'The Lodestar is yours', text: 'Her compass points at another world. The Bridge to Arc XLII is open.', kind: 'info', duration: 6500 });
         if (typeof logEvent === 'function') logEvent('🧭 ' + msg, 'gold');
         if (typeof renderMainGoal === 'function') renderMainGoal();
+        if (typeof window.playMilestoneSplashOnce === 'function') setTimeout(function(){ try { window.playMilestoneSplashOnce('lodestar'); } catch(e) {} }, 700);
       }
     } catch(e) {}
     return r;

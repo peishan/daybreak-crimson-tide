@@ -188,6 +188,15 @@
     ,{ id:'arc38ch21', icon:'🌅', title:'A Different Kind of Home', where:'When Arc XXXVIII Chapter 21 is read',
       clips:['cin52-arc38-ch21-a-different-kind-of-home.mp4'],
       passed:function(){ return !!(game.comicProgress38 && game.comicProgress38[21]); } }
+    ,{ id:'arc32ch24', icon:'🌊', title:'The Long Tide', where:'When Arc XXXII Chapter 24 is read',
+      clips:['cin87-arc32-ch24-the-long-tide.mp4'],
+      passed:function(){ return !!(game.comicProgress32 && game.comicProgress32[24]); } }
+    ,{ id:'arc38ch21b', icon:'🛋️', title:'A Different Kind of Home: Together', where:'When Arc XXXVIII Chapter 21 is read (the second clip)',
+      clips:['cin88-arc38-ch21-a-different-kind-of-home-2.mp4'],
+      passed:function(){ return !!(game.comicProgress38 && game.comicProgress38[21]); } }
+    ,{ id:'arc41int13', icon:'💋', title:'Just One?', where:'When Arc XLI Interlude Chapter 13 is read',
+      clips:['cin89-arc41-interlude-13-just-one.mp4'],
+      passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[13]); } }
     ,{ id:'arc40ch13', icon:'💗', title:'Thought Resonance', where:'When Arc XL Chapter 13 is read (the unlock splash follows it)',
       clips:['cin53-arc40-ch13-thought-resonance.mp4'],
       passed:function(){ return !!(game.comicProgress40 && game.comicProgress40[13]); } }
@@ -290,12 +299,15 @@
     ,{ id:'sparks', icon:'✨', title:'The Twins\' First Sparks', where:'When Arc XXXV is complete',
       clips:['cin23-twins-first-sparks.mp4'],
       passed:function(){ return !!game.arc35Complete; } }
+    ,{ id:'arc42ch16', icon:'🍷', title:'Familiar Faces, New Friends', where:'When Arc XLII Chapter 16 is read',
+      clips:['cin90-arc42-ch16-familiar-faces.mp4'],
+      passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[16]); } }
     ,{ id:'joycaelan', icon:'💞', title:'Joy & Caelan — A Little More Willing', where:'When Arc XXV is complete',
       clips:['cin24-joy-caelan-milestone.mp4'],
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc42ch01','arc42ch02','arc42ch14','arc42ch15','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41int13','arc42ch01','arc42ch02','arc42ch14','arc42ch15','arc42ch16','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -574,7 +586,6 @@
     let opening = false;
     const HOOKS = [
       { fn:'markArc34ChapterRead', arc:34, ch:24, clip:'arc34ch24' },
-      { fn:'markArc38ChapterRead', arc:38, ch:21, clip:'arc38ch21' },
       { fn:'markArc40ChapterRead', arc:40, ch:13, clip:'arc40ch13', splash:'thought_resonance' },
       { fn:'markArc42ChapterRead', arc:42, ch:1, clip:'arc42ch01' },
       { fn:'markArc42ChapterRead', arc:42, ch:2, clip:'arc42ch02' },
@@ -599,6 +610,22 @@
     });
   })();
 
+  // ---- Arc XLI Interlude Chapter 13 (Just One?): the clip plays when the chapter is read, then the chapter completes ----
+  (function(){
+    let opening = false;
+    const old = window.markArc41InterludeChapterRead;
+    if (typeof old !== 'function') return;
+    window.markArc41InterludeChapterRead = function(id){
+      if (opening) return;
+      const self = this, args = arguments, n = Number(id);
+      const stateFn = window.arc41InterludeObjectiveState;
+      const ready = n === 13 && typeof stateFn === 'function' && stateFn() === 'complete_interlude41_chapter_13' && !(game.comicProgress41Interlude && game.comicProgress41Interlude[13]);
+      if (!ready) return old.apply(self, args);
+      opening = true;
+      Promise.resolve(window.playCinematicOnce('arc41int13')).catch(function(){}).then(function(){ opening = false; old.apply(self, args); });
+    };
+  })();
+
   // ---- Arc XXXVI Ch.10, Arc XXXVII Ch.16, Arc XLI Ch.3 and Ch.5: the clip(s) play when the chapter is read, with the splashes between, then the chapter completes ----
   (function(){
     let opening = false;
@@ -614,6 +641,9 @@
       'markArc12ChapterRead:6': [['clip','arc12ch06']],
       'markArc12ChapterRead:7': [['clip','arc12ch07']],
       'markArc12ChapterRead:8': [['clip','arc12ch08']],
+      'markArc32ChapterRead:24': [['clip','arc32ch24']],
+      'markArc38ChapterRead:21': [['clip','arc38ch21'], ['clip','arc38ch21b']],
+      'markArc42ChapterRead:16': [['clip','arc42ch16']],
       'markArc20ChapterRead:9': [['clip','arc20ch09'], ['splash','arc20ch09a'], ['splash','arc20ch09b']],
       'markArc20ChapterRead:17': [['clip','arc20ch17a'], ['clip','arc20ch17b'], ['splash','arc20ch17']],
       'markArc6ChapterRead:8': [['clip','arc6joel1'], ['clip','arc6joel2'], ['splash','arc6joel2'], ['clip','arc6joel3'], ['clip','arc6joel4'], ['splash','arc6joel4']],
