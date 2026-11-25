@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V687 · Sequel portraits for San and Joel';
+window.__CT_BUILD__='V688 · Quarry, Mine and Nala\'s Tower';
