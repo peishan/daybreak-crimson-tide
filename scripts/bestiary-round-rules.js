@@ -25,7 +25,7 @@
         game.combatEnemyHp = Math.max(0, game.combatEnemyHp - extra);
         log('🎵 <b>On the beat!</b> Your blow lands for triple: +' + extra + ' damage.');
         if (game.combatEnemyHp <= 0 && !game.combatResolved && typeof handleVictory === 'function') { handleVictory(); return; }
-      } else if (game.combatEnemyHp > 0) {
+      } else if (game.combatEnemyHp > 0 && !(window.accordActive && window.accordActive())) {
         const party = (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).filter(function(m){ return (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp) > 0; });
         if (party.length) {
           const m = party[Math.floor(Math.random() * party.length)], echo = Math.max(1, Math.round(dealt * 0.2));
@@ -42,7 +42,7 @@
     const e = active();
     if (!e) return oldAction.apply(this, arguments);
     const r = round();
-    if (e.rule === 'jam' && r % 2 === 1 && (action === 'SKILL' || action === 'HIGHSKILL')) {
+    if (e.rule === 'jam' && r % 2 === 1 && !(window.accordActive && window.accordActive()) && (action === 'SKILL' || action === 'HIGHSKILL')) {
       if (typeof toast === 'function') toast('📡 Static: skills and spells are jammed this round. A basic attack instead.', 2600);
       action = 'ATTACK';
     }
@@ -56,7 +56,7 @@
     const e = active();
     if (!e) return oldCast.apply(this, arguments);
     const r = round();
-    if (e.rule === 'jam' && r % 2 === 1) {
+    if (e.rule === 'jam' && r % 2 === 1 && !(window.accordActive && window.accordActive())) {
       if (typeof toast === 'function') toast('📡 Static: spells are jammed this round. A basic attack instead.', 2600);
       return window.combatAction('ATTACK');
     }
@@ -70,7 +70,7 @@
   if (typeof oldCounter === 'function') window.enemyCounterAttack = function(){
     try {
       const e = active();
-      if (e && e.rule === 'oath' && (game.gold || 0) > 0) {
+      if (e && e.rule === 'oath' && (game.gold || 0) > 0 && !(window.accordActive && window.accordActive())) {
         const amt = Math.max(1, Math.round((game.gold || 0) * 0.01));
         game.gold -= amt; e.owed = (e.owed || 0) + amt;
         game.combatEnemy.owed = e.owed;
