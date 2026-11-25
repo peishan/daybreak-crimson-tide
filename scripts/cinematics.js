@@ -242,6 +242,48 @@
     ,{ id:'arc42ch08', icon:'🧭', title:'A Little Adventure', where:'After the Arc XLII Chapter 8 fight is won',
       clips:['cin96-arc42-ch08-a-little-adventure.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[8]); } }
+    ,{ id:'arc9ch01', icon:'🐈', title:'Soel: The Blessing Cat', where:'When Arc IX Chapter 1 is read',
+      clips:['cin103-arc9-ch01-the-blessing-cat.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[1]); } }
+    ,{ id:'arc9ch05', icon:'🐈', title:'Soel: The Tower Cat', where:'When Arc IX Chapter 5 is read',
+      clips:['cin104-arc9-ch05-the-tower-cat.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[5]); } }
+    ,{ id:'arc9ch09', icon:'🐈', title:'Soel: The First Blessing', where:'When Arc IX Chapter 9 is read',
+      clips:['cin105-arc9-ch09-the-first-blessing.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[9]); } }
+    ,{ id:'arc9ch14', icon:'🐈', title:'Soel: A Mother\'s Shadow', where:'When Arc IX Chapter 14 is read',
+      clips:['cin106-arc9-ch14-a-mothers-shadow.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[14]); } }
+    ,{ id:'arc9ch15', icon:'🐈', title:'Soel: The First Home', where:'When Arc IX Chapter 15 is read',
+      clips:['cin107-arc9-ch15-the-first-home.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[15]); } }
+    ,{ id:'arc9ch16', icon:'🐈', title:'Soel: The Spirit in the Rain', where:'When Arc IX Chapter 16 is read',
+      clips:['cin108-arc9-ch16-the-spirit-in-the-rain.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[16]); } }
+    ,{ id:'arc9ch17', icon:'🐈', title:'Soel: The Cat and the Door', where:'When Arc IX Chapter 17 is read',
+      clips:['cin109-arc9-ch17-the-cat-and-the-door.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[17]); } }
+    ,{ id:'arc9ch20', icon:'🐈', title:'Soel: The Place Beyond the Tide', where:'When Arc IX Chapter 20 is read',
+      clips:['cin110-arc9-ch20-the-place-beyond-the-tide.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[20]); } }
+    ,{ id:'arc9ch21a', icon:'🐈', title:'Soel: Stay (Farewell)', where:'When Arc IX Chapter 21 is read',
+      clips:['cin111-arc9-ch21-stay-farewell.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[21]); } }
+    ,{ id:'arc9ch21b', icon:'🐈', title:'Soel: Stay (Homecoming)', where:'When Arc IX Chapter 21 is read (the second clip)',
+      clips:['cin112-arc9-ch21-stay-homecoming.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[21]); } }
+    ,{ id:'arc9ch24', icon:'🐈', title:'Soel: The Name San Gave Him', where:'When Arc IX Chapter 24 is read',
+      clips:['cin113-arc9-ch24-the-name-san-gave-him.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[24]); } }
+    ,{ id:'arc9ch25', icon:'🐈', title:'Soel: The Cat Who Travels', where:'When Arc IX Chapter 25 is read',
+      clips:['cin114-arc9-ch25-the-cat-who-travels.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[25]); } }
+    ,{ id:'arc9ch26a', icon:'🐈', title:'Soel: Beside Us All Along', where:'When Arc IX Chapter 26 is read',
+      clips:['cin115-arc9-ch26-beside-us-all-along.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[26]); } }
+    ,{ id:'arc9ch26b', icon:'🐈', title:'Soel: Nala at the Watchtower', where:'When Arc IX Chapter 26 is read (the second clip)',
+      clips:['cin116-arc9-ch26-nala-at-the-watchtower.mp4'],
+      passed:function(){ return !!(game.comicProgress9 && game.comicProgress9[26]); } }
     ,{ id:'arc42ch33', icon:'🍵', title:'The Healer\'s Curiosity', where:'When Arc XLII Chapter 33 is read',
       clips:['cin99-arc42-ch33-the-healers-curiosity.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[33]); } }
@@ -343,7 +385,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -682,6 +724,18 @@
       'markArc3ChapterRead:11': [['clip','arc3ch11']],
       'markArc32ChapterRead:24': [['clip','arc32ch24']],
       'markArc38ChapterRead:21': [['clip','arc38ch21'], ['clip','arc38ch21b']],
+      'markArc9ChapterRead:1': [['clip','arc9ch01']],
+      'markArc9ChapterRead:5': [['clip','arc9ch05']],
+      'markArc9ChapterRead:9': [['clip','arc9ch09']],
+      'markArc9ChapterRead:14': [['clip','arc9ch14']],
+      'markArc9ChapterRead:15': [['clip','arc9ch15']],
+      'markArc9ChapterRead:16': [['clip','arc9ch16']],
+      'markArc9ChapterRead:17': [['clip','arc9ch17']],
+      'markArc9ChapterRead:20': [['clip','arc9ch20']],
+      'markArc9ChapterRead:21': [['clip','arc9ch21a'], ['clip','arc9ch21b']],
+      'markArc9ChapterRead:24': [['clip','arc9ch24']],
+      'markArc9ChapterRead:25': [['clip','arc9ch25']],
+      'markArc9ChapterRead:26': [['clip','arc9ch26a'], ['clip','arc9ch26b']],
       'markArc42ChapterRead:2': [['clip','arc42ch02'], ['clip','arc42ch02b']],
       'markArc42ChapterRead:8': [['clip','arc42ch08']],
       'markArc42ChapterRead:16': [['clip','arc42ch16']],
