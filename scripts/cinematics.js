@@ -107,6 +107,18 @@
     ,{ id:'mimi', icon:'🔮', title:'Mimi — The Diviner\'s Path', where:'When Arc IV Chapter 10 is marked read',
       clips:['cin19-mimi-intro.mp4'],
       passed:function(){ return !!(game.comicProgress4 && game.comicProgress4[10]); } }
+    ,{ id:'arc3ch02', icon:'💬', title:'What Are We?', where:'When Arc III Chapter 2 is read',
+      clips:['cin91-arc3-ch02-what-are-we.mp4'],
+      passed:function(){ return !!(game.comicProgress3 && game.comicProgress3[2]); } }
+    ,{ id:'arc3ch03', icon:'🌊', title:'Familiar', where:'When Arc III Chapter 3 is read',
+      clips:['cin92-arc3-ch03-familiar.mp4'],
+      passed:function(){ return !!(game.comicProgress3 && game.comicProgress3[3]); } }
+    ,{ id:'arc3ch05', icon:'⚔️', title:'Together in Battle', where:'When Arc III Chapter 5 is read',
+      clips:['cin93-arc3-ch05-together-in-battle.mp4'],
+      passed:function(){ return !!(game.comicProgress3 && game.comicProgress3[5]); } }
+    ,{ id:'arc3ch11', icon:'🌅', title:'You Said I Could', where:'When Arc III Chapter 11 is read',
+      clips:['cin94-arc3-ch11-you-said-i-could.mp4'],
+      passed:function(){ return !!(game.comicProgress3 && game.comicProgress3[11]); } }
     ,{ id:'arc5bond', icon:'🌀', title:'The Hidden Cove — The Bond Begins', where:'When Arc V Chapter 1 is opened',
       clips:['cin33-arc5-hidden-cove.mp4'],
       passed:function(){ return !!(game.comicProgress5 && game.comicProgress5[1]); } }
@@ -307,7 +319,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41int13','arc42ch01','arc42ch02','arc42ch14','arc42ch15','arc42ch16','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41int13','arc42ch01','arc42ch02','arc42ch14','arc42ch15','arc42ch16','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -641,6 +653,10 @@
       'markArc12ChapterRead:6': [['clip','arc12ch06']],
       'markArc12ChapterRead:7': [['clip','arc12ch07']],
       'markArc12ChapterRead:8': [['clip','arc12ch08']],
+      'markArc3ChapterRead:2': [['clip','arc3ch02']],
+      'markArc3ChapterRead:3': [['clip','arc3ch03']],
+      'markArc3ChapterRead:5': [['clip','arc3ch05']],
+      'markArc3ChapterRead:11': [['clip','arc3ch11']],
       'markArc32ChapterRead:24': [['clip','arc32ch24']],
       'markArc38ChapterRead:21': [['clip','arc38ch21'], ['clip','arc38ch21b']],
       'markArc42ChapterRead:16': [['clip','arc42ch16']],
