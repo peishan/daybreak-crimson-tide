@@ -46,6 +46,7 @@
     { id:'arc41ch03', img:'arc41-ch03-a-very-convenient-emergency.webp', kicker:'Arc XLI · Chapter 3', title:'A Very Convenient Emergency', where:'After the Arc XLI Chapter 3 clip' },
     { id:'arc41ch05a', img:'arc41-ch05-just-visiting-1.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting', where:'After the first Arc XLI Chapter 5 clip' },
     { id:'arc41ch05b', img:'arc41-ch05-just-visiting-2.webp', kicker:'Arc XLI · Chapter 5', title:'Just Visiting: Supper', where:'After the second Arc XLI Chapter 5 clip' },
+    { id:'arc41ch16', img:'arc41-ch16-the-ones-who-stay.webp', kicker:'Arc XLI · Chapter 16', title:'The Ones Who Stay', where:'When Arc XLI Chapter 16 is read: Sairen and the twins stay at Fair Tide' },
     { id:'lodestar', img:'lodestar-the-ship.webp', kicker:'Arc XLI · The Lodestar', title:'The Lodestar', where:'When you commission The Lodestar at the Shipyard' },
     { id:'arc6joel2', img:'arc6-ch08-joels-rest-1.webp', kicker:'Arc VI · Chapter 8', title:'Joel\'s Rest', where:'After the second Arc VI Chapter 8 clip' },
     { id:'arc6joel4', img:'arc6-ch08-joels-rest-2.webp', kicker:'Arc VI · Chapter 8', title:'Joel\'s Rest: Beside Him', where:'After the last Arc VI Chapter 8 clip' },
