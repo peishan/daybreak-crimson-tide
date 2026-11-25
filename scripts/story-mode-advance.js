@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V674 · Animated Crimson Horizon title, Arc XLI Ch.16 and Arc XLII Ch.33 clips';
+window.__CT_BUILD__='V675 · Save warning when progress cannot be saved or the save is near the limit';
