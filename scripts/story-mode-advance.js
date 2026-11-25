@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V672 · Arc XLI Ch.16 splash: Sairen and the twins';
+window.__CT_BUILD__='V673 · Arc XLII Ch.2 and Ch.8 clips';
