@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V673 · Arc XLII Ch.2 and Ch.8 clips';
+window.__CT_BUILD__='V674 · Animated Crimson Horizon title, Arc XLI Ch.16 and Arc XLII Ch.33 clips';

@@ -224,6 +224,9 @@
     ,{ id:'arc41ch05a', icon:'🚶', title:'Just Visiting', where:'When Arc XLI Chapter 5 is read',
       clips:['cin57-arc41-ch05-just-visiting-1.mp4'],
       passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[5]); } }
+    ,{ id:'arc41ch16', icon:'🐾', title:'The Ones Who Stay', where:'When Arc XLI Chapter 16 is read (the splash follows it)',
+      clips:['cin98-arc41-ch16-the-ones-who-stay.mp4'],
+      passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[16]); } }
     ,{ id:'arc41ch05b', icon:'🍲', title:'Just Visiting: Supper', where:'When Arc XLI Chapter 5 is read',
       clips:['cin58-arc41-ch05-just-visiting-2.mp4'],
       passed:function(){ return !!(game.comicProgress41 && game.comicProgress41[5]); } }
@@ -239,6 +242,9 @@
     ,{ id:'arc42ch08', icon:'🧭', title:'A Little Adventure', where:'When you set out on Arc XLII Chapter 8 (before the investigation)',
       clips:['cin96-arc42-ch08-a-little-adventure.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[8]); } }
+    ,{ id:'arc42ch33', icon:'🍵', title:'The Healer\'s Curiosity', where:'When Arc XLII Chapter 33 is read',
+      clips:['cin99-arc42-ch33-the-healers-curiosity.mp4'],
+      passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[33]); } }
     ,{ id:'arc42ch14', icon:'👨‍👩‍👧‍👦', title:'The Captain’s Family', where:'When Arc XLII Chapter 14 is read',
       clips:['cin61-arc42-ch14-the-captains-family.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[14]); } }
@@ -320,12 +326,15 @@
     ,{ id:'arc42ch16', icon:'🍷', title:'Familiar Faces, New Friends', where:'When Arc XLII Chapter 16 is read',
       clips:['cin90-arc42-ch16-familiar-faces.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[16]); } }
+    ,{ id:'chtitle', icon:'🌅', title:'Crimson Horizon', where:'When the sequel is announced',
+      clips:['cin97-crimson-horizon-title.mp4'],
+      passed:function(){ return !!game.crimsonHorizonSplashSeen; } }
     ,{ id:'joycaelan', icon:'💞', title:'Joy & Caelan — A Little More Willing', where:'When Arc XXV is complete',
       clips:['cin24-joy-caelan-milestone.mp4'],
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -685,7 +694,8 @@
       'markArc6ChapterRead:3': [['clip','arc6didnt1'], ['clip','arc6didnt2'], ['clip','arc6didnt3']],
       'markArc36ChapterRead:10': [['clip','arc36ch10']],
       'markArc37ChapterRead:16': [['clip','arc37ch16']],
-      'markArc41ChapterRead:16': [['splash','arc41ch16']],
+      'markArc41ChapterRead:16': [['clip','arc41ch16'], ['splash','arc41ch16']],
+      'markArc42ChapterRead:33': [['clip','arc42ch33']],
       'markArc41ChapterRead:3':  [['clip','arc41ch03'], ['splash','arc41ch03']],
       'markArc41ChapterRead:5':  [['clip','arc41ch05a'], ['splash','arc41ch05a'], ['clip','arc41ch05b'], ['splash','arc41ch05b']]
     };
