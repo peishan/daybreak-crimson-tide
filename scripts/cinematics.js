@@ -239,7 +239,7 @@
     ,{ id:'arc42ch02b', icon:'🏮', title:'Another Visitor?: The Balcony', where:'When Arc XLII Chapter 2 is read (the second clip)',
       clips:['cin95-arc42-ch02-another-visitor-2.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[2]); } }
-    ,{ id:'arc42ch08', icon:'🧭', title:'A Little Adventure', where:'When you set out on Arc XLII Chapter 8 (before the investigation)',
+    ,{ id:'arc42ch08', icon:'🧭', title:'A Little Adventure', where:'After the Arc XLII Chapter 8 fight is won',
       clips:['cin96-arc42-ch08-a-little-adventure.mp4'],
       passed:function(){ return !!(game.comicProgress42 && game.comicProgress42[8]); } }
     ,{ id:'arc42ch33', icon:'🍵', title:'The Healer\'s Curiosity', where:'When Arc XLII Chapter 33 is read',
@@ -645,19 +645,6 @@
     });
   })();
 
-  // ---- Arc XLII Chapter 8 (A Little Adventure): the clip plays when you set out, before the investigation starts ----
-  (function(){
-    const old = window.startArc42FrontierBattle;
-    if (typeof old !== 'function') return;
-    let busy = false;
-    window.startArc42FrontierBattle = function(){
-      if (busy) return;
-      const self = this, args = arguments;
-      busy = true;
-      Promise.resolve(window.playCinematicOnce('arc42ch08')).catch(function(){}).then(function(){ busy = false; old.apply(self, args); });
-    };
-  })();
-
   // ---- Arc XLI Interlude Chapter 13 (Just One?): the clip plays when the chapter is read, then the chapter completes ----
   (function(){
     let opening = false;
@@ -696,6 +683,7 @@
       'markArc32ChapterRead:24': [['clip','arc32ch24']],
       'markArc38ChapterRead:21': [['clip','arc38ch21'], ['clip','arc38ch21b']],
       'markArc42ChapterRead:2': [['clip','arc42ch02'], ['clip','arc42ch02b']],
+      'markArc42ChapterRead:8': [['clip','arc42ch08']],
       'markArc42ChapterRead:16': [['clip','arc42ch16']],
       'markArc20ChapterRead:9': [['clip','arc20ch09'], ['splash','arc20ch09a'], ['splash','arc20ch09b']],
       'markArc20ChapterRead:17': [['clip','arc20ch17a'], ['clip','arc20ch17b'], ['splash','arc20ch17']],

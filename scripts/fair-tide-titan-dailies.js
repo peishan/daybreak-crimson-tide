@@ -2,11 +2,11 @@
   // -------------------------------------------------------------------
   // SEQUEL ONLY (after Arc XLII): DAILIES and the TIDE TITAN world boss.
   //  * Dailies: a short checklist that resets each local day. Finish them all for a bonus Titan attempt.
-  //  * Tide Titan: one huge shared health bar. Each attempt is a fight of up to 8 rounds against it, and the damage dealt comes off the bar.
+  //  * Tide Titan: one huge shared health bar. Each attempt is a fight of up to 10 rounds against it, and the damage dealt comes off the bar.
   //    6 attempts a day. Guild Hall members chip at it while you are away, but never land the final blow. Each kill raises the Titan's tier.
   // State: game.titan, game.dailies. Quests and bounties are unchanged; the dailies only count what you already do.
   // -------------------------------------------------------------------
-  const LIMIT = 8, DAILY_ATTEMPTS = 6, POOL_ATTEMPTS = 30;
+  const LIMIT = 10, DAILY_ATTEMPTS = 6, POOL_ATTEMPTS = 30;
   const NAMES = [
     { name: 'The Tide Titan', icon: '🌊' }, { name: 'The Abyssal Warden', icon: '🦑' }, { name: 'The Drowned Colossus', icon: '🐙' },
     { name: 'The Leviathan Mother', icon: '🐋' }, { name: 'The Sunken Sovereign', icon: '👑' }
@@ -176,7 +176,7 @@
   };
   const oldCounter = window.enemyCounterAttack;
   if (typeof oldCounter === 'function') window.enemyCounterAttack = function(){
-    try { const e = game.combatEnemy; if (e && e.kind === 'tide_titan') { e.baseDmg = e.baseDmg || e.dmg; e.dmg = Math.round(e.baseDmg * (1 + 0.05 * Math.min(8, Math.max(0, (game.combatRound || 1) - 1)))); } } catch (er) {}
+    try { const e = game.combatEnemy; if (e && e.kind === 'tide_titan') { e.baseDmg = e.baseDmg || e.dmg; e.dmg = Math.round(e.baseDmg * (1 + 0.05 * Math.min(LIMIT, Math.max(0, (game.combatRound || 1) - 1)))); } } catch (er) {}
     return oldCounter.apply(this, arguments);
   };
   const oldRenderCombat = window.renderCombat;
