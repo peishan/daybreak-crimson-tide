@@ -67,6 +67,8 @@
   };
   const FT_TRADE_BASE = {timber:3, stone:4, food:3, trade:8};
   const FT_RES_LABEL = {timber:'🪵 Timber', stone:'🪨 Stone', food:'🍚 Food', trade:'💰 Trade Goods'};
+  // exposed so scripts/fair-tide-quarry-mine-nala.js can add the Quarry, Mine, Nala's Tower and the Ore and Gems resources
+  window.FT_BUILDINGS = FT_BUILDINGS; window.FT_TRADE_BASE = FT_TRADE_BASE; window.FT_RES_LABEL = FT_RES_LABEL;
 
   function ftResources(){ game.fairTideResources = game.fairTideResources || {timber:0,stone:0,food:0,trade:0}; return game.fairTideResources; }
   function ftBuildings(){ game.fairTideBuildings = game.fairTideBuildings || {port_hq:0,warehouse:0,trading_post:0,galley:0,workshop:0,watchtower:0,archive:0}; return game.fairTideBuildings; }
@@ -235,7 +237,7 @@
         '</article>';
     }
     html += '<div class="panel-title">🧱 Resources</div><div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:.85rem;">'+
-      Object.entries(FT_RES_LABEL).map(([k,label])=>'<span>'+label+': <strong>'+(res[k]||0)+'</strong></span>').join('')+
+      Object.entries(FT_RES_LABEL).filter(([k])=>!window.fairTideResourceShown || window.fairTideResourceShown(k)).map(([k,label])=>'<span>'+label+': <strong>'+(res[k]||0)+'</strong></span>').join('')+
       '<span style="opacity:.7;">(cap '+window.fairTideResourceCap()+' each)</span></div>';
     Object.entries(FT_BUILDINGS).forEach(([key,cfg])=>{
       if (cfg.gate && !cfg.gate()) return; // not yet narratively unlocked — skip entirely, not just shown-locked
@@ -261,6 +263,7 @@
         '<span style="font-size:.8rem;opacity:.82;">'+esc(cfg.desc)+'</span><br>'+
         (maxed ? '<div class="story-chip" style="margin-top:6px;">'+(key==='port_hq'?'At current cap':"Raise Port HQ's level first")+'</div>'
           : '<div style="margin-top:6px;font-size:.8rem;">Next level: '+costText+(cfg.tierNames && cfg.tierNames[level] ? ' → "'+esc(cfg.tierNames[level])+'"' : '')+'</div><button class="btn btn-small btn-success" style="margin-top:4px;" '+(afford?'':'disabled')+' onclick="upgradeFairTideBuilding(\''+key+'\')">🏗️ Upgrade</button>')+
+        (typeof window.fairTideBuildingExtra === 'function' ? window.fairTideBuildingExtra(key) : '')+
         '</article>';
     });
     el.innerHTML = html;
@@ -274,6 +277,7 @@
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:10px;">Sell surplus resources for gold, or buy what the gathering parties haven\'t brought back yet. Rates improve with the Trading Post.</p>'+
       '<p style="font-size:.85rem;">💰 Gold: <strong>'+(game.gold||0)+'</strong></p>';
     Object.keys(FT_RES_LABEL).forEach(res_key=>{
+      if (window.fairTideResourceShown && !window.fairTideResourceShown(res_key)) return;
       const sellRate = window.fairTideSellRate(res_key);
       const buyRate = window.fairTideBuyRate(res_key);
       html += '<article class="quest-item"><strong>'+FT_RES_LABEL[res_key]+'</strong> — you have '+(res[res_key]||0)+'<br>'+
@@ -315,7 +319,7 @@
     const yields = window.fairTideDispatchYield();
     el.innerHTML = '<div class="panel-title">⚓ Dispatch</div>'+
       '<p style="font-size:.85rem;opacity:.85;margin-bottom:8px;">Send a gathering party out — Port HQ and the Warehouse make every run count for more.</p>'+
-      '<p style="font-size:.8rem;opacity:.8;">Typical haul: 🪵'+yields.timber+' 🪨'+yields.stone+' 🍚'+yields.food+' 💰'+yields.trade+'</p>'+
+      '<p style="font-size:.8rem;opacity:.8;">Typical haul: 🪵'+yields.timber+' 🪨'+yields.stone+' 🍚'+yields.food+' 💰'+yields.trade+(yields.ore?' ⛏️'+yields.ore:'')+(yields.gems?' 💎'+yields.gems:'')+'</p>'+
       '<div style="margin-top:8px;">'+dispatchHtml+'</div>';
   }
 
