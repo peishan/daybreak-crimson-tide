@@ -15,7 +15,7 @@
   const BOARD_SCALE = 700;                      // roughly a busy week of Renown
   const LEVEL_DIV = 12;                         // guild level = 1 + floor(sqrt(Renown / LEVEL_DIV))
   const TITLES = [[0, 'Newcomer'], [150, 'Deckhand'], [400, 'Harbor Hand'], [800, 'Tide Walker'], [1400, 'Harbor Warden'], [2200, 'Voice of the Hall'], [3400, 'Lodestar Friend']];
-  const OFFICERS = ['jade', 'devon', 'aisyah', 'maera', 'adrian', 'eve'];
+  const OFFICERS = ['joel', 'helmsman', 'jade', 'devon', 'aisyah', 'maera', 'adrian', 'eve'];
   const VETERANS = ['sally', 'levi', 'sky', 'jenika', 'erynn', 'renn', 'mimi', 'fen', 'aster', 'hugh', 'sera', 'senedra', 'zaki', 'ate_joy', 'caelan', 'sairen', 'jovie', 'brada_shah', 'kw_liang'];
 
   function sequel(){ return !!(typeof game !== 'undefined' && game && game.arc42Complete); }
@@ -36,7 +36,26 @@
   function lvl(){ try { return typeof level === 'function' ? level() : 1; } catch (e) { return 1; } }
   function weekKey(d){ d = d ? new Date(d) : new Date(); const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = (t.getUTCDay() + 6) % 7; t.setUTCDate(t.getUTCDate() - day); return t.toISOString().slice(0, 10); }   // the Monday
   function weekFraction(){ const d = new Date(); const day = (d.getDay() + 6) % 7; return Math.min(1, (day + (d.getHours() + 1) / 24) / 7); }
-  function members(){ return (typeof window.guildHallMembers === 'function') ? window.guildHallMembers() : []; }
+  // Your own name: the helmsman's if you sail as one, otherwise San's
+  function me(){ try { return (typeof window.helmsmanActive === 'function' && window.helmsmanActive() && game.avatar.name) ? game.avatar.name : 'San'; } catch (e) { return 'San'; } }
+  // The roster is the Hall's members (residents and roster) plus everyone in your party, so Joel, Ate Joy, Caelan and the rest appear too.
+  const NAMES = { dr_aa: 'Dr. AA', kw_liang: 'KW Liang' };
+  function titleCase(s){ return String(s).toLowerCase().replace(/(^|\s)(\S)/g, function(m, a, b){ return a + b.toUpperCase(); }); }
+  function members(){
+    const base = (typeof window.guildHallMembers === 'function') ? window.guildHallMembers().slice() : [];
+    const seenId = {}, seenName = {};
+    base.forEach(function(m){ seenId[String(m.id).toLowerCase()] = 1; seenName[String(m.name).toLowerCase()] = 1; });
+    try {
+      (typeof getActiveParty === 'function' ? getActiveParty() : []).forEach(function(m){
+        if (m.id === 'san') return;
+        const name = NAMES[m.id] || titleCase(m.name);
+        if (seenId[m.id] || seenName[name.toLowerCase()]) return;
+        seenId[m.id] = 1; seenName[name.toLowerCase()] = 1;
+        base.push({ id: m.id, name: name, icon: m.portrait || '⚓' });
+      });
+    } catch (e) {}
+    return base;
+  }
   function renown(){ return typeof window.sequelRenown === 'function' ? window.sequelRenown() : 0; }
   function title(){ let t = TITLES[0][1]; const r = renown(); TITLES.forEach(function(x){ if (r >= x[0]) t = x[1]; }); return t; }
   function guildLevel(){ return Math.min(30, 1 + Math.floor(Math.sqrt(renown() / LEVEL_DIV))); }
@@ -120,7 +139,7 @@
   function board(wk, frac){
     const c = chat();
     const rows = members().map(function(m){ return { name: m.name, icon: m.icon, pts: simScore(m, wk, frac), me: false }; });
-    rows.push({ name: 'You (San)', icon: '⚓', pts: c.week.key === wk ? c.week.pts : 0, me: true });
+    rows.push({ name: 'You (' + me() + ')', icon: '⚓', pts: c.week.key === wk ? c.week.pts : 0, me: true });
     rows.sort(function(a, b){ return b.pts - a.pts; });
     return rows;
   }
@@ -146,7 +165,7 @@
     if (c.title == null) { c.title = t; return; }
     if (c.title !== t) {
       c.title = t;
-      sys('🎖️ San has earned the title [' + t + '].');
+      sys('🎖️ ' + me() + ' has earned the title [' + t + '].');
       if (typeof window.notify === 'function') window.notify({ icon: '🎖️', title: 'New title: ' + t, text: 'Renown earned in the sequel has raised your standing in the Hall.', kind: 'info', duration: 6500 });
       say(pick(members().length ? members() : [{ name: 'Someone', icon: '' }]).name, '', pick(CHEER), 'c');
     }
@@ -173,9 +192,9 @@
         if (amt > 0 && sequel()) {
           weekCheck(); chat().week.pts += amt; checkTitle();
           if (k === 'titan_kill') react(k, '🌊 The Tide Titan has fallen! The whole Hall cheers.', true);
-          else if (k === 'daily_bonus') react(k, '📅 San has finished every daily task.', true);
-          else if (k === 'sea_alpha') react(k, '🦈 San brought down an alpha sea monster.', true);
-          else if (k === 'optional') react(k, '⚔️ San cleared an optional boss.', true);
+          else if (k === 'daily_bonus') react(k, '📅 ' + me() + ' has finished every daily task.', true);
+          else if (k === 'sea_alpha') react(k, '🦈 ' + me() + ' brought down an alpha sea monster.', true);
+          else if (k === 'optional') react(k, '⚔️ ' + me() + ' cleared an optional boss.', true);
           else if (k === 'hall_chest') react(k, '🎁 A Hall chest was opened.', false);
           else if (k === 'titan_attempt') react(k, null, false);
           refresh();
@@ -224,13 +243,13 @@
     if (!text) return;
     if (text.charAt(0) === '/') {
       const sp = text.indexOf(' '), cmd = (sp < 0 ? text : text.slice(0, sp)).toLowerCase(), arg = sp < 0 ? '' : text.slice(sp + 1).trim();
-      if (cmd === '/roll') { const max = Math.max(2, Math.min(1000, parseInt(arg, 10) || 100)); sys('🎲 San rolls ' + (1 + Math.floor(Math.random() * max)) + ' (1-' + max + ').'); }
+      if (cmd === '/roll') { const max = Math.max(2, Math.min(1000, parseInt(arg, 10) || 100)); sys('🎲 ' + me() + ' rolls ' + (1 + Math.floor(Math.random() * max)) + ' (1-' + max + ').'); }
       else if (cmd === '/who') { const on = members().filter(online).map(function(m){ return m.name; }); sys('👥 Online (' + on.length + '): ' + (on.join(', ') || 'only you') + '.'); }
       else if (cmd === '/me') { say('', '', 'San ' + arg, 'e'); }
       else if (cmd === '/motd') { if (arg) { chat().motd = arg.slice(0, 120); sys('📌 The message of the day was changed.'); } else sys('📌 ' + chat().motd); }
       else sys('Commands: /roll [max], /who, /me <action>, /motd <text>.');
     } else {
-      say('San', '⚓', text, 'p');
+      say(me(), '⚓', text, 'p');
       reply(text);
     }
     chat().lastGen = Date.now();
@@ -291,7 +310,7 @@
       html += '<div style="display:flex;justify-content:space-between;padding:4px 8px;border-radius:6px;' + (row.me ? 'background:rgba(232,197,71,.18);font-weight:bold;' : '') + '"><span>' + (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + row.icon + ' ' + esc2(row.name) + '</span><span>' + fmt(row.pts) + '</span></div>';
     });
     const myPos = rows.findIndex(function(x){ return x.me; });
-    if (myPos >= 10) html += '<div style="padding:4px 8px;opacity:.85;">… #' + (myPos + 1) + ' You (San): ' + fmt(rows[myPos].pts) + '</div>';
+    if (myPos >= 10) html += '<div style="padding:4px 8px;opacity:.85;">… #' + (myPos + 1) + ' You (' + me() + '): ' + fmt(rows[myPos].pts) + '</div>';
     html += '<div class="panel-title" style="margin-top:12px;font-size:1rem;">👥 Roster</div>';
     const rr = ms.map(function(m){ return { m: m, rk: rank(m), on: online(m) }; }).sort(function(a, b){ return (b.on - a.on) || a.m.name.localeCompare(b.m.name); });
     html += '<div style="padding:4px 8px;"><b>👑 San</b> <span class="story-chip">Guildmaster</span> 🟢</div>';
