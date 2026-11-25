@@ -5360,6 +5360,7 @@ function renderCombat() {
     const options = [];
     if (kit.skill) options.push({fn: "combatAction('SKILL')", icon: kit.skill.icon, name: kit.skill.name, desc: 'Default skill'});
     if (aegisAvailable(actor)) options.push({fn: 'useFirstMatesAegis()', icon: '🛡️✨', name: "First Mate's Aegis", desc: 'Arm the mark to shield San from the next hit she takes — once per day.'});
+    if (typeof window.accordStatus === 'function') { const as = window.accordStatus(actor); if (as === '') options.push({fn: 'useCustodiansAccord()', icon: '🤝', name: "Custodians' Accord", desc: 'San and Joel raise a shared ward: 35% less damage for 3 turns, and harmful effects shrugged off. Then a 5-round recovery.'}); else if (as) options.push({fn: "toast('" + as.replace(/'/g, '') + "')", icon: '🤝', name: "Custodians' Accord", desc: as}); }
     if (highSkillAvailable(actor)) options.push({fn: "combatAction('HIGHSKILL')", icon: kit.highSkill.icon, name: kit.highSkill.name, desc: kit.highSkill.desc || ('Requires Level ' + (kit.highSkill.levelReq||1) + '.')});
     document.getElementById('skillGrid').innerHTML = options.map(o =>
       `<button class="spell-btn" onclick="${o.fn}">
@@ -5693,8 +5694,9 @@ window.handleSkillButton = function(){
   const actor = alive[game.combatTurn];
   if (!actor) return;
   const aegisOffered = aegisAvailable(actor) && !game.aegisArmed;
+  const accordOffered = typeof window.accordStatus === 'function' && window.accordStatus(actor) != null;
   const highSkillOffered = highSkillAvailable(actor);
-  if (aegisOffered || highSkillOffered) {
+  if (aegisOffered || highSkillOffered || accordOffered) {
     game.skillMenuOpen = !game.skillMenuOpen;
     game.spellMenuOpen = false;
     game.itemMenuOpen = false;
@@ -6453,6 +6455,11 @@ function autoBattleAction(actor) {
   // opportunity that's easy for an AI turn to otherwise skip entirely.
   if (typeof aegisAvailable === 'function' && aegisAvailable(actor) && !game.aegisArmed) {
     useFirstMatesAegis();
+    return;
+  }
+  // Custodians' Accord: auto-battle raises it as soon as it is ready and no stronger ward is up
+  if (typeof window.accordAvailable === 'function' && window.accordAvailable(actor) && (game.shieldTurns || 0) <= 1) {
+    window.useCustodiansAccord();
     return;
   }
   const kit = kitFor(actor.id);

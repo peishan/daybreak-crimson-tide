@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V679 · Crimson Horizon Arc XXVIII: Across the Amber Sea';
+window.__CT_BUILD__='V680 · Crimson Horizon Arc XXIX and Custodians’ Accord';

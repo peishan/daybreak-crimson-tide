@@ -379,6 +379,36 @@
       }
     });
   }
+  // Arc XXIX (What We Hold in Trust): the first practical benefit. Ch.345 (id 346) records Custodians' Accord and unlocks it (custodians-accord.js).
+  window.onPearlAccordRead = function(stage){
+    if (stage === 'first_attempt') pearlNote('accord_first_attempt', "First trial: San shaped a ward and Joel anchored it. A faint barrier stood between them, then went out. One observation, to be tested.");
+    if (stage === 'shared_intent') pearlNote('accord_shared_intent', "Review: the barrier formed when both custodians were protecting the same space. The team narrowed the next trial to a single target protected by both, and limited its conclusion to what was observed.");
+    if (stage === 'ward_trial') pearlNote('accord_ward_trial', "Ward trial: with a controlled strike from Ser Aldric against a practice target, the ward held repeatedly. The Pearl's restoring function was measured before and after and did not change.");
+    if (stage === 'accord') {
+      pearlNote('accord_recorded', "Custodians' Accord recorded: a brief shared ward between San and Joel, with a recovery period between uses. It protects only what they choose to protect. It does not establish who the Pearl belonged to, and the Pearl remains in their custody.");
+      if (typeof window.unlockCustodiansAccord === 'function') window.unlockCustodiansAccord();
+    }
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  if (R.mimi && !R.mimi.projects.some(function(p){ return p.key === 'pearl_shared_intention'; })) {
+    R.mimi.projects.push({
+      key: 'pearl_shared_intention', durationDays: 3, available: function(){ return pearlOpen() && chProgress(344); },
+      title: 'Shared Intention',
+      desc: "Mimi sits with San and Joel's accounts of the first trial and marks what each was thinking at the moment the barrier formed.",
+      finding: "Mimi writes down what San and Joel each remember thinking, side by side. The two columns match on one thing and on nothing else: they were protecting the same space. She marks it as the only pattern she is willing to call one.",
+      onComplete: function(){ pearlNote('pearl_shared_intention', "Mimi compared San's and Joel's accounts of the first trial. The only thing they share is that both were protecting the same space."); }
+    });
+  }
+  if (R.adrian && !R.adrian.projects.some(function(p){ return p.key === 'pearl_ward_measurements'; })) {
+    R.adrian.projects.push({
+      key: 'pearl_ward_measurements', durationDays: 3, available: function(){ return pearlOpen() && chProgress(345); },
+      title: 'Ward Measurements',
+      desc: "Adrian and Eve write up the ward trials: how long it held, how hard it was struck, and the Pearl's readings before and after.",
+      finding: "Adrian and Eve write up the trials in a plain table: the strikes, the time the ward stood, and the Pearl's readings before and after. The readings do not move. They add a line at the bottom, in Eve's hand, that the result is repeatable and that nothing about it says who the Pearl belonged to.",
+      onComplete: function(){ pearlNote('pearl_ward_measurements', "Adrian and Eve wrote up the ward trials. The ward held repeatedly, the Pearl's readings did not change, and the result says nothing about who the Pearl belonged to."); }
+    });
+  }
   window.__ctReadPearlArchive = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(ARCHIVE_CH_ID); };
   window.__ctReadPearlNetwork = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(NETWORK_CH_ID); };
   window.__ctReadPearlAuthorise = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(AUTHORISE_CH_ID); };
