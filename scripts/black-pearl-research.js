@@ -347,6 +347,38 @@
     if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
     if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
   };
+  // Arc XXVII (Days We Choose): the custody briefing and the compared observations. Notes and two research assignments only.
+  // No protective ability exists yet; the first supervised study is prepared here and run in a later arc.
+  window.onPearlCustodyRead = function(stage){
+    if (stage === 'briefing') pearlNote('custody_briefing', "Custody briefing: the team agreed any attempt to use the Pearl must keep its established restoration role. The next practical goal is to learn whether its custodians could safely receive a limited protective benefit. No ability is promised.");
+    if (stage === 'comparison') pearlNote('custody_comparison', "Two ways of looking: Adrian and Eve separated what was actually recorded from what the older accounts assumed. Renn proposed a supervised study for a future session. San and Joel agreed to take part once it is prepared.");
+    if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+    if (typeof window.renderArchiveScreen === 'function') window.renderArchiveScreen();
+  };
+  function custodyBriefed(){ return chProgress(320); }
+  function custodyCompared(){ return chProgress(321); }
+  if (R.renn && !R.renn.projects.some(function(p){ return p.key === 'pearl_supervised_study_plan'; })) {
+    R.renn.projects.push({
+      key: 'pearl_supervised_study_plan', durationDays: 4, available: function(){ return pearlOpen() && custodyCompared(); },
+      title: 'A Supervised Study Plan',
+      desc: "Renn drafts the supervised study for San and Joel: observation first, a limit on every step, and withdrawal at the first sign of trouble.",
+      finding: "Renn writes the plan as a ladder. Each rung is a smaller thing than the one above it, and the team does not climb to the next until the last one has been repeated and found quiet. San and Joel can step off at any rung. The Pearl's restoring role is named in the first line, and nothing on the ladder is allowed to touch it.",
+      onComplete: function(){
+        pearlNote('pearl_supervised_study_plan', "Renn drafted a supervised study plan: a ladder of small steps, each repeated before the next, with withdrawal at any rung. The Pearl's restoring role is protected on the first line. The study itself has not begun.");
+      }
+    });
+  }
+  if (R.adrian && !R.adrian.projects.some(function(p){ return p.key === 'pearl_recorded_effects'; })) {
+    R.adrian.projects.push({
+      key: 'pearl_recorded_effects', durationDays: 3, available: function(){ return pearlOpen() && custodyCompared(); },
+      title: 'Recorded Effects and Older Accounts',
+      desc: "Adrian and Eve turn their comparison into a clean list: what was recorded, what was repeated, and what was only assumed.",
+      finding: "Adrian and Eve turn the margin marks into three columns: recorded, repeated and assumed. The first is short and solid. The second is longer and weaker. The third is the longest, and they leave it standing as a list of questions. It is the first thing the team has that San and Joel could be asked to test against.",
+      onComplete: function(){
+        pearlNote('pearl_recorded_effects', "Adrian and Eve sorted the older accounts into recorded, repeated and assumed. The recorded column is short and solid; the assumed one is a list of open questions.");
+      }
+    });
+  }
   window.__ctReadPearlArchive = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(ARCHIVE_CH_ID); };
   window.__ctReadPearlNetwork = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(NETWORK_CH_ID); };
   window.__ctReadPearlAuthorise = function(){ if (typeof window.__ctReadCrimsonHorizonChapter === 'function') window.__ctReadCrimsonHorizonChapter(AUTHORISE_CH_ID); };
