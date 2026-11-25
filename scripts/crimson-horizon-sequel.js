@@ -2731,7 +2731,8 @@
     port: 'winter_harbor', unlock: function(){ return arcDone(19); },
     title: '🐲 The Snow Wyrm', btn: '⚔️ Wake the wyrm',
     text: 'A wyrm sleeps under the drifts behind the house, and wakes when the chimney is lit. The innkeepers keep the fire low for it. Someone could end that worry.',
-    enemy: {name:'The Snow Wyrm', icon:'🐲', hp:6500, dmg:96, xp:2200, gold:1100, twist:'frenzy', twistText:'The cold deepens every round', desc:'A pale wyrm as long as a ferry. The longer the fight, the colder the air, and the harder it hits.'},
+    enemy: {name:'The Snow Wyrm', icon:'🐲', hp:6800, dmg:92, xp:2200, gold:1100, rule:'cold', twistText:'Cold: each round it chills a crew member, who loses their next action unless a crewmate Defends. It rages below half health', desc:'A pale wyrm as long as a ferry. Its breath chills one of the crew each round, and a chilled crewmate loses their next action unless somebody Defends to warm them. Below half health it rages.',
+      phases:[{at:0.5, text:'The wyrm rears up and the drifts shudder: it is enraged, and hits much harder.', dmgMult:1.35}]},
     reward: { standing: 60, gear: {id:'snow_wyrm_scale', name:'Wyrm-Scale Charm', icon:'🐲', slot:'amulet', family:'any', hp:40, magic:10, spd:4, tier:4, desc:'A frost-white scale that never quite warms. It is a comfort in a gale.'}, text: 'The wyrm settles into the snow for good, and the house can light its chimney freely.' }
   };
   // ---- Bestiary release 2: fights with a round rule (scripts/bestiary-round-rules.js) ----
@@ -2764,6 +2765,26 @@
     enemy: {name:'The Cantor of the Gorge', icon:'🎼', hp:7000, dmg:92, xp:2200, gold:1100, rule:'beat', twistText:'The beat: every fourth round your damage is tripled, and off the beat a fifth of it echoes back at the crew', desc:'A tall shape of wind and sound. Rounds fall on a beat of four: land your blows on the fourth, because off the beat the echo comes back at you.'},
     reward: { standing: 60, gear: {id:'cantors_tuning_fork', name:'Cantor’s Tuning Fork', icon:'🎼', slot:'amulet', family:'any', hp:40, magic:10, spd:4, tier:4, desc:'A fork that rings a note nobody played. It makes the next sound easier to follow.'}, text: 'The wind drops, and the Cantor hums the end of the tune. The gorge has not been this quiet in years.' }
   };
+  // ---- Bestiary release 3: phases at health thresholds, plus the gate and cold rules (scripts/bestiary-round-rules.js) ----
+  OPTIONAL_FIGHTS.opt_false_light = {
+    port: 'west_gate', unlock: function(){ return arcDone(6); },
+    title: '🏮 The False Light', btn: '⚔️ Follow the lantern',
+    text: 'The lantern Levi saw in the Straits drifts against the current. It lures ships onto the shoals and has learned how to pull a crew apart. It lights one lamp, then another, then a third, and it only lets go of a crew that puts them out in order.',
+    enemy: {name:'The False Light', icon:'🏮', hp:4400, dmg:74, xp:1500, gold:750, rule:'lights', twistText:'Three lights: each time you put one out, the next kindles, the lights mend what you left, and the last one keeps mending', desc:'A pale lantern hanging over black water. Put out the first light and a second kindles; put out the second and a third closes in. From the third light on, it mends itself every round.',
+      phases:[
+        {at:0.67, text:'🏮 The first lamp gutters. A second kindles, and the lights mend part of the damage.', heal:0.08, dmgMult:1.1},
+        {at:0.34, text:'🏮 The second lamp goes out. A third closes in and the light starts to mend itself every round.', heal:0.08, dmgMult:1.2, twist:'mender', twistText:'The last light mends itself every round'}
+      ]},
+    reward: { standing: 50, dangerCut: ['west_gate'], gear: {id:'false_light_lamp', name:'False-Light Lamp', icon:'🏮', slot:'amulet', family:'any', hp:30, magic:8, spd:3, tier:3, desc:'A small lamp that burns without oil and leans toward the nearest shoal. It never lies about the water.'}, text: 'The last lamp goes out, and the Straits are dark and honest again. (+50 standing, and a lasting cut to the danger at the West Gate.)' }
+  };
+  OPTIONAL_FIGHTS.opt_ashk = {
+    port: 'central_gate', unlock: function(){ return arcDone(6); },
+    title: '🚪 Ashk, the Gate-Lord', btn: '⚔️ Meet the Gate-Lord',
+    text: 'The old network’s keeper still collects its toll, and nobody has told it that the Keeper is gone. Ashk weighs crews by what they carry, and opens and shuts the way between you and itself on a count it never explains.',
+    enemy: {name:'Ashk, the Gate-Lord', icon:'🚪', hp:6800, dmg:88, xp:2200, gold:1100, rule:'gate', twistText:'The gate: on odd rounds it is open and your blows count double; on even rounds it is shut, Ashk takes nothing and hits harder', desc:'A tall figure in a gate-keeper’s coat, with a ring of keys that is never still. On odd rounds the gate is open and your blows land twice. On even rounds it is shut, he is untouchable, and he hits hard. Save the heavy hits for the open rounds.',
+      phases:[{at:0.4, text:'🚪 Ashk lifts the ring of keys and the gate hangs wide for longer. He has stopped weighing you and started counting.', dmgMult:1.2}]},
+    reward: { standing: 60, dangerCut: ['west_gate','south_gate','central_gate'], gear: {id:'gate_key_charm', name:'Gate-Key Charm', icon:'🗝️', slot:'amulet', family:'any', hp:36, magic:8, spd:4, tier:4, desc:'A heavy key with no lock to match. Gates seem to open a little faster for whoever carries it.'}, text: 'Ashk sets the ring of keys on the floor and bows. The gates have not been told the Keeper is gone, but they have been told this. (+60 standing, and a lasting cut to the danger at all three Gates.)' }
+  };
   function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
   function claimOptionalReward(key){
     const o = OPTIONAL_FIGHTS[key]; if (!o) return;
@@ -2774,6 +2795,7 @@
     game.portStanding[o.port] = (game.portStanding[o.port] || 0) + (o.reward.standing || 0);
     if (o.reward.gear && typeof window.addGearToInventory === 'function') window.addGearToInventory(o.reward.gear);
     if (o.reward.mood && typeof window.addFairTideMood === 'function') window.addFairTideMood(o.reward.mood);
+    if (o.reward.dangerCut) { game.portDangerCut = game.portDangerCut || {}; o.reward.dangerCut.forEach(function(pid){ game.portDangerCut[pid] = 1; }); }
     if (typeof window.notify === 'function') window.notify({ icon: '🏆', title: o.title.replace(/^\S+\s/, '') + ' — cleared', text: o.reward.text, kind: 'info', duration: 8000 });
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
   }
@@ -2785,6 +2807,7 @@
     const enemy = scaleCrimsonEnemy(o.enemy, 'guardian', 465);
     if (o.enemy.twist) { enemy.twist = o.enemy.twist; enemy.twistText = o.enemy.twistText; enemy.baseDmg = enemy.dmg; }
     if (o.enemy.rule) { enemy.rule = o.enemy.rule; enemy.twistText = o.enemy.twistText; }
+    if (o.enemy.phases) { enemy.phases = JSON.parse(JSON.stringify(o.enemy.phases)); enemy.phaseIdx = 0; enemy.phaseMult = 1; enemy.baseDmg = enemy.baseDmg || enemy.dmg; }
     if (mode === 'alt' && o.alt) {
       const cost = Math.round((game.gold || 0) * (o.alt.goldPct || 0));
       game.gold = Math.max(0, (game.gold || 0) - cost);

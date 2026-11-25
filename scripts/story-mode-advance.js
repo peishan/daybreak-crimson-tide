@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V682 · Mezstorm pronouns, Tide Titan 10 rounds, crossover crew sheets';
+window.__CT_BUILD__='V683 · Bestiary release 3: False Light, Ashk, Snow Wyrm cold';
