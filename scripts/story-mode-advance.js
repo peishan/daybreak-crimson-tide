@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V678 · Guild Chat and Guild Roll (ranks, titles, weekly board)';
+window.__CT_BUILD__='V679 · Crimson Horizon Arc XXVIII: Across the Amber Sea';
