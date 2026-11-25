@@ -666,6 +666,7 @@
       'markArc6ChapterRead:3': [['clip','arc6didnt1'], ['clip','arc6didnt2'], ['clip','arc6didnt3']],
       'markArc36ChapterRead:10': [['clip','arc36ch10']],
       'markArc37ChapterRead:16': [['clip','arc37ch16']],
+      'markArc41ChapterRead:16': [['splash','arc41ch16']],
       'markArc41ChapterRead:3':  [['clip','arc41ch03'], ['splash','arc41ch03']],
       'markArc41ChapterRead:5':  [['clip','arc41ch05a'], ['splash','arc41ch05a'], ['clip','arc41ch05b'], ['splash','arc41ch05b']]
     };

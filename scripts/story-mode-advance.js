@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V671 · Arc III Ch.5 raiders run, no penalty';
+window.__CT_BUILD__='V672 · Arc XLI Ch.16 splash: Sairen and the twins';
