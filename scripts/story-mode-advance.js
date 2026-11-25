@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V675 · Save warning when progress cannot be saved or the save is near the limit';
+window.__CT_BUILD__='V676 · Arc XLII Ch.35, 39, 43 clips';
