@@ -51,7 +51,7 @@ const PORTS = [
   { id: 'bangkok', name: 'Bangkok', icon: '🛕', desc: 'Venice of the East. Rice, timber, and sacred artifacts.',
     specialties: ['rice', 'timber', 'artifacts'], distances: { singapore: 2, malacca: 3, batavia: 4, manila: 3, hanoi: 2, palembang: 3, kota_batu: 6, fair_tide: 5 }, danger: 2,
     chapterId: 5, companion: 'mezstorm', guardian: 'storm_idol',
-    blurb: "Mezstorm bartered his freedom to a drowned idol just to survive the wreck, and the idol has an excellent memory for deals. He still owes it a storm. San's about to make sure it never collects.",
+    blurb: "Mezstorm bartered her freedom to a drowned idol just to survive the wreck, and the idol has an excellent memory for deals. She still owes it a storm. San's about to make sure it never collects.",
     harbor: ['harbor_ghoul','wreck_crab'] },
   { id: 'hanoi', name: 'Hanoi', icon: '🐉', desc: 'Northern trading post. Tea, silk, and porcelain.',
     specialties: ['tea', 'silk', 'porcelain'], distances: { singapore: 3, malacca: 4, batavia: 5, manila: 2, bangkok: 2, palembang: 4, kota_batu: 7, fair_tide: 6 }, danger: 2,

@@ -158,6 +158,14 @@
       '<img loading="lazy" decoding="async" src="assets/bios/vaeren-joelle-soel-crossover.png" alt="Tribute x Crimson Tide -- Vaeren, Joelle &amp; Soel crossover sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
       '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">Vaeren, Joelle &amp; Soel -- Twins &amp; Guardian Companion (Tribute x Crimson Tide)</div>'+
       '</div>';
+    html += '<div class="panel">'+
+      '<img loading="lazy" decoding="async" src="assets/bios/crossover-travelling-crew.png" alt="Crimson Horizon -- Unified Travelling Crew sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
+      '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">Unified Travelling Crew -- one vessel, one party (Crimson Tide x Tribute)</div>'+
+      '</div>';
+    html += '<div class="panel">'+
+      '<img loading="lazy" decoding="async" src="assets/bios/crossover-research-team.png" alt="Crossover Research Team sheet" style="width:100%;border-radius:8px;margin-bottom:10px;">'+
+      '<div style="font-size:.78rem;opacity:.7;text-align:center;margin-bottom:4px;">Crossover Research Team -- Renn, Erynn, Mimi, Adrian &amp; Fen</div>'+
+      '</div>';
     html += '<div class="panel">'+renderTributeRosterPanel()+'</div>';
     const pearlPanel = (typeof window.renderBlackPearlPanel === 'function') ? window.renderBlackPearlPanel() : '';
     if (pearlPanel) html += '<div class="panel">'+pearlPanel+'</div>';

@@ -769,7 +769,7 @@
   const TRAINING_PARTNER_LINES = {
     joel: "Joel squares up, already grinning. \"Don't go easy on me.\"",
     aisyah: "Aisyah draws both blades with a flourish. \"Try to keep up.\"",
-    mezstorm: "Mezstorm cracks his knuckles. \"Storm's coming either way.\"",
+    mezstorm: "Mezstorm cracks her knuckles. \"Storm's coming either way.\"",
     eliz: "Eliz raises her mace, a little sheepish. \"I'll try not to heal myself mid-fight out of habit.\"",
     senedra: "Senedra rolls her shoulders. \"Paramedic instincts on standby, just in case.\"",
     zaki: "Zaki bounces on his heels, way too excited for a practice bout.",
