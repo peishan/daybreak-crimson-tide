@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V688 · Quarry, Mine and Nala\'s Tower';
+window.__CT_BUILD__='V689 · Arc IX Soel cinematics';
