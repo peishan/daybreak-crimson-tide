@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V683 · Bestiary release 3: False Light, Ashk, Snow Wyrm cold';
+window.__CT_BUILD__='V684 · Helmsman option, title-card Renown fix';
