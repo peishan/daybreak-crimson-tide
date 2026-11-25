@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V677 · Crimson Horizon Arc XXVII: Days We Choose';
+window.__CT_BUILD__='V678 · Guild Chat and Guild Roll (ranks, titles, weekly board)';
