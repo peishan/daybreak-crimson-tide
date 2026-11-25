@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V670 · Sparring Deck from Arc III Ch.4, Dock Ambush at Ch.5';
+window.__CT_BUILD__='V671 · Arc III Ch.5 raiders run, no penalty';
