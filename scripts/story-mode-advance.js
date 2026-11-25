@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V686 · Fleet buttons at the top of the Roster tab';
+window.__CT_BUILD__='V687 · Sequel portraits for San and Joel';
