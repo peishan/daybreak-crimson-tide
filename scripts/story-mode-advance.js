@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V667 · Arc XII Ch.19-21 clips';
+window.__CT_BUILD__='V668 · Lodestar splash, four new clips';
