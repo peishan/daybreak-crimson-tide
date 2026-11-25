@@ -418,16 +418,7 @@
       // single upgrade that can't currently be afforded, then reports one
       // combined summary instead of a toast per stat. Only shown once at
       // least one ship actually has stats to upgrade.
-      if (game.inheritedShips.some(function(s){ return !!s.stats; })) {
-        html += '<div style="margin-bottom:10px;"><button class="btn btn-small btn-success" onclick="upgradeAllFleetShips()">⬆️ Upgrade All Affordable</button></div>';
-      }
-      // One click: collect anything that's back, take the daily trickle, and
-      // send every idle trade ship out on a random route (fleet-trade-
-      // routes.js). Only shown once at least one trade ship exists.
-      if (game.inheritedShips.some(function(s){ return !!s.tradeIncome; }) && typeof window.dispatchAllTradeShips === 'function') {
-        html += '<div style="margin-bottom:10px;"><button class="btn btn-small btn-magic" onclick="dispatchAllTradeShips()">🎲 Dispatch All Trade Ships</button>'+
-          '<div style="font-size:.74rem;opacity:.7;margin-top:3px;">Collects returns, takes today\'s trade income, and sends every idle trade ship on a random route you can afford.</div></div>';
-      }
+      // The Upgrade All and Dispatch All buttons now sit at the top of the Roster tab (window.fleetQuickButtonsHtml, below), under the check-in button.
       game.inheritedShips.forEach(ship=>{
         const designated = !!ship.designation;
         let extra = '';
@@ -2325,3 +2316,20 @@
     }
   };
 })();
+
+// Fleet quick buttons: shown at the top of the Fair Tide Roster tab so they are reachable without scrolling past every resident.
+window.fleetQuickButtonsHtml = function(){
+  try {
+    const ships = (game && game.inheritedShips) || [];
+    if (!ships.length) return '';
+    let h = '';
+    if (ships.some(function(s){ return !!s.stats; })) {
+      h += '<div style="margin-bottom:8px;"><button class="btn btn-small btn-success" onclick="upgradeAllFleetShips()">⬆️ Upgrade All Affordable</button></div>';
+    }
+    if (ships.some(function(s){ return !!s.tradeIncome; }) && typeof window.dispatchAllTradeShips === 'function') {
+      h += '<div style="margin-bottom:8px;"><button class="btn btn-small btn-magic" onclick="dispatchAllTradeShips()">🎲 Dispatch All Trade Ships</button>' +
+        '<div style="font-size:.74rem;opacity:.7;margin-top:3px;">Collects returns, takes today\'s trade income, and sends every idle trade ship on a random route you can afford.</div></div>';
+    }
+    return h ? '<div id="fleetQuickWrap">' + h + '</div>' : '';
+  } catch (e) { return ''; }
+};

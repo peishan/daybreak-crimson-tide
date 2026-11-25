@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V685 · Guild roster includes your party';
+window.__CT_BUILD__='V686 · Fleet buttons at the top of the Roster tab';
