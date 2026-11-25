@@ -1962,7 +1962,7 @@ function renderLandingV24(){
     hanoi:'Hanoi', manila:'Manila', palembang:'Palembang', batavia:'Batavia'
   };
   const port = portNames[display.location] ||
-    (display.location ? String(display.location).replace(/\b\w/g,c=>c.toUpperCase()) : 'Singapore');
+    (display.location ? String(display.location).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : 'Singapore');
 
   const xpTotal = Math.max(0, Number(display.xpTotal || 0));
   const lvl = (() => {
@@ -1983,7 +1983,9 @@ function renderLandingV24(){
     partyHp.san ?? display.health ?? 0
   );
   const maxHp = Number(display.maxHealth || 82);
-  const renown = Number(display.renown ?? display.reputation ?? 0);
+  // game.renown is an object ({earned, by}) in the sequel, so read its total rather than coercing the whole object
+  const rawRenown = display.renown;
+  const renown = (rawRenown && typeof rawRenown === 'object') ? Number(rawRenown.earned || 0) : Number(rawRenown ?? display.reputation ?? 0);
   const gold = Number(display.gold || 0);
   const ship = display.shipName || 'The Daybreak';
 

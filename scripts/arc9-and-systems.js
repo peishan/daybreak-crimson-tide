@@ -796,7 +796,7 @@
   // them (San's own "by Arc 42 and the sequel, they can be taken on
   // exploration") is later, sequel-side work — this only covers combat
   // fielding, which is all getFieldedIds()/toggleFielded below govern.
-  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel', 'vaeren', 'joelle', 'sairen']);
+  const FREE_FIELD_IDS = new Set(['san', 'soel', 'joel', 'vaeren', 'joelle', 'sairen', 'helmsman']);
   window.isFreeFieldId = function(id){ return FREE_FIELD_IDS.has(id); };
 
   // -------------------------------------------------------------------
