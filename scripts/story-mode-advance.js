@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V669 · Arc III Ch.2, 3, 5, 11 clips';
+window.__CT_BUILD__='V670 · Sparring Deck from Arc III Ch.4, Dock Ambush at Ch.5';
