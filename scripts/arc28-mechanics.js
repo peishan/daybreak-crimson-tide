@@ -800,5 +800,13 @@
     if (existingBtn) existingBtn.remove();
     const btn = checkInAllButtonHtml();
     if (btn) container.insertAdjacentHTML('afterbegin', btn);
+    // fleet buttons (Upgrade All / Dispatch All) go right under the check-in button
+    const oldFleet = document.getElementById('fleetQuickWrap');
+    if (oldFleet) oldFleet.remove();
+    const fleet = typeof window.fleetQuickButtonsHtml === 'function' ? window.fleetQuickButtonsHtml() : '';
+    if (fleet) {
+      const wrap = document.getElementById('checkInAllWrap');
+      if (wrap) wrap.insertAdjacentHTML('afterend', fleet); else container.insertAdjacentHTML('afterbegin', fleet);
+    }
   };
 })();
