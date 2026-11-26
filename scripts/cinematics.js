@@ -215,7 +215,7 @@
     ,{ id:'arc20int03', icon:'☕', title:'Interlude: Morning After the Drinks', where:'When Arc XX Interlude Chapter 3 is read',
       clips:['cin119-arc20-interlude-03-morning-after-the-drinks.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[3]); } }
-    ,{ id:'helmsmanintro', icon:'⚓', title:'A New Hand at the Wheel', where:'When you choose to sail as the helmsman',
+    ,{ id:'helmsmanintro', icon:'⚓', title:'A New Hand at the Wheel', where:'For a helmsman: after the Chapter 1 clip',
       clips:['cin120-helmsman-intro.mp4'], hideUnless:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); },
       passed:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); } }
     ,{ id:'arc41int13', icon:'💋', title:'Just One?', where:'When Arc XLI Interlude Chapter 13 is read',
@@ -523,10 +523,17 @@
     window.openStoryMode = function(chapterId, options){
       options = options || {};
       const id = CHAPTER_CINEMA[chapterId];
-      if (id && !options.replay && autoOn() && !isSeen(id) && !(game.comicProgress && game.comicProgress[chapterId]) && typeof STORY_MODE_CHAPTERS !== 'undefined' && STORY_MODE_CHAPTERS[chapterId]) {
+      // a helmsman's introduction follows Chapter 1's own clip, in sequence
+      const helm = chapterId === 1 && typeof window.helmsmanActive === 'function' && window.helmsmanActive() && !isSeen('helmsmanintro');
+      const queue = [];
+      if (id && !isSeen(id)) queue.push(id);
+      if (helm) queue.push('helmsmanintro');
+      if (queue.length && !options.replay && autoOn() && !(game.comicProgress && game.comicProgress[chapterId]) && typeof STORY_MODE_CHAPTERS !== 'undefined' && STORY_MODE_CHAPTERS[chapterId]) {
         if (busy) return true;
         const self = this, args = arguments;
-        window.playCinematic(id).then(function(){ oldOpen.apply(self, args); });
+        let chain = Promise.resolve();
+        queue.forEach(function(q){ chain = chain.then(function(){ return window.playCinematic(q); }); });
+        chain.then(function(){ oldOpen.apply(self, args); });
         return true;
       }
       return oldOpen.apply(this, arguments);
