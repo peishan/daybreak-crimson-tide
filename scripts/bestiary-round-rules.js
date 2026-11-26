@@ -9,6 +9,9 @@
   //   rule 'lights' (False Light)  three stages: each one puts out a lamp, the next kindles, the lights mend, and the last mends every round
   //   rule 'gate'   (Ashk)         odd rounds the gate is open (your damage doubles); even rounds it is shut (he takes nothing and hits 35% harder)
   //   rule 'cold'   (Snow Wyrm)    each round it chills a crew member, who loses their next action unless a crewmate Defends; it rages at half health
+  // Release 4 adds:
+  //   rule 'audit'   (Hedda)       each of her blows takes goods from the hold; everything is handed back when the fight ends, win, loss or flight
+  //   rule 'keeping' (the Keeping) no extra rule: its three stages are enemy.phases
   // The rules live on the enemy (enemy.rule) and only apply to Crimson Horizon fights.
   // -------------------------------------------------------------------
   function active(){ const e = game.combatEnemy; return e && e.rule && e.kind === 'crimson_horizon' && game.inCombat && !game.combatResolved ? e : null; }
@@ -29,6 +32,17 @@
     }
   }
   function isShut(e, r){ return e.rule === 'gate' && r % 2 === 0; }
+  function recount(){ try { game.cargoUsed = Object.keys(game.cargo || {}).reduce(function(a, g){ return a + (game.cargo[g] || 0); }, 0); } catch (er) {} }
+  function returnGoods(e){
+    if (!e || e.rule !== 'audit' || !e.taken) return;
+    const t = e.taken; e.taken = null;
+    let n = 0;
+    Object.keys(t).forEach(function(g){ game.cargo[g] = (game.cargo[g] || 0) + t[g]; n += t[g]; });
+    recount();
+    if (n > 0) { try { if (typeof window.notify === 'function') window.notify({ icon: '⚖️', title: 'The scales settle', text: 'Everything Hedda weighed out (' + n + ' units) is back in the hold.', kind: 'info', duration: 5000 }); } catch (er) {} }
+    try { if (typeof updateUI === 'function') updateUI(); } catch (er) {}
+  }
+  window.__returnAuditGoods = returnGoods;
   function afterDamage(e, hpBefore, r){
     const dealt = Math.max(0, hpBefore - game.combatEnemyHp);
     if (!dealt) return;
@@ -140,6 +154,18 @@
           log('❄️ The wyrm’s breath rolls over ' + m.name + ': their next action is lost unless a crewmate Defends.');
         }
       }
+      if (e0 && e0.rule === 'audit' && game.cargo) {
+        const have = Object.keys(game.cargo).filter(function(g){ return (game.cargo[g] || 0) > 0; });
+        if (have.length) {
+          const total = have.reduce(function(a, g){ return a + game.cargo[g]; }, 0);
+          const g = have[Math.floor(Math.random() * have.length)], n = Math.min(game.cargo[g], 1 + Math.floor(total / 40));
+          game.cargo[g] -= n; if (game.cargo[g] <= 0) delete game.cargo[g];
+          e0.taken = e0.taken || {}; e0.taken[g] = (e0.taken[g] || 0) + n;
+          game.combatEnemy.taken = e0.taken;
+          recount();
+          log('⚖️ Hedda weighs ' + n + ' ' + String(g).replace(/_/g, ' ') + ' out of the hold (' + Object.keys(e0.taken).reduce(function(a, k){ return a + e0.taken[k]; }, 0) + ' held). It all goes back when the fight ends.');
+        }
+      }
     } catch (er) {}
     try {
       const e = active();
@@ -162,6 +188,7 @@
       if (typeof renderCombat === 'function') setTimeout(function(){ try { renderCombat(); } catch (er) {} }, 0);
       return;
     }
+    try { if (game.combatEnemy && game.combatEnemy.rule === 'audit') returnGoods(game.combatEnemy); } catch (er) {}
     const e = game.combatEnemy, refund = e && e.rule === 'oath' && e.kind === 'crimson_horizon' && !game.combatResolved ? (e.owed || 0) : 0;
     const r = oldVictory.apply(this, arguments);
     if (refund > 0) {
@@ -169,6 +196,21 @@
       if (typeof window.notify === 'function') window.notify({ icon: '📜', title: 'The debt is settled', text: 'Everything it took (' + refund + 'g) is returned.', kind: 'info', duration: 5000 });
       if (typeof updateUI === 'function') updateUI();
     }
+    return r;
+  };
+
+  const oldDefeat = window.handleDefeat;
+  if (typeof oldDefeat === 'function') window.handleDefeat = function(){
+    const e = game.combatEnemy, was = game.combatResolved;
+    const r = oldDefeat.apply(this, arguments);
+    try { if (e && e.rule === 'audit' && !was) returnGoods(e); } catch (er) {}
+    return r;
+  };
+  const oldFlee = window.fleeCombat;
+  if (typeof oldFlee === 'function') window.fleeCombat = function(){
+    const e = game.combatEnemy;
+    const r = oldFlee.apply(this, arguments);
+    try { if (e && e.rule === 'audit' && !game.inCombat) returnGoods(e); } catch (er) {}
     return r;
   };
 

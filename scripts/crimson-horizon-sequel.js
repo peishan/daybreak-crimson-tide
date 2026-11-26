@@ -2785,14 +2785,20 @@
       phases:[{at:0.4, text:'🚪 Ashk lifts the ring of keys and the gate hangs wide for longer. He has stopped weighing you and started counting.', dmgMult:1.2}]},
     reward: { standing: 60, dangerCut: ['west_gate','south_gate','central_gate'], gear: {id:'gate_key_charm', name:'Gate-Key Charm', icon:'🗝️', slot:'amulet', family:'any', hp:36, magic:8, spd:4, tier:4, desc:'A heavy key with no lock to match. Gates seem to open a little faster for whoever carries it.'}, text: 'Ashk sets the ring of keys on the floor and bows. The gates have not been told the Keeper is gone, but they have been told this. (+60 standing, and a lasting cut to the danger at all three Gates.)' }
   };
+  window.CH_OPTIONAL_FIGHTS = OPTIONAL_FIGHTS; window.chArcDone = arcDone;   // used by scripts/bestiary-choices.js (choice encounters)
   function optionalDone(key){ return !!(game.crimsonHorizonOptional && game.crimsonHorizonOptional[key]); }
+  // o.port can be '*' (any port but Fair Tide)
+  function optPortOk(o){ return o.port === '*' ? (game.location !== 'fair_tide') : game.location === o.port; }
   function claimOptionalReward(key){
     const o = OPTIONAL_FIGHTS[key]; if (!o) return;
     game.crimsonHorizonOptional = game.crimsonHorizonOptional || {};
     if (game.crimsonHorizonOptional[key]) return;
     game.crimsonHorizonOptional[key] = true;
     game.portStanding = game.portStanding || {};
-    game.portStanding[o.port] = (game.portStanding[o.port] || 0) + (o.reward.standing || 0);
+    const standPort = o.port === '*' ? (game.location || 'fair_tide') : o.port;
+    game.portStanding[standPort] = (game.portStanding[standPort] || 0) + (o.reward.standing || 0);
+    if (o.reward.discount) game.marketDiscount = Math.max(game.marketDiscount || 0, o.reward.discount);
+    if (o.reward.chronicle && typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry(o.reward.chronicle, o.reward.chronicleIcon || '🏆');
     if (o.reward.gear && typeof window.addGearToInventory === 'function') window.addGearToInventory(o.reward.gear);
     if (o.reward.mood && typeof window.addFairTideMood === 'function') window.addFairTideMood(o.reward.mood);
     if (o.reward.dangerCut) { game.portDangerCut = game.portDangerCut || {}; o.reward.dangerCut.forEach(function(pid){ game.portDangerCut[pid] = 1; }); }
@@ -2801,12 +2807,13 @@
   }
   window.startCrimsonHorizonOptionalFight = function(key, mode){
     const o = OPTIONAL_FIGHTS[key];
-    if (!o || optionalDone(key) || !o.unlock() || game.location !== o.port) { toast('Not available right now.'); return; }
+    if (!o || optionalDone(key) || !o.unlock() || !optPortOk(o)) { toast('Not available right now.'); return; }
     if (typeof startCombat !== 'function') return;
     if (o.waves) { startOptWave(key, 0); return; }
     const enemy = scaleCrimsonEnemy(o.enemy, 'guardian', 465);
     if (o.enemy.twist) { enemy.twist = o.enemy.twist; enemy.twistText = o.enemy.twistText; enemy.baseDmg = enemy.dmg; }
     if (o.enemy.rule) { enemy.rule = o.enemy.rule; enemy.twistText = o.enemy.twistText; }
+    if (typeof o.prepare === 'function') o.prepare(enemy);
     if (o.enemy.phases) { enemy.phases = JSON.parse(JSON.stringify(o.enemy.phases)); enemy.phaseIdx = 0; enemy.phaseMult = 1; enemy.baseDmg = enemy.baseDmg || enemy.dmg; }
     if (mode === 'alt' && o.alt) {
       const cost = Math.round((game.gold || 0) * (o.alt.goldPct || 0));
@@ -2845,7 +2852,7 @@
       if (!container || !game.arc42Complete) return;
       Object.keys(OPTIONAL_FIGHTS).forEach(function(key){
         const o = OPTIONAL_FIGHTS[key];
-        if (game.location !== o.port || !o.unlock()) return;
+        if (o.custom || game.location !== o.port || !o.unlock()) return;
         const done = optionalDone(key);
         container.insertAdjacentHTML('afterbegin',
           '<article class="quest-item" style="border-left-color:var(--danger);"><strong>' + o.title + '</strong> <span class="story-chip">Optional</span><br>' +
