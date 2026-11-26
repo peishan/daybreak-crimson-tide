@@ -34,7 +34,7 @@
     try {
       const at = ALL_PARTY.findIndex(function(m){ return m.id === ID; });
       if (window.helmsmanActive()) {
-        if (at < 0) ALL_PARTY.push({ id: ID, get name(){ return (av() && av().name ? av().name : 'HELMSMAN').toUpperCase(); }, role: 'Helmsman', combatRole: 'Support', hp: 80, mp: 90, portrait: '⚓', portraitAsset: null, desc: DESC });
+        if (at < 0) ALL_PARTY.push({ id: ID, get name(){ return (av() && av().name ? av().name : 'HELMSMAN').toUpperCase(); }, role: 'Helmsman', combatRole: 'Support', hp: 80, mp: 90, portrait: '⚓', portraitAsset: 'assets/portraits/helmsman.png', desc: DESC });
         game.foundCompanions = game.foundCompanions || {};
         game.foundCompanions[ID] = true;
       } else if (at >= 0) {
@@ -109,6 +109,18 @@
     } catch (e) {}
   }
 
+  // The helmsman's introduction clip plays once after signing on (also on a voyage already under way)
+  function introClip(){
+    const a = av(); if (!a || a.gender !== 'male') return;
+    try {
+      game.cinematics = (game.cinematics && typeof game.cinematics === 'object') ? game.cinematics : { seen: {} };
+      game.cinematics.seen = game.cinematics.seen || {};
+      if (game.cinematics.seen.helmsmanintro === true) return;
+      game.cinematics.seen.helmsmanintro = false;
+      setTimeout(function(){ try { if (typeof window.playCinematicOnce === 'function') window.playCinematicOnce('helmsmanintro'); } catch (e) {} }, 900);
+    } catch (e) {}
+  }
+
   // New voyage: ask first, then start. A saved voyage is never touched until the player really starts a new one.
   const oldStart = window.startGame;
   if (typeof oldStart === 'function') {
@@ -122,7 +134,7 @@
         sync();
         const r = oldStart.apply(self, args);
         go = false;
-        apply(a); welcome();
+        apply(a); welcome(); introClip();
         try { if (typeof updateUI === 'function') updateUI(); if (typeof renderLandingV24 === 'function') renderLandingV24(); } catch (e) {}
         return r;
       });
@@ -131,7 +143,7 @@
 
   // ---- Companion Log: the one-time offer for a voyage that is already under way, and a rename for a helmsman ----
   window.chooseHelmsmanNow = function(){
-    openChoice(function(a){ apply(a); welcome(); if (typeof renderPartyScreen === 'function') renderPartyScreen(); try { renderLandingV24(); } catch (e) {} }, { cancel: true });
+    openChoice(function(a){ apply(a); welcome(); introClip(); if (typeof renderPartyScreen === 'function') renderPartyScreen(); try { renderLandingV24(); } catch (e) {} }, { cancel: true });
   };
   window.renameHelmsman = function(){
     const cur = av() && av().name || '';
