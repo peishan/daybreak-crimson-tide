@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V690 · Arc IX clip fixes (Ch.1 and Ch.26)';
+window.__CT_BUILD__='V691 · Bestiary release 4: Hedda, the Keeping, the Lantern-Keeper';
