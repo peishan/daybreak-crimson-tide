@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V692 · Soel away windows, Arc IX scenes';
+window.__CT_BUILD__='V693 · Guild group content: finder, Vault, Tide Court, Event Night';

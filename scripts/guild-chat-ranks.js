@@ -353,4 +353,6 @@
       }
     } catch (e) {}
   }, 40 * 1000);
+  // for scripts/guild-group.js (group finder, dungeon, raid)
+  window.guildChat = { sys: sys, say: say, members: members, online: online, key: key, weekKey: weekKey, me: me, refresh: function(){ try { refresh(); } catch (e) {} } };
 })();
