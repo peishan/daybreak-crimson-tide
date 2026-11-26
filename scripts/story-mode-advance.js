@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V694 · Guild rivalry, mailbox, titles, cosmetics, pets';
+window.__CT_BUILD__='V695 · Arc XX Interlude clips (Ch.1 to 3)';
