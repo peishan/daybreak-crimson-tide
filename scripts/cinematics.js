@@ -215,6 +215,9 @@
     ,{ id:'arc20int03', icon:'☕', title:'Interlude: Morning After the Drinks', where:'When Arc XX Interlude Chapter 3 is read',
       clips:['cin119-arc20-interlude-03-morning-after-the-drinks.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[3]); } }
+    ,{ id:'helmsmanintro', icon:'⚓', title:'A New Hand at the Wheel', where:'When you choose to sail as the helmsman',
+      clips:['cin120-helmsman-intro.mp4'], hideUnless:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); },
+      passed:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); } }
     ,{ id:'arc41int13', icon:'💋', title:'Just One?', where:'When Arc XLI Interlude Chapter 13 is read',
       clips:['cin89-arc41-interlude-13-just-one.mp4'],
       passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[13]); } }
@@ -394,7 +397,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -825,7 +828,7 @@
 
   // ---- Comic Archive: replay list and the automatic switch ----
   function panelHtml(){
-    const rows = CINEMATICS.map(function(c){
+    const rows = CINEMATICS.filter(function(c){ return !c.hideUnless || c.hideUnless(); }).map(function(c){
       const seen = isSeen(c.id);
       return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid rgba(232,197,71,.15);">' +
         '<span style="flex:1;min-width:0;"><b>' + c.icon + ' ' + esc(c.title) + '</b><br><span style="font-size:.72rem;opacity:.65;">' + esc(c.where) + (seen ? '' : ' · not seen yet') + '</span></span>' +
