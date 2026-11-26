@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V699 · Arc XX Interlude clips (Ch.6 and 7)';
+window.__CT_BUILD__='V700 · Arc XX Interlude Ch.5 clip updated (two parts)';

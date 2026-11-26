@@ -222,7 +222,7 @@
       clips:['cin121-arc20-interlude-04-soel-and-everyone-else-1.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[4]); } }
     ,{ id:'arc20int05', icon:'🐈', title:'Interlude: Soel and Everyone Else (Part 2)', where:'When Arc XX Interlude Chapter 5 is read',
-      clips:['cin122-arc20-interlude-05-soel-and-everyone-else-2.mp4'],
+      clips:['cin122-arc20-interlude-05-soel-and-everyone-else-2a.mp4', 'cin122-arc20-interlude-05-soel-and-everyone-else-2b.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[5]); } }
     ,{ id:'arc20int06', icon:'👨‍👩‍👦', title:'Interlude: The Youngest Brother', where:'When Arc XX Interlude Chapter 6 is read',
       clips:['cin123-arc20-interlude-06-the-youngest-brother.mp4'],
