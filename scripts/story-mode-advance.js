@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V696 · Helmsman portrait and intro clip';
+window.__CT_BUILD__='V697 · New-area monsters, helmsman clip after Ch.1';

@@ -117,7 +117,8 @@
       game.cinematics.seen = game.cinematics.seen || {};
       if (game.cinematics.seen.helmsmanintro === true) return;
       game.cinematics.seen.helmsmanintro = false;
-      setTimeout(function(){ try { if (typeof window.playCinematicOnce === 'function') window.playCinematicOnce('helmsmanintro'); } catch (e) {} }, 900);
+      // before Chapter 1 it plays right after Chapter 1's own clip (scripts/cinematics.js); on a voyage already past it, it plays now
+      if (game.comicProgress && game.comicProgress[1]) setTimeout(function(){ try { if (typeof window.playCinematicOnce === 'function') window.playCinematicOnce('helmsmanintro'); } catch (e) {} }, 900);
     } catch (e) {}
   }
 
