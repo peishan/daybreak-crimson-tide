@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V691 · Bestiary release 4: Hedda, the Keeping, the Lantern-Keeper';
+window.__CT_BUILD__='V692 · Soel away windows, Arc IX scenes';
