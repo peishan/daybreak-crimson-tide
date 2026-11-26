@@ -218,6 +218,12 @@
     ,{ id:'helmsmanintro', icon:'⚓', title:'A New Hand at the Wheel', where:'For a helmsman: after the Chapter 1 clip',
       clips:['cin120-helmsman-intro.mp4'], hideUnless:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); },
       passed:function(){ return !!(typeof window.helmsmanActive === 'function' && window.helmsmanActive()); } }
+    ,{ id:'arc20int04', icon:'🐈', title:'Interlude: Soel and Everyone Else (Part 1)', where:'When Arc XX Interlude Chapter 4 is read',
+      clips:['cin121-arc20-interlude-04-soel-and-everyone-else-1.mp4'],
+      passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[4]); } }
+    ,{ id:'arc20int05', icon:'🐈', title:'Interlude: Soel and Everyone Else (Part 2)', where:'When Arc XX Interlude Chapter 5 is read',
+      clips:['cin122-arc20-interlude-05-soel-and-everyone-else-2.mp4'],
+      passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[5]); } }
     ,{ id:'arc41int13', icon:'💋', title:'Just One?', where:'When Arc XLI Interlude Chapter 13 is read',
       clips:['cin89-arc41-interlude-13-just-one.mp4'],
       passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[13]); } }
@@ -397,7 +403,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -706,12 +712,12 @@
     });
   })();
 
-  // ---- Arc XX Interlude Chapters 1 to 3: the clip plays when the chapter is read, then the chapter completes ----
+  // ---- Arc XX Interlude Chapters 1 to 5: the clip plays when the chapter is read, then the chapter completes ----
   (function(){
     let opening = false;
     const old = window.markArc20InterludeChapterRead;
     if (typeof old !== 'function') return;
-    const CLIPS = { 1: 'arc20int01', 2: 'arc20int02', 3: 'arc20int03' };
+    const CLIPS = { 1: 'arc20int01', 2: 'arc20int02', 3: 'arc20int03', 4: 'arc20int04', 5: 'arc20int05' };
     window.markArc20InterludeChapterRead = function(id){
       if (opening) return;
       const self = this, args = arguments, n = Number(id);

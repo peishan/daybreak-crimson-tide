@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V697 · New-area monsters, helmsman clip after Ch.1';
+window.__CT_BUILD__='V698 · Arc XX Interlude clips (Ch.4 and 5)';
