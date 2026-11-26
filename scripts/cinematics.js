@@ -230,6 +230,21 @@
     ,{ id:'arc20int07', icon:'📖', title:'Interlude: Check In with Renn', where:'When Arc XX Interlude Chapter 7 is read',
       clips:['cin124-arc20-interlude-07-check-in-with-renn.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[7]); } }
+    ,{ id:'mem08', icon:'🕯️', title:'Memory Archive: Different Battles', where:'When Memory Archive Chapter 8 is read',
+      clips:['cin125-memory-archive-08-different-battles.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[8]); } }
+    ,{ id:'mem09', icon:'🕯️', title:'Memory Archive: Memory Trigger', where:'When Memory Archive Chapter 9 is read',
+      clips:['cin126-memory-archive-09-memory-trigger.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[9]); } }
+    ,{ id:'mem10', icon:'🕯️', title:'Memory Archive: Memory Trigger (II)', where:'When Memory Archive Chapter 10 is read',
+      clips:['cin127-memory-archive-10-memory-trigger.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[10]); } }
+    ,{ id:'mem11', icon:'🕯️', title:'Memory Archive: Memory Fragment: Family', where:'When Memory Archive Chapter 11 is read',
+      clips:['cin128-memory-archive-11-memory-fragment-family.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[11]); } }
+    ,{ id:'mem12', icon:'🕯️', title:'Memory Archive: Familial Bonds', where:'When Memory Archive Chapter 12 is read',
+      clips:['cin129-memory-archive-12-familial-bonds.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[12]); } }
     ,{ id:'arc41int13', icon:'💋', title:'Just One?', where:'When Arc XLI Interlude Chapter 13 is read',
       clips:['cin89-arc41-interlude-13-just-one.mp4'],
       passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[13]); } }
@@ -409,7 +424,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -729,6 +744,23 @@
       const self = this, args = arguments, n = Number(id);
       const stateFn = window.arc20InterludeObjectiveState;
       const ready = !!CLIPS[n] && typeof stateFn === 'function' && stateFn() === ('complete_interlude_chapter_' + n) && !(game.comicProgress20Interlude && game.comicProgress20Interlude[n]);
+      if (!ready) return old.apply(self, args);
+      opening = true;
+      Promise.resolve(window.playCinematicOnce(CLIPS[n])).catch(function(){}).then(function(){ opening = false; old.apply(self, args); });
+    };
+  })();
+
+  // ---- Memory Archive Chapters 8 to 12: the clip plays when the chapter is read, then the chapter completes ----
+  (function(){
+    let opening = false;
+    const old = window.markMemoryArchiveChapterRead;
+    if (typeof old !== 'function') return;
+    const CLIPS = { 8: 'mem08', 9: 'mem09', 10: 'mem10', 11: 'mem11', 12: 'mem12' };
+    window.markMemoryArchiveChapterRead = function(id){
+      if (opening) return;
+      const self = this, args = arguments, n = Number(id);
+      const stateFn = window.memoryArchiveObjectiveState;
+      const ready = !!CLIPS[n] && typeof stateFn === 'function' && stateFn() === ('complete_memoryarchive_chapter_' + n) && !(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[n]);
       if (!ready) return old.apply(self, args);
       opening = true;
       Promise.resolve(window.playCinematicOnce(CLIPS[n])).catch(function(){}).then(function(){ opening = false; old.apply(self, args); });
