@@ -249,7 +249,7 @@
       else if (cmd === '/motd') { if (arg) { chat().motd = arg.slice(0, 120); sys('📌 The message of the day was changed.'); } else sys('📌 ' + chat().motd); }
       else sys('Commands: /roll [max], /who, /me <action>, /motd <text>.');
     } else {
-      say(me(), '⚓', text, 'p');
+      say(me(), (typeof window.guildBadge === 'function' ? window.guildBadge() : '⚓'), text, 'p');
       reply(text);
     }
     chat().lastGen = Date.now();
@@ -280,7 +280,7 @@
       if (l.k === 's') return '<div style="color:#e8c547;font-size:.82rem;margin:2px 0;">' + tm + esc2(l.x) + '</div>';
       if (l.k === 'e') return '<div style="color:#d8a8ff;font-size:.82rem;margin:2px 0;font-style:italic;">' + tm + esc2(l.x) + '</div>';
       const me = l.k === 'p';
-      return '<div style="font-size:.84rem;margin:2px 0;">' + tm + '<b style="color:' + (me ? '#7fd4ff' : '#f1d7a3') + ';">' + (l.i ? l.i + ' ' : '') + esc2(l.w) + (me ? ' [' + esc2(title()) + ']' : '') + ':</b> ' + esc2(l.x) + '</div>';
+      return '<div style="font-size:.84rem;margin:2px 0;">' + tm + '<b style="color:' + (me ? (typeof window.guildNameColor === 'function' ? window.guildNameColor() : '#7fd4ff') : '#f1d7a3') + ';">' + (l.i ? l.i + ' ' : '') + esc2(l.w) + (me ? ' [' + esc2((typeof window.guildPerkTitle === 'function' && window.guildPerkTitle()) || title()) + ']' : '') + ':</b> ' + esc2(l.x) + '</div>';
     }).join('');
     el.innerHTML = '<div class="panel-title">💬 Guild Chat</div>' +
       '<div class="story-chip" style="margin-bottom:6px;">📌 ' + esc2(c.motd) + '</div>' +
@@ -354,5 +354,5 @@
     } catch (e) {}
   }, 40 * 1000);
   // for scripts/guild-group.js (group finder, dungeon, raid)
-  window.guildChat = { sys: sys, say: say, members: members, online: online, key: key, weekKey: weekKey, me: me, refresh: function(){ try { refresh(); } catch (e) {} } };
+  window.guildChat = { weekPts: function(){ const c = chat(); return c.week && c.week.key === weekKey() ? c.week.pts : 0; }, fraction: weekFraction, level: guildLevel, title: title, sys: sys, say: say, members: members, online: online, key: key, weekKey: weekKey, me: me, refresh: function(){ try { refresh(); } catch (e) {} } };
 })();
