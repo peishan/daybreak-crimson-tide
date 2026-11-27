@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V706 · Arc XLI Interlude clips (Sairen and Jovie)';
+window.__CT_BUILD__='V707 · New-area bosses: Old Netmaster, Heart-Rot, Hollow Bell';
