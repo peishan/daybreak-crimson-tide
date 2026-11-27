@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V703 · Arc XLI Interlude Ch.4 clip order';
+window.__CT_BUILD__='V704 · Memory Archive Ch.1 clip';

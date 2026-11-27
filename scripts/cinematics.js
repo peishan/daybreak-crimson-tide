@@ -230,6 +230,9 @@
     ,{ id:'arc20int07', icon:'📖', title:'Interlude: Check In with Renn', where:'When Arc XX Interlude Chapter 7 is read',
       clips:['cin124-arc20-interlude-07-check-in-with-renn.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[7]); } }
+    ,{ id:'mem01', icon:'🕯️', title:'Memory Archive: Just a Girl', where:'When Memory Archive Chapter 1 is opened, before the comic',
+      clips:['cin136-memory-archive-01-just-a-girl.mp4'],
+      passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[1]); } }
     ,{ id:'mem08', icon:'🕯️', title:'Memory Archive: Different Battles', where:'When Memory Archive Chapter 8 is read',
       clips:['cin125-memory-archive-08-different-battles.mp4'],
       passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[8]); } }
@@ -439,7 +442,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','mem01','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -605,8 +608,8 @@
     if (typeof old !== 'function') return;
     window.openComicImage = function(url){
       const u = String(url || '');
-      const m = /comics\/arc5\/ch0([1-9])-/.exec(u), m15 = /comics\/arc15\/ch0([1-9])-/.exec(u), mo = /comics\/arc(12|17|19|21)\/ch(\d+)-/.exec(u);
-      const id = (m && ARC5_CLIPS[Number(m[1])]) || (m15 && ARC15_CLIPS[Number(m15[1])]) || (mo && OTHER_CLIPS[mo[1] + ':' + Number(mo[2])]);
+      const m = /comics\/arc5\/ch0([1-9])-/.exec(u), m15 = /comics\/arc15\/ch0([1-9])-/.exec(u), mo = /comics\/arc(12|17|19|21)\/ch(\d+)-/.exec(u), mm = /comics\/memory-archive\/ch01-/.exec(u);
+      const id = (m && ARC5_CLIPS[Number(m[1])]) || (m15 && ARC15_CLIPS[Number(m15[1])]) || (mo && OTHER_CLIPS[mo[1] + ':' + Number(mo[2])]) || (mm && 'mem01');
       if (id && autoOn() && !isSeen(id) && !busy) {
         const self = this, args = arguments;
         window.playCinematic(id).then(function(){ old.apply(self, args); });
