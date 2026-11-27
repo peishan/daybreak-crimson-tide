@@ -12,6 +12,10 @@
   // Release 4 adds:
   //   rule 'audit'   (Hedda)       each of her blows takes goods from the hold; everything is handed back when the fight ends, win, loss or flight
   //   rule 'keeping' (the Keeping) no extra rule: its three stages are enemy.phases
+  // New-area bosses add:
+  //   rule 'drain' (Heart-Rot)    it heals by half of the damage it deals to the crew, so a long fight loses; Defend and shields beat it
+  //   rule 'echo'  (Hollow Bell)  every second round it throws the strongest blow you dealt last round back at the crew
+  // (the cold rule's flavour text can be set per enemy with enemy.chillText)
   // The rules live on the enemy (enemy.rule) and only apply to Crimson Horizon fights.
   // -------------------------------------------------------------------
   function active(){ const e = game.combatEnemy; return e && e.rule && e.kind === 'crimson_horizon' && game.inCombat && !game.combatResolved ? e : null; }
@@ -46,6 +50,7 @@
   function afterDamage(e, hpBefore, r){
     const dealt = Math.max(0, hpBefore - game.combatEnemyHp);
     if (!dealt) return;
+    if (e.rule === 'echo') { e.maxByRound = e.maxByRound || {}; e.maxByRound[r] = Math.max(e.maxByRound[r] || 0, dealt); }
     if (e.rule === 'gate') {
       if (isShut(e, r)) {
         game.combatEnemyHp = Math.min(e.hp, game.combatEnemyHp + dealt);
@@ -151,7 +156,17 @@
         if (pool.length) {
           const m = pool[Math.floor(Math.random() * pool.length)];
           e0.chilled = e0.chilled || {}; e0.chilled[m.id] = true; e0.chillRound = round();
-          log('❄️ The wyrm’s breath rolls over ' + m.name + ': their next action is lost unless a crewmate Defends.');
+          log('❄️ ' + (e0.chillText || 'The wyrm’s breath rolls over') + ' ' + m.name + ': their next action is lost unless a crewmate Defends.');
+        }
+      }
+      if (e0 && e0.rule === 'echo' && round() % 2 === 0 && e0.echoRound !== round() && game.combatEnemyHp > 0) {
+        const prev = (e0.maxByRound || {})[round() - 1] || 0;
+        const alive = (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).filter(function(m){ return (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp) > 0; });
+        if (prev > 0 && alive.length) {
+          const m = alive[Math.floor(Math.random() * alive.length)], dmg = Math.max(1, Math.round(prev * 0.8));
+          game.partyHp[m.id] = Math.max(0, (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp) - dmg);
+          e0.echoRound = round();
+          log('🔔 <b>The echo comes back.</b> ' + e0.name + ' throws your strongest blow of last round, ' + prev + ', at ' + m.name + ' for ' + dmg + '.');
         }
       }
       if (e0 && e0.rule === 'audit' && game.cargo) {
@@ -177,7 +192,21 @@
         if (typeof updateUI === 'function') updateUI();
       }
     } catch (er) {}
-    return oldCounter.apply(this, arguments);
+    let drainBefore = null;
+    try {
+      const ed = active();
+      if (ed && ed.rule === 'drain') drainBefore = (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).reduce(function(a, m){ return a + (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp); }, 0);
+    } catch (er) {}
+    const counterResult = oldCounter.apply(this, arguments);
+    try {
+      const ed = game.combatEnemy;
+      if (drainBefore !== null && ed && ed.rule === 'drain' && game.combatEnemyHp > 0) {
+        const after = (typeof getCrimsonCombatParty === 'function' ? getCrimsonCombatParty() : []).reduce(function(a, m){ return a + (game.partyHp[m.id] != null ? game.partyHp[m.id] : m.hp); }, 0);
+        const heal = Math.round(Math.max(0, drainBefore - after) * 0.5);
+        if (heal > 0) { game.combatEnemyHp = Math.min(ed.hp, game.combatEnemyHp + heal); log('🌿 ' + ed.name + ' drinks the blow: it heals ' + heal + '.'); }
+      }
+    } catch (er) {}
+    return counterResult;
   };
   const oldVictory = window.handleVictory;
   if (typeof oldVictory === 'function') window.handleVictory = function(){

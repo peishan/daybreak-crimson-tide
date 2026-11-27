@@ -1,6 +1,6 @@
 (function(){
   // -------------------------------------------------------------------
-  // BESTIARY: THE NEW AREAS (release 1, the monsters). Eight optional creature fights for the ports from Arc XXIII on, each at its own port once that
+  // BESTIARY: THE NEW AREAS (release 1, the monsters; release 2, the first three bosses). Eight optional creature fights for the ports from Arc XXIII on, each at its own port once that
   // arc is done. They use mechanics the game already has: waves with the mender and frenzy twists, and the tide, jam and cold round rules.
   // Drafted in the "Crimson Horizon Bestiary: New Areas Draft" doc. Names and numbers are placeholders to tune.
   // -------------------------------------------------------------------
@@ -77,5 +77,42 @@
     ],
     enemy: { name: 'The Eldest Fledgling', icon: '🪶', hp: 3000, dmg: 88, xp: 700, gold: 350, twist: 'mender', twistText: 'It mends under its own feathers', desc: 'The eldest of the brood.' },
     reward: { standing: 40, gear: amulet('fledgling_feather', 'Fledgling Feather', '🪶', 'A long feather, soft at the edge and sharp at the quill. It is light in a gale.', { hp: 28, spd: 4 }), text: 'The brood settles on the rock again, and you take one long feather from the nest\'s edge.' }
+  };
+
+  // ---- Release 2: the first three bosses (the netmaster's cold, the heart-rot's drain, the bell's echo; rules in bestiary-round-rules.js) ----
+  OPT.opt_old_netmaster = {
+    port: 'northern_landing', unlock: function(){ return done(24); },
+    title: '🪢 The Old Netmaster', btn: '⚔️ Face the Netmaster',
+    text: 'A drowned fisher is still mending his net at the end of the landing, long after the boats stopped coming. He means no harm. He has simply never been told that the nets are done, and anything that comes near gets caught.',
+    enemy: { name: 'The Old Netmaster', icon: '🪢', hp: 6200, dmg: 90, xp: 2000, gold: 1000, rule: 'cold',
+      twistText: 'The net: each round it holds one crew member, who loses their next action unless a crewmate Defends. Rages below half health',
+      desc: 'A grey, patient figure of wet rope and old tar, with a net that is never quite empty. Each round the net closes over one of the crew, and only a crewmate bracing beside them frees them. When he is hurt he hauls hard.',
+      phases: [{ at: 0.5, text: '🪢 The Netmaster hauls hard on the net. He is angry now, and he hits much harder.', dmgMult: 1.3 }] },
+    prepare: function(enemy){ enemy.chillText = 'The Netmaster’s net closes over'; },
+    reward: { standing: 50, chronicle: 'The Old Netmaster finally puts down his needle, and Northern Landing has one less thing to mend.', chronicleIcon: '🪢',
+      gear: amulet('netmasters_knot', 'Netmaster’s Knot', '🪢', 'A single perfect knot, tied by someone who never got the chance to stop. It does not slip.', { hp: 36, magic: 8, spd: 3 }, 4),
+      text: 'He sets down the needle, and the net finally goes slack. A single perfect knot is left on the pilings. (+50 standing.)' }
+  };
+  OPT.opt_heart_rot = {
+    port: 'cedar_reach', unlock: function(){ return done(25); },
+    title: '🍄 The Heart-Rot', btn: '⚔️ Cut it out',
+    text: 'The rot took one launching beam last spring and has been growing since, quietly, through the stacked cedar. The shipwright says it is feeding. She would like it cut out before it reaches the new hull.',
+    enemy: { name: 'The Heart-Rot', icon: '🍄', hp: 7000, dmg: 88, xp: 2200, gold: 1100, rule: 'drain',
+      twistText: 'Drain: it heals by half of the damage it deals to the crew. Defend and shields beat it',
+      desc: 'A swollen, pale growth in the shape of a beam, pulsing slowly. Every blow it lands feeds it, so a long fight loses. Defend, raise a shield, and finish it quickly.' },
+    reward: { standing: 50, chronicle: 'The shipwright burns the last of the Heart-Rot at the end of the yard, and the new hull is laid on sound wood.', chronicleIcon: '🪵',
+      gear: amulet('heartwood_splinter', 'Heartwood Splinter', '🪵', 'A sliver of clean, dark heartwood from the cut. It is warm and does not rot.', { hp: 38, spd: 4, magic: 6 }, 4),
+      text: 'The last of it shrivels, and the stack beneath it is sound. The shipwright hands you a splinter of clean heartwood. (+50 standing.)' }
+  };
+  OPT.opt_hollow_bell = {
+    port: 'black_sand_harbor', unlock: function(){ return done(24); },
+    title: '🔔 The Hollow Bell', btn: '⚔️ Ring it down',
+    text: 'In the shell of a wreck on the black sand a bell still rings, long after its ship went down. It is the reef’s last echo, and it will give back to anyone who strikes at it exactly what they gave.',
+    enemy: { name: 'The Hollow Bell', icon: '🔔', hp: 6000, dmg: 86, xp: 2000, gold: 1000, rule: 'echo',
+      twistText: 'Echo: every second round it throws the strongest blow you dealt last round back at the crew',
+      desc: 'A tarnished ship’s bell hung in a ribcage of black timber, ringing without a hand on it. Every other round it throws your strongest blow back at you, so a huge hit has a price, and an even spread is safer.' },
+    reward: { standing: 50, chronicle: 'The Hollow Bell on the black sand rings once more, clean and quiet, and then is still.', chronicleIcon: '🔔',
+      gear: amulet('reef_song_pearl', 'Reef-Song Pearl', '🫧', 'A grey pearl that hums the first note of a song and then holds it.', { hp: 34, magic: 10 }, 4),
+      text: 'The bell rings once more, clean and quiet, and is still. A grey pearl rolls out of the wreck. (+50 standing.)' }
   };
 })();
