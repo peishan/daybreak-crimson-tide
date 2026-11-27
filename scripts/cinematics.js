@@ -230,6 +230,9 @@
     ,{ id:'arc20int07', icon:'📖', title:'Interlude: Check In with Renn', where:'When Arc XX Interlude Chapter 7 is read',
       clips:['cin124-arc20-interlude-07-check-in-with-renn.mp4'],
       passed:function(){ return !!(game.comicProgress20Interlude && game.comicProgress20Interlude[7]); } }
+    ,{ id:'arc3ch26', icon:'💚', title:'Small Hands, Long Memory', where:'After the Arc III Chapter 26 fight (Eliz; a scene from the game that is not in the comic)',
+      clips:['cin137-arc3-ch26-small-hands-long-memory.mp4'],
+      passed:function(){ return (game.act3Index || 0) >= (typeof ACT3_CHAPTERS !== 'undefined' ? ACT3_CHAPTERS.length : 5); } }
     ,{ id:'mem01', icon:'🕯️', title:'Memory Archive: Just a Girl', where:'When Memory Archive Chapter 1 is opened, before the comic',
       clips:['cin136-memory-archive-01-just-a-girl.mp4'],
       passed:function(){ return !!(game.comicProgressMemoryArchive && game.comicProgressMemoryArchive[1]); } }
@@ -442,7 +445,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','mem01','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc3ch26','mem01','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -799,6 +802,18 @@
       if (!ready) return old.apply(self, args);
       opening = true;
       Promise.resolve(window.playCinematicOnce(CLIPS[n])).catch(function(){}).then(function(){ opening = false; old.apply(self, args); });
+    };
+  })();
+
+  // ---- Arc III Chapter 26 (Small Hands, Long Memory): the clip plays after the memory fight is won ----
+  (function(){
+    const oldVictory = window.handleVictory;
+    if (typeof oldVictory !== 'function') return;
+    window.handleVictory = function(){
+      const e = game.combatEnemy, key = e && e.kind === 'memory' ? String(e.key || '') : '', was = game.combatResolved;
+      const r = oldVictory.apply(this, arguments);
+      try { if (key === 'act3_26' && !was) setTimeout(function(){ try { window.playCinematicOnce('arc3ch26'); } catch (er) {} }, 700); } catch (er) {}
+      return r;
     };
   })();
 

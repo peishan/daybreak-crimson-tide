@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V704 · Memory Archive Ch.1 clip';
+window.__CT_BUILD__='V705 · Arc III Ch.26 Eliz clip';
