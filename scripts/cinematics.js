@@ -260,6 +260,15 @@
     ,{ id:'arc41int04', icon:'💐', title:'Interlude: A Different Kind of Knowing', where:'When Arc XLI Interlude Chapter 4 is read',
       clips:['cin132-arc41-interlude-04-a-different-kind-of-knowing-a.mp4', 'cin133-arc41-interlude-04-a-different-kind-of-knowing-b.mp4'],
       passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[4]); } }
+    ,{ id:'arc41int05', icon:'🩹', title:'Interlude: An Unexpected Visitor', where:'When Arc XLI Interlude Chapter 5 is read',
+      clips:['cin138-arc41-interlude-05-an-unexpected-visitor.mp4'],
+      passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[5]); } }
+    ,{ id:'arc41int06', icon:'🍲', title:'Interlude: The Questions She Doesn\'t Ask', where:'When Arc XLI Interlude Chapter 6 is read',
+      clips:['cin139-arc41-interlude-06-the-questions-she-doesnt-ask.mp4'],
+      passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[6]); } }
+    ,{ id:'arc41int10', icon:'🌅', title:'Interlude: A Reason to Return', where:'When Arc XLI Interlude Chapter 10 is read',
+      clips:['cin140-arc41-interlude-10-a-reason-to-return.mp4'],
+      passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[10]); } }
     ,{ id:'arc41int11', icon:'📚', title:'Interlude: An Interesting Distraction', where:'When Arc XLI Interlude Chapter 11 is read',
       clips:['cin134-arc41-interlude-11-an-interesting-distraction.mp4'],
       passed:function(){ return !!(game.comicProgress41Interlude && game.comicProgress41Interlude[11]); } }
@@ -445,7 +454,7 @@
       passed:function(){ return !!game.arc25Complete; } }
   ];
   // story order, for the Comic Archive list
-  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc3ch26','mem01','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
+  (function(){ const o=['teaser','helmsmanintro','storm','malacca','joel','rescue','rescueafter','aboard','palembang','kiss','catch','aisyah','aisyahafter','batavia','eliz','bangkok','mezstorm','mezstormafter','hanoi','senedra','manila','zaki','twins','passage','kota_batu','fair_tide','fthome','mimi','arc3ch02','arc3ch03','arc3ch05','arc3ch11','arc3ch26','mem01','mem08','mem09','mem10','mem11','mem12','arc5bond','arc5shield','arc5mark','arc5aegis','renn','arc6encounter','arc6robin','arc6jeff','arc6renn','arc6service','arc6didnt1','arc6didnt2','arc6didnt3','arc6joel1','arc6joel2','arc6joel3','arc6joel4','erynn','arc9ch01','arc9ch05','arc9ch09','arc9ch14','arc9ch15','arc9ch16','arc9ch17','arc9ch20','arc9ch21a','arc9ch21b','arc9ch24','arc9ch25','arc9ch26a','arc9ch26b','arc12ch01','arc12ch04','arc12ch05','arc12ch06','arc12ch07','arc12ch08','arc12harbour','arc12ch16','arc12ch17','arc12ch19','arc12ch20','arc12ch21','arc13harbour','arc14harbour','arc15harbour','ftresearch','arc17archive','arc19fountain','arc20ch09','arc20ch17a','arc20ch17b','arc20ch20','arc20int01','arc20int02','arc20int03','arc20int04','arc20int05','arc20int06','arc20int07','ftdefence','arc22ch11','arc22ch12','arc30ch19','arc30ch21','arc30ch23','arc32ch24','arc34ch24','arc36ch10','arc37ch16','arc38ch21','arc38ch21b','arc40ch13','arc41ch03','arc41ch05a','arc41ch05b','arc41ch16','arc41int01','arc41int02','arc41int04','arc41int05','arc41int06','arc41int10','arc41int11','arc41int12','arc41int13','arc42ch01','arc42ch02','arc42ch02b','arc42ch08','arc42ch14','arc42ch15','arc42ch16','arc42ch33','arc42ch35','arc42ch39','arc42ch43','chtitle','joycaelan','twinsbirth','sparks']; CINEMATICS.sort(function(a,b){ return o.indexOf(a.id)-o.indexOf(b.id); }); })();
   const BY_ID = {}; CINEMATICS.forEach(function(c){ BY_ID[c.id] = c; });
   window.CT_CINEMATICS = CINEMATICS;
 
@@ -788,12 +797,12 @@
     };
   })();
 
-  // ---- Arc XLI Interlude Chapters 1, 2, 4, 11 and 12: the clip plays when the chapter is read, then the chapter completes ----
+  // ---- Arc XLI Interlude Chapters 1, 2, 4, 5, 6, 10, 11 and 12: the clip plays when the chapter is read, then the chapter completes ----
   (function(){
     let opening = false;
     const old = window.markArc41InterludeChapterRead;
     if (typeof old !== 'function') return;
-    const CLIPS = { 1: 'arc41int01', 2: 'arc41int02', 4: 'arc41int04', 11: 'arc41int11', 12: 'arc41int12' };
+    const CLIPS = { 1: 'arc41int01', 2: 'arc41int02', 4: 'arc41int04', 5: 'arc41int05', 6: 'arc41int06', 10: 'arc41int10', 11: 'arc41int11', 12: 'arc41int12' };
     window.markArc41InterludeChapterRead = function(id){
       if (opening) return;
       const self = this, args = arguments, n = Number(id);
