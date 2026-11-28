@@ -15,7 +15,7 @@ One generic player plays every episode. An episode is only data in `registry.jso
 
 ## Video storage (keep videos out of the repo)
 
-Set `storage.baseUrl` in `config.json` to your private storage, for example `https://media.example.com/daybreak/`. Clips are found by file name (see below), or by an explicit `src` relative to it or a full `https://` URL. Leave `baseUrl` empty to use `series/media/` for local testing.
+Set `storage.baseUrl` in `config.json` to your private storage, for example `https://media.example.com/daybreak/`. Clips are found by file name (see below), or by an explicit `src` relative to it or a full `https://` URL. Leave `baseUrl` empty to use `series/media/` in this repo (see `series/media/README.md`; files there are public if the site is public).
 
 Authorisation is sent with every clip request: `storage.auth` is `{ "type": "query", "param": "key" }` (the access key is added as `?key=...`) or `{ "type": "none" }`. A base URL containing `{key}` has it replaced by the key. `storage.versionParam` (default `v`) adds the clip's `version` to its URL so a replaced clip is not served from a cache; set it to `""` if your storage uses signed URLs that a changed query would break.
 
