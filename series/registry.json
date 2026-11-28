@@ -15,7 +15,7 @@
       ],
       "thumbnail": "assets/comics/arc1/ch01-storm-that-remained.webp",
       "status": {
-        "production": "in_production",
+        "production": "ready",
         "approval": "pending"
       },
       "ending": {
@@ -75,17 +75,29 @@
     {
       "number": 2,
       "arc": 1,
-      "title": "The First Port",
-      "description": "Placeholder: set the episode title, description and chapters.",
+      "title": "The Voice Behind the Wall",
+      "description": "San meets the crew, finds her way to the Guardian’s fortress and hears a voice behind the wall.",
       "chapters": [
         {
           "arc": 1,
           "chapter": 2
+        },
+        {
+          "arc": 1,
+          "chapter": 3
+        },
+        {
+          "arc": 1,
+          "chapter": 4
+        },
+        {
+          "arc": 1,
+          "chapter": 5
         }
       ],
-      "thumbnail": "assets/comics/arc1/ch02-the-first-port.webp",
+      "thumbnail": "assets/comics/arc1/ch05-the-voice-behind-the-wall.webp",
       "status": {
-        "production": "in_production",
+        "production": "ready",
         "approval": "pending"
       },
       "ending": {
@@ -113,7 +125,7 @@
         {
           "id": "002-04",
           "title": "The Lone Guardian",
-          "duration": null,
+          "duration": 10.12,
           "version": 1
         },
         {
@@ -125,7 +137,7 @@
         {
           "id": "002-06",
           "title": "Bring Him Home",
-          "duration": null,
+          "duration": 10.12,
           "version": 1
         },
         {
@@ -137,18 +149,108 @@
         {
           "id": "002-08",
           "title": "Leaving You Felt Wrong",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "002-09",
           "title": "Soel Chooses",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "002-10",
           "title": "Some Things Survive the Storm",
+          "duration": 10.12,
+          "version": 1
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "arc": 1,
+      "title": "The Shield Returns",
+      "description": "San returns to the Guardian’s fortress at midnight to rescue the mysterious warrior. When danger returns, the two fight side by side with an inexplicably familiar coordination. Their escape marks the beginning of a new partnership, while the Guardian’s shield offers clues to a forgotten past.",
+      "chapters": [
+        {
+          "arc": 1,
+          "chapter": 6
+        },
+        {
+          "arc": 1,
+          "chapter": 7
+        },
+        {
+          "arc": 1,
+          "chapter": 8
+        }
+      ],
+      "thumbnail": "assets/comics/arc1/ch06-the-shield-returns.webp",
+      "status": {
+        "production": "in_production",
+        "approval": "pending"
+      },
+      "ending": {
+        "art": ""
+      },
+      "clips": [
+        {
+          "id": "003-01",
+          "title": "The Midnight Rescue",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-02",
+          "title": "Have We Met?",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-03",
+          "title": "The Beast Awakens",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-04",
+          "title": "The Shield Returns",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-05",
+          "title": "As Though We Always Had",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-06",
+          "title": "Leaving Together",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-07",
+          "title": "My Name Is Joel",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-08",
+          "title": "The Shield That Remained",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-09",
+          "title": "The Tradewinds Remember",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "003-10",
+          "title": "A Place Beside Her",
           "duration": null,
           "version": 1
         }
