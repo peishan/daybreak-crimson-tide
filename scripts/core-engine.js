@@ -5363,6 +5363,7 @@ function renderCombat() {
     if (kit.skill) options.push({fn: "combatAction('SKILL')", icon: kit.skill.icon, name: kit.skill.name, desc: 'Default skill'});
     if (aegisAvailable(actor)) options.push({fn: 'useFirstMatesAegis()', icon: '🛡️✨', name: "First Mate's Aegis", desc: 'Arm the mark to shield San from the next hit she takes — once per day.'});
     if (typeof window.accordStatus === 'function') { const as = window.accordStatus(actor); if (as === '') options.push({fn: 'useCustodiansAccord()', icon: '🤝', name: "Custodians' Accord", desc: 'San and Joel raise a shared ward: 35% less damage for 3 turns, and harmful effects shrugged off. Then a 5-round recovery.'}); else if (as) options.push({fn: "toast('" + as.replace(/'/g, '') + "')", icon: '🤝', name: "Custodians' Accord", desc: as}); }
+    if (typeof window.blessOptions === 'function') window.blessOptions(actor).forEach(function(o){ options.push(o); });   // Founders' Blessing abilities
     if (highSkillAvailable(actor)) options.push({fn: "combatAction('HIGHSKILL')", icon: kit.highSkill.icon, name: kit.highSkill.name, desc: kit.highSkill.desc || ('Requires Level ' + (kit.highSkill.levelReq||1) + '.')});
     document.getElementById('skillGrid').innerHTML = options.map(o =>
       `<button class="spell-btn" onclick="${o.fn}">
@@ -5697,8 +5698,9 @@ window.handleSkillButton = function(){
   if (!actor) return;
   const aegisOffered = aegisAvailable(actor) && !game.aegisArmed;
   const accordOffered = typeof window.accordStatus === 'function' && window.accordStatus(actor) != null;
+  const blessOffered = typeof window.blessOptions === 'function' && window.blessOptions(actor).length > 0;
   const highSkillOffered = highSkillAvailable(actor);
-  if (aegisOffered || highSkillOffered || accordOffered) {
+  if (aegisOffered || highSkillOffered || accordOffered || blessOffered) {
     game.skillMenuOpen = !game.skillMenuOpen;
     game.spellMenuOpen = false;
     game.itemMenuOpen = false;
@@ -6464,6 +6466,8 @@ function autoBattleAction(actor) {
     window.useCustodiansAccord();
     return;
   }
+  // Founders' Blessing: auto-battle uses a blessed ability when it is ready and would help
+  if (typeof window.blessAutoUse === 'function' && window.blessAutoUse(actor)) return;
   const kit = kitFor(actor.id);
   const mp = game.partyMp[actor.id] || 0;
   const combatParty = getCrimsonCombatParty();
