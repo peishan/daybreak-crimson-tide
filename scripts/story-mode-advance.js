@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V708 · Arc V clips for Renn (Ch.7 and 8)';
+window.__CT_BUILD__='V709 · Arc II Ch.10 and Arc X Ch.5, 16 clips';
