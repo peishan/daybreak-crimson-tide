@@ -32,7 +32,7 @@ ep001/02.mp4   Lost Memories
 ep001/10.mp4   We Sail. We Live.
 ```
 
-Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no registry edit needed; the clip titles come from the registry, in order. A clip whose file is missing shows a short "not available yet" card and the episode moves on. The pattern can be changed with `naming.pattern` in `config.json` (`{ep}` is the 3-digit episode number, `{clip}` the 2-digit clip number). A clip may still set its own `src` to override the convention.
+Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no registry edit needed; the clip titles come from the registry, in order. A clip whose file is missing is skipped silently: no placeholder screen, and it takes no time on the progress bar. Only if no clip of the episode can play does the player say "This episode is not available yet." The clip list still marks missing clips as "not uploaded". The pattern can be changed with `naming.pattern` in `config.json` (`{ep}` is the 3-digit episode number, `{clip}` the 2-digit clip number). A clip may still set its own `src` to override the convention.
 
 ## Access
 

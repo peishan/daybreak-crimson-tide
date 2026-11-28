@@ -187,7 +187,12 @@
     slots = [{ v: vids[0], idx: -1, ready: false, err: false, missing: false }, { v: vids[1], idx: -1, ready: false, err: false, missing: false }];
 
     // durations
-    function dur(i){ const c = clips[i]; return knownDuration(c) || probed[clipDurKey(c)] || (isMissing(c) ? cfg.missingClipSeconds : cfg.defaultClipSeconds); }
+    // A clip with no file is skipped silently (no placeholder screen, no time on the bar). Only if no clip at all can play do we say so.
+    function allMissing(){ return clips.every(isMissing); }
+    function skipClip(i){ return isMissing(clips[i]) && !allMissing(); }
+    function nextAvail(i){ for (let j = Math.max(0, i); j < n; j++) if (!skipClip(j)) return j; return -1; }
+    function prevAvail(i){ for (let j = i; j >= 0; j--) if (!skipClip(j)) return j; return -1; }
+    function dur(i){ if (skipClip(i)) return 0; const c = clips[i]; return knownDuration(c) || probed[clipDurKey(c)] || (isMissing(c) ? cfg.missingClipSeconds : cfg.defaultClipSeconds); }
     function recompute(){ offsets = []; total = 0; for (let i = 0; i < n; i++) { offsets.push(total); total += dur(i); } drawTicks(); }
     function drawTicks(){ el.ticks.innerHTML = offsets.slice(1).map(function(o){ return '<u style="left:' + (o / total * 100) + '%"></u>'; }).join(''); }
     function curTime(){ const s = slots[active]; const t = s && s.idx === cur && !s.missing ? (s.v.currentTime || 0) : (virtual ? virtual.off : 0); return Math.min(dur(cur), t); }
@@ -220,7 +225,12 @@
         if (!(typeof c.duration === 'number' && c.duration > 0) && Math.abs((probed[key] || 0) - v.duration) > 0.2) { probed[key] = Math.round(v.duration * 100) / 100; const all = durCache(); all[key] = probed[key]; lsSet(LS.dur, all); recompute(); drawList(); }
       });
       v.addEventListener('canplay', function(){ slot.ready = true; if (k === active) stage.classList.remove('buffering'); });
-      v.addEventListener('error', function(){ slot.err = true; if (k === active && slot.idx === cur) onClipFailed(); });
+      v.addEventListener('error', function(){
+        slot.err = true;
+        if (slot.idx < 0) return;
+        if (k === active && slot.idx === cur) onClipFailed();
+        else { clips[slot.idx]._failed = true; recompute(); drawList(); }   // a preloaded clip that cannot load is skipped when its turn comes
+      });
       v.addEventListener('waiting', function(){ if (k === active && playing) stage.classList.add('buffering'); });
       v.addEventListener('playing', function(){ if (k === active) { reveal(k); stage.classList.remove('buffering'); } });
       v.addEventListener('ended', function(){ if (k === active) next(); });
@@ -229,14 +239,17 @@
     slots.forEach(wire);
     function reveal(k){ slots.forEach(function(s, j){ s.v.classList.toggle('on', j === k); if (j !== k && slots[j].idx !== slots[k].idx) { try { s.v.pause(); } catch (e) {} } }); }
     function preloadNext(){
-      const ni = cur + 1; if (ni >= n) return;
+      const ni = nextAvail(cur + 1); if (ni < 0) return;
       const other = slots[1 - active];
       if (other.idx !== ni) prep(other, ni);
     }
 
     // playback
     function startClip(idx, off, autoplay){
-      hideOver(el.miss); cur = idx; virtual = null;
+      hideOver(el.miss); virtual = null;
+      if (allMissing()) { cur = idx; showNoFiles(); playing = false; setPlayUi(); return; }
+      if (skipClip(idx)) { const j = nextAvail(idx); if (j < 0) { cur = n - 1; finish(); return; } idx = j; off = 0; }
+      cur = idx;
       let k = slots.findIndex(function(s){ return s.idx === idx; });
       if (k < 0) { k = 1 - active; prep(slots[k], idx); }
       active = k;
@@ -263,9 +276,15 @@
       tick();
     }
     function showMissing(idx){ const c = clips[idx]; el.miss.innerHTML = '<b>Clip ' + String(idx + 1).padStart(2, '0') + ' · ' + esc(c.title || '') + '</b><span>' + (c && c.src ? 'This clip is not available yet.' : 'No file is set for this clip.') + '</span>'; showOver(el.miss); }
-    function onClipFailed(){ const c = clips[cur]; c._failed = true; recompute(); slots[active].missing = true; slots[active].v.classList.remove('on'); virtual = { off: 0, last: performance.now() }; el.miss.innerHTML = '<b>Clip ' + String(cur + 1).padStart(2, '0') + ' · ' + esc(c.title || '') + '</b><span>This clip could not be loaded. Skipping on.</span>'; showOver(el.miss); stage.classList.remove('buffering'); }
+    function showNoFiles(){ el.miss.innerHTML = '<b>Episode ' + pad3(ep.number) + ' · ' + esc(ep.title) + '</b><span>This episode is not available yet.</span>'; slots.forEach(function(x){ x.v.classList.remove('on'); }); showOver(el.miss); stage.classList.remove('buffering'); }
+    function onClipFailed(){
+      clips[cur]._failed = true; recompute(); drawList(); stage.classList.remove('buffering');
+      if (state !== 'playing' && state !== 'paused') return;     // behind the title card: it is skipped when playback starts
+      if (allMissing()) { showNoFiles(); playing = false; setPlayUi(); return; }
+      slots[active].v.classList.remove('on'); next();
+    }
     function next(){ if (cur + 1 >= n) finish(); else startClip(cur + 1, 0, true); }
-    function prev(){ if (curTime() > 3 || cur === 0) startClip(cur, 0, playing); else startClip(cur - 1, 0, playing); }
+    function prev(){ const j = prevAvail(cur - 1); if (curTime() > 3 || j < 0) startClip(cur, 0, playing); else startClip(j, 0, playing); }
     function jumpTo(i, off){ if (state !== 'playing' && state !== 'paused') { beginPlayback({ idx: i, off: off, skipOpening: true }); return; } state = 'playing'; startClip(i, off, true); }
     function seekTo(t){ const l = locate(t); if (l.idx === cur && !slots[active].missing && slots[active].idx === cur) { try { slots[active].v.currentTime = l.off; } catch (e) {} if (virtual) virtual.off = l.off; tick(); } else startClip(l.idx, l.off, playing); }
     function togglePlay(){
@@ -317,7 +336,7 @@
       const idx = opts.idx || 0, off = opts.off || 0;
       if (opts.skipOpening || idx > 0 || off > 0) { state = 'playing'; startClip(idx, off, true); wake(); return; }
       state = 'opening'; showOver(el.open);
-      if (!isMissing(clips[0])) prep(slots[active], 0);     // preload the first clip behind the title card
+      { const f0 = nextAvail(0); if (f0 >= 0) prep(slots[active], f0); }     // preload the first playable clip behind the title card
       const proceed = function(){ if (state !== 'opening') return; clearTimeout(openingTimer); hideOver(el.open); state = 'playing'; setTimeout(function(){ if (!destroyed && state === 'playing') startClip(0, 0, true); }, 500); wake(); };
       openingTimer = setTimeout(proceed, cfg.openingSeconds * 1000);
       el.open.onclick = proceed;
