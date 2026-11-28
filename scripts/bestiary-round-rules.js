@@ -125,6 +125,9 @@
     return false;
   }
 
+  // used by abilities that strike outside combatAction/castSpell (the Founders' Blessing), so phases and the gate/tide/beat rules still see the damage
+  window.roundRulesAfterDamage = function(hpBefore){ const e = active(); if (e) afterDamage(e, hpBefore, round()); };
+
   const oldAction = window.combatAction;
   if (typeof oldAction === 'function') window.combatAction = function(action){
     const e = active();
