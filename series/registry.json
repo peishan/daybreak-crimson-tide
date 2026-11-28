@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Episode registry. Metadata only: video files live in private storage (see config.json storage.baseUrl). A clip without a src is found by the naming convention in config.json (default ep001/01.mp4 = episode 1, clip 1); add src only to override, e.g. a full https URL. To replace a clip, upload a file with the same name and bump its version. For hundreds of episodes, an entry may point to its own file instead: { \"number\": 2, \"title\": \"...\", \"file\": \"episodes/ep002.json\" }.",
+  "note": "Episode registry. Metadata only: video files live in private storage (see config.json storage.baseUrl). A clip without a src is found by the naming convention in config.json (default ep001/001.mp4 = episode 1, clip 1); add src only to override, e.g. a full https URL. To replace a clip, upload a file with the same name and bump its version. For hundreds of episodes, an entry may point to its own file instead: { \"number\": 2, \"title\": \"...\", \"file\": \"episodes/ep002.json\" }.",
   "episodes": [
     {
       "number": 1,
@@ -25,49 +25,49 @@
         {
           "id": "001-01",
           "title": "The Storm",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-02",
           "title": "Lost Memories",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-03",
           "title": "Awakening",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-04",
           "title": "Her Only Memory",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-05",
           "title": "Learning to Survive",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-06",
           "title": "Do You Remember?",
-          "duration": null,
+          "duration": 10.12,
           "version": 1
         },
         {
           "id": "001-07",
           "title": "It Feels Right",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         },
         {
           "id": "001-08",
           "title": "We Sail. We Live.",
-          "duration": null,
+          "duration": 10.03,
           "version": 1
         }
       ]

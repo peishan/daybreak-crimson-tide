@@ -23,16 +23,20 @@ Authorisation is sent with every clip request: `storage.auth` is `{ "type": "que
 
 ## File naming (upload straight into the folder)
 
-Clip N of episode E is looked up at `ep{EEE}/{NN}.mp4` under the storage root, so Episode 001's clips are:
+Clip N of episode E is looked up at `ep{EEE}/{CCC}.mp4` (episode and clip both three digits) under the storage root, so Episode 001's clips are:
 
 ```
-ep001/01.mp4   The Storm
-ep001/02.mp4   Lost Memories
-...
-ep001/10.mp4   We Sail. We Live.
+ep001/001.mp4   The Storm
+ep001/002.mp4   Lost Memories
+ep001/003.mp4   Awakening
+ep001/004.mp4   Her Only Memory
+ep001/005.mp4   Learning to Survive
+ep001/006.mp4   Do You Remember?
+ep001/007.mp4   It Feels Right
+ep001/008.mp4   We Sail. We Live.
 ```
 
-Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no registry edit needed; the clip titles come from the registry, in order. A clip whose file is missing is skipped silently: no placeholder screen, and it takes no time on the progress bar. Only if no clip of the episode can play does the player say "This episode is not available yet." The clip list still marks missing clips as "not uploaded". The pattern can be changed with `naming.pattern` in `config.json` (`{ep}` is the 3-digit episode number, `{clip}` the 2-digit clip number). A clip may still set its own `src` to override the convention.
+Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no registry edit needed; the clip titles come from the registry, in order. A clip whose file is missing is skipped silently: no placeholder screen, and it takes no time on the progress bar. Only if no clip of the episode can play does the player say "This episode is not available yet." The clip list still marks missing clips as "not uploaded". The pattern can be changed with `naming.pattern` in `config.json` (`{ep}` and `{clip}` are both 3-digit numbers). A clip may still set its own `src` to override the convention.
 
 ## Access
 
