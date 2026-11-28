@@ -36,6 +36,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sr-badge.ok{color:var(--ok);border-color:rgba(88,201,139,.5)}
 .sr-badge.warn{color:var(--warn);border-color:rgba(232,178,74,.5)}
 .sr-badge.bad{color:var(--bad);border-color:rgba(224,106,106,.5)}
+/* captions */
+.sr-cap{position:absolute;left:5%;right:5%;bottom:13%;z-index:3;text-align:center;pointer-events:none;white-space:pre-line;font-size:clamp(.85rem,2.7vw,1.5rem);line-height:1.35;color:#fff;text-shadow:0 1px 3px #000,0 0 6px #000;transition:bottom .25s}
+.sr-cap:not(:empty){background:none}
+.sr-stage.idle .sr-cap{bottom:5%}
+.sr-row button#srCC{font-size:.72rem;font-weight:700;letter-spacing:.04em;border:1.5px solid rgba(255,255,255,.55);border-radius:5px;padding:3px 6px;opacity:.6}
+.sr-row button#srCC.on{opacity:1;border-color:var(--gold2);color:var(--gold2)}
 /* player */
 .sr-stage{position:relative;background:#000;aspect-ratio:16/9;border-radius:12px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .sr-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;opacity:0}

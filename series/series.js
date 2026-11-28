@@ -3,7 +3,7 @@
  * Video files live in private storage (config.storage.baseUrl), never in this code. See series/README.md. */
 (function(){
   'use strict';
-  const LS = { key: 'ct_series_key', local: 'ct_series_local_hash', progress: 'ct_series_progress', vol: 'ct_series_volume', dur: 'ct_series_durations' };
+  const LS = { key: 'ct_series_key', local: 'ct_series_local_hash', progress: 'ct_series_progress', vol: 'ct_series_volume', dur: 'ct_series_durations', cc: 'ct_series_captions' };
   const app = document.getElementById('srApp');
   const lockBtn = document.getElementById('srLock');
   let config = null, registry = null, player = null;
@@ -65,6 +65,27 @@
     const vp = config.storage && config.storage.versionParam;
     if (vp && clip.version != null && clip.version !== '') u += (u.indexOf('?') < 0 ? '?' : '&') + vp + '=' + encodeURIComponent(clip.version);
     return withAuth(u);
+  }
+  // Captions: one WebVTT file per clip, next to the video (ep001/001.mp4 -> ep001/001.vtt), or clip.captions to override.
+  function captionUrl(clip){
+    if (!clip || !clip.src) return '';
+    const path = clip.captions || String(clip.src).replace(/\.[A-Za-z0-9]+$/, '') + '.vtt';
+    let u = /^https?:\/\//i.test(path) ? path : storageBase() + String(path).replace(/^\//, '');
+    const vp = config.storage && config.storage.versionParam;
+    if (vp && clip.version != null && clip.version !== '') u += (u.indexOf('?') < 0 ? '?' : '&') + vp + '=' + encodeURIComponent(clip.version);
+    return withAuth(u);
+  }
+  function vttTime(x){ const m = /^(?:(\d+):)?(\d{1,2}):(\d{2})(?:[.,](\d{1,3}))?$/.exec(x.trim()); return m ? (+(m[1] || 0)) * 3600 + (+m[2]) * 60 + (+m[3]) + (m[4] ? +('0.' + m[4].padEnd(3, '0')) : 0) : NaN; }
+  function parseVtt(text){
+    const cues = [];
+    String(text).replace(/\r/g, '').split(/\n{2,}/).forEach(function(block){
+      const lines = block.split('\n'), i = lines.findIndex(function(l){ return l.indexOf('-->') >= 0; });
+      if (i < 0) return;
+      const parts = lines[i].split('-->'), a = vttTime(parts[0]), b = vttTime(parts[1].trim().split(/\s+/)[0]);
+      const t = lines.slice(i + 1).join('\n').replace(/<[^>]+>/g, '').trim();
+      if (isFinite(a) && isFinite(b) && t) cues.push({ s: a, e: b, t: t });
+    });
+    return cues;
   }
   function isMissing(clip){ return !clip || !clip.src || clip.status === 'pending' || clip.status === 'missing' || !!clip._failed; }
 
@@ -168,7 +189,7 @@
 
     stage.innerHTML =
       '<video playsinline webkit-playsinline preload="auto"></video><video playsinline webkit-playsinline preload="auto"></video>' +
-      '<div class="sr-spin"></div>' +
+      '<div class="sr-spin"></div><div class="sr-cap" id="srCap"></div>' +
       '<div class="sr-over sr-miss" id="srMiss"></div>' +
       '<div class="sr-over sr-play" id="srPlayOver"><button type="button" aria-label="Play">▶</button></div>' +
       '<div class="sr-over sr-open" id="srOpen"><div class="kick">' + esc(config.seriesTitle) + '</div><div class="num">EPISODE ' + pad3(ep.number) + '</div><div class="ttl">' + esc(ep.title) + '</div><div class="skip">tap to skip</div></div>' +
@@ -179,11 +200,11 @@
       '<div class="sr-ctl"><div class="sr-bar"><div class="sr-ticks" id="srTicks"></div><input id="srSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek"></div>' +
       '<div class="sr-row"><button id="srPP" type="button" aria-label="Play or pause">▶</button><button id="srPrev" type="button" aria-label="Previous clip">⏮</button><button id="srNext" type="button" aria-label="Next clip">⏭</button>' +
       '<span class="sr-time" id="srTime">0:00 / 0:00</span><span class="sr-clipname" id="srName"></span>' +
-      '<span class="sr-vol"><button id="srMute" type="button" aria-label="Mute">🔊</button><input id="srVol" type="range" min="0" max="100" value="100" aria-label="Volume"></span>' +
+      '<button id="srCC" type="button" aria-label="Captions" title="Captions (C)">CC</button><span class="sr-vol"><button id="srMute" type="button" aria-label="Mute">🔊</button><input id="srVol" type="range" min="0" max="100" value="100" aria-label="Volume"></span>' +
       '<button id="srFs" type="button" aria-label="Fullscreen">⛶</button></div></div>';
     const $ = function(id){ return stage.querySelector('#' + id); };
     const vids = stage.querySelectorAll('video');
-    const el = { miss: $('srMiss'), playOver: $('srPlayOver'), open: $('srOpen'), end: $('srEnd'), endPanel: $('srEndPanel'), resume: $('srResume'), seek: $('srSeek'), time: $('srTime'), name: $('srName'), pp: $('srPP'), vol: $('srVol'), mute: $('srMute'), fs: $('srFs'), ticks: $('srTicks') };
+    const el = { miss: $('srMiss'), playOver: $('srPlayOver'), open: $('srOpen'), end: $('srEnd'), endPanel: $('srEndPanel'), resume: $('srResume'), seek: $('srSeek'), time: $('srTime'), name: $('srName'), pp: $('srPP'), vol: $('srVol'), mute: $('srMute'), cc: $('srCC'), cap: $('srCap'), fs: $('srFs'), ticks: $('srTicks') };
     slots = [{ v: vids[0], idx: -1, ready: false, err: false, missing: false }, { v: vids[1], idx: -1, ready: false, err: false, missing: false }];
 
     // durations
@@ -213,6 +234,7 @@
       const clip = clips[idx], v = slot.v;
       if (slot.goFn) { v.removeEventListener('loadedmetadata', slot.goFn); slot.goFn = null; }   // a start that was waiting on the old clip must not fire for the new one
       slot.idx = idx; slot.ready = false; slot.err = false; slot.missing = isMissing(clip);
+      loadCaps(idx);
       v.pause(); v.removeAttribute('src');
       if (slot.missing) { v.load(); return; }
       v.src = clipUrl(clip); v.preload = 'auto'; v.load();
@@ -243,6 +265,28 @@
       const other = slots[1 - active];
       if (other.idx !== ni) prep(other, ni);
     }
+
+    // captions: fetched per clip (a missing file just means no captions) and drawn by the player, so they sit above the controls and work in fullscreen
+    let ccOn = lsGet(LS.cc, true) !== false; const caps = {};
+    function loadCaps(idx){
+      const c = clips[idx]; if (!c || caps[idx] !== undefined) return;
+      caps[idx] = null;
+      const url = captionUrl(c); if (!url) return;
+      fetch(url).then(function(r){ return r.ok ? r.text() : ''; }).then(function(t){ if (t && !/^\s*</.test(t)) { caps[idx] = parseVtt(t); } }).catch(function(){});
+    }
+    function drawCap(){
+      let text = '';
+      if (ccOn && (state === 'playing' || state === 'paused') && !(slots[active] && slots[active].missing)) {
+        const cues = caps[cur];
+        if (cues && cues.length) { const t = curTime(); const q = cues.find(function(x){ return t >= x.s && t < x.e; }); if (q) text = q.t; }
+      }
+      if (el.cap.textContent !== text) el.cap.textContent = text;
+      el.cap.style.display = text ? '' : 'none';
+    }
+    function setCcUi(){ el.cc.classList.toggle('on', ccOn); el.cc.setAttribute('aria-pressed', ccOn ? 'true' : 'false'); }
+    function toggleCc(){ ccOn = !ccOn; lsSet(LS.cc, ccOn); setCcUi(); drawCap(); }
+    el.cc.onclick = function(e){ e.stopPropagation(); toggleCc(); };
+    setCcUi();
 
     // playback
     function startClip(idx, off, autoplay){
@@ -311,6 +355,7 @@
         if (s && s.idx === cur && isFinite(s.v.duration) && playing && s.v.duration - s.v.currentTime < cfg.preloadSeconds) preloadNext();
       }
       if (!dragging) { const g = globalTime(); el.seek.value = total ? Math.round(g / total * 1000) : 0; el.seek.style.setProperty('--p', (total ? g / total * 100 : 0) + '%'); el.time.textContent = fmt(g) + ' / ' + fmt(total); }
+      drawCap();
       save(false);
     }
     const heartbeat = setInterval(tick, 250);
@@ -395,7 +440,7 @@
       if (e.key === ' ' || e.key === 'k') { e.preventDefault(); togglePlay(); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); if (e.shiftKey) { if (state === 'playing' || state === 'paused') next(); } else seekTo(globalTime() + 5); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); if (e.shiftKey) prev(); else seekTo(globalTime() - 5); }
-      else if (e.key === 'f') toggleFs(); else if (e.key === 'm') { muted = !muted; applyVol(); }
+      else if (e.key === 'c') toggleCc(); else if (e.key === 'f') toggleFs(); else if (e.key === 'm') { muted = !muted; applyVol(); }
     });
     let lock = null;
     function wake(){ try { if (playing && navigator.wakeLock && !lock) navigator.wakeLock.request('screen').then(function(l){ lock = l; l.addEventListener('release', function(){ lock = null; }); }).catch(function(){}); } catch (e) {} }
