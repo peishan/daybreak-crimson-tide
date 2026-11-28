@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V709 · Arc II Ch.10 and Arc X Ch.5, 16 clips';
+window.__CT_BUILD__='V710 · Arc X Ch.21 clip';
