@@ -35,25 +35,45 @@
         desc:"Usually found wherever Imah and Dre are — the three of them have been inseparable long before any of this."},
       {id:'sa', name:'SA', role:'Legal Strategist', icon:'⚖️',
         desc:"Finds the angle in a contract nobody else thought to look for."},
+      // Zainah joined the group after the first five (San's request). Role and line are placeholders for the author to change.
+      {id:'zainah', name:'Zainah', role:'Records & Compliance', icon:'🗂️',
+        desc:"Kept C. Adv's files in an order nobody else could follow, and still knows where every page went. Has already reorganised Fair Tide's paperwork twice."},
       {id:'mike', name:'Mike', role:'Legal & Financial Affairs', icon:'💼',
         desc:"San's cousin on her mother's side. An accident back in the old world cost him the use of one leg long before any of this started — whatever Veyren's magic did to the prosthetic, it works better than the original ever did. Handles legal drafting and the kind of financial-institution work Brunei's banks actually trust."}
     ];
   }
 
+  function addOfficeMember(def){
+    if (game.fairTideRoster[def.id]) return false;
+    const entry = {name: def.name, role: def.role, icon: def.icon, desc: def.desc};
+    if (def.civilianRole) entry.civilianRole = def.civilianRole;
+    game.fairTideRoster[def.id] = entry;
+    return true;
+  }
+
   function checkOfficeNetworkReveal(){
-    if (game.officeNetworkRevealed) return;
     if (!(game.fairTideRoster && game.fairTideRoster.dre)) return;
-    game.fairTideRoster = game.fairTideRoster || {};
-    officeNetworkAdditions().forEach(function(def){
-      if (game.fairTideRoster[def.id]) return;
-      const entry = {name: def.name, role: def.role, icon: def.icon, desc: def.desc};
-      if (def.civilianRole) entry.civilianRole = def.civilianRole;
-      game.fairTideRoster[def.id] = entry;
-    });
+    if (game.officeNetworkRevealed) {
+      // A save that already met the first group: Zainah arrives on her own, once.
+      if (!game.officeZainahAdded) {
+        game.officeZainahAdded = true;
+        const z = officeNetworkAdditions().find(function(d){ return d.id === 'zainah'; });
+        if (z && addOfficeMember(z)) {
+          logEvent("📇 Zainah, another face from San's old office, has found her way to Fair Tide.", 'good');
+          if (typeof window.recordChronicleEntry === 'function') window.recordChronicleEntry('Zainah, from the old C. Adv office, found her way to Fair Tide.', '📇');
+          toast('📇 Zainah has joined the Fair Tide Roster.', 3600);
+          if (typeof saveGameQuiet === 'function') saveGameQuiet();
+          if (typeof window.renderFairTideHub === 'function') window.renderFairTideHub();
+        }
+      }
+      return;
+    }
+    officeNetworkAdditions().forEach(addOfficeMember);
     game.officeNetworkRevealed = true;
+    game.officeZainahAdded = true;
     logEvent("📇 A few familiar faces from San's old office have found their way to Fair Tide.", 'good');
     if (typeof window.recordChronicleEntry === 'function') {
-      window.recordChronicleEntry('Erma, Erna, Jeh, SA, and Mike all found their way to Fair Tide.', '📇');
+      window.recordChronicleEntry('Erma, Erna, Jeh, SA, Zainah, and Mike all found their way to Fair Tide.', '📇');
     }
     toast('📇 New faces have joined the Fair Tide Roster.', 3600);
     if (typeof saveGameQuiet === 'function') saveGameQuiet();
