@@ -64,6 +64,10 @@ For many episodes, keep the registry small and give each episode its own file: `
 - `production`: `planned`, `in_production` or `ready`. `approval`: `pending`, `approved` or `rejected`.
 - `ending.art`: an optional image to show behind the closing tagline; otherwise the last frame is held.
 
+## Captions
+
+Put a WebVTT file next to a clip with the same number: `ep001/001.mp4` gets `ep001/001.vtt`. Captions are on by default; the CC button (or the C key) turns them off and the choice is remembered on that device. A clip with no .vtt simply plays without captions. A clip may set `"captions": "path/or/url.vtt"` to override the location.
+
 ## Replacing a clip
 
 Upload the new file over the old one (same name) and bump that clip's `version` so devices do not serve the cached copy. The other clips and the episode do not change.
