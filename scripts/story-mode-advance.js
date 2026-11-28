@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V714 · Sequel hulls, Zainah';
+window.__CT_BUILD__='V715 · Arc XXX The Harbor of the Founders';

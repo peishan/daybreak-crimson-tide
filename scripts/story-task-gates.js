@@ -54,7 +54,8 @@
     { id: 't26', arc: 26, title: 'Trade at Cedar Reach',          tasks: [{ k: 'sell', port: 'cedar_reach', n: 20 }] },
     { id: 't27', arc: 27, title: 'Trade at Windward Bay',         tasks: [{ k: 'sell', port: 'windward_bay', n: 20 }] },
     { id: 't28', arc: 28, title: 'Trade at Fair Tide',            tasks: [{ k: 'sell', port: 'fair_tide', n: 20 }] },
-    { id: 't29', arc: 29, title: 'Trade at Ochre Harbor',         tasks: [{ k: 'sell', port: 'ochre_harbor', n: 20 }] }
+    { id: 't29', arc: 29, title: 'Trade at Ochre Harbor',         tasks: [{ k: 'sell', port: 'ochre_harbor', n: 20 }] },
+    { id: 't30', arc: 30, title: 'Trade at Fair Tide',            tasks: [{ k: 'sell', port: 'fair_tide', n: 20 }] }
   ];
 
   // More than one trade task per gate: every gate now asks for delivery contracts as well as selling, and the asks grow with the arcs.
