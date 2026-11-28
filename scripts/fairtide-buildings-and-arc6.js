@@ -185,7 +185,7 @@
     let c = oldShipUpgradeCostForFT ? oldShipUpgradeCostForFT(type) : 0;
     if(type==='hull'){
       const ws = ftBuildings().workshop||0;
-      c = Math.round(c * (1 - Math.min(0.3, 0.05*ws)));
+      c = Math.round(c * (1 - Math.min(0.5, 0.05*ws)));
     }
     return c;
   };
