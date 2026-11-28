@@ -55,10 +55,10 @@
     return url;
   }
   // File naming convention: with no explicit src, clip N of episode E lives at naming.pattern
-  // (default "ep{ep}/{clip}.mp4" -> ep001/01.mp4), so files can be uploaded straight into the episode folder.
+  // (default "ep{ep}/{clip}.mp4" -> ep001/001.mp4), so files can be uploaded straight into the episode folder.
   function conventionPath(epNum, n){
     const pat = (config.naming && config.naming.pattern) || 'ep{ep}/{clip}.mp4';
-    return pat.replace('{ep}', String(epNum).padStart(3, '0')).replace('{clip}', String(n).padStart(2, '0'));
+    return pat.replace('{ep}', String(epNum).padStart(3, '0')).replace('{clip}', String(n).padStart(3, '0'));
   }
   function clipUrl(clip){
     let u = /^https?:\/\//i.test(clip.src) ? clip.src : storageBase() + String(clip.src).replace(/^\//, '');
