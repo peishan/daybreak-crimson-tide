@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V707 · New-area bosses: Old Netmaster, Heart-Rot, Hollow Bell';
+window.__CT_BUILD__='V708 · Arc V clips for Renn (Ch.7 and 8)';
