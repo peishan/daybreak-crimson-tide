@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V712 · Series file naming';
+window.__CT_BUILD__='V713 · Combat redraw trim';

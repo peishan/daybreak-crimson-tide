@@ -24,16 +24,24 @@
 
   function phaseCheck(e){
     if (!e.phases) return;
-    let i = e.phaseIdx || 0;
+    let i = e.phaseIdx || 0, fired = false;
     while (i < e.phases.length && game.combatEnemyHp > 0 && game.combatEnemyHp <= e.phases[i].at * e.hp) {
       const p = e.phases[i]; i++;
       log('<b>' + p.text + '</b>');
       if (p.heal) game.combatEnemyHp = Math.min(e.hp, game.combatEnemyHp + Math.round(e.hp * p.heal));
       if (p.dmgMult) e.phaseMult = (e.phaseMult || 1) * p.dmgMult;
       if (p.twist) { e.twist = p.twist; e.twistText = p.twistText || e.twistText; e.baseDmg = e.baseDmg || e.dmg; }
-      e.phaseIdx = i;
+      e.phaseIdx = i; fired = true;
       try { if (typeof toast === 'function') toast('⚠️ ' + p.text.replace(/^\S+\s/, ''), 3200); } catch (er) {}
     }
+    return fired;
+  }
+  // One notice per jammed round (not one per crew member's turn).
+  function jamNotice(e, r){
+    if (e.jamShown === r) return;
+    e.jamShown = r;
+    log('📡 Static: skills and spells are jammed this round. A basic attack instead.');
+    if (!game.autoBattle && typeof toast === 'function') toast('📡 Static: skills and spells are jammed this round. A basic attack instead.', 2600);
   }
   function isShut(e, r){ return e.rule === 'gate' && r % 2 === 0; }
   function recount(){ try { game.cargoUsed = Object.keys(game.cargo || {}).reduce(function(a, g){ return a + (game.cargo[g] || 0); }, 0); } catch (er) {} }
@@ -50,8 +58,11 @@
   function afterDamage(e, hpBefore, r){
     const dealt = Math.max(0, hpBefore - game.combatEnemyHp);
     if (!dealt) return;
+    // The game has already drawn the screen for this action; draw again only if a rule changed something (a full redraw reloads every portrait).
+    let dirty = false;
     if (e.rule === 'echo') { e.maxByRound = e.maxByRound || {}; e.maxByRound[r] = Math.max(e.maxByRound[r] || 0, dealt); }
     if (e.rule === 'gate') {
+      dirty = true;
       if (isShut(e, r)) {
         game.combatEnemyHp = Math.min(e.hp, game.combatEnemyHp + dealt);
         log('🚪 The gate is shut: ' + e.name + ' takes nothing. Wait for it to open.');
@@ -62,13 +73,15 @@
         if (game.combatEnemyHp <= 0 && !game.combatResolved && typeof handleVictory === 'function') { handleVictory(); return; }
       }
     }
-    phaseCheck(e);
+    if (phaseCheck(e)) dirty = true;
     if (e.rule === 'tide' && r % 3 === 0 && game.combatEnemyHp > 0) {
+      dirty = true;
       const back = Math.round(dealt * 0.3);
       game.combatEnemyHp = Math.min(e.hp, game.combatEnemyHp + back);
       log('🌊 The tide rises: ' + e.name + ' takes back ' + back + ' health.');
     }
     if (e.rule === 'beat') {
+      dirty = true;
       if (r % 4 === 0) {
         const extra = dealt * 2;
         game.combatEnemyHp = Math.max(0, game.combatEnemyHp - extra);
@@ -83,7 +96,7 @@
         }
       }
     }
-    if (typeof renderCombat === 'function') renderCombat();
+    if (dirty && typeof renderCombat === 'function') renderCombat();
   }
 
   // Before the crew acts: the gate remembers whether it is shut, and a chilled crew member loses their turn (Defend warms everyone).
@@ -119,7 +132,7 @@
     const r = round();
     if (preAction(e, action)) return;
     if (e.rule === 'jam' && r % 2 === 1 && !(window.accordActive && window.accordActive()) && (action === 'SKILL' || action === 'HIGHSKILL')) {
-      if (typeof toast === 'function') toast('📡 Static: skills and spells are jammed this round. A basic attack instead.', 2600);
+      jamNotice(e, r);
       action = 'ATTACK';
     }
     const hp0 = game.combatEnemyHp;
@@ -134,7 +147,7 @@
     const r = round();
     if (preAction(e, 'SPELL')) return;
     if (e.rule === 'jam' && r % 2 === 1 && !(window.accordActive && window.accordActive())) {
-      if (typeof toast === 'function') toast('📡 Static: spells are jammed this round. A basic attack instead.', 2600);
+      jamNotice(e, r);
       return window.combatAction('ATTACK');
     }
     const hp0 = game.combatEnemyHp;
