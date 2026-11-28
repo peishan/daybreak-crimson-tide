@@ -4,7 +4,7 @@
 // NOTE: this does NOT cover runtime-cached assets like portraits/comics/
 // audio (see below) — those now self-update via stale-while-revalidate,
 // so swapping a portrait file no longer requires a version bump at all.
-const CACHE_VERSION = 'crimson-tide-v488';
+const CACHE_VERSION = 'crimson-tide-v489';
 const PRECACHE = `${CACHE_VERSION}-precache`;
 // BUG FIX (San's report — "images loading very slowly with this
 // refresh"): RUNTIME used to be derived from CACHE_VERSION too
@@ -370,6 +370,10 @@ self.addEventListener('fetch', event => {
   // Cinematics (video) are never cached here: they are loaded only when played, and caching them breaks
   // range requests on iPhones and would eat storage. The browser handles them directly.
   if (/\.(mp4|webm|m4v|mov)$/i.test(new URL(req.url).pathname)) return;
+
+  // The animated-series player (series.html and everything under /series/) is never cached here: its registry and config change as episodes are
+  // added, and the page is a private, separate app from the game.
+  if (/\/series\.html$|\/series\//i.test(new URL(req.url).pathname)) return;
 
   // Music (mp3) is left to the browser too. Audio elements ask for byte ranges; a full copy kept here and handed back for a range
   // request can leave a track silent or unable to start, and the files are large enough to eat storage. The browser's own cache keeps them.

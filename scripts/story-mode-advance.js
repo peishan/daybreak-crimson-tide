@@ -26,4 +26,4 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire, {once:true}); else wire();
 })();
 
-window.__CT_BUILD__='V710 · Arc X Ch.21 clip';
+window.__CT_BUILD__='V711 · Animated Series player';
