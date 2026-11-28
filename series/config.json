@@ -1,10 +1,16 @@
 {
   "seriesTitle": "DAYBREAK: CRIMSON TIDE",
   "tagline": "Same sea. Different paths. Still family.",
+  "naming": {
+    "pattern": "ep{ep}/{clip}.mp4"
+  },
   "registryUrl": "series/registry.json",
   "storage": {
     "baseUrl": "",
-    "auth": { "type": "query", "param": "key" },
+    "auth": {
+      "type": "query",
+      "param": "key"
+    },
     "versionParam": "v"
   },
   "access": {

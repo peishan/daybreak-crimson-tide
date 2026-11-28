@@ -54,6 +54,12 @@
     if (a.type === 'query' && a.param) { const key = lsGet(LS.key, ''); if (key) url += (url.indexOf('?') < 0 ? '?' : '&') + encodeURIComponent(a.param) + '=' + encodeURIComponent(key); }
     return url;
   }
+  // File naming convention: with no explicit src, clip N of episode E lives at naming.pattern
+  // (default "ep{ep}/{clip}.mp4" -> ep001/01.mp4), so files can be uploaded straight into the episode folder.
+  function conventionPath(epNum, n){
+    const pat = (config.naming && config.naming.pattern) || 'ep{ep}/{clip}.mp4';
+    return pat.replace('{ep}', String(epNum).padStart(3, '0')).replace('{clip}', String(n).padStart(2, '0'));
+  }
   function clipUrl(clip){
     let u = /^https?:\/\//i.test(clip.src) ? clip.src : storageBase() + String(clip.src).replace(/^\//, '');
     const vp = config.storage && config.storage.versionParam;
@@ -104,7 +110,9 @@
   }
   async function loadEpisode(ep){
     if (ep.file && !ep.clips) { const full = await loadJson(ep.file, /^https?:/i.test(ep.file)); Object.assign(ep, full); }
-    ep.clips = ep.clips || []; ep.status = ep.status || { production: 'planned', approval: 'pending' };
+    ep.clips = ep.clips || [];
+    ep.clips.forEach(function(c, i){ if (!c.src) c.src = conventionPath(ep.number, i + 1); });
+    ep.status = ep.status || { production: 'planned', approval: 'pending' };
     return ep;
   }
   function progressOf(n){ return (lsGet(LS.progress, {}))[n] || null; }

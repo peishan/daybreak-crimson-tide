@@ -1,27 +1,87 @@
 {
   "version": 1,
-  "note": "Episode registry. Metadata only: video files live in private storage (see config.json storage.baseUrl). A clip's src is relative to storage.baseUrl, or a full https URL. To replace a clip, upload the new file and change its src, or bump its version. For hundreds of episodes, an entry may point to its own file instead: { \"number\": 2, \"title\": \"...\", \"file\": \"episodes/ep002.json\" }.",
+  "note": "Episode registry. Metadata only: video files live in private storage (see config.json storage.baseUrl). A clip without a src is found by the naming convention in config.json (default ep001/01.mp4 = episode 1, clip 1); add src only to override, e.g. a full https URL. To replace a clip, upload a file with the same name and bump its version. For hundreds of episodes, an entry may point to its own file instead: { \"number\": 2, \"title\": \"...\", \"file\": \"episodes/ep002.json\" }.",
   "episodes": [
     {
       "number": 1,
       "arc": 1,
       "title": "The Storm That Remained",
       "description": "A storm, a wreck and a woman who remembers almost nothing. San wakes among strangers and finds, slowly, that the ship has a crew and the crew has a name for her.",
-      "chapters": [ { "arc": 1, "chapter": 1 } ],
+      "chapters": [
+        {
+          "arc": 1,
+          "chapter": 1
+        }
+      ],
       "thumbnail": "assets/comics/arc1/ch01-storm-that-remained.webp",
-      "status": { "production": "in_production", "approval": "pending" },
-      "ending": { "art": "" },
+      "status": {
+        "production": "in_production",
+        "approval": "pending"
+      },
+      "ending": {
+        "art": ""
+      },
       "clips": [
-        { "id": "001-01", "title": "The Storm",                   "src": "ep001/clip-01-the-storm.mp4",                   "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-02", "title": "Lost Memories",               "src": "ep001/clip-02-lost-memories.mp4",               "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-03", "title": "Awakening",                   "src": "ep001/clip-03-awakening.mp4",                   "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-04", "title": "Her Only Memory",             "src": "ep001/clip-04-her-only-memory.mp4",             "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-05", "title": "The Unnamed Crew",            "src": "ep001/clip-05-the-unnamed-crew.mp4",            "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-06", "title": "The Ship They Call Home",     "src": "ep001/clip-06-the-ship-they-call-home.mp4",     "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-07", "title": "Learning to Survive",         "src": "ep001/clip-07-learning-to-survive.mp4",         "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-08", "title": "Do You Remember?",            "src": "ep001/clip-08-do-you-remember.mp4",             "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-09", "title": "It Feels Right",              "src": "ep001/clip-09-it-feels-right.mp4",              "duration": null, "status": "pending", "version": 1 },
-        { "id": "001-10", "title": "We Sail. We Live.",           "src": "ep001/clip-10-we-sail-we-live.mp4",             "duration": null, "status": "pending", "version": 1 }
+        {
+          "id": "001-01",
+          "title": "The Storm",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-02",
+          "title": "Lost Memories",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-03",
+          "title": "Awakening",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-04",
+          "title": "Her Only Memory",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-05",
+          "title": "The Unnamed Crew",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-06",
+          "title": "The Ship They Call Home",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-07",
+          "title": "Learning to Survive",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-08",
+          "title": "Do You Remember?",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-09",
+          "title": "It Feels Right",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "001-10",
+          "title": "We Sail. We Live.",
+          "duration": null,
+          "version": 1
+        }
       ]
     }
   ]

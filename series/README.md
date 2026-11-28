@@ -15,11 +15,24 @@ One generic player plays every episode. An episode is only data in `registry.jso
 
 ## Video storage (keep videos out of the repo)
 
-Set `storage.baseUrl` in `config.json` to your private storage, for example `https://media.example.com/daybreak/`. A clip's `src` is relative to it (`ep001/clip-01-the-storm.mp4`) or a full `https://` URL. Leave `baseUrl` empty to use `series/media/` for local testing.
+Set `storage.baseUrl` in `config.json` to your private storage, for example `https://media.example.com/daybreak/`. Clips are found by file name (see below), or by an explicit `src` relative to it or a full `https://` URL. Leave `baseUrl` empty to use `series/media/` for local testing.
 
 Authorisation is sent with every clip request: `storage.auth` is `{ "type": "query", "param": "key" }` (the access key is added as `?key=...`) or `{ "type": "none" }`. A base URL containing `{key}` has it replaced by the key. `storage.versionParam` (default `v`) adds the clip's `version` to its URL so a replaced clip is not served from a cache; set it to `""` if your storage uses signed URLs that a changed query would break.
 
 **Protection.** A static site cannot keep a file private by itself. The page only holds the player; real protection must come from the storage refusing requests without a valid key (for example a signed URL, or a small Worker or edge function that checks `?key=`). Videos should not be placed in the public repo or the public game files.
+
+## File naming (upload straight into the folder)
+
+Clip N of episode E is looked up at `ep{EEE}/{NN}.mp4` under the storage root, so Episode 001's clips are:
+
+```
+ep001/01.mp4   The Storm
+ep001/02.mp4   Lost Memories
+...
+ep001/10.mp4   We Sail. We Live.
+```
+
+Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no registry edit needed; the clip titles come from the registry, in order. A clip whose file is missing shows a short "not available yet" card and the episode moves on. The pattern can be changed with `naming.pattern` in `config.json` (`{ep}` is the 3-digit episode number, `{clip}` the 2-digit clip number). A clip may still set its own `src` to override the convention.
 
 ## Access
 
@@ -37,19 +50,19 @@ Add an entry to `registry.json`:
   "chapters": [ { "arc": 1, "chapter": 2 } ], "thumbnail": "assets/comics/arc1/ch02-the-first-port.webp",
   "status": { "production": "in_production", "approval": "pending" },
   "ending": { "art": "" },
-  "clips": [ { "id": "002-01", "title": "...", "src": "ep002/clip-01.mp4", "duration": null, "status": "ready", "version": 1 } ] }
+  "clips": [ { "id": "002-01", "title": "...", "duration": null, "version": 1 } ] }
 ```
 
 For many episodes, keep the registry small and give each episode its own file: `{ "number": 2, "title": "...", "file": "series/episodes/ep002.json" }`. It is loaded only when opened.
 
 - `duration`: seconds, or `null` to let the player read it from the file (it caches what it reads).
-- `status`: `pending` for a clip that is not uploaded yet (the player shows a title card and moves on), `ready` once it is.
+- `status` (optional): leave it out and the player simply tries the file. Set `pending` to skip a clip deliberately.
 - `production`: `planned`, `in_production` or `ready`. `approval`: `pending`, `approved` or `rejected`.
 - `ending.art`: an optional image to show behind the closing tagline; otherwise the last frame is held.
 
 ## Replacing a clip
 
-Upload the new file to storage and change that clip's `src`, or bump its `version`. The other clips and the episode do not change.
+Upload the new file over the old one (same name) and bump that clip's `version` so devices do not serve the cached copy. The other clips and the episode do not change.
 
 ## Playback
 
