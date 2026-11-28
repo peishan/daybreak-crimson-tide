@@ -45,6 +45,10 @@ Episode 002 goes in `ep002/`, and so on. Just drop the files into the folder, no
 - `access.checkUrl`: a URL that returns 200 only for a valid key (the key is added as for clips).
 - If neither is set, the first key entered becomes the key for that device (a soft gate).
 
+## Episode length
+
+Episodes can have any number of clips (Episode 004 has five). List only the clips the episode has, in order; nothing assumes ten.
+
 ## Adding an episode
 
 Add an entry to `registry.json`:
@@ -67,6 +71,25 @@ For many episodes, keep the registry small and give each episode its own file: `
 ## Captions
 
 Put a WebVTT file next to a clip with the same number: `ep001/001.mp4` gets `ep001/001.vtt`. Captions are on by default; the CC button (or the C key) turns them off and the choice is remembered on that device. A clip with no .vtt simply plays without captions. A clip may set `"captions": "path/or/url.vtt"` to override the location.
+
+## Cinematic introductions
+
+An optional name card that fades in over a clip to introduce a character, companion, place, item, ability or settlement. It never touches the video file, audio or playback: it is drawn from the clip's current time, so seeking, pausing, replaying and resuming all stay in step. **Nothing is added automatically**; add a card only for a name, role or title you have approved.
+
+Add entries to `series/intros.json` (or give a clip an `intros` array in the registry), keyed by clip id:
+
+```json
+{ "clips": { "004-02": [
+  { "category": "Companion", "name": "Joel", "subtitle": "First Mate", "start": 2, "duration": 3, "side": "left" }
+] } }
+```
+
+- `category`: small gold label above the name (Character, Companion, Location, Equipment, Ability, Settlement, ...). Optional.
+- `name`: the large ivory serif name. Required.
+- `subtitle`: optional smaller gold line, such as a role.
+- `start`: seconds into the clip. `duration`: seconds on screen (default 3, or `player.introSeconds`).
+- `side`: `left` or `right` (lower third, away from the middle of the frame). `enabled: false` switches one off.
+- `player.introsEnabled: false` in `config.json` turns every card off.
 
 ## Replacing a clip
 

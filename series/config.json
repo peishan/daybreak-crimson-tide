@@ -24,6 +24,9 @@
     "missingClipSeconds": 3,
     "preloadSeconds": 8,
     "resumeRewindSeconds": 2,
-    "defaultClipSeconds": 10
-  }
+    "defaultClipSeconds": 10,
+    "introSeconds": 3,
+    "introsEnabled": true
+  },
+  "introsUrl": "series/intros.json"
 }

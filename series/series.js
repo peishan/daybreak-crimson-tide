@@ -129,10 +129,32 @@
     if (!r.ok) throw new Error(url + ' ' + r.status);
     return r.json();
   }
+  // Cinematic introductions: optional per-clip name cards (a character, place, item, ability...). They live in the registry (clip.intros) or in
+  // series/intros.json keyed by clip id, so they can be added to any episode, old or new, without touching a video. Nothing is added automatically.
+  let introMap = null;
+  async function getIntros(){
+    if (introMap) return introMap;
+    introMap = {};
+    const url = config.introsUrl;
+    if (!url) return introMap;
+    try { const d = await loadJson(url, /^https?:/i.test(url)); introMap = (d && d.clips) || {}; } catch (e) {}
+    return introMap;
+  }
+  function normIntros(list, dflt){
+    if (!Array.isArray(list)) return [];
+    return list.map(function(x){
+      if (!x || typeof x !== 'object' || !x.name) return null;
+      const start = Number(x.start), dur = Number(x.duration);
+      return { category: x.category ? String(x.category) : '', name: String(x.name), subtitle: x.subtitle ? String(x.subtitle) : '',
+        start: isFinite(start) && start >= 0 ? start : 0, duration: isFinite(dur) && dur > 0 ? dur : dflt,
+        side: x.side === 'right' ? 'right' : 'left', enabled: x.enabled !== false };
+    }).filter(function(x){ return x && x.enabled; });
+  }
   async function loadEpisode(ep){
     if (ep.file && !ep.clips) { const full = await loadJson(ep.file, /^https?:/i.test(ep.file)); Object.assign(ep, full); }
     ep.clips = ep.clips || [];
-    ep.clips.forEach(function(c, i){ if (!c.src) c.src = conventionPath(ep.number, i + 1); });
+    const im = await getIntros(), dflt = Number((config.player && config.player.introSeconds) || 3);
+    ep.clips.forEach(function(c, i){ if (!c.src) c.src = conventionPath(ep.number, i + 1); c.intros = normIntros(c.intros || im[c.id], dflt); });
     ep.status = ep.status || { production: 'planned', approval: 'pending' };
     return ep;
   }
@@ -190,6 +212,7 @@
     stage.innerHTML =
       '<video playsinline webkit-playsinline preload="auto"></video><video playsinline webkit-playsinline preload="auto"></video>' +
       '<div class="sr-spin"></div><div class="sr-cap" id="srCap"></div>' +
+      '<div class="sr-intro left" id="srIntroL"></div><div class="sr-intro right" id="srIntroR"></div>' +
       '<div class="sr-over sr-miss" id="srMiss"></div>' +
       '<div class="sr-over sr-play" id="srPlayOver"><button type="button" aria-label="Play">▶</button></div>' +
       '<div class="sr-over sr-open" id="srOpen"><div class="kick">' + esc(config.seriesTitle) + '</div><div class="num">EPISODE ' + pad3(ep.number) + '</div><div class="ttl">' + esc(ep.title) + '</div><div class="skip">tap to skip</div></div>' +
@@ -204,7 +227,7 @@
       '<button id="srFs" type="button" aria-label="Fullscreen">⛶</button></div></div>';
     const $ = function(id){ return stage.querySelector('#' + id); };
     const vids = stage.querySelectorAll('video');
-    const el = { miss: $('srMiss'), playOver: $('srPlayOver'), open: $('srOpen'), end: $('srEnd'), endPanel: $('srEndPanel'), resume: $('srResume'), seek: $('srSeek'), time: $('srTime'), name: $('srName'), pp: $('srPP'), vol: $('srVol'), mute: $('srMute'), cc: $('srCC'), cap: $('srCap'), fs: $('srFs'), ticks: $('srTicks') };
+    const el = { miss: $('srMiss'), playOver: $('srPlayOver'), open: $('srOpen'), end: $('srEnd'), endPanel: $('srEndPanel'), resume: $('srResume'), seek: $('srSeek'), time: $('srTime'), name: $('srName'), pp: $('srPP'), vol: $('srVol'), mute: $('srMute'), cc: $('srCC'), cap: $('srCap'), introL: $('srIntroL'), introR: $('srIntroR'), fs: $('srFs'), ticks: $('srTicks') };
     slots = [{ v: vids[0], idx: -1, ready: false, err: false, missing: false }, { v: vids[1], idx: -1, ready: false, err: false, missing: false }];
 
     // durations
@@ -283,6 +306,26 @@
       if (el.cap.textContent !== text) el.cap.textContent = text;
       el.cap.style.display = text ? '' : 'none';
     }
+    // introductions: shown purely from the clip's current time, so seeking, pausing, replaying and resuming all stay in step
+    function drawIntros(){
+      const found = { left: null, right: null };
+      const list = clips[cur] && clips[cur].intros, s = slots[active];
+      if (list && list.length && introsOn() && (state === 'playing' || state === 'paused') && s && !s.missing && s.idx === cur && s.v.classList.contains('on')) {
+        const t = curTime();
+        list.forEach(function(x){ if (t >= x.start && t < x.start + x.duration && !found[x.side]) found[x.side] = x; });
+      }
+      [['left', el.introL], ['right', el.introR]].forEach(function(p){
+        const x = found[p[0]], node = p[1];
+        if (x) {
+          if (node._cur !== x) {
+            node.innerHTML = (x.category ? '<div class="in-cat">' + esc(x.category) + '</div>' : '') + '<div class="in-name">' + esc(x.name) + '</div>' + (x.subtitle ? '<div class="in-sub">' + esc(x.subtitle) + '</div>' : '');
+            node._cur = x;
+          }
+          node.classList.add('on');
+        } else node.classList.remove('on');     // the text stays in place while it fades out
+      });
+    }
+    function introsOn(){ return !(config.player && config.player.introsEnabled === false); }
     function setCcUi(){ el.cc.classList.toggle('on', ccOn); el.cc.setAttribute('aria-pressed', ccOn ? 'true' : 'false'); }
     function toggleCc(){ ccOn = !ccOn; lsSet(LS.cc, ccOn); setCcUi(); drawCap(); }
     el.cc.onclick = function(e){ e.stopPropagation(); toggleCc(); };
@@ -355,7 +398,7 @@
         if (s && s.idx === cur && isFinite(s.v.duration) && playing && s.v.duration - s.v.currentTime < cfg.preloadSeconds) preloadNext();
       }
       if (!dragging) { const g = globalTime(); el.seek.value = total ? Math.round(g / total * 1000) : 0; el.seek.style.setProperty('--p', (total ? g / total * 100 : 0) + '%'); el.time.textContent = fmt(g) + ' / ' + fmt(total); }
-      drawCap();
+      drawCap(); drawIntros();
       save(false);
     }
     const heartbeat = setInterval(tick, 250);

@@ -42,6 +42,20 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sr-stage.idle .sr-cap{bottom:5%}
 .sr-row button#srCC{font-size:.72rem;font-weight:700;letter-spacing:.04em;border:1.5px solid rgba(255,255,255,.55);border-radius:5px;padding:3px 6px;opacity:.6}
 .sr-row button#srCC.on{opacity:1;border-color:var(--gold2);color:var(--gold2)}
+/* cinematic introductions: name cards that fade in over the picture */
+.sr-intro{isolation:isolate;position:absolute;bottom:20%;max-width:40%;z-index:3;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .7s ease,transform .7s ease;font-family:'Cinzel','Cormorant Garamond',Georgia,'Times New Roman',serif}
+.sr-intro.on{opacity:1;transform:none}
+.sr-intro.left{left:0;padding:16px 44px 16px 5%;text-align:left}
+.sr-intro.right{right:0;padding:16px 5% 16px 44px;text-align:right}
+.sr-intro::before{content:'';position:absolute;inset:0;z-index:-1;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent)}
+.sr-intro.left::before{background:linear-gradient(to right,rgba(7,15,32,.85),rgba(7,15,32,.55) 65%,rgba(7,15,32,0))}
+.sr-intro.right::before{background:linear-gradient(to left,rgba(7,15,32,.85),rgba(7,15,32,.55) 65%,rgba(7,15,32,0))}
+.sr-intro .in-cat{color:var(--gold);font-size:clamp(.5rem,1.5vw,.74rem);letter-spacing:.24em;text-transform:uppercase}
+.sr-intro .in-name{color:#f6efdc;font-size:clamp(1rem,3.6vw,2rem);letter-spacing:.05em;line-height:1.15;margin:2px 0;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.sr-intro .in-sub{color:var(--gold);font-size:clamp(.6rem,1.8vw,.9rem);letter-spacing:.1em;font-style:italic}
+.sr-stage.idle .sr-intro{bottom:12%}
+@media (max-width:560px){.sr-intro{max-width:56%;bottom:18%}}
+@media (prefers-reduced-motion:reduce){.sr-intro{transition:opacity .2s;transform:none}}
 /* player */
 .sr-stage{position:relative;background:#000;aspect-ratio:16/9;border-radius:12px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .sr-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;opacity:0}
