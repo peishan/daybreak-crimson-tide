@@ -71,6 +71,88 @@
           "version": 1
         }
       ]
+    },
+    {
+      "number": 2,
+      "arc": 1,
+      "title": "The First Port",
+      "description": "Placeholder: set the episode title, description and chapters.",
+      "chapters": [
+        {
+          "arc": 1,
+          "chapter": 2
+        }
+      ],
+      "thumbnail": "assets/comics/arc1/ch02-the-first-port.webp",
+      "status": {
+        "production": "in_production",
+        "approval": "pending"
+      },
+      "ending": {
+        "art": ""
+      },
+      "clips": [
+        {
+          "id": "002-01",
+          "title": "The First Port",
+          "duration": 10.12,
+          "version": 1
+        },
+        {
+          "id": "002-02",
+          "title": "Rumours of a Warrior",
+          "duration": 10.12,
+          "version": 1
+        },
+        {
+          "id": "002-03",
+          "title": "A Crew of Choice",
+          "duration": 10.12,
+          "version": 1
+        },
+        {
+          "id": "002-04",
+          "title": "The Lone Guardian",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "002-05",
+          "title": "Strange Familiarity",
+          "duration": 10.03,
+          "version": 1
+        },
+        {
+          "id": "002-06",
+          "title": "Bring Him Home",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "002-07",
+          "title": "The Sound of a Bell",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "002-08",
+          "title": "Leaving You Felt Wrong",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "002-09",
+          "title": "Soel Chooses",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "002-10",
+          "title": "Some Things Survive the Storm",
+          "duration": null,
+          "version": 1
+        }
+      ]
     }
   ]
 }
