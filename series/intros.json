@@ -1,0 +1,4 @@
+{
+  "note": "Cinematic introductions, keyed by clip id (see README). Nothing is added automatically: add an entry only for a name, role or title you have approved. Each entry: category, name, optional subtitle, start (seconds into the clip), duration (default 3), side ('left' or 'right'), enabled (default true).",
+  "clips": {}
+}

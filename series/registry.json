@@ -187,7 +187,7 @@
       ],
       "thumbnail": "assets/comics/arc1/ch06-the-shield-returns.webp",
       "status": {
-        "production": "in_production",
+        "production": "ready",
         "approval": "pending"
       },
       "ending": {
@@ -251,6 +251,66 @@
         {
           "id": "003-10",
           "title": "A Place Beside Her",
+          "duration": null,
+          "version": 1
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "arc": 1,
+      "title": "The Day We Chose",
+      "description": "With the Guardian safely aboard, life on the Crimson Tide settles into a peaceful rhythm. During a quiet visit ashore, San and Joel reflect on their missing memories and choose to build a relationship based on who they are now.",
+      "chapters": [
+        {
+          "arc": 1,
+          "chapter": 9
+        },
+        {
+          "arc": 1,
+          "chapter": 10
+        },
+        {
+          "arc": 1,
+          "chapter": 11
+        }
+      ],
+      "thumbnail": "assets/comics/arc1/ch11-day-we-chose.webp",
+      "status": {
+        "production": "in_production",
+        "approval": "pending"
+      },
+      "ending": {
+        "art": ""
+      },
+      "clips": [
+        {
+          "id": "004-01",
+          "title": "Life Aboard",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "004-02",
+          "title": "The Day the Sea Rested",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "004-03",
+          "title": "A Familiar Feeling",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "004-04",
+          "title": "What If We Never Remember?",
+          "duration": null,
+          "version": 1
+        },
+        {
+          "id": "004-05",
+          "title": "The Day We Chose",
           "duration": null,
           "version": 1
         }
